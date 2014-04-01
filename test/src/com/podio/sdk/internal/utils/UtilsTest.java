@@ -2,6 +2,7 @@ package com.podio.sdk.internal.utils;
 
 import java.util.ArrayList;
 
+import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.ArrayMap;
 
@@ -24,6 +25,24 @@ public class UtilsTest extends AndroidTestCase {
 
         assertFalse(Utils.notEmpty(empty));
         assertFalse(Utils.notEmpty((ArrayList<Object>) null));
+        assertTrue(Utils.notEmpty(nonEmpty));
+    }
+
+    public void testUriIsEmpty() {
+        Uri empty = Uri.EMPTY;
+        Uri nonEmpty = Uri.parse("test://uri");
+
+        assertTrue(Utils.isEmpty(empty));
+        assertTrue(Utils.isEmpty((Uri) null));
+        assertFalse(Utils.isEmpty(nonEmpty));
+    }
+
+    public void testUriNotEmpty() {
+        Uri empty = Uri.EMPTY;
+        Uri nonEmpty = Uri.parse("test://uri");
+
+        assertFalse(Utils.notEmpty(empty));
+        assertFalse(Utils.notEmpty((Uri) null));
         assertTrue(Utils.notEmpty(nonEmpty));
     }
 

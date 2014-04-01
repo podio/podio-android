@@ -3,6 +3,8 @@ package com.podio.sdk.internal.utils;
 import java.util.Collection;
 import java.util.Map;
 
+import android.net.Uri;
+
 public final class Utils {
 
     private Utils() {
@@ -11,6 +13,10 @@ public final class Utils {
 
     public static boolean isEmpty(Collection<?> collection) {
         return (collection == null) || (collection.size() == 0);
+    }
+
+    public static boolean isEmpty(Uri uri) {
+        return (uri == null || uri.equals(Uri.EMPTY));
     }
 
     public static boolean isEmpty(int[] array) {
@@ -35,6 +41,10 @@ public final class Utils {
 
     public static boolean notEmpty(Collection<?> collection) {
         return !isEmpty(collection);
+    }
+
+    public static boolean notEmpty(Uri uri) {
+        return !isEmpty(uri);
     }
 
     public static boolean notEmpty(int[] array) {
