@@ -2,9 +2,13 @@ package com.podio.sdk.client;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import android.net.Uri;
 
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
+import com.podio.sdk.internal.utils.Utils;
 
 public final class RestRequest {
     private Object content;
@@ -14,6 +18,54 @@ public final class RestRequest {
     private Map<String, List<String>> query;
     private ResultListener resultListener;
     private Object ticket;
+
+    public Uri buildUri(String scheme, String authority) {
+        Uri uri = Uri.EMPTY;
+
+        if (Utils.notEmpty(scheme) && Utils.notEmpty(authority)) {
+
+            Uri.Builder uriBuilder = new Uri.Builder() //
+                    .scheme(scheme) //
+                    .authority(authority) //
+                    .path(path);
+
+            if (Utils.notEmpty(query)) {
+                Set<String> keys = query.keySet();
+
+                for (String key : keys) {
+                    List<String> values = query.get(key);
+
+                    for (String value : values) {
+                        uriBuilder.appendQueryParameter(key, value);
+                    }
+                }
+            }
+
+            uri = uriBuilder.build();
+        }
+
+        return uri;
+    }
+
+    public Object getContent() {
+        return content;
+    }
+
+    public Class<?> getItemType() {
+        return itemType;
+    }
+
+    public RestOperation getOperation() {
+        return operation;
+    }
+
+    public ResultListener getResultListener() {
+        return resultListener;
+    }
+
+    public Object getTicket() {
+        return ticket;
+    }
 
     public RestRequest setContent(Object item) {
         this.content = item;
@@ -48,34 +100,6 @@ public final class RestRequest {
     public RestRequest setTicket(Object ticket) {
         this.ticket = ticket;
         return this;
-    }
-
-    public Object getContent() {
-        return content;
-    }
-
-    public Class<?> getItemType() {
-        return itemType;
-    }
-
-    public RestOperation getOperation() {
-        return operation;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public Map<String, List<String>> getQueryParameters() {
-        return query;
-    }
-
-    public ResultListener getResultListener() {
-        return resultListener;
-    }
-
-    public Object getTicket() {
-        return ticket;
     }
 
 }

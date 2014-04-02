@@ -1,7 +1,9 @@
-package com.podio.sdk.client.sqlite;
+package com.podio.sdk.client.database;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.podio.sdk.client.database.SQLiteDatabaseHelper;
 
 import android.app.Instrumentation;
 import android.content.ContentValues;
@@ -11,7 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-public class DatabaseHelperTest extends InstrumentationTestCase {
+public class SQLiteDatabaseHelperTest extends InstrumentationTestCase {
 
     private static final String DATABASE_NAME = "test.db";
     private static final int DATABASE_VERSION = 2;
@@ -27,7 +29,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides an empty URI.
      * 
      * <pre>
@@ -45,7 +47,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesEmptyUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.delete(Uri.EMPTY);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -55,7 +57,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides a null-pointer URI.
      * 
      * <pre>
@@ -73,7 +75,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesNullUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.delete(null);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -83,7 +85,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns the correct count in the
+     * Verifies that the {@link SQLiteDatabaseHelper} returns the correct count in the
      * result cursor when a row was successfully deleted as a result of a valid
      * URI pointing to an existing row.
      * 
@@ -102,7 +104,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     public void testDeleteReturnsCorrectCountWhenRowDeleted() {
         ContentValues values = new ContentValues();
         values.put("text", "test_text");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         long id = sqliteDatabase.insert("task", null, values);
 
@@ -115,7 +117,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns the correct count in the
+     * Verifies that the {@link SQLiteDatabaseHelper} returns the correct count in the
      * result cursor when a row couldn't be deleted as a result of a valid URI
      * not pointing to an existing row.
      * 
@@ -131,7 +133,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      */
     public void testDeleteReturnsCorrectCountWhenNoRowDeleted() {
         Uri invalidUri = Uri.parse("test://uri/task/?_id=-1");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.delete(invalidUri);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -140,7 +142,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides an empty URI.
      * 
      * <pre>
@@ -158,7 +160,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testInsertHandlesEmptyUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.insert(Uri.EMPTY, null);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("id"));
@@ -168,7 +170,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides a null-pointer URI.
      * 
      * <pre>
@@ -186,7 +188,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testInsertHandlesNullUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.insert(null, null);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("id"));
@@ -196,7 +198,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns the correct id in the
+     * Verifies that the {@link SQLiteDatabaseHelper} returns the correct id in the
      * result cursor when a row was successfully inserted.
      * 
      * <pre>
@@ -217,7 +219,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         ContentValues values = new ContentValues();
         values.put("text", "test_text");
         Uri uri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.insert(uri, values);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("id"));
@@ -233,7 +235,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides an empty URI.
      * 
      * <pre>
@@ -249,7 +251,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testQueryHandlesEmptyUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.query(Uri.EMPTY);
         assertNotNull(result);
         assertEquals(0, result.getColumnCount());
@@ -257,7 +259,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides a null-pointer URI.
      * 
      * <pre>
@@ -273,7 +275,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testQueryHandlesNullUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.query(null);
         assertNotNull(result);
         assertEquals(0, result.getColumnCount());
@@ -302,7 +304,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         values2.put("_id", 2L);
 
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
@@ -337,7 +339,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         values2.put("_id", 2L);
 
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
@@ -370,7 +372,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         values2.put("_id", 2L);
 
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
@@ -403,7 +405,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         values2.put("_id", 2L);
 
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
@@ -439,7 +441,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         values3.put("_id", 3L);
 
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
         databaseHelper.insert(insertUri, values3);
@@ -454,7 +456,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns the correct item when an
+     * Verifies that the {@link SQLiteDatabaseHelper} returns the correct item when an
      * existing row is requested.
      * 
      * <pre>
@@ -473,7 +475,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         ContentValues values = new ContentValues();
         values.put("text", "test_text");
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor insertResult = databaseHelper.insert(insertUri, values);
         insertResult.moveToFirst();
         long id = insertResult.getLong(0);
@@ -494,7 +496,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * 
      * <pre>
      * 
-     * 1. Create a new {@link DatabaseHelper} object.
+     * 1. Create a new {@link SQLiteDatabaseHelper} object.
      * 
      * 2. Verify that the expected tables have been created automatically.
      * 
@@ -505,7 +507,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         // is five of them.
         String query = "SELECT name FROM sqlite_master WHERE type = ? AND name != ? AND name != ?";
         String[] arguments = { "table", "sqlite_master", "android_metadata" };
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         Cursor cursor = sqliteDatabase.rawQuery(query, arguments);
         assertNotNull(cursor);
@@ -529,11 +531,11 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * 
      * <pre>
      * 
-     * 1. Create a new {@link DatabaseHelper} object.
+     * 1. Create a new {@link SQLiteDatabaseHelper} object.
      * 
      * 2. Add some data to the table.
      * 
-     * 3. Create a new {@link DatabaseHelper} object, with a lower version.
+     * 3. Create a new {@link SQLiteDatabaseHelper} object, with a lower version.
      * 
      * 4. Verify that table is properly reset.
      * 
@@ -541,7 +543,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      */
     public void testTaskTableResetOnVersionDowngrade() {
         // Insert test data.
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         sqliteDatabase.execSQL("INSERT INTO task (text) VALUES ('test_task')");
         Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(task.text) FROM task", null);
@@ -551,7 +553,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         assertEquals(1, cursor.getInt(0));
 
         // Verify the database is reset properly.
-        DatabaseHelper databaseHelper2 = getDatabaseHelper(DATABASE_VERSION - 1);
+        SQLiteDatabaseHelper databaseHelper2 = getDatabaseHelper(DATABASE_VERSION - 1);
         SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
         Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(task.text) FROM task", null);
         assertNotNull(cursor2);
@@ -566,11 +568,11 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * 
      * <pre>
      * 
-     * 1. Create a new {@link DatabaseHelper} object.
+     * 1. Create a new {@link SQLiteDatabaseHelper} object.
      * 
      * 2. Add some data to the table.
      * 
-     * 3. Create a new {@link DatabaseHelper} object, with a higher version.
+     * 3. Create a new {@link SQLiteDatabaseHelper} object, with a higher version.
      * 
      * 4. Verify that table is properly reset.
      * 
@@ -578,7 +580,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      */
     public void testTaskTableResetOnVersionUpgrade() {
         // Insert test data.
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         sqliteDatabase.execSQL("INSERT INTO task (text) VALUES ('test_task')");
         Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(task.text) FROM task", null);
@@ -588,7 +590,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         assertEquals(1, cursor.getInt(0));
 
         // Verify the database is reset properly.
-        DatabaseHelper databaseHelper2 = getDatabaseHelper(DATABASE_VERSION + 1);
+        SQLiteDatabaseHelper databaseHelper2 = getDatabaseHelper(DATABASE_VERSION + 1);
         SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
         Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(task.text) FROM task", null);
         assertNotNull(cursor2);
@@ -598,7 +600,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides an empty URI.
      * 
      * <pre>
@@ -616,7 +618,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testUpdateHandlesEmptyUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.update(Uri.EMPTY, null);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -626,7 +628,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns a valid result cursor
+     * Verifies that the {@link SQLiteDatabaseHelper} returns a valid result cursor
      * even if the caller provides a null-pointer URI.
      * 
      * <pre>
@@ -644,7 +646,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testUpdateHandlesNullUriCorrectly() {
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.update(null, null);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -654,7 +656,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns the correct count in the
+     * Verifies that the {@link SQLiteDatabaseHelper} returns the correct count in the
      * result cursor when a row was successfully updated.
      * 
      * <pre>
@@ -671,7 +673,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         ContentValues insertValues = new ContentValues();
         insertValues.put("text", "test_text");
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor insertResult = databaseHelper.insert(insertUri, insertValues);
         insertResult.moveToFirst();
         long id = insertResult.getLong(0);
@@ -688,7 +690,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link DatabaseHelper} returns the updated values when
+     * Verifies that the {@link SQLiteDatabaseHelper} returns the updated values when
      * a row was successfully updated.
      * 
      * <pre>
@@ -705,7 +707,7 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
         ContentValues insertValues = new ContentValues();
         insertValues.put("text", "test_text");
         Uri insertUri = Uri.parse("test://uri/task/");
-        DatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabaseHelper databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor insertResult = databaseHelper.insert(insertUri, insertValues);
         insertResult.moveToFirst();
         long id = insertResult.getLong(0);
@@ -727,16 +729,16 @@ public class DatabaseHelperTest extends InstrumentationTestCase {
     }
 
     /**
-     * Creates a new {@link DatabaseHelper} object with the given version
+     * Creates a new {@link SQLiteDatabaseHelper} object with the given version
      * number.
      * 
      * @param version
      *            The desired version number of the database helper.
      * @return The newly created database helper object.
      */
-    private DatabaseHelper getDatabaseHelper(int version) {
+    private SQLiteDatabaseHelper getDatabaseHelper(int version) {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getTargetContext();
-        return new DatabaseHelper(context, DATABASE_NAME, version);
+        return new SQLiteDatabaseHelper(context, DATABASE_NAME, version);
     }
 }

@@ -1,4 +1,4 @@
-package com.podio.sdk.client.sqlite;
+package com.podio.sdk.client.database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import android.net.Uri;
 
 import com.podio.sdk.internal.utils.Utils;
 
-final class DatabaseHelper extends SQLiteOpenHelper {
+public final class SQLiteDatabaseHelper extends SQLiteOpenHelper implements DatabaseHelper {
 
     private static final class SQLiteConstraint {
         private final String constraint;
@@ -27,28 +27,11 @@ final class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public DatabaseHelper(Context context, String name, int version) {
+    public SQLiteDatabaseHelper(Context context, String name, int version) {
         super(context, name, null, version);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase database) {
-        clear(database);
-        initialize(database);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        clear(database);
-        initialize(database);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        clear(database);
-        initialize(database);
-    }
-
     public Cursor delete(Uri uri) {
         int count = 0;
 
@@ -70,6 +53,57 @@ final class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    @Override
+    public void initialize(SQLiteDatabase database) {
+        if (database != null) {
+            try {
+                String query = new StringBuilder("CREATE TABLE task (")
+                        .append(" _id INTEGER PRIMARY KEY NOT NULL UNIQUE ON CONFLICT REPLACE,") //
+                        .append(" completed_by_id INTEGER,") //
+                        .append(" responsible_user_id INTEGER,") //
+                        .append(" responsible_profile_id INTEGER,") //
+                        .append(" responsible_name TEXT,") //
+                        .append(" responsible_avatar INTEGER,") //
+                        .append(" created_by_id INTEGER,") //
+                        .append(" description TEXT,") //
+                        .append(" is_private BOOLEAN,") //
+                        .append(" due_on TEXT,") //
+                        .append(" due_date TEXT,") //
+                        .append(" due_time TEXT,") //
+                        .append(" space_id TEXT,") //
+                        .append(" created_on TEXT,") //
+                        .append(" created_by_name TEXT,") //
+                        .append(" created_by_avatar TEXT,") //
+                        .append(" created_by_type TEXT,") //
+                        .append(" created_via_name TEXT,") //
+                        .append(" completed_on TEXT,") //
+                        .append(" completed_by_name TEXT,") //
+                        .append(" completed_by_avatar TEXT,") //
+                        .append(" completed_by_type TEXT,") //
+                        .append(" completed_via_name TEXT,") //
+                        .append(" is_completed BOOLEAN,") //
+                        .append(" text TEXT,") //
+                        .append(" has_ref BOOLEAN,") //
+                        .append(" ref_type TEXT,") //
+                        .append(" ref_id INTEGER,") //
+                        .append(" ref_title TEXT,") //
+                        .append(" ref_item_name TEXT,") //
+                        .append(" ref_icon_id INTEGER,") //
+                        .append(" group_value TEXT,") //
+                        .append(" files TEXT,") //
+                        .append(" comment_count INTEGER,") //
+                        .append(" timestamp LONG,") //
+                        .append(" task_type INTEGER)").toString();
+                database.beginTransaction();
+                database.execSQL(query);
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+    }
+
+    @Override
     public Cursor insert(Uri uri, ContentValues values) {
         long id = 0L;
 
@@ -89,6 +123,25 @@ final class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    @Override
+    public void onCreate(SQLiteDatabase database) {
+        clear(database);
+        initialize(database);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+        clear(database);
+        initialize(database);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+        clear(database);
+        initialize(database);
+    }
+
+    @Override
     public Cursor query(Uri uri) {
         Cursor result = null;
 
@@ -111,6 +164,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    @Override
     public Cursor update(Uri uri, ContentValues values) {
         int count = 0;
 
@@ -237,55 +291,6 @@ final class DatabaseHelper extends SQLiteOpenHelper {
                 if (cursor != null && !cursor.isClosed()) {
                     cursor.close();
                 }
-                database.endTransaction();
-            }
-        }
-    }
-
-    private void initialize(SQLiteDatabase database) {
-        if (database != null) {
-            try {
-                String query = new StringBuilder("CREATE TABLE task (")
-                        .append(" _id INTEGER PRIMARY KEY NOT NULL UNIQUE ON CONFLICT REPLACE,") //
-                        .append(" completed_by_id INTEGER,") //
-                        .append(" responsible_user_id INTEGER,") //
-                        .append(" responsible_profile_id INTEGER,") //
-                        .append(" responsible_name TEXT,") //
-                        .append(" responsible_avatar INTEGER,") //
-                        .append(" created_by_id INTEGER,") //
-                        .append(" description TEXT,") //
-                        .append(" is_private BOOLEAN,") //
-                        .append(" due_on TEXT,") //
-                        .append(" due_date TEXT,") //
-                        .append(" due_time TEXT,") //
-                        .append(" space_id TEXT,") //
-                        .append(" created_on TEXT,") //
-                        .append(" created_by_name TEXT,") //
-                        .append(" created_by_avatar TEXT,") //
-                        .append(" created_by_type TEXT,") //
-                        .append(" created_via_name TEXT,") //
-                        .append(" completed_on TEXT,") //
-                        .append(" completed_by_name TEXT,") //
-                        .append(" completed_by_avatar TEXT,") //
-                        .append(" completed_by_type TEXT,") //
-                        .append(" completed_via_name TEXT,") //
-                        .append(" is_completed BOOLEAN,") //
-                        .append(" text TEXT,") //
-                        .append(" has_ref BOOLEAN,") //
-                        .append(" ref_type TEXT,") //
-                        .append(" ref_id INTEGER,") //
-                        .append(" ref_title TEXT,") //
-                        .append(" ref_item_name TEXT,") //
-                        .append(" ref_icon_id INTEGER,") //
-                        .append(" group_value TEXT,") //
-                        .append(" files TEXT,") //
-                        .append(" comment_count INTEGER,") //
-                        .append(" timestamp LONG,") //
-                        .append(" task_type INTEGER)").toString();
-                database.beginTransaction();
-                database.execSQL(query);
-                database.setTransactionSuccessful();
-            } finally {
                 database.endTransaction();
             }
         }

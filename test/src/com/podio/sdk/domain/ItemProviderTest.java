@@ -45,7 +45,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct DELETE RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.DELETE, null, filter, path, request);
+        validateRequest(RestOperation.DELETE, null, filter, request);
     }
 
     /**
@@ -77,7 +77,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct GET RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.GET, null, filter, path, request);
+        validateRequest(RestOperation.GET, null, filter, request);
     }
 
     /**
@@ -109,7 +109,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct POST RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.POST, item, null, path, request);
+        validateRequest(RestOperation.POST, item, null, request);
     }
 
     /**
@@ -142,7 +142,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct PUT RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.PUT, item, filter, path, request);
+        validateRequest(RestOperation.PUT, item, filter, request);
     }
 
     /**
@@ -256,24 +256,26 @@ public class ItemProviderTest extends AndroidTestCase {
      * the provided expectations.
      * 
      * @param expectedOperation
-     *        The expected {@link RestOperation}.
+     *            The expected {@link RestOperation}.
      * @param expectedContent
-     *        The expected target item.
+     *            The expected target item.
      * @param expectedFilter
-     *        The expected request filter.
+     *            The expected request filter.
      * @param expectedPath
-     *        The expected path in the request URI.
+     *            The expected path in the request URI.
      * @param target
-     *        The {@link RestRequest} that needs to live up to the expectations.
+     *            The {@link RestRequest} that needs to live up to the
+     *            expectations.
      */
-    private void validateRequest(RestOperation expectedOperation, Object expectedContent, Filter expectedFilter, String expectedPath, RestRequest target) {
+    private void validateRequest(RestOperation expectedOperation, Object expectedContent,
+            Filter expectedFilter, RestRequest target) {
+
         Class<?> expectedItemType = expectedContent != null ? expectedContent.getClass() : null;
 
         assertNotNull(target);
         assertEquals(expectedContent, target.getContent());
         assertEquals(expectedItemType, target.getItemType());
         assertEquals(expectedOperation, target.getOperation());
-        assertEquals(expectedPath, target.getPath());
         assertEquals(expectedFilter, target.getTicket());
     }
 }

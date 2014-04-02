@@ -11,16 +11,16 @@ import com.podio.sdk.internal.request.ResultListener;
  * Facilitates default means of queuing up requests, flirting with the classical
  * Producer Consumer design pattern. This implementation of the Rest client acts
  * as a producer to its own queue and holds a private consumer as well.
- *
+ * 
  * The consumer runs on a worker thread which means that the actual execution of
  * a request will not interfere with with the main thread execution.
- *
+ * 
  * The responsibility of which thread the result is delivered on is delegated to
  * the actual request implementation.
- *
+ * 
  * The responsibility of analyzing the request state is delegated to extending
  * classes.
- *
+ * 
  * @author László Urszuly
  */
 public abstract class QueuedRestClient implements RestClient {
@@ -34,7 +34,7 @@ public abstract class QueuedRestClient implements RestClient {
     /**
      * Consumes request from the request queue and executes them (according to
      * abstract implementations) on a worker thread.
-     *
+     * 
      * @author László Urszuly
      */
     private final class QueuedRestConsumer implements Runnable {
@@ -74,38 +74,42 @@ public abstract class QueuedRestClient implements RestClient {
         }
     }
 
+    protected final String scheme;
+    protected final String authority;
+
     private final Handler callerHandler;
     private final LinkedBlockingQueue<RestRequest> queue;
-    private final String scheme;
-    private final String authority;
     private final Thread consumerThread;
 
     private State state;
 
     /**
      * Initializes the request queue with the
-     * {@link QueuedRestClient#CAPACITY_DEFAULT} capacity.
-     *
+     * {@link QueuedRestClient#CAPACITY_DEFAULT} capacity. Any requests that are
+     * passed on to a full queue will be rejected.
+     * 
      * @param scheme
-     *        The scheme of this {@link RestClient}.
+     *            The scheme of this {@link RestClient}.
      * @param authority
-     *        The authority of this {@link RestClient}.
+     *            The authority of this {@link RestClient}.
      */
     public QueuedRestClient(String scheme, String authority) {
         this(scheme, authority, CAPACITY_DEFAULT);
     }
 
     /**
-     * Initializes the request queue with the given capacity.
-     *
+     * Initializes the request queue with the given capacity. Any requests that
+     * are passed on to a full queue will be rejected.
+     * 
      * @param scheme
-     *        The scheme of this {@link RestClient}.
+     *            The scheme of this {@link RestClient}.
      * @param authority
-     *        The authority of this {@link RestClient}.
+     *            The authority of this {@link RestClient}.
      * @param queueCapacity
-     *        The capacity of the request queue. If the provided capacity is
-     *        less than or equal to zero, then the
-     *        {@link QueuedRestClient#CAPACITY_DEFAULT} will be used instead.
+     *            The capacity of the request queue. If the provided capacity is
+     *            less than or equal to zero, then the
+     *            {@link QueuedRestClient#CAPACITY_DEFAULT} will be used
+     *            instead.
      */
     public QueuedRestClient(String scheme, String authority, int queueCapacity) {
         int capacity = queueCapacity > 0 ? queueCapacity : CAPACITY_DEFAULT;
@@ -146,9 +150,9 @@ public abstract class QueuedRestClient implements RestClient {
     /**
      * Processes the given result and analyzes the result of it, returning a
      * generic success/failure bundle.
-     *
+     * 
      * @param restRequest
-     *        The request to process.
+     *            The request to process.
      * @return A simplified result object which reflects the final processing
      *         state of the request.
      */
@@ -156,7 +160,7 @@ public abstract class QueuedRestClient implements RestClient {
 
     /**
      * Gives information on the current occupied size of the request queue.
-     *
+     * 
      * @return The number of requests in the queue.
      */
     public int size() {
@@ -165,7 +169,7 @@ public abstract class QueuedRestClient implements RestClient {
 
     /**
      * Gives information on the current state of the consumer thread.
-     *
+     * 
      * @return The current state.
      */
     public State state() {
