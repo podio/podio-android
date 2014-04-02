@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.client.database.DatabaseHelper;
+import com.podio.sdk.client.database.DatabaseClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
 
@@ -33,7 +33,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
         result = new ConcurrentResult();
 
         target = new SQLiteRestClient(context, "authority");
-        target.setDatabaseHelper(new DatabaseHelper() {
+        target.setDatabaseDelegate(new DatabaseClientDelegate() {
 
             @Override
             public Cursor delete(Uri uri) {
@@ -68,12 +68,12 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that a delete rest operation is delegated correctly to the
-     * {@link DatabaseHelper}.
+     * {@link DatabaseClientDelegate}.
      * 
      * <pre>
      * 
      * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseHelper} to it.
+     *      {@link DatabaseClientDelegate} to it.
      * 
      * 2. Push a delete operation to the client.
      * 
@@ -93,12 +93,12 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that a get rest operation is delegated correctly to the
-     * {@link DatabaseHelper}.
+     * {@link DatabaseClientDelegate}.
      * 
      * <pre>
      * 
      * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseHelper} to it.
+     *      {@link DatabaseClientDelegate} to it.
      * 
      * 2. Push a get operation to the client.
      * 
@@ -118,12 +118,12 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that a post rest operation is delegated correctly to the
-     * {@link DatabaseHelper}.
+     * {@link DatabaseClientDelegate}.
      * 
      * <pre>
      * 
      * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseHelper} to it.
+     *      {@link DatabaseClientDelegate} to it.
      * 
      * 2. Push a post operation to the client.
      * 
@@ -143,12 +143,12 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that a put rest operation is delegated correctly to the
-     * {@link DatabaseHelper}.
+     * {@link DatabaseClientDelegate}.
      * 
      * <pre>
      * 
      * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseHelper} to it.
+     *      {@link DatabaseClientDelegate} to it.
      * 
      * 2. Push a put operation to the client.
      * 

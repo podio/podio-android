@@ -15,7 +15,7 @@ import android.net.Uri;
 
 import com.podio.sdk.internal.utils.Utils;
 
-public final class SQLiteDatabaseHelper extends SQLiteOpenHelper implements DatabaseHelper {
+public final class SQLiteClientDelegate extends SQLiteOpenHelper implements DatabaseClientDelegate {
 
     private static final class SQLiteConstraint {
         private final String constraint;
@@ -27,7 +27,7 @@ public final class SQLiteDatabaseHelper extends SQLiteOpenHelper implements Data
         }
     }
 
-    public SQLiteDatabaseHelper(Context context, String name, int version) {
+    public SQLiteClientDelegate(Context context, String name, int version) {
         super(context, name, null, version);
     }
 

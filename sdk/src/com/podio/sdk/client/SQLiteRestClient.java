@@ -8,11 +8,12 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.database.DatabaseHelper;
-import com.podio.sdk.client.database.SQLiteDatabaseHelper;
+import com.podio.sdk.client.database.DatabaseClientDelegate;
+import com.podio.sdk.client.database.SQLiteClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.parser.CursorParser;
-import com.podio.sdk.parser.ItemParser;
+import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.parser.CursorItemParser;
+import com.podio.sdk.parser.ItemContentValuesParser;
 
 /**
  * This class manages the communication between the client application and the
@@ -24,9 +25,9 @@ public final class SQLiteRestClient extends QueuedRestClient {
     private static final String DATABASE_NAME = "podio.db";
     private static final int DATABASE_VERSION = 1;
 
-    private DatabaseHelper databaseHelper;
-    private CursorParser resultParser;
-    private ItemParser contentParser;
+    private DatabaseClientDelegate databaseDelegate;
+    private CursorItemParser resultParser;
+    private ItemContentValuesParser contentParser;
 
     /**
      * Creates a new SQLiteRestClient with a request queue capacity of 10
@@ -57,9 +58,9 @@ public final class SQLiteRestClient extends QueuedRestClient {
      */
     public SQLiteRestClient(Context context, String authority, int queueCapacity) {
         super("content", authority, queueCapacity);
-        resultParser = new CursorParser();
-        contentParser = new ItemParser();
-        databaseHelper = new SQLiteDatabaseHelper(context, DATABASE_NAME, DATABASE_VERSION);
+        resultParser = new CursorItemParser();
+        contentParser = new ItemContentValuesParser();
+        databaseDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
     }
 
     /**
@@ -97,7 +98,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @param parser
      *            The parser to use for extracting item data.
      */
-    public void setContentParser(ItemParser parser) {
+    public void setContentParser(ItemContentValuesParser parser) {
         if (parser != null) {
             this.contentParser = parser;
         }
@@ -110,9 +111,9 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @param databaseHelper
      *            The helper implementation.
      */
-    public void setDatabaseHelper(DatabaseHelper databaseHelper) {
-        if (databaseHelper != null) {
-            this.databaseHelper = databaseHelper;
+    public void setDatabaseDelegate(DatabaseClientDelegate databaseDelegate) {
+        if (databaseDelegate != null) {
+            this.databaseDelegate = databaseDelegate;
         }
     }
 
@@ -124,7 +125,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @param parser
      *            The parser to use for extracting cursor data.
      */
-    public void setResultParser(CursorParser parser) {
+    public void setResultParser(CursorItemParser parser) {
         if (parser != null) {
             this.resultParser = parser;
         }
@@ -143,7 +144,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      */
     private ContentValues buildContentValues(Object item, Class<?> classOfItem) {
         List<ContentValues> values = contentParser.parse(item, classOfItem);
-        ContentValues result = values != null && values.size() > 0 ? values.get(0) : null;
+        ContentValues result = Utils.notEmpty(values) ? values.get(0) : null;
 
         return result;
     }
@@ -164,7 +165,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
     }
 
     /**
-     * Delegates the requested operation to the {@link DatabaseHelper} to
+     * Delegates the requested operation to the {@link DatabaseClientDelegate} to
      * execute.
      * 
      * @param operation
@@ -183,18 +184,18 @@ public final class SQLiteRestClient extends QueuedRestClient {
 
         switch (operation) {
         case GET:
-            cursor = databaseHelper.query(uri);
+            cursor = databaseDelegate.query(uri);
             break;
         case POST:
             values = buildContentValues(content, itemType);
-            cursor = databaseHelper.insert(uri, values);
+            cursor = databaseDelegate.insert(uri, values);
             break;
         case DELETE:
-            cursor = databaseHelper.delete(uri);
+            cursor = databaseDelegate.delete(uri);
             break;
         case PUT:
             values = buildContentValues(content, itemType);
-            cursor = databaseHelper.update(uri, values);
+            cursor = databaseDelegate.update(uri, values);
             break;
         default:
             // This should never happen under normal conditions.
