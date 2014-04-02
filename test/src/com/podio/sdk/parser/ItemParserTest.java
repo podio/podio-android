@@ -32,7 +32,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseBooleanMemberSuccess() {
         ItemParserBooleanMockItem item = new ItemParserBooleanMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserBooleanMockItem.class);
 
         assertNotNull(valuesList);
@@ -72,7 +72,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseDoubleMemberSuccess() {
         ItemParserDoubleMockItem item = new ItemParserDoubleMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserDoubleMockItem.class);
 
         assertNotNull(valuesList);
@@ -112,7 +112,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseFloatMemberSuccess() {
         ItemParserFloatMockItem item = new ItemParserFloatMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserFloatMockItem.class);
 
         assertNotNull(valuesList);
@@ -152,7 +152,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseIntegerMemberSuccess() {
         ItemParserIntegerMockItem item = new ItemParserIntegerMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserIntegerMockItem.class);
 
         assertNotNull(valuesList);
@@ -192,7 +192,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseLongMemberSuccess() {
         ItemParserLongMockItem item = new ItemParserLongMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserLongMockItem.class);
 
         assertNotNull(valuesList);
@@ -232,7 +232,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseMixedMemberSuccess() {
         ItemParserMixedMockItem item = new ItemParserMixedMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserMixedMockItem.class);
 
         assertNotNull(valuesList);
@@ -272,7 +272,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseShortMemberSuccess() {
         ItemParserShortMockItem item = new ItemParserShortMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserShortMockItem.class);
 
         assertNotNull(valuesList);
@@ -312,7 +312,7 @@ public class ItemParserTest extends AndroidTestCase {
      */
     public void testParseStringMemberSuccess() {
         ItemParserStringMockItem item = new ItemParserStringMockItem();
-        ItemParser parser = new ItemParser();
+        ItemContentValuesParser parser = new ItemContentValuesParser();
         List<ContentValues> valuesList = parser.parse(item, ItemParserStringMockItem.class);
 
         assertNotNull(valuesList);

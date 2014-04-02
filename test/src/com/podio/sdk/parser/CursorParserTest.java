@@ -79,7 +79,7 @@ public class CursorParserTest extends AndroidTestCase {
         Boolean[] defaults = { false, false, false, false };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserBooleanMockItem.class);
 
         String failMessage = "Boolean test failed";
@@ -111,7 +111,7 @@ public class CursorParserTest extends AndroidTestCase {
         Double[] defaults = { 0.0d, 0.0d, 0.0d, 0.0d };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserDoubleMockItem.class);
 
         String failMessage = "Double test failed";
@@ -143,7 +143,7 @@ public class CursorParserTest extends AndroidTestCase {
         Float[] defaults = { 0.0f, 0.0f, 0.0f, 0.0f };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserFloatMockItem.class);
 
         String failMessage = "Float test failed";
@@ -175,7 +175,7 @@ public class CursorParserTest extends AndroidTestCase {
         Integer[] defaults = { 0, 0, 0, 0 };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserIntegerMockItem.class);
 
         String failMessage = "Integer test failed";
@@ -207,7 +207,7 @@ public class CursorParserTest extends AndroidTestCase {
         Long[] defaults = { 0L, 0L, 0L, 0L };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserLongMockItem.class);
 
         String failMessage = "Long test failed";
@@ -239,7 +239,7 @@ public class CursorParserTest extends AndroidTestCase {
         Object[] defaults = { null, 0L, 0.0f, false };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserMixedMockItem.class);
 
         String failMessage = "Mixed test failed";
@@ -275,7 +275,7 @@ public class CursorParserTest extends AndroidTestCase {
         Object[] defaults = { null, 0L, 0.0f, false };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserMixedMockItem.class);
 
         String failMessage = "Multirow Mixed test failed";
@@ -311,7 +311,7 @@ public class CursorParserTest extends AndroidTestCase {
         Short[] defaults = { 0, 0, 0, 0 };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserShortMockItem.class);
 
         String failMessage = "Integer test failed";
@@ -343,7 +343,7 @@ public class CursorParserTest extends AndroidTestCase {
         String[] defaults = { null, null, null, null };
 
         Cursor cursor = prepareCursor(values);
-        CursorParser parser = new CursorParser();
+        CursorItemParser parser = new CursorItemParser();
         List<?> items = parser.parse(cursor, CursorParserStringMockItem.class);
 
         String failMessage = "String test failed";

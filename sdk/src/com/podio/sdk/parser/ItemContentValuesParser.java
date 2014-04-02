@@ -10,7 +10,7 @@ import com.podio.sdk.Parser;
 import com.podio.sdk.internal.utils.Utils;
 import com.podio.sdk.parser.annotation.StructuredName;
 
-public class ItemParser implements Parser<Object> {
+public class ItemContentValuesParser implements Parser<Object> {
 
     @Override
     public List<ContentValues> parse(Object content, Class<?> classOfItem) {
