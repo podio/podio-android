@@ -9,6 +9,9 @@
         android:minSdkVersion="19"
         android:targetSdkVersion="19" />
 
+    <uses-permission
+        android:name="android.permission.INTERNET" />
+    
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.podio.sdk" />
