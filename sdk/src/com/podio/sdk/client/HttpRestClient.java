@@ -6,6 +6,8 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.podio.sdk.RestClient;
+import com.podio.sdk.client.authentication.AuthenticationDelegate;
+import com.podio.sdk.client.authentication.PodioAuthenticationDelegate;
 import com.podio.sdk.client.network.HttpClientDelegate;
 import com.podio.sdk.client.network.NetworkClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
@@ -20,6 +22,7 @@ import com.podio.sdk.parser.JsonItemParser;
  * @author László Urszuly
  */
 public class HttpRestClient extends QueuedRestClient {
+    private AuthenticationDelegate authenticationDelegate;
     private NetworkClientDelegate networkDelegate;
     private JsonItemParser resultParser;
     private ItemJsonParser contentParser;
@@ -38,9 +41,6 @@ public class HttpRestClient extends QueuedRestClient {
      */
     public HttpRestClient(Context context, String authority) {
         this(context, authority, 10);
-        resultParser = new JsonItemParser();
-        contentParser = new ItemJsonParser();
-        networkDelegate = new HttpClientDelegate();
     }
 
     /**
@@ -56,6 +56,10 @@ public class HttpRestClient extends QueuedRestClient {
      */
     public HttpRestClient(Context context, String authority, int queueCapacity) {
         super("https", authority, queueCapacity);
+        resultParser = new JsonItemParser();
+        contentParser = new ItemJsonParser();
+        networkDelegate = new HttpClientDelegate(context);
+        authenticationDelegate = new PodioAuthenticationDelegate();
     }
 
     /**
@@ -83,6 +87,12 @@ public class HttpRestClient extends QueuedRestClient {
         }
 
         return result;
+    }
+
+    public void setAuthenticationDelegate(AuthenticationDelegate authenticationDelegate) {
+        if (authenticationDelegate != null) {
+            this.authenticationDelegate = authenticationDelegate;
+        }
     }
 
     /**
@@ -161,17 +171,18 @@ public class HttpRestClient extends QueuedRestClient {
     private String queryNetwork(RestOperation operation, Uri uri, Object item, Class<?> classOfItem) {
         String json = null;
         String values = null;
+        String token = authenticationDelegate.getAuthToken();
 
         switch (operation) {
+        case DELETE:
+            json = networkDelegate.delete(uri);
+            break;
         case GET:
             json = networkDelegate.get(uri);
             break;
         case POST:
             values = buildJson(item, classOfItem);
             json = networkDelegate.post(uri, values);
-            break;
-        case DELETE:
-            json = networkDelegate.delete(uri);
             break;
         case PUT:
             values = buildJson(item, classOfItem);
