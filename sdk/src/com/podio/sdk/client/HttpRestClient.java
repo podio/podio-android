@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.authentication.AuthenticationDelegate;
 import com.podio.sdk.client.authentication.PodioAuthenticationDelegate;
@@ -70,19 +71,22 @@ public class HttpRestClient extends QueuedRestClient {
         RestResult result = null;
 
         if (restRequest != null) {
-            Uri uri = restRequest.buildUri(scheme, authority);
+            Filter filter = restRequest.getFilter();
 
-            RestOperation operation = restRequest.getOperation();
-            Class<?> itemType = restRequest.getItemType();
-            Object item = restRequest.getContent();
+            if (filter != null) {
+                RestOperation operation = restRequest.getOperation();
+                Class<?> itemType = restRequest.getItemType();
+                Object item = restRequest.getContent();
+                Uri uri = filter.buildUri(scheme, authority);
 
-            String json = queryNetwork(operation, uri, item, itemType);
-            List<?> items = buildItems(json, itemType);
+                String json = queryNetwork(operation, uri, item, itemType);
+                List<?> items = buildItems(json, itemType);
 
-            if (items != null) {
-                result = new RestResult(true, null, items);
-            } else {
-                result = new RestResult(false, "Ohno", null);
+                if (items != null) {
+                    result = new RestResult(true, null, items);
+                } else {
+                    result = new RestResult(false, "Ohno", null);
+                }
             }
         }
 

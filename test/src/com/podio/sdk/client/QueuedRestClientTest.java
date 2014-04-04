@@ -4,7 +4,9 @@ import java.util.List;
 
 import android.test.InstrumentationTestCase;
 
+import com.podio.sdk.Filter;
 import com.podio.sdk.client.mock.MockRestClient;
+import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
 
@@ -74,7 +76,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      */
     public void testRequestQueueCapacityValid() {
         int invalidSize = -1;
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test", invalidSize);
+        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test",
+                invalidSize);
         RestRequest request = new RestRequest();
         boolean didAcceptRequest = testTarget.perform(request);
 
@@ -96,8 +99,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueueDrainedEventually() {
-        final Object firstTicket = new Object();
-        final Object secondTicket = new Object();
+        final Filter firstFilter = new ItemFilter("first");
+        final Filter secondFilter = new ItemFilter("second");
 
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
@@ -106,11 +109,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 TestUtils.calmDown();
-                Object ticket = restRequest.getTicket();
+                Filter filter = restRequest.getFilter();
 
-                if (ticket == firstTicket) {
+                if (filter == firstFilter) {
                     firstResult.isRequestPopped = firstResult.isTicketValid = true;
-                } else if (ticket == secondTicket) {
+                } else if (filter == secondFilter) {
                     secondResult.isRequestPopped = secondResult.isTicketValid = true;
                 }
 
@@ -122,16 +125,18 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        RestRequest firstRequest = new RestRequest().setTicket(firstTicket);
-        RestRequest secondRequest = new RestRequest().setTicket(secondTicket);
+        RestRequest firstRequest = new RestRequest().setFilter(firstFilter);
+        RestRequest secondRequest = new RestRequest().setFilter(secondFilter);
 
         firstResult.isRequestPushed = testTarget.perform(firstRequest);
         secondResult.isRequestPushed = testTarget.perform(secondRequest);
 
         TestUtils.blockThread(500);
 
-        assertTrue("First request wasn't handled properly", firstResult.isRequestPushed && firstResult.isRequestPopped && firstResult.isTicketValid);
-        assertTrue("Second request wasn't handled properly", secondResult.isRequestPushed && secondResult.isRequestPopped && secondResult.isTicketValid);
+        assertTrue("First request wasn't handled properly", firstResult.isRequestPushed
+                && firstResult.isRequestPopped && firstResult.isTicketValid);
+        assertTrue("Second request wasn't handled properly", secondResult.isRequestPushed
+                && secondResult.isRequestPopped && secondResult.isTicketValid);
     }
 
     /**
@@ -197,10 +202,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueueProcessedOnWorkerThread() {
-        final String[] threadNames = new String[] {
-                Thread.currentThread().getName(),
-                Thread.currentThread().getName()
-        };
+        final String[] threadNames = new String[] { Thread.currentThread().getName(),
+                Thread.currentThread().getName() };
 
         MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
             @Override
@@ -216,8 +219,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         testTarget.perform(request);
         TestUtils.blockThread();
 
-        assertFalse("RestRequest was processed from the calling thread." +
-                " Calling thread: " + threadNames[0] + ", worker thread: " + threadNames[1],
+        assertFalse("RestRequest was processed from the calling thread." + " Calling thread: "
+                + threadNames[0] + ", worker thread: " + threadNames[1],
                 threadNames[0].equals(threadNames[1]));
     }
 
@@ -267,7 +270,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         boolean isThirdRequestAccepted = testTarget.perform(request);
 
         assertTrue("The first request wasn't pushed successfully", isFirstRequestAccepted);
-        assertFalse("The second request was unexpectedly accepted", isSecondRequestAccepted && isThirdRequestAccepted);
+        assertFalse("The second request was unexpectedly accepted", isSecondRequestAccepted
+                && isThirdRequestAccepted);
     }
 
     /**
@@ -317,7 +321,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueuePushPopSuccess() {
-        final Object expectedTicket = new Object();
+        final Filter expectedFilter = new ItemFilter("expected");
         final ConcurrentResult result = new ConcurrentResult();
 
         MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
@@ -325,13 +329,13 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             protected RestResult handleRequest(RestRequest restRequest) {
                 TestUtils.calmDown();
                 result.isRequestPopped = true;
-                result.isTicketValid = (expectedTicket == restRequest.getTicket());
+                result.isTicketValid = (expectedFilter == restRequest.getFilter());
                 TestUtils.releaseBlocketThread();
                 return new RestResult(true, "", null);
             }
         };
 
-        RestRequest request = new RestRequest().setTicket(expectedTicket);
+        RestRequest request = new RestRequest().setFilter(expectedFilter);
         result.isRequestPushed = testTarget.perform(request);
 
         // This line will block execution until the blocking semaphore is
@@ -367,8 +371,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
 
-        final Object firstTicket = new Object();
-        final Object secondTicket = new Object();
+        final Filter firstFilter = new ItemFilter("first");
+        final Filter secondFilter = new ItemFilter("second");
 
         ResultListener listener = new ResultListener() {
             @Override
@@ -380,9 +384,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             public void onSuccess(Object ticket, List<?> items) {
                 boolean isSuccess = true;
 
-                if (firstTicket == ticket) {
+                if (firstFilter == ticket) {
                     assertTrue(isSuccess);
-                } else if (secondTicket == ticket) {
+                } else if (secondFilter == ticket) {
                     assertTrue(isSuccess);
                 } else {
                     assertFalse("Unexpected ticket", isSuccess);
@@ -394,12 +398,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 TestUtils.calmDown();
-                Object ticket = restRequest.getTicket();
+                Filter filter = restRequest.getFilter();
 
-                if (firstTicket == ticket) {
+                if (firstFilter == filter) {
                     firstResult.isRequestPopped = true;
                     firstResult.isTicketValid = true;
-                } else if (secondTicket == ticket) {
+                } else if (secondFilter == filter) {
                     secondResult.isRequestPopped = true;
                     secondResult.isTicketValid = true;
                 }
@@ -408,7 +412,10 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        RestRequest firstRequest = new RestRequest().setTicket(firstTicket).setResultListener(listener);
+        RestRequest firstRequest = new RestRequest() //
+                .setFilter(firstFilter) //
+                .setResultListener(listener);
+
         firstResult.isRequestPushed = testTarget.perform(firstRequest);
         TestUtils.blockThread(100);
 
@@ -419,7 +426,10 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread(100);
 
-        RestRequest secondRequest = new RestRequest().setTicket(secondTicket).setResultListener(listener);
+        RestRequest secondRequest = new RestRequest() //
+                .setFilter(secondFilter) //
+                .setResultListener(listener);
+
         secondResult.isRequestPushed = testTarget.perform(secondRequest);
         TestUtils.blockThread(100);
 
@@ -450,10 +460,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestResultReportedOnCallingThread() {
-        final String[] threadNames = new String[] {
-                Thread.currentThread().getName(),
-                ""
-        };
+        final String[] threadNames = new String[] { Thread.currentThread().getName(), "" };
 
         ResultListener listener = new ResultListener() {
             @Override
@@ -464,9 +471,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             @Override
             public void onSuccess(Object ticket, List<?> items) {
                 threadNames[1] = Thread.currentThread().getName();
-                assertTrue("The result of the RestRequest was reported from an unexpected thread." +
-                        " Calling thread: " + threadNames[0] + ", other thread: " + threadNames[1],
-                        threadNames[0].equals(threadNames[1]));
+                assertTrue("The result of the RestRequest was reported from an unexpected thread."
+                        + " Calling thread: " + threadNames[0] + ", other thread: "
+                        + threadNames[1], threadNames[0].equals(threadNames[1]));
             }
         };
 

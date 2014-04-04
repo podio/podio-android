@@ -9,8 +9,6 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.domain.mock.MockItemFilter;
-import com.podio.sdk.domain.mock.MockItemProvider;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.internal.request.RestOperation;
 
@@ -35,11 +33,10 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testCorrectDeleteRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new MockItemFilter();
-        final String path = "testPath";
+        final Filter filter = new ItemFilter();
 
         // Perform the delete request.
-        MockItemProvider target = new MockItemProvider(path);
+        ItemProvider<Object> target = new ItemProvider<Object>();
         target.setRestClient(client);
         target.deleteItems(filter);
 
@@ -67,11 +64,10 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testCorrectGetRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new MockItemFilter();
-        final String path = "testPath";
+        final Filter filter = new ItemFilter();
 
         // Perform the fetch request.
-        MockItemProvider target = new MockItemProvider(path);
+        ItemProvider<Object> target = new ItemProvider<Object>();
         target.setRestClient(client);
         target.fetchItems(filter);
 
@@ -100,10 +96,9 @@ public class ItemProviderTest extends AndroidTestCase {
     public void testCorrectPostRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
         final Object item = new Object();
-        final String path = "testPath";
 
         // Perform the push request.
-        MockItemProvider target = new MockItemProvider(path);
+        ItemProvider<Object> target = new ItemProvider<Object>();
         target.setRestClient(client);
         target.pushItem(item);
 
@@ -131,12 +126,11 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testCorrectPutRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new MockItemFilter();
+        final Filter filter = new ItemFilter();
         final Object item = new Object();
-        final String path = "testPath";
 
         // Perform the change request.
-        MockItemProvider target = new MockItemProvider(path);
+        ItemProvider<Object> target = new ItemProvider<Object>();
         target.setRestClient(client);
         target.changeItem(filter, item);
 
@@ -165,7 +159,7 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testProviderCallbackFailureCalledProperly() {
-        final Filter itemFilter = new MockItemFilter();
+        final Filter itemFilter = new ItemFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
         final List<Object> resultList = new ArrayList<Object>();
@@ -187,7 +181,7 @@ public class ItemProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        MockItemProvider target = new MockItemProvider("testpath");
+        ItemProvider<Object> target = new ItemProvider<Object>();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeItem(itemFilter, itemObject);
@@ -217,7 +211,7 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testProviderCallbackSuccessCalledProperly() {
-        final Filter itemFilter = new MockItemFilter();
+        final Filter itemFilter = new ItemFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
         final List<Object> resultList = new ArrayList<Object>();
@@ -241,7 +235,7 @@ public class ItemProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        MockItemProvider target = new MockItemProvider("testpath");
+        ItemProvider<Object> target = new ItemProvider<Object>();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeItem(itemFilter, itemObject);
@@ -276,6 +270,6 @@ public class ItemProviderTest extends AndroidTestCase {
         assertEquals(expectedContent, target.getContent());
         assertEquals(expectedItemType, target.getItemType());
         assertEquals(expectedOperation, target.getOperation());
-        assertEquals(expectedFilter, target.getTicket());
+        assertEquals(expectedFilter, target.getFilter());
     }
 }

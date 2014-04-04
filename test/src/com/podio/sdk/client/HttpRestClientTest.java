@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.network.NetworkClientDelegate;
+import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
 
@@ -76,8 +77,13 @@ public class HttpRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteOperationIsDelegatedCorrectly() {
-        target.perform(new RestRequest().setOperation(RestOperation.DELETE));
+        RestRequest restRequest = new RestRequest() //
+                .setFilter(new ItemFilter()) //
+                .setOperation(RestOperation.DELETE);
+
+        target.perform(restRequest);
         TestUtils.blockThread(20);
+
         assertEquals(true, result.isDeleteCalled);
         assertEquals(false, result.isGetCalled);
         assertEquals(false, result.isPostCalled);
@@ -101,8 +107,13 @@ public class HttpRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetOperationIsDelegatedCorrectly() {
-        target.perform(new RestRequest().setOperation(RestOperation.GET));
+        RestRequest restRequest = new RestRequest() //
+                .setFilter(new ItemFilter()) //
+                .setOperation(RestOperation.GET);
+
+        target.perform(restRequest);
         TestUtils.blockThread(20);
+
         assertEquals(false, result.isDeleteCalled);
         assertEquals(true, result.isGetCalled);
         assertEquals(false, result.isPostCalled);
@@ -126,8 +137,13 @@ public class HttpRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostOperationIsDelegatedCorrectly() {
-        target.perform(new RestRequest().setOperation(RestOperation.POST));
+        RestRequest restRequest = new RestRequest() //
+                .setFilter(new ItemFilter()) //
+                .setOperation(RestOperation.POST);
+
+        target.perform(restRequest);
         TestUtils.blockThread(20);
+
         assertEquals(false, result.isDeleteCalled);
         assertEquals(false, result.isGetCalled);
         assertEquals(true, result.isPostCalled);
@@ -151,8 +167,13 @@ public class HttpRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutOperationIsDelegatedCorrectly() {
-        target.perform(new RestRequest().setOperation(RestOperation.PUT));
+        RestRequest restRequest = new RestRequest() //
+                .setFilter(new ItemFilter()) //
+                .setOperation(RestOperation.PUT);
+
+        target.perform(restRequest);
         TestUtils.blockThread(20);
+
         assertEquals(false, result.isDeleteCalled);
         assertEquals(false, result.isGetCalled);
         assertEquals(false, result.isPostCalled);

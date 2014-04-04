@@ -1,35 +1,51 @@
 package com.podio.sdk.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.net.Uri;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.internal.utils.Utils;
 
-public abstract class ItemFilter implements Filter {
-    private final Map<String, List<String>> query = new HashMap<String, List<String>>();
+public class ItemFilter implements Filter {
+    private final Uri.Builder uriBuilder;
 
-    @Override
-    public Map<String, List<String>> getQueryParameters() {
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
-        result.putAll(query);
-        return result;
+    public ItemFilter() {
+        this(null);
+    }
+
+    public ItemFilter(String path) {
+        uriBuilder = new Uri.Builder();
+
+        if (Utils.notEmpty(path)) {
+            uriBuilder.appendPath(path);
+        }
     }
 
     @Override
-    public void addQueryParameter(String key, String value) {
-        if (key != null && key.length() > 0 && value != null) {
-            List<String> values;
-
-            if (query.containsKey(key)) {
-                values = query.get(key);
-            } else {
-                values = new ArrayList<String>();
-                query.put(key, values);
-            }
-
-            values.add(value);
+    public Filter addQueryParameter(String key, String value) {
+        if (Utils.notEmpty(key) && value != null) {
+            uriBuilder.appendQueryParameter(key, value);
         }
+
+        return this;
+    }
+
+    @Override
+    public Filter addPathSegment(String segment) {
+        if (Utils.notEmpty(segment)) {
+            uriBuilder.appendPath(segment);
+        }
+
+        return this;
+    }
+
+    @Override
+    public Uri buildUri(String scheme, String authority) {
+        Uri uri = null;
+
+        if (Utils.notEmpty(scheme) && Utils.notEmpty(authority)) {
+            uri = uriBuilder.scheme(scheme).authority(authority).build();
+        }
+
+        return uri;
     }
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.database.DatabaseClientDelegate;
 import com.podio.sdk.client.database.SQLiteClientDelegate;
@@ -71,19 +72,22 @@ public final class SQLiteRestClient extends QueuedRestClient {
         RestResult result = null;
 
         if (restRequest != null) {
-            Uri uri = restRequest.buildUri(scheme, authority);
+            Filter filter = restRequest.getFilter();
 
-            RestOperation operation = restRequest.getOperation();
-            Class<?> itemType = restRequest.getItemType();
-            Object item = restRequest.getContent();
+            if (filter != null) {
+                RestOperation operation = restRequest.getOperation();
+                Class<?> itemType = restRequest.getItemType();
+                Object item = restRequest.getContent();
+                Uri uri = filter.buildUri(scheme, authority);
 
-            Cursor cursor = queryDatabase(operation, uri, item, itemType);
-            List<?> items = buildItems(cursor, itemType);
+                Cursor cursor = queryDatabase(operation, uri, item, itemType);
+                List<?> items = buildItems(cursor, itemType);
 
-            if (items != null) {
-                result = new RestResult(true, null, items);
-            } else {
-                result = new RestResult(false, "Ohno", null);
+                if (items != null) {
+                    result = new RestResult(true, null, items);
+                } else {
+                    result = new RestResult(false, "Ohno", null);
+                }
             }
         }
 
@@ -165,8 +169,8 @@ public final class SQLiteRestClient extends QueuedRestClient {
     }
 
     /**
-     * Delegates the requested operation to the {@link DatabaseClientDelegate} to
-     * execute.
+     * Delegates the requested operation to the {@link DatabaseClientDelegate}
+     * to execute.
      * 
      * @param operation
      *            The type of rest operation to perform.
