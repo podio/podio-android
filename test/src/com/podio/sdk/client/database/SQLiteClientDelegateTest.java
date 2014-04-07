@@ -3,8 +3,6 @@ package com.podio.sdk.client.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.podio.sdk.client.database.SQLiteClientDelegate;
-
 import android.app.Instrumentation;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,8 +27,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides an empty URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides an empty URI.
      * 
      * <pre>
      * 
@@ -57,8 +55,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides a null-pointer URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides a null-pointer URI.
      * 
      * <pre>
      * 
@@ -85,9 +83,9 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns the correct count in the
-     * result cursor when a row was successfully deleted as a result of a valid
-     * URI pointing to an existing row.
+     * Verifies that the {@link SQLiteClientDelegate} returns the correct count
+     * in the result cursor when a row was successfully deleted as a result of a
+     * valid URI pointing to an existing row.
      * 
      * <pre>
      * 
@@ -103,12 +101,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteReturnsCorrectCountWhenRowDeleted() {
         ContentValues values = new ContentValues();
-        values.put("text", "test_text");
+        values.put("json_content", "{text: 'test'}");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
-        long id = sqliteDatabase.insert("task", null, values);
+        long id = sqliteDatabase.insert("app", null, values);
 
-        Uri validUri = Uri.parse("test://uri/task/?_id=" + id);
+        Uri validUri = Uri.parse("test://uri/app/?app_id=" + id);
         Cursor result = databaseHelper.delete(validUri);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -117,9 +115,9 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns the correct count in the
-     * result cursor when a row couldn't be deleted as a result of a valid URI
-     * not pointing to an existing row.
+     * Verifies that the {@link SQLiteClientDelegate} returns the correct count
+     * in the result cursor when a row couldn't be deleted as a result of a
+     * valid URI not pointing to an existing row.
      * 
      * <pre>
      * 
@@ -132,7 +130,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteReturnsCorrectCountWhenNoRowDeleted() {
-        Uri invalidUri = Uri.parse("test://uri/task/?_id=-1");
+        Uri invalidUri = Uri.parse("test://uri/app/?app_id=-1");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.delete(invalidUri);
         assertNotNull(result);
@@ -142,8 +140,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides an empty URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides an empty URI.
      * 
      * <pre>
      * 
@@ -170,8 +168,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides a null-pointer URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides a null-pointer URI.
      * 
      * <pre>
      * 
@@ -198,8 +196,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns the correct id in the
-     * result cursor when a row was successfully inserted.
+     * Verifies that the {@link SQLiteClientDelegate} returns the correct id in
+     * the result cursor when a row was successfully inserted.
      * 
      * <pre>
      * 
@@ -217,16 +215,16 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testInsertReturnsCorrectIdWhenRowAdded() {
         ContentValues values = new ContentValues();
-        values.put("text", "test_text");
-        Uri uri = Uri.parse("test://uri/task/");
+        values.put("json_content", "{text: 'test'}");
+        Uri uri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor result = databaseHelper.insert(uri, values);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("id"));
         assertTrue(result.moveToFirst());
 
-        String query = "SELECT _id FROM task WHERE text=?";
-        String[] arguments = { "test_text" };
+        String query = "SELECT app_id FROM app WHERE json_content=?";
+        String[] arguments = { "{text: 'test'}" };
         SQLiteDatabase sqliteDatabase = databaseHelper.getReadableDatabase();
         Cursor reference = sqliteDatabase.rawQuery(query, arguments);
         reference.moveToFirst();
@@ -235,8 +233,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides an empty URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides an empty URI.
      * 
      * <pre>
      * 
@@ -259,8 +257,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides a null-pointer URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides a null-pointer URI.
      * 
      * <pre>
      * 
@@ -298,21 +296,21 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testQueryParameterEqualsOperatorIsRespected() {
         ContentValues values1 = new ContentValues();
-        values1.put("_id", 1L);
+        values1.put("app_id", 1L);
 
         ContentValues values2 = new ContentValues();
-        values2.put("_id", 2L);
+        values2.put("app_id", 2L);
 
-        Uri insertUri = Uri.parse("test://uri/task/");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
-        Uri uri = Uri.parse("test://uri/task/?_id==1");
+        Uri uri = Uri.parse("test://uri/app/?app_id==1");
         Cursor cursor = databaseHelper.query(uri);
         cursor.moveToFirst();
         assertEquals(1, cursor.getCount());
-        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("_id")));
+        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("app_id")));
     }
 
     /**
@@ -331,23 +329,23 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testQueryParameterEscapeOperatorIsRespected() {
         ContentValues values1 = new ContentValues();
-        values1.put("text", "=sign");
-        values1.put("_id", 1L);
+        values1.put("json_content", "=sign");
+        values1.put("app_id", 1L);
 
         ContentValues values2 = new ContentValues();
-        values2.put("text", "sign");
-        values2.put("_id", 2L);
+        values2.put("json_content", "sign");
+        values2.put("app_id", 2L);
 
-        Uri insertUri = Uri.parse("test://uri/task/");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
-        Uri uri = Uri.parse("test://uri/task/?text=\\=sign");
+        Uri uri = Uri.parse("test://uri/app/?json_content=\\=sign");
         Cursor cursor = databaseHelper.query(uri);
         cursor.moveToFirst();
         assertEquals(1, cursor.getCount());
-        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("_id")));
+        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("app_id")));
     }
 
     /**
@@ -366,21 +364,21 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testQueryParameterGreaterThanOperatorIsRespected() {
         ContentValues values1 = new ContentValues();
-        values1.put("_id", 1L);
+        values1.put("app_id", 1L);
 
         ContentValues values2 = new ContentValues();
-        values2.put("_id", 2L);
+        values2.put("app_id", 2L);
 
-        Uri insertUri = Uri.parse("test://uri/task/");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
-        Uri uri = Uri.parse("test://uri/task/?_id=>1");
+        Uri uri = Uri.parse("test://uri/app/?app_id=>1");
         Cursor cursor = databaseHelper.query(uri);
         cursor.moveToFirst();
         assertEquals(1, cursor.getCount());
-        assertEquals(2L, cursor.getLong(cursor.getColumnIndex("_id")));
+        assertEquals(2L, cursor.getLong(cursor.getColumnIndex("app_id")));
     }
 
     /**
@@ -399,21 +397,21 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testQueryParameterLessThanOperatorIsRespected() {
         ContentValues values1 = new ContentValues();
-        values1.put("_id", 1L);
+        values1.put("app_id", 1L);
 
         ContentValues values2 = new ContentValues();
-        values2.put("_id", 2L);
+        values2.put("app_id", 2L);
 
-        Uri insertUri = Uri.parse("test://uri/task/");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
 
-        Uri uri = Uri.parse("test://uri/task/?_id=<2");
+        Uri uri = Uri.parse("test://uri/app/?app_id=<2");
         Cursor cursor = databaseHelper.query(uri);
         cursor.moveToFirst();
         assertEquals(1, cursor.getCount());
-        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("_id")));
+        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("app_id")));
     }
 
     /**
@@ -432,32 +430,32 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testQueryParameterOrChainedOnMultipleDefinitions() {
         ContentValues values1 = new ContentValues();
-        values1.put("_id", 1L);
+        values1.put("app_id", 1L);
 
         ContentValues values2 = new ContentValues();
-        values2.put("_id", 2L);
+        values2.put("app_id", 2L);
 
         ContentValues values3 = new ContentValues();
-        values3.put("_id", 3L);
+        values3.put("app_id", 3L);
 
-        Uri insertUri = Uri.parse("test://uri/task/");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         databaseHelper.insert(insertUri, values1);
         databaseHelper.insert(insertUri, values2);
         databaseHelper.insert(insertUri, values3);
 
-        Uri uri = Uri.parse("test://uri/task/?_id=1&_id=3");
+        Uri uri = Uri.parse("test://uri/app/?app_id=1&app_id=3");
         Cursor cursor = databaseHelper.query(uri);
         cursor.moveToFirst();
         assertEquals(2, cursor.getCount());
-        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("_id")));
+        assertEquals(1L, cursor.getLong(cursor.getColumnIndex("app_id")));
         cursor.moveToNext();
-        assertEquals(3L, cursor.getLong(cursor.getColumnIndex("_id")));
+        assertEquals(3L, cursor.getLong(cursor.getColumnIndex("app_id")));
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns the correct item when an
-     * existing row is requested.
+     * Verifies that the {@link SQLiteClientDelegate} returns the correct item
+     * when an existing row is requested.
      * 
      * <pre>
      * 
@@ -473,21 +471,21 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testQueryReturnsCorrectItem() {
         ContentValues values = new ContentValues();
-        values.put("text", "test_text");
-        Uri insertUri = Uri.parse("test://uri/task/");
+        values.put("json_content", "{text:'test'}");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor insertResult = databaseHelper.insert(insertUri, values);
         insertResult.moveToFirst();
         long id = insertResult.getLong(0);
 
-        Uri uri = Uri.parse("test://uri/task/?_id=" + id);
+        Uri uri = Uri.parse("test://uri/app/?app_id=" + id);
         Cursor result = databaseHelper.query(uri);
 
         assertNotNull(result);
         result.moveToFirst();
 
-        assertEquals(id, result.getLong(result.getColumnIndex("_id")));
-        assertEquals("test_text", result.getString(result.getColumnIndex("text")));
+        assertEquals(id, result.getLong(result.getColumnIndex("app_id")));
+        assertEquals("{text:'test'}", result.getString(result.getColumnIndex("json_content")));
     }
 
     /**
@@ -522,7 +520,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         } while (cursor.moveToNext());
 
         // Verify that the list has all expected table names.
-        assertTrue(tables.contains("task"));
+        assertTrue(tables.contains("app"));
     }
 
     /**
@@ -545,8 +543,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         // Insert test data.
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
-        sqliteDatabase.execSQL("INSERT INTO task (text) VALUES ('test_task')");
-        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(task.text) FROM task", null);
+        sqliteDatabase.execSQL("INSERT INTO app (json_content) VALUES ('{number:1}')");
+        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(app.json_content) FROM app", null);
         assertNotNull(cursor);
         assertEquals(1, cursor.getCount());
         assertTrue(cursor.moveToFirst());
@@ -555,7 +553,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         // Verify the database is reset properly.
         SQLiteClientDelegate databaseHelper2 = getDatabaseHelper(DATABASE_VERSION - 1);
         SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
-        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(task.text) FROM task", null);
+        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(app.json_content) FROM app", null);
         assertNotNull(cursor2);
         assertEquals(1, cursor2.getCount());
         assertTrue(cursor2.moveToFirst());
@@ -582,8 +580,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         // Insert test data.
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
-        sqliteDatabase.execSQL("INSERT INTO task (text) VALUES ('test_task')");
-        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(task.text) FROM task", null);
+        sqliteDatabase.execSQL("INSERT INTO app (json_content) VALUES ('{number:1}')");
+        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(app.json_content) FROM app", null);
         assertNotNull(cursor);
         assertEquals(1, cursor.getCount());
         assertTrue(cursor.moveToFirst());
@@ -592,7 +590,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         // Verify the database is reset properly.
         SQLiteClientDelegate databaseHelper2 = getDatabaseHelper(DATABASE_VERSION + 1);
         SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
-        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(task.text) FROM task", null);
+        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(app.json_content) FROM app", null);
         assertNotNull(cursor2);
         assertEquals(1, cursor2.getCount());
         assertTrue(cursor2.moveToFirst());
@@ -600,8 +598,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides an empty URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides an empty URI.
      * 
      * <pre>
      * 
@@ -628,8 +626,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns a valid result cursor
-     * even if the caller provides a null-pointer URI.
+     * Verifies that the {@link SQLiteClientDelegate} returns a valid result
+     * cursor even if the caller provides a null-pointer URI.
      * 
      * <pre>
      * 
@@ -656,8 +654,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns the correct count in the
-     * result cursor when a row was successfully updated.
+     * Verifies that the {@link SQLiteClientDelegate} returns the correct count
+     * in the result cursor when a row was successfully updated.
      * 
      * <pre>
      * 
@@ -671,16 +669,16 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testUpdateReturnsCorrectCountWhenRowUpdated() {
         ContentValues insertValues = new ContentValues();
-        insertValues.put("text", "test_text");
-        Uri insertUri = Uri.parse("test://uri/task/");
+        insertValues.put("json_content", "{text:'test'}");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor insertResult = databaseHelper.insert(insertUri, insertValues);
         insertResult.moveToFirst();
         long id = insertResult.getLong(0);
 
-        Uri uri = Uri.parse("test://uri/task/?_id=" + id);
+        Uri uri = Uri.parse("test://uri/app/?app_id=" + id);
         ContentValues values = new ContentValues();
-        values.put("text", "text_test");
+        values.put("json_content", "{text:'test'}");
         Cursor result = databaseHelper.update(uri, values);
         assertNotNull(result);
         assertEquals(0, result.getColumnIndex("count"));
@@ -690,8 +688,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the {@link SQLiteClientDelegate} returns the updated values when
-     * a row was successfully updated.
+     * Verifies that the {@link SQLiteClientDelegate} returns the updated values
+     * when a row was successfully updated.
      * 
      * <pre>
      * 
@@ -705,27 +703,27 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testUpdateReturnsCorrectValuesAfterRowUpdated() {
         ContentValues insertValues = new ContentValues();
-        insertValues.put("text", "test_text");
-        Uri insertUri = Uri.parse("test://uri/task/");
+        insertValues.put("json_content", "{text:'test'}");
+        Uri insertUri = Uri.parse("test://uri/app/");
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         Cursor insertResult = databaseHelper.insert(insertUri, insertValues);
         insertResult.moveToFirst();
         long id = insertResult.getLong(0);
 
-        Uri uri = Uri.parse("test://uri/task/?_id=" + id);
+        Uri uri = Uri.parse("test://uri/app/?app_id=" + id);
         ContentValues values = new ContentValues();
-        values.put("text", "text_test");
+        values.put("json_content", "{text:'test updated'}");
         databaseHelper.update(uri, values);
 
-        String query = "SELECT text FROM task WHERE _id=?";
+        String query = "SELECT json_content FROM app WHERE app_id=?";
         String[] arguments = { Long.toString(id, 10) };
         SQLiteDatabase sqliteDatabase = databaseHelper.getReadableDatabase();
         Cursor cursor = sqliteDatabase.rawQuery(query, arguments);
         assertNotNull(cursor);
-        assertEquals(0, cursor.getColumnIndex("text"));
+        assertEquals(0, cursor.getColumnIndex("json_content"));
         assertEquals(1, cursor.getCount());
         assertTrue(cursor.moveToFirst());
-        assertEquals(values.getAsString("text"), cursor.getString(0));
+        assertEquals(values.getAsString("json_content"), cursor.getString(0));
     }
 
     /**

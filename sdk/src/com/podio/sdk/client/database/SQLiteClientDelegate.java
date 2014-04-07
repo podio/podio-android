@@ -57,43 +57,11 @@ public final class SQLiteClientDelegate extends SQLiteOpenHelper implements Data
     public void initialize(SQLiteDatabase database) {
         if (database != null) {
             try {
-                String query = new StringBuilder("CREATE TABLE task (")
-                        .append(" _id INTEGER PRIMARY KEY NOT NULL UNIQUE ON CONFLICT REPLACE,") //
-                        .append(" completed_by_id INTEGER,") //
-                        .append(" responsible_user_id INTEGER,") //
-                        .append(" responsible_profile_id INTEGER,") //
-                        .append(" responsible_name TEXT,") //
-                        .append(" responsible_avatar INTEGER,") //
-                        .append(" created_by_id INTEGER,") //
-                        .append(" description TEXT,") //
-                        .append(" is_private BOOLEAN,") //
-                        .append(" due_on TEXT,") //
-                        .append(" due_date TEXT,") //
-                        .append(" due_time TEXT,") //
-                        .append(" space_id TEXT,") //
-                        .append(" created_on TEXT,") //
-                        .append(" created_by_name TEXT,") //
-                        .append(" created_by_avatar TEXT,") //
-                        .append(" created_by_type TEXT,") //
-                        .append(" created_via_name TEXT,") //
-                        .append(" completed_on TEXT,") //
-                        .append(" completed_by_name TEXT,") //
-                        .append(" completed_by_avatar TEXT,") //
-                        .append(" completed_by_type TEXT,") //
-                        .append(" completed_via_name TEXT,") //
-                        .append(" is_completed BOOLEAN,") //
-                        .append(" text TEXT,") //
-                        .append(" has_ref BOOLEAN,") //
-                        .append(" ref_type TEXT,") //
-                        .append(" ref_id INTEGER,") //
-                        .append(" ref_title TEXT,") //
-                        .append(" ref_item_name TEXT,") //
-                        .append(" ref_icon_id INTEGER,") //
-                        .append(" group_value TEXT,") //
-                        .append(" files TEXT,") //
-                        .append(" comment_count INTEGER,") //
-                        .append(" timestamp LONG,") //
-                        .append(" task_type INTEGER)").toString();
+                String query = new StringBuilder("CREATE TABLE app (")
+                        .append(" app_id INTEGER PRIMARY KEY NOT NULL UNIQUE ON CONFLICT REPLACE,") //
+                        .append(" space_id INTEGER NOT NULL DEFAULT (0), ") //
+                        .append(" json_content TEXT NOT NULL DEFAULT ('{}'))") //
+                        .toString();
                 database.beginTransaction();
                 database.execSQL(query);
                 database.setTransactionSuccessful();
