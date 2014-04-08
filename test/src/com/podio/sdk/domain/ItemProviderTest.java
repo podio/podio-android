@@ -168,7 +168,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final MockRestClient client = new MockRestClient();
         final ProviderListener listener = new ProviderListener() {
             @Override
-            public void onFetchCompleted(Filter filter, List<?> items) {
+            public void onRequestCompleted(Filter filter, List<?> items) {
                 boolean isCalled = true;
                 assertFalse(isCalled);
             }
@@ -220,7 +220,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final MockRestClient client = new MockRestClient();
         final ProviderListener listener = new ProviderListener() {
             @Override
-            public void onFetchCompleted(Filter filter, List<?> items) {
+            public void onRequestCompleted(Filter filter, List<?> items) {
                 assertEquals(itemFilter, filter);
                 assertEquals(resultList, items);
                 assertEquals(resultList.size(), items.size());

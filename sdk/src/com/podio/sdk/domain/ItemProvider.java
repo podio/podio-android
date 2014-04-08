@@ -25,7 +25,7 @@ public class ItemProvider<T> implements Provider<T> {
         public void onSuccess(Object ticket, List<?> items) {
             if (providerListener != null) {
                 Filter filter = (Filter) ticket;
-                providerListener.onFetchCompleted(filter, items);
+                providerListener.onRequestCompleted(filter, items);
             }
         }
     };
