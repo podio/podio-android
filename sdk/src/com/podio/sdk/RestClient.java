@@ -21,7 +21,7 @@ public interface RestClient {
     /**
      * Returns the authority string for this rest client. The authority is the
      * 'www.google.com' part in 'http://www.google.com/query?a=b' or the
-     * 'com.tulip' part in 'content://com.tulip/provider/item/12'.
+     * 'com.tulip' part in 'content://com.podio/provider/item/12'.
      * 
      * @return The authority of this client.
      */
@@ -29,7 +29,7 @@ public interface RestClient {
 
     /**
      * Returns the scheme for this rest client. The scheme is the 'http' part in
-     * 'http://www.google.com' or the 'content' part in 'content://com.tulip'.
+     * 'http://www.google.com' or the 'content' part in 'content://com.podio'.
      * 
      * @return The scheme of this client.
      */
