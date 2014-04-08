@@ -1,10 +1,10 @@
 package com.podio.sdk.internal.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
-import android.util.ArrayMap;
 
 public class UtilsTest extends AndroidTestCase {
 
@@ -47,12 +47,12 @@ public class UtilsTest extends AndroidTestCase {
     }
 
     public void testMapIsEmpty() {
-        ArrayMap<Object, Object> empty = new ArrayMap<Object, Object>();
-        ArrayMap<Object, Object> nonEmpty = new ArrayMap<Object, Object>();
+        HashMap<Object, Object> empty = new HashMap<Object, Object>();
+        HashMap<Object, Object> nonEmpty = new HashMap<Object, Object>();
         nonEmpty.put(new Object(), new Object());
 
         assertTrue(Utils.isEmpty(empty));
-        assertTrue(Utils.isEmpty((ArrayMap<Object, Object>) null));
+        assertTrue(Utils.isEmpty((HashMap<Object, Object>) null));
         assertFalse(Utils.isEmpty(nonEmpty));
     }
 
@@ -85,12 +85,12 @@ public class UtilsTest extends AndroidTestCase {
     }
 
     public void testMapNotEmpty() {
-        ArrayMap<Object, Object> empty = new ArrayMap<Object, Object>();
-        ArrayMap<Object, Object> nonEmpty = new ArrayMap<Object, Object>();
+        HashMap<Object, Object> empty = new HashMap<Object, Object>();
+        HashMap<Object, Object> nonEmpty = new HashMap<Object, Object>();
         nonEmpty.put(new Object(), new Object());
 
         assertFalse(Utils.notEmpty(empty));
-        assertFalse(Utils.notEmpty((ArrayMap<Object, Object>) null));
+        assertFalse(Utils.notEmpty((HashMap<Object, Object>) null));
         assertTrue(Utils.notEmpty(nonEmpty));
     }
 
