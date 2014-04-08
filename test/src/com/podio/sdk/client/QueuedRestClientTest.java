@@ -321,6 +321,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueuePushPopSuccess() {
+        final Object expectedTicket = new Object();
         final Filter expectedFilter = new ItemFilter("expected");
         final ConcurrentResult result = new ConcurrentResult();
 
@@ -329,13 +330,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             protected RestResult handleRequest(RestRequest restRequest) {
                 TestUtils.calmDown();
                 result.isRequestPopped = true;
-                result.isTicketValid = (expectedFilter == restRequest.getFilter());
+                result.isTicketValid = (expectedTicket == restRequest.getTicket());
                 TestUtils.releaseBlocketThread();
                 return new RestResult(true, "", null);
             }
         };
 
-        RestRequest request = new RestRequest().setFilter(expectedFilter);
+        RestRequest request = new RestRequest() //
+                .setFilter(expectedFilter) //
+                .setTicket(expectedTicket);
+
         result.isRequestPushed = testTarget.perform(request);
 
         // This line will block execution until the blocking semaphore is

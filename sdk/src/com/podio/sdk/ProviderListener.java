@@ -16,23 +16,21 @@ public interface ProviderListener {
      * identifying which call the result belongs to, are delivered through the
      * method arguments.
      * 
-     * @param filter
-     *            The filter defining the items collection. It's the same filter
-     *            the caller provided when calling the fetch request.
+     * @param ticket
+     *            The ticket used to identify the request.
      * @param items
      *            The result of the previously made fetch request.
      */
-    public void onRequestCompleted(Filter filter, List<?> items);
+    public void onRequestCompleted(Object ticket, List<?> items);
 
     /**
      * Notifies the calling implementation that a request couldn't be performed.
      * 
-     * @param filter
-     *            The filter provided by the caller when the specific request
-     *            was made.
+     * @param ticket
+     *            The ticket used to identify the request.
      * @param message
      *            A message describing what went wrong.
      */
-    public void onRequestFailed(Filter filter, String message);
+    public void onRequestFailed(Object ticket, String message);
 
 }

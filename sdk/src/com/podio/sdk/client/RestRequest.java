@@ -10,6 +10,7 @@ public final class RestRequest {
     private RestOperation operation;
     private ResultListener resultListener;
     private Filter filter;
+    private Object ticket;
 
     public Object getContent() {
         return content;
@@ -29,6 +30,10 @@ public final class RestRequest {
 
     public ResultListener getResultListener() {
         return resultListener;
+    }
+
+    public Object getTicket() {
+        return ticket;
     }
 
     public RestRequest setContent(Object item) {
@@ -56,4 +61,8 @@ public final class RestRequest {
         return this;
     }
 
+    public RestRequest setTicket(Object ticket) {
+        this.ticket = ticket;
+        return this;
+    }
 }

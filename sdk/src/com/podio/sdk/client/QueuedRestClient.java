@@ -55,7 +55,7 @@ public abstract class QueuedRestClient implements RestClient {
                         @Override
                         public void run() {
                             ResultListener listener = request.getResultListener();
-                            Object ticket = request.getFilter();
+                            Object ticket = request.getTicket();
 
                             if (listener != null) {
                                 if (result == null) {

@@ -33,14 +33,14 @@ public class AppItemProviderTest extends AndroidTestCase {
         target.setRestClient(new MockRestClient());
         target.setProviderListener(new ProviderListener() {
             @Override
-            public void onRequestFailed(Filter filter, String message) {
+            public void onRequestFailed(Object ticket, String message) {
                 boolean isCalled = true;
                 assertFalse(isCalled);
             }
 
             @Override
-            public void onRequestCompleted(Filter filter, List<?> items) {
-                Uri target = filter.buildUri("content", "test.uri");
+            public void onRequestCompleted(Object ticket, List<?> items) {
+                Uri target = ((Filter) ticket).buildUri("content", "test.uri");
                 assertEquals(reference, target);
             }
         });
@@ -70,14 +70,14 @@ public class AppItemProviderTest extends AndroidTestCase {
         target.setRestClient(new MockRestClient());
         target.setProviderListener(new ProviderListener() {
             @Override
-            public void onRequestFailed(Filter filter, String message) {
+            public void onRequestFailed(Object ticket, String message) {
                 boolean isCalled = true;
                 assertFalse(isCalled);
             }
 
             @Override
-            public void onRequestCompleted(Filter filter, List<?> items) {
-                Uri target = filter.buildUri("content", "test.uri");
+            public void onRequestCompleted(Object ticket, List<?> items) {
+                Uri target = ((Filter) ticket).buildUri("content", "test.uri");
                 assertEquals(reference, target);
             }
         });

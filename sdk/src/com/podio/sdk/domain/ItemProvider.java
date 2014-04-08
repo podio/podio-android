@@ -16,16 +16,14 @@ public class ItemProvider<T> implements Provider<T> {
         @Override
         public void onFailure(Object ticket, String message) {
             if (providerListener != null) {
-                Filter filter = (Filter) ticket;
-                providerListener.onRequestFailed(filter, message);
+                providerListener.onRequestFailed(ticket, message);
             }
         }
 
         @Override
         public void onSuccess(Object ticket, List<?> items) {
             if (providerListener != null) {
-                Filter filter = (Filter) ticket;
-                providerListener.onRequestCompleted(filter, items);
+                providerListener.onRequestCompleted(ticket, items);
             }
         }
     };
@@ -91,7 +89,8 @@ public class ItemProvider<T> implements Provider<T> {
                 .setItemType(classOfContent) //
                 .setOperation(operation) //
                 .setResultListener(resultListener) //
-                .setFilter(filter);
+                .setFilter(filter) //
+                .setTicket(filter);
 
         return request;
     }
