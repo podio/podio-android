@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.podio.sdk.Parser;
 
-public class ItemJsonParser implements Parser<Object> {
+public class ItemToJsonParser implements Parser<Object> {
 
     @Override
     public List<?> parse(Object source, Class<?> classOfTarget) {

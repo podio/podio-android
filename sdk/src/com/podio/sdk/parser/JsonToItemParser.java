@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.podio.sdk.Parser;
 import com.podio.sdk.internal.utils.Utils;
 
-public class JsonItemParser implements Parser<String> {
+public class JsonToItemParser implements Parser<String> {
 
     @Override
     public List<?> parse(String source, Class<?> classOfTarget) {

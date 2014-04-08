@@ -13,8 +13,8 @@ import com.podio.sdk.client.network.HttpClientDelegate;
 import com.podio.sdk.client.network.NetworkClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.utils.Utils;
-import com.podio.sdk.parser.ItemJsonParser;
-import com.podio.sdk.parser.JsonItemParser;
+import com.podio.sdk.parser.ItemToJsonParser;
+import com.podio.sdk.parser.JsonToItemParser;
 
 /**
  * This class manages the communication between the client application and the
@@ -25,8 +25,8 @@ import com.podio.sdk.parser.JsonItemParser;
 public class HttpRestClient extends QueuedRestClient {
     private AuthenticationDelegate authenticationDelegate;
     private NetworkClientDelegate networkDelegate;
-    private JsonItemParser resultParser;
-    private ItemJsonParser contentParser;
+    private JsonToItemParser jsonToItemParser;
+    private ItemToJsonParser itemToJsonParser;
 
     /**
      * Creates a new SQLiteRestClient with a request queue capacity of 10
@@ -57,8 +57,8 @@ public class HttpRestClient extends QueuedRestClient {
      */
     public HttpRestClient(Context context, String authority, int queueCapacity) {
         super("https", authority, queueCapacity);
-        resultParser = new JsonItemParser();
-        contentParser = new ItemJsonParser();
+        jsonToItemParser = new JsonToItemParser();
+        itemToJsonParser = new ItemToJsonParser();
         networkDelegate = new HttpClientDelegate(context);
         authenticationDelegate = new PodioAuthenticationDelegate();
     }
@@ -100,16 +100,30 @@ public class HttpRestClient extends QueuedRestClient {
     }
 
     /**
-     * Sets the parser used for parsing content items when performing an insert
-     * or update operation. The parser will take the content item object and
-     * parse data from it and populate a new ContentValues object with the data.
+     * Sets the parser used for parsing content items when performing an HTTP
+     * POST or PUT request. The parser will take the item object, parse data
+     * from its fields and create a new JSON string from it.
      * 
-     * @param parser
+     * @param itemToJsonParser
      *            The parser to use for extracting item data.
      */
-    public void setContentParser(ItemJsonParser parser) {
-        if (parser != null) {
-            this.contentParser = parser;
+    public void setItemToJsonParser(ItemToJsonParser itemToJsonParser) {
+        if (itemToJsonParser != null) {
+            this.itemToJsonParser = itemToJsonParser;
+        }
+    }
+
+    /**
+     * Sets the parser used for parsing the response json when performing an
+     * HTTP GET request. The parser will take the json string, parse its
+     * attributes and create new corresponding item objects from it.
+     * 
+     * @param jsonToItemParser
+     *            The parser to use for extracting cursor data.
+     */
+    public void setJsonToItemParser(JsonToItemParser jsonToItemParser) {
+        if (jsonToItemParser != null) {
+            this.jsonToItemParser = jsonToItemParser;
         }
     }
 
@@ -127,20 +141,6 @@ public class HttpRestClient extends QueuedRestClient {
     }
 
     /**
-     * Sets the parser used for parsing the database cursor when performing a
-     * query operation. The parser will take the cursor and parse data from its
-     * columns and populate new content item objects with the data.
-     * 
-     * @param parser
-     *            The parser to use for extracting cursor data.
-     */
-    public void setResultParser(JsonItemParser parser) {
-        if (parser != null) {
-            this.resultParser = parser;
-        }
-    }
-
-    /**
      * Creates a ContentValues object, populated with data from the provided
      * content item object.
      * 
@@ -152,7 +152,7 @@ public class HttpRestClient extends QueuedRestClient {
      *         item.
      */
     private String buildJson(Object item, Class<?> classOfItem) {
-        List<?> values = contentParser.parse(item, classOfItem);
+        List<?> values = itemToJsonParser.parse(item, classOfItem);
         Object result = Utils.notEmpty(values) ? values.get(0) : null;
         return result != null ? result.toString() : "";
     }
@@ -168,7 +168,7 @@ public class HttpRestClient extends QueuedRestClient {
      * @return A list of content item objects.
      */
     private List<?> buildItems(String json, Class<?> classOfItem) {
-        List<?> result = resultParser.parse(json, classOfItem);
+        List<?> result = jsonToItemParser.parse(json, classOfItem);
         return result;
     }
 

@@ -13,8 +13,8 @@ import com.podio.sdk.client.database.DatabaseClientDelegate;
 import com.podio.sdk.client.database.SQLiteClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.utils.Utils;
-import com.podio.sdk.parser.CursorItemParser;
-import com.podio.sdk.parser.ItemContentValuesParser;
+import com.podio.sdk.parser.CursorToItemParser;
+import com.podio.sdk.parser.ItemToContentValuesParser;
 
 /**
  * This class manages the communication between the client application and the
@@ -27,8 +27,8 @@ public final class SQLiteRestClient extends QueuedRestClient {
     private static final int DATABASE_VERSION = 1;
 
     private DatabaseClientDelegate databaseDelegate;
-    private CursorItemParser resultParser;
-    private ItemContentValuesParser contentParser;
+    private CursorToItemParser cursorToItemParser;
+    private ItemToContentValuesParser itemToContentValuesParser;
 
     /**
      * Creates a new SQLiteRestClient with a request queue capacity of 10
@@ -59,8 +59,8 @@ public final class SQLiteRestClient extends QueuedRestClient {
      */
     public SQLiteRestClient(Context context, String authority, int queueCapacity) {
         super("content", authority, queueCapacity);
-        resultParser = new CursorItemParser();
-        contentParser = new ItemContentValuesParser();
+        cursorToItemParser = new CursorToItemParser();
+        itemToContentValuesParser = new ItemToContentValuesParser();
         databaseDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
     }
 
@@ -95,16 +95,16 @@ public final class SQLiteRestClient extends QueuedRestClient {
     }
 
     /**
-     * Sets the parser used for parsing content items when performing an insert
-     * or update operation. The parser will take the content item object and
-     * parse data from it and populate a new ContentValues object with the data.
+     * Sets the parser used for parsing the database cursor objects. The parser
+     * will take the cursor, parse data from its columns and create new item
+     * objects from it.
      * 
-     * @param parser
-     *            The parser to use for extracting item data.
+     * @param cursorToItemParser
+     *            The parser to use for extracting cursor data.
      */
-    public void setContentParser(ItemContentValuesParser parser) {
-        if (parser != null) {
-            this.contentParser = parser;
+    public void setCursorToItemParser(CursorToItemParser cursorToItemParser) {
+        if (cursorToItemParser != null) {
+            this.cursorToItemParser = cursorToItemParser;
         }
     }
 
@@ -122,16 +122,16 @@ public final class SQLiteRestClient extends QueuedRestClient {
     }
 
     /**
-     * Sets the parser used for parsing the database cursor when performing a
-     * query operation. The parser will take the cursor and parse data from its
-     * columns and populate new content item objects with the data.
+     * Sets the parser used for parsing item objects when performing a SQL
+     * INSERT or UPDATE operation. The parser will take the item object, parse
+     * data from its fields and create a new ContentValues object from it.
      * 
-     * @param parser
-     *            The parser to use for extracting cursor data.
+     * @param itemToContentValuesParser
+     *            The parser to use for extracting item data.
      */
-    public void setResultParser(CursorItemParser parser) {
-        if (parser != null) {
-            this.resultParser = parser;
+    public void setItemToContentValuesParser(ItemToContentValuesParser itemToContentValuesParser) {
+        if (itemToContentValuesParser != null) {
+            this.itemToContentValuesParser = itemToContentValuesParser;
         }
     }
 
@@ -147,7 +147,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      *         item.
      */
     private ContentValues buildContentValues(Object item, Class<?> classOfItem) {
-        List<ContentValues> values = contentParser.parse(item, classOfItem);
+        List<ContentValues> values = itemToContentValuesParser.parse(item, classOfItem);
         ContentValues result = Utils.notEmpty(values) ? values.get(0) : null;
 
         return result;
@@ -164,7 +164,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @return A list of content item objects.
      */
     private List<?> buildItems(Cursor cursor, Class<?> classOfItem) {
-        List<?> result = resultParser.parse(cursor, classOfItem);
+        List<?> result = cursorToItemParser.parse(cursor, classOfItem);
         return result;
     }
 

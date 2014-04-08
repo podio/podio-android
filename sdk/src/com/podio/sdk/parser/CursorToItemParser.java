@@ -10,7 +10,7 @@ import com.podio.sdk.Parser;
 import com.podio.sdk.internal.utils.Utils;
 import com.podio.sdk.parser.annotation.StructuredName;
 
-public class CursorItemParser implements Parser<Cursor> {
+public class CursorToItemParser implements Parser<Cursor> {
 
     private static final class FieldData {
         private int columnIndex;
