@@ -43,31 +43,18 @@ public abstract class QueuedRestClient implements RestClient {
             while (true) {
                 state = State.IDLE;
                 try {
-                    final RestRequest request = queue.take();
-                    state = State.PROCESSING;
+                    RestRequest request = queue.take();
 
-                    // Let the extending class define how to process the request
-                    // and analyze the result.
-                    final RestResult result = handleRequest(request);
+                    if (request != null) {
+                        state = State.PROCESSING;
 
-                    // Make sure to post to the caller thread.
-                    callerHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ResultListener listener = request.getResultListener();
-                            Object ticket = request.getTicket();
-
-                            if (listener != null) {
-                                if (result == null) {
-                                    listener.onFailure(ticket, null);
-                                } else if (result.isSuccess()) {
-                                    listener.onSuccess(ticket, result.items());
-                                } else {
-                                    listener.onFailure(ticket, result.message());
-                                }
-                            }
-                        }
-                    });
+                        // Let the extending class define how to process the
+                        // request and analyze the result.
+                        Object ticket = request.getTicket();
+                        ResultListener resultListener = request.getResultListener();
+                        RestResult result = handleRequest(request);
+                        reportResult(ticket, resultListener, result);
+                    }
                 } catch (InterruptedException e) {
                 }
             }
@@ -157,6 +144,36 @@ public abstract class QueuedRestClient implements RestClient {
      *         state of the request.
      */
     protected abstract RestResult handleRequest(RestRequest restRequest);
+
+    /**
+     * Reports a result back to any callback implementation.
+     * 
+     * @param ticket
+     *            The request ticket to pass back to the caller.
+     * @param resultListener
+     *            The callback implementation to call through.
+     * @param result
+     *            The result of the request.
+     */
+    protected final void reportResult(final Object ticket, final ResultListener resultListener,
+            final RestResult result) {
+
+        if (resultListener != null) {
+            // Make sure to post to the caller thread.
+            callerHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (result == null) {
+                        resultListener.onFailure(ticket, null);
+                    } else if (result.isSuccess()) {
+                        resultListener.onSuccess(ticket, result.items());
+                    } else {
+                        resultListener.onFailure(ticket, result.message());
+                    }
+                }
+            });
+        }
+    }
 
     /**
      * Gives information on the current occupied size of the request queue.
