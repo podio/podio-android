@@ -36,7 +36,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient(expectedScheme, null);
         String actualScheme = testTarget.getScheme();
 
-        assertEquals("Unexpected scheme", expectedScheme, actualScheme);
+        assertEquals(expectedScheme, actualScheme);
     }
 
     /**
@@ -57,7 +57,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient(null, expectedAuthority);
         String actualAuthority = testTarget.getAuthority();
 
-        assertEquals("Unexpected authority", expectedAuthority, actualAuthority);
+        assertEquals(expectedAuthority, actualAuthority);
     }
 
     /**
@@ -76,12 +76,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      */
     public void testRequestQueueCapacityValid() {
         int invalidSize = -1;
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test",
-                invalidSize);
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", invalidSize);
         RestRequest request = new RestRequest();
         boolean didAcceptRequest = testTarget.perform(request);
 
-        assertTrue("The request was not accepted", didAcceptRequest);
+        assertEquals(true, didAcceptRequest);
     }
 
     /**
@@ -105,19 +104,20 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test", 2) {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 2) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown();
                 Filter filter = restRequest.getFilter();
 
                 if (filter == firstFilter) {
-                    firstResult.isRequestPopped = firstResult.isTicketValid = true;
+                    firstResult.isRequestPopped = true;
+                    firstResult.isTicketValid = true;
                 } else if (filter == secondFilter) {
-                    secondResult.isRequestPopped = secondResult.isTicketValid = true;
+                    secondResult.isRequestPopped = true;
+                    secondResult.isTicketValid = true;
                 }
 
-                if (firstResult.isTicketValid == secondResult.isTicketValid == true) {
+                if (firstResult.isTicketValid && secondResult.isTicketValid) {
                     TestUtils.releaseBlockedThread();
                 }
 
@@ -133,10 +133,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread(500);
 
-        assertTrue("First request wasn't handled properly", firstResult.isRequestPushed
-                && firstResult.isRequestPopped && firstResult.isTicketValid);
-        assertTrue("Second request wasn't handled properly", secondResult.isRequestPushed
-                && secondResult.isRequestPopped && secondResult.isTicketValid);
+        assertEquals(true, firstResult.isRequestPushed);
+        assertEquals(true, firstResult.isRequestPopped);
+        assertEquals(true, firstResult.isTicketValid);
+        assertEquals(true, secondResult.isRequestPushed);
+        assertEquals(true, secondResult.isRequestPopped);
+        assertEquals(true, secondResult.isTicketValid);
     }
 
     /**
@@ -168,10 +170,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown();
                 return null;
             }
         };
@@ -205,10 +206,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final String[] threadNames = new String[] { Thread.currentThread().getName(),
                 Thread.currentThread().getName() };
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown();
                 threadNames[1] = Thread.currentThread().getName();
                 TestUtils.releaseBlockedThread();
                 return new RestResult(true, null, null);
@@ -219,8 +219,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         testTarget.perform(request);
         TestUtils.blockThread();
 
-        assertFalse("RestRequest was processed from the calling thread." + " Calling thread: "
-                + threadNames[0] + ", worker thread: " + threadNames[1],
+        assertFalse(threadNames[0] + " vs. " + threadNames[1],
                 threadNames[0].equals(threadNames[1]));
     }
 
@@ -246,10 +245,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueuePushFailureOnCapacityReached() {
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test", 1) {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown(2000);
                 return new RestResult(true, null, null);
             }
         };
@@ -269,9 +267,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         // (or both) should be guaranteed to be rejected for this test to pass.
         boolean isThirdRequestAccepted = testTarget.perform(request);
 
-        assertTrue("The first request wasn't pushed successfully", isFirstRequestAccepted);
-        assertFalse("The second request was unexpectedly accepted", isSecondRequestAccepted
-                && isThirdRequestAccepted);
+        assertEquals(true, isFirstRequestAccepted);
+        assertEquals(false, isSecondRequestAccepted);
+        assertEquals(false, isThirdRequestAccepted);
     }
 
     /**
@@ -289,7 +287,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueuePushFailureOnNullRequest() {
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test", 1) {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 assertFalse("Unexpected request processing", true);
@@ -300,8 +298,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         boolean isRequestAccepted = testTarget.perform(null);
         TestUtils.blockThread();
 
-        assertFalse("Null pointer request shouldn't be accepted", isRequestAccepted);
-        assertEquals("The queue should be empty", 0, testTarget.size());
+        assertEquals(false, isRequestAccepted);
+        assertEquals(0, testTarget.size());
     }
 
     /**
@@ -325,10 +323,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final Filter expectedFilter = new ItemFilter("expected");
         final ConcurrentResult result = new ConcurrentResult();
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown();
                 result.isRequestPopped = true;
                 result.isTicketValid = (expectedTicket == restRequest.getTicket());
                 TestUtils.releaseBlockedThread();
@@ -347,9 +344,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         // watch-dog.
         TestUtils.blockThread();
 
-        assertTrue("The request wasn't pushed successfully", result.isRequestPushed);
-        assertTrue("The request wasn't processed successfully", result.isRequestPopped);
-        assertTrue("The RestClient delivered an unexpected ticket", result.isTicketValid);
+        assertEquals(true, result.isRequestPushed);
+        assertEquals(true, result.isRequestPopped);
+        assertEquals(true, result.isTicketValid);
     }
 
     /**
@@ -398,10 +395,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown();
                 Filter filter = restRequest.getFilter();
 
                 if (firstFilter == filter) {
@@ -423,10 +419,10 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         firstResult.isRequestPushed = testTarget.perform(firstRequest);
         TestUtils.blockThread(100);
 
-        assertTrue("First request wasn't pushed", firstResult.isRequestPushed);
-        assertTrue("First request wasn't popped", firstResult.isRequestPopped);
-        assertEquals("Client isn't idle", QueuedRestClient.State.IDLE, testTarget.state());
-        assertEquals("Client queue isn't empty", 0, testTarget.size());
+        assertEquals(true, firstResult.isRequestPushed);
+        assertEquals(true, firstResult.isRequestPopped);
+        assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
+        assertEquals(0, testTarget.size());
 
         TestUtils.blockThread(100);
 
@@ -437,10 +433,10 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         secondResult.isRequestPushed = testTarget.perform(secondRequest);
         TestUtils.blockThread(100);
 
-        assertTrue("Second request wasn't pushed", secondResult.isRequestPushed);
-        assertTrue("Second request wasn't popped", secondResult.isRequestPopped);
-        assertEquals("Client isn't idle", QueuedRestClient.State.IDLE, testTarget.state());
-        assertEquals("Client queue isn't empty", 0, testTarget.size());
+        assertEquals(true, secondResult.isRequestPushed);
+        assertEquals(true, secondResult.isRequestPopped);
+        assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
+        assertEquals(0, testTarget.size());
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -481,10 +477,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                TestUtils.calmDown();
                 return new RestResult(true, null, null);
             }
         };
@@ -526,7 +521,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 return new RestResult(false, null, null);
@@ -570,7 +565,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        MockRestClient testTarget = new MockRestClient("test://", "com.echsylon.tulip.test") {
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 return new RestResult(true, null, null);

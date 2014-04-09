@@ -52,17 +52,10 @@ public class TestUtils {
      * Just calm down a bit, and wait the time it takes to count to ten (in
      * milliseconds).
      */
-    public static void calmDown(long timeToTen) {
+    private static void calmDown(long timeToTen) {
         try {
             Thread.sleep(timeToTen);
         } catch (InterruptedException e) {
         }
-    }
-
-    /**
-     * Just calm down a bit, and wait for 200 ms.
-     */
-    public static void calmDown() {
-        calmDown(100);
     }
 }
