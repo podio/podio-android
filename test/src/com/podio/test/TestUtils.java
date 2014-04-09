@@ -15,7 +15,7 @@ public class TestUtils {
             @Override
             public void run() {
                 calmDown(delay);
-                releaseBlocketThread();
+                releaseBlockedThread();
             }
         }).start();
     }
@@ -42,7 +42,7 @@ public class TestUtils {
      * Release the semaphore now and remove any pending force releases from the
      * watch dog.
      */
-    public static void releaseBlocketThread() {
+    public static void releaseBlockedThread() {
         if (semaphore != null) {
             semaphore.release();
         }

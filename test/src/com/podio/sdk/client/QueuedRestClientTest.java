@@ -118,7 +118,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 }
 
                 if (firstResult.isTicketValid == secondResult.isTicketValid == true) {
-                    TestUtils.releaseBlocketThread();
+                    TestUtils.releaseBlockedThread();
                 }
 
                 return new RestResult(true, null, null);
@@ -210,7 +210,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             protected RestResult handleRequest(RestRequest restRequest) {
                 TestUtils.calmDown();
                 threadNames[1] = Thread.currentThread().getName();
-                TestUtils.releaseBlocketThread();
+                TestUtils.releaseBlockedThread();
                 return new RestResult(true, null, null);
             }
         };
@@ -331,7 +331,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 TestUtils.calmDown();
                 result.isRequestPopped = true;
                 result.isTicketValid = (expectedTicket == restRequest.getTicket());
-                TestUtils.releaseBlocketThread();
+                TestUtils.releaseBlockedThread();
                 return new RestResult(true, "", null);
             }
         };
