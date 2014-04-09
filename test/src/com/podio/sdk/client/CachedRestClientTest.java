@@ -7,6 +7,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.client.database.DatabaseClientDelegate;
+import com.podio.sdk.client.mock.MockAuthenticationDelegate;
 import com.podio.sdk.client.mock.MockDatabaseClientDelegate;
 import com.podio.sdk.client.mock.MockNetworkClientDelegate;
 import com.podio.sdk.client.network.NetworkClientDelegate;
@@ -17,7 +18,11 @@ import com.podio.test.TestUtils;
 
 public class CachedRestClientTest extends InstrumentationTestCase {
 
-    private static final String TEST_AUTHORITY = "test.authority";
+    private static final Uri REFERENCE_CONTENT_URI = Uri //
+            .parse("content://test.authority/path");
+    private static final Uri REFERENCE_NETWORK_URI = Uri //
+            .parse("https://test.authority/path?oauth_token=" //
+                    + MockAuthenticationDelegate.TEST_TOKEN);
 
     private MockDatabaseClientDelegate targetDatabaseDelegate;
     private MockNetworkClientDelegate targetNetworkDelegate;
@@ -32,7 +37,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         targetDatabaseDelegate = new MockDatabaseClientDelegate();
         targetNetworkDelegate = new MockNetworkClientDelegate();
 
-        targetRestClient = new CachedRestClient(context, TEST_AUTHORITY) {
+        targetRestClient = new CachedRestClient(context, "test.authority") {
             @Override
             protected void reportResult(Object ticket, ResultListener resultListener,
                     RestResult result) {
@@ -48,6 +53,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         };
         targetRestClient.setDatabaseDelegate(targetDatabaseDelegate);
         targetRestClient.setNetworkDelegate(targetNetworkDelegate);
+        targetRestClient.setAuthenticationDelegate(new MockAuthenticationDelegate());
     }
 
     /**
@@ -73,16 +79,13 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteRequestDelegatesCorrectUri() {
-        String path = "path";
-        Uri reference = Uri.parse("https://" + TEST_AUTHORITY + "/" + path);
-
-        RestRequest request = buildRestRequest(RestOperation.DELETE, path);
+        RestRequest request = buildRestRequest(RestOperation.DELETE, "path");
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
         assertNull(targetDatabaseDelegate.mock_getDeleteUri());
-        assertEquals(reference, targetNetworkDelegate.mock_getDeleteUri());
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getDeleteUri());
     }
 
     /**
@@ -137,17 +140,13 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetRequestDelegatesCorrectUri() {
-        String path = "path";
-        Uri databaseReference = Uri.parse("content://" + TEST_AUTHORITY + "/" + path);
-        Uri networkReference = Uri.parse("https://" + TEST_AUTHORITY + "/" + path);
-
-        RestRequest request = buildRestRequest(RestOperation.GET, path);
+        RestRequest request = buildRestRequest(RestOperation.GET, "path");
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
-        assertEquals(databaseReference, targetDatabaseDelegate.mock_getQueryUri());
-        assertEquals(networkReference, targetNetworkDelegate.mock_getGetUri());
+        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getQueryUri());
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getGetUri());
     }
 
     /**
@@ -202,16 +201,13 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostRequestDelegatesCorrectUri() {
-        String path = "path";
-        Uri reference = Uri.parse("https://" + TEST_AUTHORITY + "/" + path);
-
-        RestRequest request = buildRestRequest(RestOperation.POST, path);
+        RestRequest request = buildRestRequest(RestOperation.POST, "path");
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
         assertNull(targetDatabaseDelegate.mock_getInsertUri());
-        assertEquals(reference, targetNetworkDelegate.mock_getPostUri());
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPostUri());
     }
 
     /**
@@ -266,16 +262,13 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutRequestDelegatesCorrectUri() {
-        String path = "path";
-        Uri reference = Uri.parse("https://" + TEST_AUTHORITY + "/" + path);
-
-        RestRequest request = buildRestRequest(RestOperation.PUT, path);
+        RestRequest request = buildRestRequest(RestOperation.PUT, "path");
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
         assertNull(targetDatabaseDelegate.mock_getUpdateUri());
-        assertEquals(reference, targetNetworkDelegate.mock_getPutUri());
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPutUri());
     }
 
     /**

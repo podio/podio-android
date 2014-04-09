@@ -23,12 +23,10 @@ public class AppItemFilterTest extends AndroidTestCase {
      */
     public void testAllPropertiesIncludedInResultUri() {
         Uri reference = Uri.parse("content://test.uri/app/space/2" //
-                + "?oauth_token=test_token" + //
-                "&include_inactive=true");
+                + "?include_inactive=true");
 
         Uri result = new AppItemFilter() //
                 .withSpaceId(2L) //
-                .withToken("test_token") //
                 .withInactivesIncluded(true) //
                 .buildUri("content", "test.uri");
 
@@ -55,7 +53,6 @@ public class AppItemFilterTest extends AndroidTestCase {
 
         assertEquals(target, target.withInactivesIncluded(true));
         assertEquals(target, target.withSpaceId(1L));
-        assertEquals(target, target.withToken("token"));
     }
 
     /**
@@ -105,26 +102,4 @@ public class AppItemFilterTest extends AndroidTestCase {
         assertEquals(reference, result);
     }
 
-    /**
-     * Verifies that the {@link AppItemFilter} adds the given "token" as a query
-     * parameter in the final Uri.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new AppItemFilter.
-     * 
-     * 2. Specify a "access token" for it.
-     * 
-     * 3. Make it build the result Uri.
-     * 
-     * 4. Verify that the token is a query parameter.
-     * 
-     * </pre>
-     */
-    public void testTokenAddedAsQueryParameter() {
-        Uri reference = Uri.parse("content://test.uri/app?oauth_token=token");
-        Uri result = new AppItemFilter().withToken("token").buildUri("content", "test.uri");
-
-        assertEquals(reference, result);
-    }
 }

@@ -17,9 +17,4 @@ public final class AppItemFilter extends ItemFilter {
         return this;
     }
 
-    public AppItemFilter withToken(String token) {
-        addQueryParameter("oauth_token", token);
-        return this;
-    }
-
 }

@@ -77,7 +77,7 @@ public class HttpRestClient extends QueuedRestClient {
                 RestOperation operation = restRequest.getOperation();
                 Class<?> itemType = restRequest.getItemType();
                 Object item = restRequest.getContent();
-                Uri uri = filter.buildUri(scheme, authority);
+                Uri uri = buildUri(filter);
 
                 String json = queryNetwork(operation, uri, item, itemType);
                 List<?> items = buildItems(json, itemType);
@@ -172,10 +172,21 @@ public class HttpRestClient extends QueuedRestClient {
         return result;
     }
 
+    private Uri buildUri(Filter filter) {
+        String token = authenticationDelegate.getAuthToken();
+
+        Uri authUri = filter //
+                .buildUri(scheme, authority) //
+                .buildUpon() //
+                .appendQueryParameter("oauth_token", token) //
+                .build();
+
+        return authUri;
+    }
+
     private String queryNetwork(RestOperation operation, Uri uri, Object item, Class<?> classOfItem) {
         String json = null;
         String values = null;
-        String token = authenticationDelegate.getAuthToken();
 
         switch (operation) {
         case DELETE:
