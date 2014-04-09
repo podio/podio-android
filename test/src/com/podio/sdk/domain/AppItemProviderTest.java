@@ -11,6 +11,12 @@ import com.podio.sdk.domain.mock.MockRestClient;
 
 public class AppItemProviderTest extends AndroidTestCase {
 
+    private static final class ConcurrentResult {
+        private boolean isSuccessCalled = false;
+        private boolean isFailureCalled = false;
+        private Object ticket = null;
+    }
+
     /**
      * Verifies that the {@link AppItemProvider} doesn't request inactive app
      * items by default.
@@ -28,24 +34,33 @@ public class AppItemProviderTest extends AndroidTestCase {
      */
     public void testFetchAppItemsForSpaceDoesntRequestInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/1?include_inactive=false");
+        final MockRestClient mockClient = new MockRestClient();
+        final ConcurrentResult result = new ConcurrentResult();
 
         AppItemProvider target = new AppItemProvider();
-        target.setRestClient(new MockRestClient());
+        target.setRestClient(mockClient);
         target.setProviderListener(new ProviderListener() {
             @Override
             public void onRequestFailed(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+                result.isFailureCalled = true;
+                result.ticket = ticket;
             }
 
             @Override
             public void onRequestCompleted(Object ticket, List<?> items) {
-                Uri target = ((Filter) ticket).buildUri("content", "test.uri");
-                assertEquals(reference, target);
+                result.isSuccessCalled = true;
+                result.ticket = ticket;
             }
         });
 
         target.fetchAppItemsForSpace(1);
+        mockClient.mock_processLastPushedRestRequest(true, null, null);
+
+        assertEquals(true, result.isSuccessCalled);
+        assertEquals(false, result.isFailureCalled);
+
+        Uri uri = ((Filter) result.ticket).buildUri("content", "test.uri");
+        assertEquals(reference, uri);
     }
 
     /**
@@ -65,23 +80,32 @@ public class AppItemProviderTest extends AndroidTestCase {
      */
     public void testfetchAppItemsForSpaceWithInactivesIncludedRequestsInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/2?include_inactive=true");
+        final MockRestClient mockClient = new MockRestClient();
+        final ConcurrentResult result = new ConcurrentResult();
 
         AppItemProvider target = new AppItemProvider();
-        target.setRestClient(new MockRestClient());
+        target.setRestClient(mockClient);
         target.setProviderListener(new ProviderListener() {
             @Override
             public void onRequestFailed(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+                result.isFailureCalled = true;
+                result.ticket = ticket;
             }
 
             @Override
             public void onRequestCompleted(Object ticket, List<?> items) {
-                Uri target = ((Filter) ticket).buildUri("content", "test.uri");
-                assertEquals(reference, target);
+                result.isSuccessCalled = true;
+                result.ticket = ticket;
             }
         });
 
         target.fetchAppItemsForSpaceWithInactivesIncluded(2);
+        mockClient.mock_processLastPushedRestRequest(true, null, null);
+
+        assertEquals(true, result.isSuccessCalled);
+        assertEquals(false, result.isFailureCalled);
+
+        Uri uri = ((Filter) result.ticket).buildUri("content", "test.uri");
+        assertEquals(reference, uri);
     }
 }

@@ -30,17 +30,22 @@ public final class MockRestClient implements RestClient {
         return request;
     }
 
-    public void mock_processLastPushedRestRequest(boolean isSuccess, Object ticket, String message, List<?> items) {
+    public void mock_processLastPushedRestRequest(boolean shouldBeSuccess, String withMockMessage,
+            List<?> withMockItems) {
+
         if (request != null) {
             ResultListener listener = request.getResultListener();
 
             if (listener != null) {
-                if (isSuccess) {
-                    listener.onSuccess(ticket, items);
+                Object ticket = request.getTicket();
+
+                if (shouldBeSuccess) {
+                    listener.onSuccess(ticket, withMockItems);
                 } else {
-                    listener.onFailure(ticket, message);
+                    listener.onFailure(ticket, withMockMessage);
                 }
             }
         }
     }
+
 }

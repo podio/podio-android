@@ -14,6 +14,14 @@ import com.podio.sdk.internal.request.RestOperation;
 
 public class ItemProviderTest extends AndroidTestCase {
 
+    private static final class ConcurrentResult {
+        private boolean isSuccessCalled = false;
+        private boolean isFailureCalled = false;
+        private Object ticket = null;
+        private List<?> items = null;
+        private String message = null;
+    }
+
     /**
      * Verify that the abstract {@link ItemProvider} implementation builds the
      * correct {@link RestRequest} for a DELETE request.
@@ -42,7 +50,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct DELETE RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.DELETE, null, filter, request);
+        validateRequest(RestOperation.DELETE, null, filter, filter, request);
     }
 
     /**
@@ -73,7 +81,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct GET RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.GET, null, filter, request);
+        validateRequest(RestOperation.GET, null, filter, filter, request);
     }
 
     /**
@@ -104,7 +112,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct POST RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.POST, item, null, request);
+        validateRequest(RestOperation.POST, item, null, null, request);
     }
 
     /**
@@ -136,7 +144,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Verify that the correct PUT RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.PUT, item, filter, request);
+        validateRequest(RestOperation.PUT, item, filter, filter, request);
     }
 
     /**
@@ -166,17 +174,20 @@ public class ItemProviderTest extends AndroidTestCase {
         resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
+        final ConcurrentResult result = new ConcurrentResult();
         final ProviderListener listener = new ProviderListener() {
             @Override
             public void onRequestCompleted(Object ticket, List<?> items) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+                result.isSuccessCalled = true;
+                result.ticket = ticket;
+                result.items = items;
             }
 
             @Override
             public void onRequestFailed(Object ticket, String message) {
-                assertEquals(itemFilter, ticket);
-                assertEquals(message, errorMessage);
+                result.isFailureCalled = true;
+                result.ticket = ticket;
+                result.message = message;
             }
         };
 
@@ -188,7 +199,12 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
-        client.mock_processLastPushedRestRequest(false, itemFilter, errorMessage, resultList);
+        client.mock_processLastPushedRestRequest(false, errorMessage, resultList);
+
+        assertEquals(false, result.isSuccessCalled);
+        assertEquals(true, result.isFailureCalled);
+        assertEquals(itemFilter, result.ticket);
+        assertEquals(errorMessage, result.message);
     }
 
     /**
@@ -218,19 +234,20 @@ public class ItemProviderTest extends AndroidTestCase {
         resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
+        final ConcurrentResult result = new ConcurrentResult();
         final ProviderListener listener = new ProviderListener() {
             @Override
             public void onRequestCompleted(Object ticket, List<?> items) {
-                assertEquals(itemFilter, ticket);
-                assertEquals(resultList, items);
-                assertEquals(resultList.size(), items.size());
-                assertEquals(resultList.get(0), items.get(0));
+                result.isSuccessCalled = true;
+                result.ticket = ticket;
+                result.items = items;
             }
 
             @Override
             public void onRequestFailed(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+                result.isFailureCalled = true;
+                result.ticket = ticket;
+                result.message = message;
             }
         };
 
@@ -242,7 +259,14 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
-        client.mock_processLastPushedRestRequest(true, itemFilter, errorMessage, resultList);
+        client.mock_processLastPushedRestRequest(true, errorMessage, resultList);
+
+        assertEquals(true, result.isSuccessCalled);
+        assertEquals(false, result.isFailureCalled);
+        assertEquals(itemFilter, result.ticket);
+        assertEquals(resultList, result.items);
+        assertEquals(resultList.size(), result.items.size());
+        assertEquals(resultList.get(0), result.items.get(0));
     }
 
     /**
@@ -262,7 +286,7 @@ public class ItemProviderTest extends AndroidTestCase {
      *            expectations.
      */
     private void validateRequest(RestOperation expectedOperation, Object expectedContent,
-            Filter expectedFilter, RestRequest target) {
+            Object expectedTicket, Filter expectedFilter, RestRequest target) {
 
         Class<?> expectedItemType = expectedContent != null ? expectedContent.getClass() : null;
 
@@ -271,5 +295,6 @@ public class ItemProviderTest extends AndroidTestCase {
         assertEquals(expectedItemType, target.getItemType());
         assertEquals(expectedOperation, target.getOperation());
         assertEquals(expectedFilter, target.getFilter());
+        assertEquals(expectedTicket, target.getTicket());
     }
 }
