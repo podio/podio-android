@@ -21,7 +21,7 @@ public interface RestClient {
     /**
      * Returns the authority string for this rest client. The authority is the
      * 'www.google.com' part in 'http://www.google.com/query?a=b' or the
-     * 'com.tulip' part in 'content://com.podio/provider/item/12'.
+     * 'com.podio' part in 'content://com.podio/provider/item/12'.
      * 
      * @return The authority of this client.
      */

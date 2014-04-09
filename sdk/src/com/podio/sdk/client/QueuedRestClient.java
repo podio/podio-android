@@ -155,7 +155,7 @@ public abstract class QueuedRestClient implements RestClient {
      * @param result
      *            The result of the request.
      */
-    protected final void reportResult(final Object ticket, final ResultListener resultListener,
+    protected void reportResult(final Object ticket, final ResultListener resultListener,
             final RestResult result) {
 
         if (resultListener != null) {
@@ -192,5 +192,4 @@ public abstract class QueuedRestClient implements RestClient {
     public State state() {
         return state;
     }
-
 }
