@@ -189,12 +189,12 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         RestResult result = target.get(uri, MockContentItem.class);
         assertNotNull(result);
-        assertNotNull(result.items());
+        assertNotNull(result.item());
         assertEquals(true, result.isSuccess());
 
-        MockContentItem item = (MockContentItem) result.items().get(0);
+        MockContentItem item = (MockContentItem) result.item();
         ItemToJsonParser parser = new ItemToJsonParser();
-        String fetchedJson = parser.parse(item, MockContentItem.class).get(0).toString();
+        String fetchedJson = parser.parse(item, MockContentItem.class);
         String mockedJson = mockResponse.toString();
         assertEquals(mockedJson, fetchedJson);
 

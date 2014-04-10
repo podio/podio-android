@@ -1,7 +1,5 @@
 package com.podio.sdk.client;
 
-import java.util.List;
-
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
@@ -165,8 +163,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
 
             @Override
-            public void onSuccess(Object ticket, List<?> items) {
-                assertFalse("Unexpected success callback", true);
+            public void onSuccess(Object ticket, Object item) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
             }
         };
 
@@ -378,11 +377,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                assertFalse("Unexpected failure callback.", true);
+                boolean isCalled = true;
+                assertFalse(isCalled);
             }
 
             @Override
-            public void onSuccess(Object ticket, List<?> items) {
+            public void onSuccess(Object ticket, Object item) {
                 boolean isSuccess = true;
 
                 if (firstFilter == ticket) {
@@ -390,7 +390,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 } else if (secondFilter == ticket) {
                     assertTrue(isSuccess);
                 } else {
-                    assertFalse("Unexpected ticket", isSuccess);
+                    assertFalse(isSuccess);
                 }
             }
         };
@@ -469,7 +469,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
 
             @Override
-            public void onSuccess(Object ticket, List<?> items) {
+            public void onSuccess(Object ticket, Object item) {
                 threadNames[1] = Thread.currentThread().getName();
                 assertTrue("The result of the RestRequest was reported from an unexpected thread."
                         + " Calling thread: " + threadNames[0] + ", other thread: "
@@ -512,12 +512,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                assertTrue(true);
+                boolean isCalled = true;
+                assertTrue(isCalled);
             }
 
             @Override
-            public void onSuccess(Object ticket, List<?> items) {
-                assertFalse("Unexpected success callback.", true);
+            public void onSuccess(Object ticket, Object item) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
             }
         };
 
@@ -556,12 +558,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                assertFalse("Unexpected failure callback.", true);
+                boolean isCalled = true;
+                assertFalse(isCalled);
             }
 
             @Override
-            public void onSuccess(Object ticket, List<?> items) {
-                assertTrue(true);
+            public void onSuccess(Object ticket, Object item) {
+                boolean isCalled = true;
+                assertTrue(isCalled);
             }
         };
 

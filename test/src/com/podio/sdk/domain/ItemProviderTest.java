@@ -18,7 +18,7 @@ public class ItemProviderTest extends AndroidTestCase {
         private boolean isSuccessCalled = false;
         private boolean isFailureCalled = false;
         private Object ticket = null;
-        private List<?> items = null;
+        private Object item = null;
         private String message = null;
     }
 
@@ -177,10 +177,10 @@ public class ItemProviderTest extends AndroidTestCase {
         final ConcurrentResult result = new ConcurrentResult();
         final ProviderListener listener = new ProviderListener() {
             @Override
-            public void onRequestCompleted(Object ticket, List<?> items) {
+            public void onRequestCompleted(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
-                result.items = items;
+                result.item = item;
             }
 
             @Override
@@ -230,17 +230,15 @@ public class ItemProviderTest extends AndroidTestCase {
         final Filter itemFilter = new ItemFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
-        final List<Object> resultList = new ArrayList<Object>();
-        resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
         final ProviderListener listener = new ProviderListener() {
             @Override
-            public void onRequestCompleted(Object ticket, List<?> items) {
+            public void onRequestCompleted(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
-                result.items = items;
+                result.item = item;
             }
 
             @Override
@@ -259,14 +257,12 @@ public class ItemProviderTest extends AndroidTestCase {
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
-        client.mock_processLastPushedRestRequest(true, errorMessage, resultList);
+        client.mock_processLastPushedRestRequest(true, errorMessage, itemObject);
 
         assertEquals(true, result.isSuccessCalled);
         assertEquals(false, result.isFailureCalled);
         assertEquals(itemFilter, result.ticket);
-        assertEquals(resultList, result.items);
-        assertEquals(resultList.size(), result.items.size());
-        assertEquals(resultList.get(0), result.items.get(0));
+        assertEquals(itemObject, result.item);
     }
 
     /**

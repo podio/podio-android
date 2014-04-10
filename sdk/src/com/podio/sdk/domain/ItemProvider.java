@@ -1,7 +1,5 @@
 package com.podio.sdk.domain;
 
-import java.util.List;
-
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.ProviderListener;
@@ -21,9 +19,9 @@ public class ItemProvider<T> implements Provider<T> {
         }
 
         @Override
-        public void onSuccess(Object ticket, List<?> items) {
+        public void onSuccess(Object ticket, Object content) {
             if (providerListener != null) {
-                providerListener.onRequestCompleted(ticket, items);
+                providerListener.onRequestCompleted(ticket, content);
             }
         }
     };

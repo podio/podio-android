@@ -166,7 +166,7 @@ public abstract class QueuedRestClient implements RestClient {
                     if (result == null) {
                         resultListener.onFailure(ticket, null);
                     } else if (result.isSuccess()) {
-                        resultListener.onSuccess(ticket, result.items());
+                        resultListener.onSuccess(ticket, result.item());
                     } else {
                         resultListener.onFailure(ticket, result.message());
                     }

@@ -1,8 +1,5 @@
 package com.podio.sdk.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.podio.sdk.Parser;
@@ -10,18 +7,17 @@ import com.podio.sdk.Parser;
 public class ItemToJsonParser implements Parser<Object> {
 
     @Override
-    public List<?> parse(Object source, Class<?> classOfTarget) {
-        List<String> result = new ArrayList<String>(1);
+    public String parse(Object source, Class<?> classOfTarget) {
+        String result = null;
 
         if (source != null) {
             GsonBuilder builder = new GsonBuilder();
             builder.disableHtmlEscaping();
             Gson gson = builder.create();
-            String json = gson.toJson(source);
-            result.add(json);
+            result = gson.toJson(source);
         }
 
-        return result;
+        return result != null ? result : "{}";
     }
 
 }

@@ -1,7 +1,5 @@
 package com.podio.sdk.client;
 
-import java.util.List;
-
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
@@ -66,7 +64,7 @@ public class RestRequestTest extends AndroidTestCase {
             }
 
             @Override
-            public void onSuccess(Object ticket, List<?> items) {
+            public void onSuccess(Object ticket, Object item) {
             }
         };
 

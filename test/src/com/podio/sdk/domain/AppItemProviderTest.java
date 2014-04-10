@@ -1,7 +1,5 @@
 package com.podio.sdk.domain;
 
-import java.util.List;
-
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
@@ -47,7 +45,7 @@ public class AppItemProviderTest extends AndroidTestCase {
             }
 
             @Override
-            public void onRequestCompleted(Object ticket, List<?> items) {
+            public void onRequestCompleted(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
             }
@@ -93,7 +91,7 @@ public class AppItemProviderTest extends AndroidTestCase {
             }
 
             @Override
-            public void onRequestCompleted(Object ticket, List<?> items) {
+            public void onRequestCompleted(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
             }

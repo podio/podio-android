@@ -67,8 +67,8 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         boolean isSuccess = jsonString != null;
         String message = null;
-        List<?> items = jsonToItemParser.parse(jsonString, classOfResult);
-        RestResult result = new RestResult(isSuccess, message, items);
+        Object item = jsonToItemParser.parse(jsonString, classOfResult);
+        RestResult result = new RestResult(isSuccess, message, item);
 
         return result;
     }
@@ -81,8 +81,7 @@ public class HttpClientDelegate implements RestClientDelegate {
             JSONObject params;
 
             try {
-                List<?> content = itemToJsonParser.parse(item, classOfItem);
-                String json = Utils.notEmpty(content) ? content.get(0).toString() : null;
+                String json = itemToJsonParser.parse(item, classOfItem);
                 params = Utils.notEmpty(json) ? new JSONObject(json) : null;
             } catch (JSONException e) {
                 params = null;
@@ -95,8 +94,8 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         boolean isSuccess = jsonString != null;
         String message = null;
-        List<?> items = jsonToItemParser.parse(jsonString, classOfItem);
-        RestResult result = new RestResult(isSuccess, message, items);
+        Object content = jsonToItemParser.parse(jsonString, classOfItem);
+        RestResult result = new RestResult(isSuccess, message, content);
 
         return result;
     }
@@ -109,8 +108,7 @@ public class HttpClientDelegate implements RestClientDelegate {
             JSONObject params;
 
             try {
-                List<?> content = itemToJsonParser.parse(item, classOfItem);
-                String json = Utils.notEmpty(content) ? content.get(0).toString() : null;
+                String json = itemToJsonParser.parse(item, classOfItem);
                 params = Utils.notEmpty(json) ? new JSONObject(json) : null;
             } catch (JSONException e) {
                 params = null;
@@ -123,8 +121,8 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         boolean isSuccess = jsonString != null;
         String message = null;
-        List<?> items = jsonToItemParser.parse(jsonString, classOfItem);
-        RestResult result = new RestResult(isSuccess, message, items);
+        Object content = jsonToItemParser.parse(jsonString, classOfItem);
+        RestResult result = new RestResult(isSuccess, message, content);
 
         return result;
     }

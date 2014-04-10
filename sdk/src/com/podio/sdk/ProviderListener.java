@@ -1,7 +1,5 @@
 package com.podio.sdk;
 
-import java.util.List;
-
 /**
  * Defines the {@link Provider} callback interface as seen by the third party
  * client application.
@@ -18,10 +16,10 @@ public interface ProviderListener {
      * 
      * @param ticket
      *            The ticket used to identify the request.
-     * @param items
+     * @param content
      *            The result of the previously made fetch request.
      */
-    public void onRequestCompleted(Object ticket, List<?> items);
+    public void onRequestCompleted(Object ticket, Object content);
 
     /**
      * Notifies the calling implementation that a request couldn't be performed.

@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.RestResult;
-import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.parser.ItemToJsonParser;
 import com.podio.sdk.parser.JsonToItemParser;
@@ -52,7 +51,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
         assertNull(result.message());
-        assertNull(result.items());
+        assertNull(result.item());
     }
 
     /**
@@ -203,13 +202,11 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
                 new MockContentItem("test://uri/app/1", "{text:'test 1'}") };
 
         ItemToJsonParser parser = new ItemToJsonParser();
-        String json0 = parser.parse(content[0], MockContentItem.class).get(0).toString();
-        String json1 = parser.parse(content[1], MockContentItem.class).get(0).toString();
         ContentValues[] values = { new ContentValues(), new ContentValues() };
         values[0].put("uri", content[0].uri);
-        values[0].put("json", json0);
+        values[0].put("json", parser.parse(content[0], MockContentItem.class));
         values[1].put("uri", content[1].uri);
-        values[1].put("json", json1);
+        values[1].put("json", parser.parse(content[1], MockContentItem.class));
 
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
@@ -220,11 +217,10 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         RestResult result = databaseHelper.get(uri, MockContentItem.class);
 
         assertNotNull(result);
-        assertNotNull(result.items());
+        assertNotNull(result.item());
         assertEquals(true, result.isSuccess());
-        assertEquals(1, result.items().size());
 
-        MockContentItem item = (MockContentItem) result.items().get(0);
+        MockContentItem item = (MockContentItem) result.item();
         assertEquals(content[0].uri, item.uri);
         assertEquals(content[0].json, item.json);
     }
@@ -413,8 +409,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         String fetchedJson = cursor.getString(cursor.getColumnIndex("json"));
 
         JsonToItemParser parser = new JsonToItemParser();
-        List<?> itemList = parser.parse(fetchedJson, MockContentItem.class);
-        MockContentItem fetchedItem = (MockContentItem) itemList.get(0);
+        MockContentItem fetchedItem = (MockContentItem) parser.parse(fetchedJson,
+                MockContentItem.class);
 
         assertEquals(item.uri, fetchedUri);
         assertEquals(item.uri, fetchedItem.uri);

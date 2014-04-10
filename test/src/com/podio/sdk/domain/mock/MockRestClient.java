@@ -1,7 +1,5 @@
 package com.podio.sdk.domain.mock;
 
-import java.util.List;
-
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.ResultListener;
@@ -31,7 +29,7 @@ public final class MockRestClient implements RestClient {
     }
 
     public void mock_processLastPushedRestRequest(boolean shouldBeSuccess, String withMockMessage,
-            List<?> withMockItems) {
+            Object withMockItem) {
 
         if (request != null) {
             ResultListener listener = request.getResultListener();
@@ -40,7 +38,7 @@ public final class MockRestClient implements RestClient {
                 Object ticket = request.getTicket();
 
                 if (shouldBeSuccess) {
-                    listener.onSuccess(ticket, withMockItems);
+                    listener.onSuccess(ticket, withMockItem);
                 } else {
                     listener.onFailure(ticket, withMockMessage);
                 }

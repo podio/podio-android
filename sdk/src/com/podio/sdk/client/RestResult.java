@@ -1,38 +1,37 @@
 package com.podio.sdk.client;
 
-import java.util.List;
 
 /**
  * Wraps the result of a performed {@link RestRequest}.
- *
+ * 
  * @author László Urszuly
  */
 public class RestResult {
     private final boolean isSuccess;
     private final String message;
-    private final List<?> items;
+    private final Object item;
 
     /**
      * Constructor. The one and only way to set the state of this object.
-     *
+     * 
      * @param isSuccess
-     *        Boolean true if this object represents a successfully performed
-     *        {@link RestRequest}. Boolean false otherwise.
+     *            Boolean true if this object represents a successfully
+     *            performed {@link RestRequest}. Boolean false otherwise.
      * @param message
-     *        A optional message provided to the caller by the creator of this
-     *        object.
-     * @param items
-     *        Optional content of this object.
+     *            A optional message provided to the caller by the creator of
+     *            this object.
+     * @param item
+     *            Optional content of this object.
      */
-    public RestResult(boolean isSuccess, String message, List<?> items) {
+    public RestResult(boolean isSuccess, String message, Object item) {
         this.isSuccess = isSuccess;
         this.message = message;
-        this.items = items;
+        this.item = item;
     }
 
     /**
      * Returns the read-only success state.
-     *
+     * 
      * @return Boolean true if the corresponding request was successfully
      *         performed. Boolean false otherwise.
      */
@@ -42,17 +41,17 @@ public class RestResult {
 
     /**
      * Returns any items associated with the corresponding request. May be null.
-     *
+     * 
      * @return A list of items or null.
      */
-    public List<?> items() {
-        return items;
+    public Object item() {
+        return item;
     }
 
     /**
      * Returns any message provided by the underlying infrastructure. May be
      * null or empty.
-     *
+     * 
      * @return A message string.
      */
     public String message() {

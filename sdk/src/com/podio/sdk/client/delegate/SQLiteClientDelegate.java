@@ -65,8 +65,8 @@ public final class SQLiteClientDelegate extends SQLiteOpenHelper implements Rest
 
         boolean isSuccess = json != null;
         String message = null;
-        List<?> items = jsonToItemParser.parse(json, classOfResult);
-        RestResult result = new RestResult(isSuccess, message, items);
+        Object item = jsonToItemParser.parse(json, classOfResult);
+        RestResult result = new RestResult(isSuccess, message, item);
 
         return result;
     }
@@ -95,7 +95,7 @@ public final class SQLiteClientDelegate extends SQLiteOpenHelper implements Rest
         SQLiteDatabase database = openDatabase(uri);
 
         if (database != null) {
-            String json = buildContentJson(item, classOfItem);
+            String json = itemToJsonParser.parse(item, classOfItem);
 
             ContentValues values = new ContentValues();
             values.put("uri", uri.toString());
@@ -119,7 +119,7 @@ public final class SQLiteClientDelegate extends SQLiteOpenHelper implements Rest
         SQLiteDatabase database = openDatabase(uri);
 
         if (database != null) {
-            String json = buildContentJson(item, classOfItem);
+            String json = itemToJsonParser.parse(item, classOfItem);
 
             String key = "uri=?";
             String[] value = { uri.toString() };
@@ -165,13 +165,6 @@ public final class SQLiteClientDelegate extends SQLiteOpenHelper implements Rest
         if (jsonToItemParser != null) {
             this.jsonToItemParser = jsonToItemParser;
         }
-    }
-
-    private String buildContentJson(Object item, Class<?> classOfItem) {
-        List<?> values = itemToJsonParser.parse(item, classOfItem);
-        Object jsonObject = Utils.notEmpty(values) ? values.get(0) : "{}";
-
-        return jsonObject.toString();
     }
 
     private void clearDatabase(SQLiteDatabase database) {

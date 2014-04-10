@@ -24,15 +24,12 @@ public class RestResultTest extends AndroidTestCase {
         boolean isSuccess = true;
         String message = "success";
         Object item = new Object();
-        ArrayList<Object> items = new ArrayList<Object>();
-        items.add(item);
 
-        RestResult target = new RestResult(isSuccess, message, items);
+        RestResult target = new RestResult(isSuccess, message, item);
         assertNotNull(target);
         assertEquals(isSuccess, target.isSuccess());
         assertEquals(message, target.message());
-        assertEquals(items, target.items());
-        assertEquals(item, target.items().get(0));
+        assertEquals(item, target.item());
     }
 
     /**
@@ -58,7 +55,7 @@ public class RestResultTest extends AndroidTestCase {
         assertNotNull(target);
         assertEquals(isSuccess, target.isSuccess());
         assertEquals(message, target.message());
-        assertEquals(items, target.items());
+        assertEquals(items, target.item());
     }
 
 }
