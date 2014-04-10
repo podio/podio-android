@@ -2,9 +2,10 @@ package com.podio.sdk.client.mock;
 
 import android.net.Uri;
 
-import com.podio.sdk.client.network.NetworkClientDelegate;
+import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.RestResult;
 
-public class MockNetworkClientDelegate implements NetworkClientDelegate {
+public class MockNetworkClientDelegate implements RestClientDelegate {
 
     private Uri deleteUri = null;
     private Uri getUri = null;
@@ -17,28 +18,28 @@ public class MockNetworkClientDelegate implements NetworkClientDelegate {
     private boolean isPutCalled = false;
 
     @Override
-    public String delete(Uri uri) {
+    public RestResult delete(Uri uri) {
         isDeleteCalled = true;
         deleteUri = uri;
         return null;
     }
 
     @Override
-    public String get(Uri uri) {
+    public RestResult get(Uri uri, Class<?> classOfResult) {
         isGetCalled = true;
         getUri = uri;
         return null;
     }
 
     @Override
-    public String post(Uri uri, String json) {
+    public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
         isPostCalled = true;
         postUri = uri;
         return null;
     }
 
     @Override
-    public String put(Uri uri, String json) {
+    public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
         isPutCalled = true;
         putUri = uri;
         return null;

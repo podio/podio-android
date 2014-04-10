@@ -1,13 +1,11 @@
 package com.podio.sdk.client.mock;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.podio.sdk.client.database.DatabaseClientDelegate;
+import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.RestResult;
 
-public class MockDatabaseClientDelegate implements DatabaseClientDelegate {
+public class MockDatabaseClientDelegate implements RestClientDelegate {
 
     private Uri deleteUri = null;
     private Uri insertUri = null;
@@ -20,35 +18,31 @@ public class MockDatabaseClientDelegate implements DatabaseClientDelegate {
     private boolean isUpdateCalled = false;
 
     @Override
-    public Cursor delete(Uri uri) {
+    public RestResult delete(Uri uri) {
         isDeleteCalled = true;
         deleteUri = uri;
         return null;
     }
 
     @Override
-    public Cursor insert(Uri uri, ContentValues values) {
-        isInsertCalled = true;
-        insertUri = uri;
-        return null;
-    }
-
-    @Override
-    public Cursor query(Uri uri) {
+    public RestResult get(Uri uri, Class<?> classOfResult) {
         isQueryCalled = true;
         queryUri = uri;
         return null;
     }
 
     @Override
-    public Cursor update(Uri uri, ContentValues values) {
-        isUpdateCalled = true;
-        updateUri = uri;
+    public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+        isInsertCalled = true;
+        insertUri = uri;
         return null;
     }
 
     @Override
-    public void initialize(SQLiteDatabase database) {
+    public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+        isUpdateCalled = true;
+        updateUri = uri;
+        return null;
     }
 
     public Uri mock_getDeleteUri() {

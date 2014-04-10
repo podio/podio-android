@@ -6,11 +6,9 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.client.database.DatabaseClientDelegate;
 import com.podio.sdk.client.mock.MockAuthenticationDelegate;
 import com.podio.sdk.client.mock.MockDatabaseClientDelegate;
 import com.podio.sdk.client.mock.MockNetworkClientDelegate;
-import com.podio.sdk.client.network.NetworkClientDelegate;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.client.network.NetworkClientDelegate;
+import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
@@ -31,28 +31,28 @@ public class HttpRestClientTest extends InstrumentationTestCase {
         result = new ConcurrentResult();
 
         target = new HttpRestClient(context, "authority");
-        target.setNetworkDelegate(new NetworkClientDelegate() {
+        target.setNetworkDelegate(new RestClientDelegate() {
 
             @Override
-            public String delete(Uri uri) {
+            public RestResult delete(Uri uri) {
                 result.isDeleteCalled = true;
                 return null;
             }
 
             @Override
-            public String get(Uri uri) {
+            public RestResult get(Uri uri, Class<?> classOfItem) {
                 result.isGetCalled = true;
                 return null;
             }
 
             @Override
-            public String post(Uri uri, String json) {
+            public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
                 result.isPostCalled = true;
                 return null;
             }
 
             @Override
-            public String put(Uri uri, String json) {
+            public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
                 result.isPutCalled = true;
                 return null;
             }

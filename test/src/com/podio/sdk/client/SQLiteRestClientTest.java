@@ -1,14 +1,11 @@
 package com.podio.sdk.client;
 
 import android.app.Instrumentation;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.client.database.DatabaseClientDelegate;
+import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
@@ -34,34 +31,30 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
         result = new ConcurrentResult();
 
         target = new SQLiteRestClient(context, "authority");
-        target.setDatabaseDelegate(new DatabaseClientDelegate() {
+        target.setDatabaseDelegate(new RestClientDelegate() {
 
             @Override
-            public Cursor delete(Uri uri) {
+            public RestResult delete(Uri uri) {
                 result.isDeleteCalled = true;
                 return null;
             }
 
             @Override
-            public Cursor insert(Uri uri, ContentValues contentValues) {
-                result.isInsertCalled = true;
-                return null;
-            }
-
-            @Override
-            public Cursor query(Uri uri) {
+            public RestResult get(Uri uri, Class<?> classOfResult) {
                 result.isQueryCalled = true;
                 return null;
             }
 
             @Override
-            public Cursor update(Uri uri, ContentValues contentValues) {
-                result.isUpdateCalled = true;
+            public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+                result.isInsertCalled = true;
                 return null;
             }
 
             @Override
-            public void initialize(SQLiteDatabase database) {
+            public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+                result.isUpdateCalled = true;
+                return null;
             }
 
         });

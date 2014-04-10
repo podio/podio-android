@@ -1,18 +1,15 @@
 package com.podio.sdk.client;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.database.DatabaseClientDelegate;
-import com.podio.sdk.client.database.SQLiteClientDelegate;
+import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.parser.CursorToItemParser;
 
 /**
  * A RestClient that, when requesting data, returns content from a local
@@ -29,8 +26,7 @@ public class CachedRestClient extends HttpRestClient {
 
     private final String contentScheme;
 
-    private DatabaseClientDelegate databaseDelegate;
-    private CursorToItemParser cursorToItemParser;
+    private RestClientDelegate databaseDelegate;
     private ArrayList<RestRequest> delegatedRequests;
 
     /**
@@ -66,7 +62,6 @@ public class CachedRestClient extends HttpRestClient {
         super(context, authority, queueCapacity);
         contentScheme = "content";
         delegatedRequests = new ArrayList<RestRequest>();
-        cursorToItemParser = new CursorToItemParser();
         databaseDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
     }
 
@@ -86,15 +81,8 @@ public class CachedRestClient extends HttpRestClient {
                 // Query the locally cached data first...
                 if (filter != null) {
                     Uri uri = filter.buildUri(contentScheme, authority);
-                    Cursor cursor = databaseDelegate.query(uri);
                     Class<?> itemType = restRequest.getItemType();
-                    List<?> items = buildItems(cursor, itemType);
-
-                    if (items != null) {
-                        result = new RestResult(true, null, items);
-                    } else {
-                        result = new RestResult(false, "Ohno", null);
-                    }
+                    result = databaseDelegate.get(uri, itemType);
                 }
 
                 // ...and then queue the request once again for the super
@@ -111,44 +99,16 @@ public class CachedRestClient extends HttpRestClient {
     }
 
     /**
-     * Sets the parser used for parsing the database cursor objects. The parser
-     * will take the cursor, parse data from its columns and create new item
-     * objects from it.
-     * 
-     * @param cursorToItemParser
-     *            The parser to use for extracting cursor data.
-     */
-    public void setCursorToItemParser(CursorToItemParser cursorToItemParser) {
-        if (cursorToItemParser != null) {
-            this.cursorToItemParser = cursorToItemParser;
-        }
-    }
-
-    /**
      * Sets the database helper class which will manage the actual database
      * access operations.
      * 
      * @param databaseHelper
      *            The helper implementation.
      */
-    public void setDatabaseDelegate(DatabaseClientDelegate databaseDelegate) {
+    public void setDatabaseDelegate(RestClientDelegate databaseDelegate) {
         if (databaseDelegate != null) {
             this.databaseDelegate = databaseDelegate;
         }
     }
 
-    /**
-     * Creates a list of content item objects, created from the rows of the
-     * provided cursor.
-     * 
-     * @param cursor
-     *            The cursor to parse
-     * @param classOfItem
-     *            The class definition of the resulting item.
-     * @return A list of content item objects.
-     */
-    private List<?> buildItems(Cursor cursor, Class<?> classOfItem) {
-        List<?> result = cursorToItemParser.parse(cursor, classOfItem);
-        return result;
-    }
 }
