@@ -74,7 +74,7 @@ public class HttpRestClient extends QueuedRestClient {
             }
         }
 
-        return result;
+        return result != null ? result : new RestResult(false, null, null);
     }
 
     public void setAuthenticationDelegate(AuthenticationDelegate authenticationDelegate) {
