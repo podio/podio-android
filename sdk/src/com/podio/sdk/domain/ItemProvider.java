@@ -30,35 +30,63 @@ public class ItemProvider<T> implements Provider<T> {
     private RestClient client;
 
     @Override
-    public void changeItem(Filter filter, T item) {
+    public Object changeItem(Filter filter, T item) {
+        Object ticket = null;
+
         if (client != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item);
-            client.perform(restRequest);
+
+            if (client.perform(restRequest)) {
+                ticket = restRequest.getTicket();
+            }
         }
+
+        return ticket;
     }
 
     @Override
-    public void deleteItems(Filter filter) {
+    public Object deleteItems(Filter filter) {
+        Object ticket = null;
+
         if (client != null && filter != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter);
-            client.perform(restRequest);
+
+            if (client.perform(restRequest)) {
+                ticket = restRequest.getTicket();
+            }
         }
+
+        return ticket;
     }
 
     @Override
-    public void fetchItems(Filter filter) {
+    public Object fetchItems(Filter filter) {
+        Object ticket = null;
+
         if (client != null && filter != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.GET, filter);
-            client.perform(restRequest);
+
+            if (client.perform(restRequest)) {
+                ticket = restRequest.getTicket();
+            }
         }
+
+        return ticket;
     }
 
     @Override
-    public void pushItem(T item) {
+    public Object pushItem(T item) {
+        Object ticket = null;
+
         if (client != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.POST, item);
-            client.perform(restRequest);
+
+            if (client.perform(restRequest)) {
+                ticket = restRequest.getTicket();
+            }
         }
+
+        return ticket;
     }
 
     @Override

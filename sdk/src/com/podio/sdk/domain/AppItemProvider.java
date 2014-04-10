@@ -13,14 +13,12 @@ public final class AppItemProvider extends ItemProvider<AppItem> {
 
     public Object fetchAppItemsForSpace(long spaceId) {
         Filter filter = new AppItemFilter().withSpaceId(spaceId).withInactivesIncluded(false);
-        fetchItems(filter);
-        return filter;
+        return fetchItems(filter);
     }
 
     public Object fetchAppItemsForSpaceWithInactivesIncluded(long spaceId) {
         Filter filter = new AppItemFilter().withSpaceId(spaceId).withInactivesIncluded(true);
-        fetchItems(filter);
-        return filter;
+        return fetchItems(filter);
     }
 
 }
