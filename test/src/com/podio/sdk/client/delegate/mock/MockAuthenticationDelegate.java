@@ -1,4 +1,4 @@
-package com.podio.sdk.client.mock;
+package com.podio.sdk.client.delegate.mock;
 
 import com.podio.sdk.client.authentication.AuthenticationDelegate;
 

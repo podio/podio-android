@@ -6,9 +6,8 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.client.mock.MockAuthenticationDelegate;
-import com.podio.sdk.client.mock.MockDatabaseClientDelegate;
-import com.podio.sdk.client.mock.MockNetworkClientDelegate;
+import com.podio.sdk.client.delegate.mock.MockAuthenticationDelegate;
+import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -18,13 +17,17 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
     private static final Uri REFERENCE_CONTENT_URI = Uri //
             .parse("content://test.authority/path");
+
     private static final Uri REFERENCE_NETWORK_URI = Uri //
             .parse("https://test.authority/path?oauth_token=" //
                     + MockAuthenticationDelegate.TEST_TOKEN);
 
-    private MockDatabaseClientDelegate targetDatabaseDelegate;
-    private MockNetworkClientDelegate targetNetworkDelegate;
+    private MockRestClientDelegate targetDatabaseDelegate;
+    private MockRestClientDelegate targetNetworkDelegate;
     private CachedRestClient targetRestClient;
+
+    private int actualReportCount;
+    private int expectedReportCount;
 
     @Override
     protected void setUp() throws Exception {
@@ -32,21 +35,30 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getContext();
 
-        targetDatabaseDelegate = new MockDatabaseClientDelegate();
-        targetNetworkDelegate = new MockNetworkClientDelegate();
+        actualReportCount = 0;
+        expectedReportCount = 1;
+
+        targetDatabaseDelegate = new MockRestClientDelegate();
+        targetNetworkDelegate = new MockRestClientDelegate();
 
         targetRestClient = new CachedRestClient(context, "test.authority") {
             @Override
             protected void reportResult(Object ticket, ResultListener resultListener,
                     RestResult result) {
 
-                // This call is still run on the worker thread. The super
-                // implementation will make sure that the given resultListener
-                // is called from the parent thread, but in our case that thread
-                // is blocked while we're waiting for worker thread to complete.
+                // This call is still running on the worker thread. The super
+                // implementation (QueuedRestClient) will make sure that the
+                // given result listener is called on the main thread, but since
+                // that thread is blocked in the test, this is our last chance
+                // to manually release the blockades.
 
-                TestUtils.releaseBlockedThread();
-                super.reportResult(ticket, resultListener, result);
+                actualReportCount++;
+                if (actualReportCount >= expectedReportCount) {
+                    TestUtils.releaseBlockedThread();
+                }
+
+                // The last step in the reporting flow (the one that is executed
+                // on the main thread) is intentionally ignored for now.
             }
         };
         targetRestClient.setDatabaseDelegate(targetDatabaseDelegate);
@@ -56,9 +68,8 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that the expected Uri delegated to the
-     * {@link MockNetworkClientDelegate}, while there is no Uri delegated at all
-     * to the {@link MockDatabaseClientDelegate} when performing a delete
-     * request.
+     * {@link MockRestClientDelegate}, while there is no Uri delegated at all to
+     * the {@link MockDatabaseClientDelegate} when performing a delete request.
      * 
      * <pre>
      * 
@@ -107,18 +118,23 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteRequestTriggersOnlyNetworkDelegate() {
+        targetNetworkDelegate.mock_setMockDeleteResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockDeleteResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
+
         RestRequest request = buildRestRequest(RestOperation.DELETE);
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
-        assertEquals(false, targetDatabaseDelegate.mock_isDeleteCalled());
-        assertEquals(true, targetNetworkDelegate.mock_isDeleteCalled());
+        assertEquals(1, targetNetworkDelegate.mock_getDeleteCallCount());
+        assertEquals(1, targetDatabaseDelegate.mock_getDeleteCallCount());
+        assertEquals(1, targetDatabaseDelegate.mock_getGetCallCount());
     }
 
     /**
      * Verifies that the expected Uri delegated to both the
-     * {@link MockNetworkClientDelegate}, and the
+     * {@link MockRestClientDelegate}, and the
      * {@link MockDatabaseClientDelegate} when performing a get request.
      * 
      * <pre>
@@ -143,7 +159,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread();
 
-        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getQueryUri());
+        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getGetUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getGetUri());
     }
 
@@ -168,19 +184,26 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetRequestTriggersBothClientDelegates() {
+        targetNetworkDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
+        targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
+
+        expectedReportCount = 4;
+
         RestRequest request = buildRestRequest(RestOperation.GET);
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
-        assertEquals(true, targetDatabaseDelegate.mock_isQueryCalled());
-        assertEquals(true, targetNetworkDelegate.mock_isGetCalled());
+        assertEquals(2, targetDatabaseDelegate.mock_getGetCallCount());
+        assertEquals(1, targetNetworkDelegate.mock_getGetCallCount());
+        assertEquals(1, targetDatabaseDelegate.mock_getPostCallCount());
     }
 
     /**
      * Verifies that the expected Uri delegated to the
-     * {@link MockNetworkClientDelegate}, while there is no Uri delegated at all
-     * to the {@link MockDatabaseClientDelegate} when performing a post request.
+     * {@link MockRestClientDelegate}, while there is no Uri delegated at all to
+     * the {@link MockDatabaseClientDelegate} when performing a post request.
      * 
      * <pre>
      * 
@@ -204,7 +227,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread();
 
-        assertNull(targetDatabaseDelegate.mock_getInsertUri());
+        assertNull(targetDatabaseDelegate.mock_getPostUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPostUri());
     }
 
@@ -229,19 +252,22 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostRequestTriggersOnlyNetworkDelegate() {
+        targetNetworkDelegate.mock_setMockPostResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, null));
+
         RestRequest request = buildRestRequest(RestOperation.POST);
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
-        assertEquals(false, targetDatabaseDelegate.mock_isInsertCalled());
-        assertEquals(true, targetNetworkDelegate.mock_isPostCalled());
+        assertEquals(1, targetNetworkDelegate.mock_getPostCallCount());
+        assertEquals(1, targetDatabaseDelegate.mock_getPostCallCount());
     }
 
     /**
      * Verifies that the expected Uri delegated to the
-     * {@link MockNetworkClientDelegate}, while there is no Uri delegated at all
-     * to the {@link MockDatabaseClientDelegate} when performing a put request.
+     * {@link MockRestClientDelegate}, while there is no Uri delegated at all to
+     * the {@link MockDatabaseClientDelegate} when performing a put request.
      * 
      * <pre>
      * 
@@ -265,7 +291,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread();
 
-        assertNull(targetDatabaseDelegate.mock_getUpdateUri());
+        assertNull(targetDatabaseDelegate.mock_getPutUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPutUri());
     }
 
@@ -290,13 +316,16 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutRequestTriggersOnlyNetworkDelegate() {
+        targetNetworkDelegate.mock_setMockPutResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockPutResult(new RestResult(true, null, null));
+
         RestRequest request = buildRestRequest(RestOperation.PUT);
         targetRestClient.perform(request);
 
         TestUtils.blockThread();
 
-        assertEquals(false, targetDatabaseDelegate.mock_isUpdateCalled());
-        assertEquals(true, targetNetworkDelegate.mock_isPutCalled());
+        assertEquals(1, targetNetworkDelegate.mock_getPutCallCount());
+        assertEquals(1, targetDatabaseDelegate.mock_getPutCallCount());
     }
 
     private RestRequest buildRestRequest(RestOperation operation) {
