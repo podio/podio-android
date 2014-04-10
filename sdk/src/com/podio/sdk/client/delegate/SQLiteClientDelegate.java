@@ -102,7 +102,7 @@ public final class SQLiteClientDelegate extends SQLiteOpenHelper implements Rest
             values.put("json", json);
 
             id = database.insertWithOnConflict("content", null, values,
-                    SQLiteDatabase.CONFLICT_IGNORE);
+                    SQLiteDatabase.CONFLICT_REPLACE);
         }
 
         boolean isSuccess = id != -1L;

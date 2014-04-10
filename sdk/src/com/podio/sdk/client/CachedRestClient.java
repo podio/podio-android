@@ -93,9 +93,8 @@ public class CachedRestClient extends HttpRestClient {
 
             if (uri != null && itemType != null) {
                 if (operation == RestOperation.GET && !delegatedRequests.contains(restRequest)) {
-
                     // Query the locally cached data first...
-                    delegate(operation, uri, item, itemType);
+                    result = delegate(operation, uri, item, itemType);
 
                     // ...and then queue the request once again for the super
                     // implementation to act upon.
@@ -108,8 +107,12 @@ public class CachedRestClient extends HttpRestClient {
 
                     // The super implementation has delivered successfully,
                     // now also update the local cache accordingly.
-                    if (result.isSuccess() && operation != RestOperation.GET) {
-                        result = delegate(operation, uri, item, itemType);
+                    if (result.isSuccess()) {
+                        if (operation == RestOperation.GET) {
+                            result = delegate(RestOperation.POST, uri, item, itemType);
+                        } else {
+                            result = delegate(operation, uri, item, itemType);
+                        }
                     }
 
                     // The cache update succeeded. Get the new cached content
