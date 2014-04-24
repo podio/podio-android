@@ -10,6 +10,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
+import com.podio.sdk.Credentials;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.client.mock.MockWebServer;
@@ -30,7 +31,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getTargetContext();
-        target = new HttpClientDelegate(context);
+        Credentials credentials = new Credentials("clientId", "clientSecret");
+        credentials.setTokens("authToken", "refreshToken", 3600L);
+        credentials.setUserCredentials("userId", "userToken", "userGrantType");
+        target = new HttpClientDelegate(context, credentials);
     }
 
     @Override

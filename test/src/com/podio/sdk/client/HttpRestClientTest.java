@@ -29,9 +29,7 @@ public class HttpRestClientTest extends InstrumentationTestCase {
         Context context = instrumentation.getContext();
 
         result = new ConcurrentResult();
-
-        target = new HttpRestClient(context, "authority");
-        target.setNetworkDelegate(new RestClientDelegate() {
+        target = new HttpRestClient(context, "authority", new RestClientDelegate() {
 
             @Override
             public RestResult delete(Uri uri) {
@@ -57,7 +55,7 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 return null;
             }
 
-        });
+        }, 10);
     }
 
     /**

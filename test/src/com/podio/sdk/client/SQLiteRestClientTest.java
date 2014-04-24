@@ -30,8 +30,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
 
         result = new ConcurrentResult();
 
-        target = new SQLiteRestClient(context, "authority");
-        target.setDatabaseDelegate(new RestClientDelegate() {
+        target = new SQLiteRestClient(context, "authority", new RestClientDelegate() {
 
             @Override
             public RestResult delete(Uri uri) {
@@ -57,7 +56,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 return null;
             }
 
-        });
+        }, 10);
     }
 
     /**

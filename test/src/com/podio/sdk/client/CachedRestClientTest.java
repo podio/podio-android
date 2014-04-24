@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.client.delegate.mock.MockAuthenticationDelegate;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
@@ -19,8 +18,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
             .parse("content://test.authority/path");
 
     private static final Uri REFERENCE_NETWORK_URI = Uri //
-            .parse("https://test.authority/path?oauth_token=" //
-                    + MockAuthenticationDelegate.TEST_TOKEN);
+            .parse("https://test.authority/path");
 
     private MockRestClientDelegate targetDatabaseDelegate;
     private MockRestClientDelegate targetNetworkDelegate;
@@ -41,7 +39,8 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         targetDatabaseDelegate = new MockRestClientDelegate();
         targetNetworkDelegate = new MockRestClientDelegate();
 
-        targetRestClient = new CachedRestClient(context, "test.authority") {
+        targetRestClient = new CachedRestClient(context, "test.authority", targetNetworkDelegate,
+                targetDatabaseDelegate, 10) {
             @Override
             protected void reportResult(Object ticket, ResultListener resultListener,
                     RestResult result) {
@@ -61,14 +60,11 @@ public class CachedRestClientTest extends InstrumentationTestCase {
                 // on the main thread) is intentionally ignored for now.
             }
         };
-        targetRestClient.setDatabaseDelegate(targetDatabaseDelegate);
-        targetRestClient.setNetworkDelegate(targetNetworkDelegate);
-        targetRestClient.setAuthenticationDelegate(new MockAuthenticationDelegate());
     }
 
     /**
      * Verifies that the expected Uri delegated to the
-     * {@link MockRestClientDelegate}, while there is no Uri delegated at all to
+     * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
      * the {@link MockDatabaseClientDelegate} when performing a delete request.
      * 
      * <pre>
@@ -134,7 +130,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that the expected Uri delegated to both the
-     * {@link MockRestClientDelegate}, and the
+     * {@link MockHttpClientDelegate}, and the
      * {@link MockDatabaseClientDelegate} when performing a get request.
      * 
      * <pre>
@@ -202,7 +198,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that the expected Uri delegated to the
-     * {@link MockRestClientDelegate}, while there is no Uri delegated at all to
+     * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
      * the {@link MockDatabaseClientDelegate} when performing a post request.
      * 
      * <pre>
@@ -266,7 +262,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
     /**
      * Verifies that the expected Uri delegated to the
-     * {@link MockRestClientDelegate}, while there is no Uri delegated at all to
+     * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
      * the {@link MockDatabaseClientDelegate} when performing a put request.
      * 
      * <pre>

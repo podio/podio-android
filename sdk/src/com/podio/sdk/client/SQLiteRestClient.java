@@ -6,7 +6,6 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 
 /**
@@ -16,41 +15,26 @@ import com.podio.sdk.internal.request.RestOperation;
  * @author László Urszuly
  */
 public final class SQLiteRestClient extends QueuedRestClient {
-    private static final String DATABASE_NAME = "podio.db";
-    private static final int DATABASE_VERSION = 1;
-
-    private RestClientDelegate databaseDelegate;
-
-    /**
-     * Creates a new SQLiteRestClient with a request queue capacity of 10
-     * requests.
-     * 
-     * @param context
-     *            The context to execute the database operations in.
-     * @param authority
-     *            The authority to use in URIs by this client.
-     * 
-     * @see QueuedRestClient
-     * @see RestClient
-     */
-    public SQLiteRestClient(Context context, String authority) {
-        this(context, authority, 10);
-    }
+    private final RestClientDelegate databaseDelegate;
 
     /**
      * @param context
      *            The context to execute the database operations in.
      * @param authority
      *            The authority to use in URIs by this client.
+     * @param databaseDelegate
+     *            The {@link RestClientDelegate} implementation that will
+     *            perform the SQLite queries.
      * @param queueCapacity
      *            The custom request queue capacity.
      * 
      * @see QueuedRestClient
      * @see RestClient
      */
-    public SQLiteRestClient(Context context, String authority, int queueCapacity) {
+    public SQLiteRestClient(Context context, String authority, RestClientDelegate databaseDelegate,
+            int queueCapacity) {
         super("content", authority, queueCapacity);
-        databaseDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
+        this.databaseDelegate = databaseDelegate;
     }
 
     /**
@@ -74,19 +58,6 @@ public final class SQLiteRestClient extends QueuedRestClient {
         }
 
         return result;
-    }
-
-    /**
-     * Sets the database helper class which will manage the actual database
-     * access operations.
-     * 
-     * @param databaseHelper
-     *            The helper implementation.
-     */
-    public void setDatabaseDelegate(RestClientDelegate databaseDelegate) {
-        if (databaseDelegate != null) {
-            this.databaseDelegate = databaseDelegate;
-        }
     }
 
     /**

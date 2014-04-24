@@ -8,7 +8,6 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 
 /**
@@ -21,17 +20,16 @@ import com.podio.sdk.internal.request.RestOperation;
  * @author László Urszuly
  */
 public class CachedRestClient extends HttpRestClient {
-    private static final String DATABASE_NAME = "podio.db";
-    private static final int DATABASE_VERSION = 1;
-
     private final String contentScheme;
-
-    private RestClientDelegate databaseDelegate;
-    private ArrayList<RestRequest> delegatedRequests;
+    private final RestClientDelegate databaseDelegate;
+    private final ArrayList<RestRequest> delegatedRequests;
 
     /**
-     * Creates a new <code>CachedRestClient</code> with a default pending
-     * requests capacity of 10.
+     * Creates a new <code>CachedRestClient</code>. This implementation will
+     * return any cached content that matches the request criteria immediately
+     * and after that do a corresponding network operation. When the network
+     * call is finished, the cache is updated and the new result is also
+     * returned (through the same callback).
      * 
      * @param context
      *            The context in which to operate on the database and network
@@ -39,30 +37,27 @@ public class CachedRestClient extends HttpRestClient {
      * @param authority
      *            The content authority, this authority will apply to both the
      *            database and the network Uri.
-     */
-    public CachedRestClient(Context context, String authority) {
-        this(context, authority, 10);
-    }
-
-    /**
-     * Creates a new <code>CachedRestClient</code> with the given pending
-     * requests capacity.
-     * 
-     * @param context
-     *            The context in which to operate on the database and network
-     *            files.
-     * @param authority
-     *            The content authority, this authority will apply to both the
-     *            database and the network Uri.
+     * @param networkDelegate
+     *            The {@link RestClientDelegate} implementation that will
+     *            perform the HTTP requests.
+     * @param cacheDelegate
+     *            The {@link RestClientDelegate} implementation that will
+     *            perform the SQLite queries.
      * @param queueCapacity
      *            The number of pending request this {@link RestClient} will
      *            keep in its queue.
      */
-    public CachedRestClient(Context context, String authority, int queueCapacity) {
-        super(context, authority, queueCapacity);
-        contentScheme = "content";
-        delegatedRequests = new ArrayList<RestRequest>();
-        databaseDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
+    public CachedRestClient(Context context, String authority, RestClientDelegate networkDelegate,
+            RestClientDelegate cacheDelegate, int queueCapacity) {
+
+        super(context, authority, networkDelegate, queueCapacity);
+        if (cacheDelegate == null) {
+            throw new IllegalArgumentException("The SQLiteClientDelegate mustn't be null");
+        } else {
+            this.contentScheme = "content";
+            this.delegatedRequests = new ArrayList<RestRequest>();
+            this.databaseDelegate = cacheDelegate;
+        }
     }
 
     /**
@@ -128,19 +123,6 @@ public class CachedRestClient extends HttpRestClient {
     }
 
     /**
-     * Sets the database helper class which will manage the actual database
-     * access operations.
-     * 
-     * @param databaseHelper
-     *            The helper implementation.
-     */
-    public void setDatabaseDelegate(RestClientDelegate databaseDelegate) {
-        if (databaseDelegate != null) {
-            this.databaseDelegate = databaseDelegate;
-        }
-    }
-
-    /**
      * Lets the assigned {@link RestClientDelegate} implementation act upon the
      * underlying content as requested per operation and Uri.
      * 
@@ -155,26 +137,17 @@ public class CachedRestClient extends HttpRestClient {
      * @return The result description of the requested operation.
      */
     private RestResult delegate(RestOperation operation, Uri uri, Object item, Class<?> itemType) {
-        RestResult result;
-
         switch (operation) {
         case DELETE:
-            result = databaseDelegate.delete(uri);
-            break;
+            return databaseDelegate.delete(uri);
         case GET:
-            result = databaseDelegate.get(uri, itemType);
-            break;
+            return databaseDelegate.get(uri, itemType);
         case POST:
-            result = databaseDelegate.post(uri, item, itemType);
-            break;
+            return databaseDelegate.post(uri, item, itemType);
         case PUT:
-            result = databaseDelegate.put(uri, item, itemType);
-            break;
+            return databaseDelegate.put(uri, item, itemType);
         default:
-            result = new RestResult(false, null, null);
-            break;
+            return new RestResult(false, null, null);
         }
-
-        return result;
     }
 }
