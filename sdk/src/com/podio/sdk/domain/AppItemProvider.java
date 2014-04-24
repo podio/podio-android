@@ -12,12 +12,17 @@ import com.podio.sdk.Filter;
 public final class AppItemProvider extends ItemProvider<AppItem> {
 
     public Object fetchAppItemsForSpace(long spaceId) {
-        Filter filter = new AppItemFilter().withSpaceId(spaceId).withInactivesIncluded(false);
+        Filter filter = new AppItemFilter() //
+                .withSpaceId(spaceId) //
+                .withInactivesIncluded(false);
+
         return fetchItems(filter);
     }
 
     public Object fetchAppItemsForSpaceWithInactivesIncluded(long spaceId) {
-        Filter filter = new AppItemFilter().withSpaceId(spaceId).withInactivesIncluded(true);
+        Filter filter = new AppItemFilter() //
+                .withSpaceId(spaceId) //
+                .withInactivesIncluded(true);
         return fetchItems(filter);
     }
 

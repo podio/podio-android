@@ -16,7 +16,7 @@ import com.podio.sdk.internal.utils.Utils;
 import com.podio.sdk.parser.ItemToJsonParser;
 import com.podio.sdk.parser.JsonToItemParser;
 
-public final class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClientDelegate {
+public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClientDelegate {
 
     private ItemToJsonParser itemToJsonParser;
     private JsonToItemParser jsonToItemParser;
