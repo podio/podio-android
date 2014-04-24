@@ -13,9 +13,11 @@ import android.net.Uri;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
+import com.podio.sdk.Credentials;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.internal.utils.Utils;
@@ -26,13 +28,17 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     private final RequestQueue requestQueue;
 
+    private VolleyError lastRequestError;
     private ItemToJsonParser itemToJsonParser;
     private JsonToItemParser jsonToItemParser;
 
-    public HttpClientDelegate(Context context) {
-        requestQueue = Volley.newRequestQueue(context);
-        itemToJsonParser = new ItemToJsonParser();
-        jsonToItemParser = new JsonToItemParser();
+    private Credentials credentials;
+
+    public HttpClientDelegate(Context context, Credentials credentials) {
+        this.requestQueue = Volley.newRequestQueue(context);
+        this.itemToJsonParser = new ItemToJsonParser();
+        this.jsonToItemParser = new JsonToItemParser();
+        this.credentials = credentials;
     }
 
     @Override
@@ -155,11 +161,31 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
     }
 
-    private String performBlockingRequest(int method, String url, JSONObject params) {
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(method, url, params, future, future);
-        requestQueue.add(request);
+    private String performBlockingRequest(int method, String url, JSONObject body) {
+        JSONObject result = null;
+
+        if (credentials != null) {
+            if (!credentials.isAuthorized()) {
+                JSONObject authResult = authorize(credentials);
+                updateTokens(credentials, authResult);
+            }
+
+            if (credentials.shouldRefreshTokens()) {
+                JSONObject refreshResult = refresh(credentials);
+                updateTokens(credentials, refreshResult);
+            }
+
+            if (credentials.isAuthorized() && !credentials.shouldRefreshTokens()) {
+                result = perform(method, url, body, credentials);
+            }
+        }
+
+        return result != null ? result.toString() : null;
+    }
+
+    private JSONObject getBlockingResponse(RequestFuture<JSONObject> future) {
         JSONObject response;
+        lastRequestError = null;
 
         try {
             response = future.get(10, TimeUnit.SECONDS);
@@ -167,6 +193,7 @@ public class HttpClientDelegate implements RestClientDelegate {
             e.printStackTrace();
             response = null;
         } catch (ExecutionException e) {
+            lastRequestError = (VolleyError) e.getCause();
             e.printStackTrace();
             response = null;
         } catch (TimeoutException e) {
@@ -174,6 +201,63 @@ public class HttpClientDelegate implements RestClientDelegate {
             response = null;
         }
 
-        return response != null ? response.toString() : null;
+        return response;
+    }
+
+    private JSONObject authorize(Credentials credentials) {
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new AuthRequest(credentials, future);
+        requestQueue.add(request);
+        JSONObject result = getBlockingResponse(future);
+
+        return result;
+    }
+
+    private JSONObject perform(int method, String url, JSONObject bodyContent,
+            Credentials credentials) {
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new PodioRequest(method, url, bodyContent, credentials, future);
+        requestQueue.add(request);
+        JSONObject result = getBlockingResponse(future);
+
+        if (result == null && lastRequestError != null && lastRequestError.networkResponse != null) {
+
+            // For some reason the server has invalidated our access token.
+            if (lastRequestError.networkResponse.statusCode == 401) {
+                // Force refresh the access token.
+                credentials.forceExpired();
+                JSONObject refreshResult = refresh(credentials);
+                updateTokens(credentials, refreshResult);
+
+                // Perform the request again.
+                future = RequestFuture.newFuture();
+                request = new PodioRequest(method, url, bodyContent, credentials, future);
+                requestQueue.add(request);
+                result = getBlockingResponse(future);
+            }
+        }
+
+        return result;
+    }
+
+    private JSONObject refresh(Credentials credentials) {
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new RefreshRequest(credentials, future);
+        requestQueue.add(request);
+        JSONObject result = getBlockingResponse(future);
+
+        return result;
+    }
+
+    private void updateTokens(Credentials credentials, JSONObject responseBody) {
+        if (responseBody != null) {
+            String authToken = responseBody.optString("access_token");
+            String refreshToken = responseBody.optString("refresh_token");
+            long expiresIn = responseBody.optLong("expires_in", -1L);
+            credentials.setTokens(authToken, refreshToken, expiresIn);
+        } else {
+            credentials.setTokens(null, null, -1L);
+        }
     }
 }
