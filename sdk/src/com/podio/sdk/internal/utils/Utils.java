@@ -11,6 +11,16 @@ public final class Utils {
         // Hide constructor.
     }
 
+    public static boolean isAnyEmpty(String... strings) {
+        boolean isEmpty = isEmpty(strings);
+
+        for (int i = 0; !isEmpty && i < strings.length; i++) {
+            isEmpty = isEmpty(strings[i]);
+        }
+
+        return isEmpty;
+    }
+
     public static boolean isEmpty(Collection<?> collection) {
         return (collection == null) || (collection.size() == 0);
     }
@@ -37,6 +47,10 @@ public final class Utils {
 
     public static boolean isEmpty(String string) {
         return (string == null) || (string.length() == 0);
+    }
+
+    public static boolean notAnyEmpty(String... strings) {
+        return !isAnyEmpty(strings);
     }
 
     public static boolean notEmpty(Collection<?> collection) {
