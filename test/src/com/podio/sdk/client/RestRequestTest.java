@@ -3,6 +3,7 @@ package com.podio.sdk.client;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Session;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -61,6 +62,10 @@ public class RestRequestTest extends AndroidTestCase {
         ResultListener resultListener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
+            }
+
+            @Override
+            public void onSessionChange(Object ticket, Session session) {
             }
 
             @Override

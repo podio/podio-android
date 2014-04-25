@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import android.os.Handler;
 
 import com.podio.sdk.RestClient;
+import com.podio.sdk.Session;
 import com.podio.sdk.internal.request.ResultListener;
 
 /**
@@ -165,10 +166,17 @@ public abstract class QueuedRestClient implements RestClient {
                 public void run() {
                     if (result == null) {
                         resultListener.onFailure(ticket, null);
-                    } else if (result.isSuccess()) {
-                        resultListener.onSuccess(ticket, result.item());
                     } else {
-                        resultListener.onFailure(ticket, result.message());
+                        if (result.isSuccess()) {
+                            resultListener.onSuccess(ticket, result.item());
+                        } else {
+                            resultListener.onFailure(ticket, result.message());
+                        }
+
+                        Session session = result.session();
+                        if (session != null) {
+                            resultListener.onSessionChange(ticket, session);
+                        }
                     }
                 }
             });

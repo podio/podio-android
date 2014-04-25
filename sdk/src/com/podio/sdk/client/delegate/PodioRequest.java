@@ -3,36 +3,45 @@ package com.podio.sdk.client.delegate;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
+import android.util.Base64;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
 import com.podio.sdk.Session;
 import com.podio.sdk.internal.utils.Utils;
 
-public class PodioRequest extends JsonObjectRequest {
+public class PodioRequest extends StringRequest {
 
-    private final Session session;
+    private final String authToken;
+    private final String body;
 
-    public PodioRequest(int method, String url, JSONObject bodyContent, Session session,
-            RequestFuture<JSONObject> future) {
+    public PodioRequest(int method, String url, String body, Session session,
+            RequestFuture<String> future) {
 
-        super(method, url, bodyContent, future, future);
+        super(method, url, future, future);
         setShouldCache(false);
-        this.session = session;
+
+        this.authToken = session != null ? session.accessToken : "";
+        this.body = body;
     }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = new HashMap<String, String>();
-        String authToken = session != null ? session.accessToken : null;
 
         if (Utils.notEmpty(authToken)) {
-            headers.put("Authorization", "OAuth oauth_token=" + authToken);
+            headers.put("Authorization", "Bearer " + authToken);
         }
 
         return headers;
+    }
+
+    @Override
+    public byte[] getPostBody() {
+        byte[] bytes = body.getBytes();
+        byte[] result = Base64.encode(bytes, Base64.DEFAULT);
+        return result;
     }
 
 }

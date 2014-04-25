@@ -5,11 +5,13 @@ import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.ProviderListener;
+import com.podio.sdk.Session;
 import com.podio.sdk.domain.mock.MockRestClient;
 
 public class AppItemProviderTest extends AndroidTestCase {
 
     private static final class ConcurrentResult {
+        private boolean isSessionChangeCalled = false;
         private boolean isSuccessCalled = false;
         private boolean isFailureCalled = false;
         private Object ticket = null;
@@ -39,13 +41,19 @@ public class AppItemProviderTest extends AndroidTestCase {
         target.setRestClient(mockClient);
         target.setProviderListener(new ProviderListener() {
             @Override
-            public void onRequestFailed(Object ticket, String message) {
+            public void onRequestFailure(Object ticket, String message) {
                 result.isFailureCalled = true;
                 result.ticket = ticket;
             }
 
             @Override
-            public void onRequestCompleted(Object ticket, Object item) {
+            public void onSessionChange(Object ticket, Session session) {
+                result.isSessionChangeCalled = true;
+                result.ticket = ticket;
+            }
+
+            @Override
+            public void onRequestComplete(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
             }
@@ -54,6 +62,7 @@ public class AppItemProviderTest extends AndroidTestCase {
         target.fetchAppItemsForSpace(1);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
+        assertEquals(false, result.isSessionChangeCalled);
         assertEquals(true, result.isSuccessCalled);
         assertEquals(false, result.isFailureCalled);
 
@@ -85,13 +94,19 @@ public class AppItemProviderTest extends AndroidTestCase {
         target.setRestClient(mockClient);
         target.setProviderListener(new ProviderListener() {
             @Override
-            public void onRequestFailed(Object ticket, String message) {
+            public void onRequestFailure(Object ticket, String message) {
                 result.isFailureCalled = true;
                 result.ticket = ticket;
             }
 
             @Override
-            public void onRequestCompleted(Object ticket, Object item) {
+            public void onSessionChange(Object ticket, Session session) {
+                result.isSessionChangeCalled = true;
+                result.ticket = ticket;
+            }
+
+            @Override
+            public void onRequestComplete(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
             }
@@ -100,6 +115,7 @@ public class AppItemProviderTest extends AndroidTestCase {
         target.fetchAppItemsForSpaceWithInactivesIncluded(2);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
+        assertEquals(false, result.isSessionChangeCalled);
         assertEquals(true, result.isSuccessCalled);
         assertEquals(false, result.isFailureCalled);
 

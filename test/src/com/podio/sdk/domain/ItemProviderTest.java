@@ -8,6 +8,7 @@ import android.test.AndroidTestCase;
 import com.podio.sdk.Filter;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.Session;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.internal.request.RestOperation;
@@ -15,6 +16,7 @@ import com.podio.sdk.internal.request.RestOperation;
 public class ItemProviderTest extends AndroidTestCase {
 
     private static final class ConcurrentResult {
+        private boolean isSessionChangeCalled = false;
         private boolean isSuccessCalled = false;
         private boolean isFailureCalled = false;
         private Object ticket = null;
@@ -177,14 +179,21 @@ public class ItemProviderTest extends AndroidTestCase {
         final ConcurrentResult result = new ConcurrentResult();
         final ProviderListener listener = new ProviderListener() {
             @Override
-            public void onRequestCompleted(Object ticket, Object item) {
+            public void onRequestComplete(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
                 result.item = item;
             }
 
             @Override
-            public void onRequestFailed(Object ticket, String message) {
+            public void onSessionChange(Object ticket, Session session) {
+                result.isSessionChangeCalled = true;
+                result.ticket = ticket;
+                result.item = null;
+            }
+
+            @Override
+            public void onRequestFailure(Object ticket, String message) {
                 result.isFailureCalled = true;
                 result.ticket = ticket;
                 result.message = message;
@@ -201,6 +210,7 @@ public class ItemProviderTest extends AndroidTestCase {
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(false, errorMessage, resultList);
 
+        assertEquals(false, result.isSessionChangeCalled);
         assertEquals(false, result.isSuccessCalled);
         assertEquals(true, result.isFailureCalled);
         assertEquals(itemFilter, result.ticket);
@@ -235,14 +245,21 @@ public class ItemProviderTest extends AndroidTestCase {
         final ConcurrentResult result = new ConcurrentResult();
         final ProviderListener listener = new ProviderListener() {
             @Override
-            public void onRequestCompleted(Object ticket, Object item) {
+            public void onRequestComplete(Object ticket, Object item) {
                 result.isSuccessCalled = true;
                 result.ticket = ticket;
                 result.item = item;
             }
 
             @Override
-            public void onRequestFailed(Object ticket, String message) {
+            public void onSessionChange(Object ticket, Session session) {
+                result.isSessionChangeCalled = true;
+                result.ticket = ticket;
+                result.item = null;
+            }
+
+            @Override
+            public void onRequestFailure(Object ticket, String message) {
                 result.isFailureCalled = true;
                 result.ticket = ticket;
                 result.message = message;
@@ -259,6 +276,7 @@ public class ItemProviderTest extends AndroidTestCase {
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(true, errorMessage, itemObject);
 
+        assertEquals(false, result.isSessionChangeCalled);
         assertEquals(true, result.isSuccessCalled);
         assertEquals(false, result.isFailureCalled);
         assertEquals(itemFilter, result.ticket);

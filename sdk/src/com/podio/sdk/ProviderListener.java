@@ -19,7 +19,7 @@ public interface ProviderListener {
      * @param content
      *            The result of the previously made fetch request.
      */
-    public void onRequestCompleted(Object ticket, Object content);
+    public void onRequestComplete(Object ticket, Object content);
 
     /**
      * Notifies the calling implementation that a request couldn't be performed.
@@ -29,6 +29,18 @@ public interface ProviderListener {
      * @param message
      *            A message describing what went wrong.
      */
-    public void onRequestFailed(Object ticket, String message);
+    public void onRequestFailure(Object ticket, String message);
+
+    /**
+     * Notifies the calling implementation that a request caused the session
+     * tokens to change.
+     * 
+     * @param ticket
+     *            The ticket used to identify the request that caused the
+     *            session tokens to change.
+     * @param session
+     *            The new session tokens.
+     */
+    public void onSessionChange(Object ticket, Session session);
 
 }

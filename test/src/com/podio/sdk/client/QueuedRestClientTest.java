@@ -3,6 +3,7 @@ package com.podio.sdk.client;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Session;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.ItemFilter;
 import com.podio.sdk.internal.request.ResultListener;
@@ -159,7 +160,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                assertTrue(true);
+                boolean isCalled = true;
+                assertTrue(isCalled);
+            }
+
+            @Override
+            public void onSessionChange(Object ticket, Session session) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
             }
 
             @Override
@@ -382,6 +390,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
 
             @Override
+            public void onSessionChange(Object ticket, Session session) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
+            }
+
+            @Override
             public void onSuccess(Object ticket, Object item) {
                 boolean isSuccess = true;
 
@@ -465,7 +479,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                assertFalse("Unexpected failure callback.", true);
+                boolean isCalled = true;
+                assertFalse(isCalled);
+            }
+
+            @Override
+            public void onSessionChange(Object object, Session session) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
             }
 
             @Override
@@ -517,6 +538,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
 
             @Override
+            public void onSessionChange(Object ticket, Session session) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
+            }
+
+            @Override
             public void onSuccess(Object ticket, Object item) {
                 boolean isCalled = true;
                 assertFalse(isCalled);
@@ -527,6 +554,60 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 return new RestResult(false, null, null);
+            }
+        };
+
+        RestRequest request = new RestRequest().setResultListener(listener);
+        testTarget.enqueue(request);
+        TestUtils.blockThread(100);
+
+        // The code should return in the above defined listener once the
+        // blockade is released.
+    }
+
+    /**
+     * Verifies that the onSessionChange callback is called when the request was
+     * processed properly with a non-null session parameter.
+     * 
+     * <pre>
+     * 
+     *  1. Set up a local QueuedRestClient implementation.
+     * 
+     *  2. Push a request to the client.
+     * 
+     *  3. Simulate a success and session update during processing of the
+     *      request.
+     * 
+     *  4. Verify that the correct callback methods are called.
+     * 
+     * </pre>
+     */
+    public void testResultListenerReportsSessionChangeProperly() {
+        ResultListener listener = new ResultListener() {
+            @Override
+            public void onFailure(Object ticket, String message) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
+            }
+
+            @Override
+            public void onSessionChange(Object ticket, Session session) {
+                boolean isCalled = true;
+                assertTrue(isCalled);
+            }
+
+            @Override
+            public void onSuccess(Object ticket, Object item) {
+                boolean isCalled = true;
+                assertTrue(isCalled);
+            }
+        };
+
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
+            @Override
+            protected RestResult handleRequest(RestRequest restRequest) {
+                Session session = new Session("a", "b", 1L);
+                return new RestResult(true, session, null, null);
             }
         };
 
@@ -558,6 +639,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
+                boolean isCalled = true;
+                assertFalse(isCalled);
+            }
+
+            @Override
+            public void onSessionChange(Object ticket, Session session) {
                 boolean isCalled = true;
                 assertFalse(isCalled);
             }

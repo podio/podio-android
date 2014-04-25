@@ -1,5 +1,6 @@
 package com.podio.sdk.client;
 
+import com.podio.sdk.Session;
 
 /**
  * Wraps the result of a performed {@link RestRequest}.
@@ -8,6 +9,7 @@ package com.podio.sdk.client;
  */
 public class RestResult {
     private final boolean isSuccess;
+    private final Session session;
     private final String message;
     private final Object item;
 
@@ -24,7 +26,26 @@ public class RestResult {
      *            Optional content of this object.
      */
     public RestResult(boolean isSuccess, String message, Object item) {
+        this(isSuccess, null, message, item);
+    }
+
+    /**
+     * Constructor. The one and only way to set the state of this object.
+     * 
+     * @param isSuccess
+     *            Boolean true if this object represents a successfully
+     *            performed {@link RestRequest}. Boolean false otherwise.
+     * @param session
+     *            The new session variables, if changed. Otherwise null.
+     * @param message
+     *            A optional message provided to the caller by the creator of
+     *            this object.
+     * @param item
+     *            Optional content of this object.
+     */
+    public RestResult(boolean isSuccess, Session session, String message, Object item) {
         this.isSuccess = isSuccess;
+        this.session = session;
         this.message = message;
         this.item = item;
     }
@@ -37,6 +58,10 @@ public class RestResult {
      */
     public boolean isSuccess() {
         return isSuccess;
+    }
+
+    public Session session() {
+        return session;
     }
 
     /**

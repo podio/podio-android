@@ -74,24 +74,25 @@ public final class Podio {
 
     public static final class Client {
 
-        public static final void authenticateWithCredentials(String username, String password,
-                SessionListener sessionListener) {
-
-            networkDelegate.setSessionListener(sessionListener);
+        public static final Object authenticateWithCredentials(String username, String password,
+                ProviderListener providerListener) {
 
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
-            provider.authenticateWithUserCredentials(clientId, clientSecret, username, password);
+            provider.setProviderListener(providerListener);
+
+            return provider.authenticateWithUserCredentials(clientId, clientSecret, username,
+                    password);
         }
 
-        public static final void authenticateWithApp(String appId, String appToken,
-                SessionListener sessionListener) {
-
-            networkDelegate.setSessionListener(sessionListener);
+        public static final Object authenticateWithApp(String appId, String appToken,
+                ProviderListener providerListener) {
 
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
-            provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
+            provider.setProviderListener(providerListener);
+
+            return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
         }
 
         public static final void revokeSession(Session session) {
@@ -99,7 +100,7 @@ public final class Podio {
         }
     }
 
-    private static final String AUTHORITY = "com.podio";
+    private static final String AUTHORITY = "api.podio.com";
     private static final String DATABASE_NAME = "podio.db";
     private static final int DATABASE_VERSION = 1;
     private static final int QUEUE_CAPACITY = 10;
@@ -119,7 +120,7 @@ public final class Podio {
     public Podio() {
     }
 
-    public void setup(Context context, String clientId, String clientSecret) {
+    public static void setup(Context context, String clientId, String clientSecret) {
         Podio.clientId = clientId;
         Podio.clientSecret = clientSecret;
         Podio.networkDelegate = new HttpClientDelegate(context);

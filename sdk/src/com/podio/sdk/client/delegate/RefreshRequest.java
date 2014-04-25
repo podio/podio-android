@@ -1,24 +1,22 @@
 package com.podio.sdk.client.delegate;
 
-import org.json.JSONObject;
-
 import android.util.Base64;
 
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
 import com.podio.sdk.Session;
 
-public class RefreshRequest extends JsonObjectRequest {
+public class RefreshRequest extends StringRequest {
     private final String authBody;
 
-    public RefreshRequest(Session session, RequestFuture<JSONObject> future) {
-        super(Method.POST, "https://podio.com/oauth/token", null, future, future);
+    public RefreshRequest(String url, Session session, RequestFuture<String> future) {
+        super(Method.POST, url, future, future);
         setShouldCache(false);
         authBody = buildAuthBody(session);
     }
 
     @Override
-    public byte[] getBody() {
+    public byte[] getPostBody() {
         byte[] bytes = authBody.getBytes();
         byte[] result = Base64.encode(bytes, Base64.DEFAULT);
         return result;

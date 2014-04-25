@@ -1,27 +1,25 @@
 package com.podio.sdk.client.delegate;
 
-import org.json.JSONObject;
+import java.util.Map;
 
-import android.util.Base64;
-
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
 
-public class AuthRequest extends JsonObjectRequest {
+public class AuthRequest extends StringRequest {
 
-    private final String authBody;
+    private final Map<String, String> params;
 
-    public AuthRequest(String url, String body, RequestFuture<JSONObject> future) {
-        super(Method.POST, url, null, future, future);
+    public AuthRequest(String url, Map<String, String> params, RequestFuture<String> future) {
+        super(Method.POST, url, future, future);
         setShouldCache(false);
-        authBody = body;
+
+        this.params = params;
     }
 
     @Override
-    public byte[] getBody() {
-        byte[] bytes = authBody.getBytes();
-        byte[] result = Base64.encode(bytes, Base64.DEFAULT);
-        return result;
+    protected Map<String, String> getParams() throws AuthFailureError {
+        return params;
     }
 
 }

@@ -4,6 +4,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.Session;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -14,14 +15,21 @@ public class ItemProvider<T> implements Provider<T> {
         @Override
         public void onFailure(Object ticket, String message) {
             if (providerListener != null) {
-                providerListener.onRequestFailed(ticket, message);
+                providerListener.onRequestFailure(ticket, message);
+            }
+        }
+
+        @Override
+        public void onSessionChange(Object ticket, Session session) {
+            if (providerListener != null) {
+                providerListener.onSessionChange(ticket, session);
             }
         }
 
         @Override
         public void onSuccess(Object ticket, Object content) {
             if (providerListener != null) {
-                providerListener.onRequestCompleted(ticket, content);
+                providerListener.onRequestComplete(ticket, content);
             }
         }
     };

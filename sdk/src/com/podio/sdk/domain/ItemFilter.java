@@ -16,7 +16,7 @@ public class ItemFilter implements Filter {
         uriBuilder = new Uri.Builder();
 
         if (Utils.notEmpty(path)) {
-            uriBuilder.appendPath(path);
+            uriBuilder.appendEncodedPath(path);
         }
     }
 

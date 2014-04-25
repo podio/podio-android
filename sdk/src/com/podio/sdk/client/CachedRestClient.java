@@ -9,6 +9,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
+import com.podio.sdk.internal.utils.Utils;
 
 /**
  * A RestClient that, when requesting data, returns content from a local
@@ -86,7 +87,7 @@ public class CachedRestClient extends HttpRestClient {
 
             Uri uri = filter.buildUri(contentScheme, authority);
 
-            if (uri != null && itemType != null) {
+            if (Utils.notEmpty(uri)) {
                 if (operation == RestOperation.GET && !delegatedRequests.contains(restRequest)) {
                     // Query the locally cached data first...
                     result = delegate(operation, uri, item, itemType);
