@@ -17,8 +17,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
-import com.podio.sdk.Credentials;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.Session;
+import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.internal.utils.Utils;
 import com.podio.sdk.parser.ItemToJsonParser;
@@ -32,27 +33,50 @@ public class HttpClientDelegate implements RestClientDelegate {
     private ItemToJsonParser itemToJsonParser;
     private JsonToItemParser jsonToItemParser;
 
-    private Credentials credentials;
+    private Session session;
+    private SessionListener sessionListener;
 
-    public HttpClientDelegate(Context context, Credentials credentials) {
+    public HttpClientDelegate(Context context) {
         this.requestQueue = Volley.newRequestQueue(context);
         this.itemToJsonParser = new ItemToJsonParser();
         this.jsonToItemParser = new JsonToItemParser();
-        this.credentials = credentials;
+    }
+
+    @Override
+    public RestResult authorize(Uri uri) {
+        JSONObject jsonObject = null;
+
+        if (Utils.notEmpty(uri)) {
+            String url = uri.toString();
+            String body = uri.getQuery();
+
+            int queryStart = url.indexOf(body) - 1; // -1 for the "?"
+            if (queryStart > 0) {
+                url = url.substring(0, queryStart);
+            }
+
+            jsonObject = authorize(url, body);
+            updateSession(jsonObject);
+        }
+
+        boolean isSuccess = jsonObject != null;
+        RestResult result = new RestResult(isSuccess, null, null);
+
+        return result;
     }
 
     @Override
     public RestResult delete(Uri uri) {
-        String jsonString = null;
+        JSONObject jsonObject = null;
 
         if (Utils.notEmpty(uri)) {
             int method = Request.Method.DELETE;
             String url = uri.toString();
             JSONObject params = null;
-            jsonString = performBlockingRequest(method, url, params);
+            jsonObject = request(method, url, params);
         }
 
-        boolean isSuccess = jsonString != null;
+        boolean isSuccess = jsonObject != null;
         String message = null;
         List<?> items = null;
         RestResult result = new RestResult(isSuccess, message, items);
@@ -62,17 +86,18 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult get(Uri uri, Class<?> classOfResult) {
-        String jsonString = null;
+        JSONObject jsonObject = null;
 
         if (Utils.notEmpty(uri)) {
             int method = Request.Method.GET;
             String url = uri.toString();
             JSONObject params = null;
-            jsonString = performBlockingRequest(method, url, params);
+            jsonObject = request(method, url, params);
         }
 
-        boolean isSuccess = jsonString != null;
+        boolean isSuccess = jsonObject != null;
         String message = null;
+        String jsonString = isSuccess ? jsonObject.toString() : null;
         Object item = jsonToItemParser.parse(jsonString, classOfResult);
         RestResult result = new RestResult(isSuccess, message, item);
 
@@ -81,7 +106,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
-        String jsonString = null;
+        JSONObject jsonObject = null;
 
         if (Utils.notEmpty(uri)) {
             JSONObject params;
@@ -95,11 +120,12 @@ public class HttpClientDelegate implements RestClientDelegate {
 
             int method = Request.Method.POST;
             String url = uri.toString();
-            jsonString = performBlockingRequest(method, url, params);
+            jsonObject = request(method, url, params);
         }
 
-        boolean isSuccess = jsonString != null;
+        boolean isSuccess = jsonObject != null;
         String message = null;
+        String jsonString = isSuccess ? jsonObject.toString() : null;
         Object content = jsonToItemParser.parse(jsonString, classOfItem);
         RestResult result = new RestResult(isSuccess, message, content);
 
@@ -108,7 +134,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
-        String jsonString = null;
+        JSONObject jsonObject = null;
 
         if (Utils.notEmpty(uri)) {
             JSONObject params;
@@ -122,15 +148,39 @@ public class HttpClientDelegate implements RestClientDelegate {
 
             int method = Request.Method.PUT;
             String url = uri.toString();
-            jsonString = performBlockingRequest(method, url, params);
+            jsonObject = request(method, url, params);
         }
 
-        boolean isSuccess = jsonString != null;
+        boolean isSuccess = jsonObject != null;
         String message = null;
+        String jsonString = isSuccess ? jsonObject.toString() : null;
         Object content = jsonToItemParser.parse(jsonString, classOfItem);
         RestResult result = new RestResult(isSuccess, message, content);
 
         return result;
+    }
+
+    /**
+     * Revokes a previously stored session. The network delegate will use this
+     * session object when authenticating API calls.
+     * 
+     * @param session
+     *            The new session object to use.
+     */
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    /**
+     * Sets the new session listener callback. Every time the session variables
+     * are refreshed, this callback will be notified, offering the listening
+     * party to persist the session.
+     * 
+     * @param sessionListener
+     *            The callback implementation.
+     */
+    public void setSessionListener(SessionListener sessionListener) {
+        this.sessionListener = sessionListener;
     }
 
     /**
@@ -161,26 +211,21 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
     }
 
-    private String performBlockingRequest(int method, String url, JSONObject body) {
+    private JSONObject request(int method, String url, JSONObject body) {
         JSONObject result = null;
 
-        if (credentials != null) {
-            if (!credentials.isAuthorized()) {
-                JSONObject authResult = authorize(credentials);
-                updateTokens(credentials, authResult);
+        if (session != null && session.isAuthorized()) {
+            if (session.shouldRefreshTokens()) {
+                JSONObject refreshResult = refresh(session);
+                updateSession(refreshResult);
             }
 
-            if (credentials.shouldRefreshTokens()) {
-                JSONObject refreshResult = refresh(credentials);
-                updateTokens(credentials, refreshResult);
-            }
-
-            if (credentials.isAuthorized() && !credentials.shouldRefreshTokens()) {
-                result = perform(method, url, body, credentials);
+            if (session.isAuthorized() && !session.shouldRefreshTokens()) {
+                result = perform(method, url, body, session);
             }
         }
 
-        return result != null ? result.toString() : null;
+        return result;
     }
 
     private JSONObject getBlockingResponse(RequestFuture<JSONObject> future) {
@@ -204,20 +249,19 @@ public class HttpClientDelegate implements RestClientDelegate {
         return response;
     }
 
-    private JSONObject authorize(Credentials credentials) {
+    private JSONObject authorize(String url, String body) {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new AuthRequest(credentials, future);
+        JsonObjectRequest request = new AuthRequest(url, body, future);
         requestQueue.add(request);
         JSONObject result = getBlockingResponse(future);
 
         return result;
     }
 
-    private JSONObject perform(int method, String url, JSONObject bodyContent,
-            Credentials credentials) {
+    private JSONObject perform(int method, String url, JSONObject bodyContent, Session session) {
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new PodioRequest(method, url, bodyContent, credentials, future);
+        JsonObjectRequest request = new PodioRequest(method, url, bodyContent, session, future);
         requestQueue.add(request);
         JSONObject result = getBlockingResponse(future);
 
@@ -226,13 +270,13 @@ public class HttpClientDelegate implements RestClientDelegate {
             // For some reason the server has invalidated our access token.
             if (lastRequestError.networkResponse.statusCode == 401) {
                 // Force refresh the access token.
-                credentials.forceExpired();
-                JSONObject refreshResult = refresh(credentials);
-                updateTokens(credentials, refreshResult);
+                session = new Session(null);
+                JSONObject refreshResult = refresh(session);
+                session = new Session(refreshResult);
 
                 // Perform the request again.
                 future = RequestFuture.newFuture();
-                request = new PodioRequest(method, url, bodyContent, credentials, future);
+                request = new PodioRequest(method, url, bodyContent, session, future);
                 requestQueue.add(request);
                 result = getBlockingResponse(future);
             }
@@ -241,23 +285,20 @@ public class HttpClientDelegate implements RestClientDelegate {
         return result;
     }
 
-    private JSONObject refresh(Credentials credentials) {
+    private JSONObject refresh(Session session) {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new RefreshRequest(credentials, future);
+        JsonObjectRequest request = new RefreshRequest(session, future);
         requestQueue.add(request);
         JSONObject result = getBlockingResponse(future);
 
         return result;
     }
 
-    private void updateTokens(Credentials credentials, JSONObject responseBody) {
-        if (responseBody != null) {
-            String authToken = responseBody.optString("access_token");
-            String refreshToken = responseBody.optString("refresh_token");
-            long expiresIn = responseBody.optLong("expires_in", -1L);
-            credentials.setTokens(authToken, refreshToken, expiresIn);
-        } else {
-            credentials.setTokens(null, null, -1L);
+    private void updateSession(JSONObject sessionData) {
+        session = new Session(sessionData);
+
+        if (sessionListener != null) {
+            sessionListener.onSessionChange(session);
         }
     }
 }

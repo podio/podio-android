@@ -76,7 +76,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         int invalidSize = -1;
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", invalidSize);
         RestRequest request = new RestRequest();
-        boolean didAcceptRequest = testTarget.perform(request);
+        boolean didAcceptRequest = testTarget.enqueue(request);
 
         assertEquals(true, didAcceptRequest);
     }
@@ -126,8 +126,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         RestRequest firstRequest = new RestRequest().setFilter(firstFilter);
         RestRequest secondRequest = new RestRequest().setFilter(secondFilter);
 
-        firstResult.isRequestPushed = testTarget.perform(firstRequest);
-        secondResult.isRequestPushed = testTarget.perform(secondRequest);
+        firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
+        secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
 
         TestUtils.blockThread(500);
 
@@ -177,7 +177,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         };
 
         RestRequest request = new RestRequest().setResultListener(listener);
-        testTarget.perform(request);
+        testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
         // The code should return in the above defined listener once the
@@ -215,7 +215,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         };
 
         RestRequest request = new RestRequest();
-        testTarget.perform(request);
+        testTarget.enqueue(request);
         TestUtils.blockThread();
 
         assertFalse(threadNames[0] + " vs. " + threadNames[1],
@@ -252,8 +252,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         };
 
         RestRequest request = new RestRequest();
-        boolean isFirstRequestAccepted = testTarget.perform(request);
-        boolean isSecondRequestAccepted = testTarget.perform(request);
+        boolean isFirstRequestAccepted = testTarget.enqueue(request);
+        boolean isSecondRequestAccepted = testTarget.enqueue(request);
 
         // Sometimes the Java thread scheduler allows the worker thread of the
         // QueuedRestClient to start working right after the first request is
@@ -264,7 +264,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         // pop the second request as well from the queue before the third
         // request is requested. The grand total is that either request 2 or 3
         // (or both) should be guaranteed to be rejected for this test to pass.
-        boolean isThirdRequestAccepted = testTarget.perform(request);
+        boolean isThirdRequestAccepted = testTarget.enqueue(request);
 
         assertEquals(true, isFirstRequestAccepted);
         assertEquals(false, isSecondRequestAccepted);
@@ -294,7 +294,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        boolean isRequestAccepted = testTarget.perform(null);
+        boolean isRequestAccepted = testTarget.enqueue(null);
         TestUtils.blockThread();
 
         assertEquals(false, isRequestAccepted);
@@ -336,7 +336,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .setFilter(expectedFilter) //
                 .setTicket(expectedTicket);
 
-        result.isRequestPushed = testTarget.perform(request);
+        result.isRequestPushed = testTarget.enqueue(request);
 
         // This line will block execution until the blocking semaphore is
         // released either by the above result listener or the test global
@@ -416,7 +416,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .setFilter(firstFilter) //
                 .setResultListener(listener);
 
-        firstResult.isRequestPushed = testTarget.perform(firstRequest);
+        firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
         TestUtils.blockThread(100);
 
         assertEquals(true, firstResult.isRequestPushed);
@@ -430,7 +430,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .setFilter(secondFilter) //
                 .setResultListener(listener);
 
-        secondResult.isRequestPushed = testTarget.perform(secondRequest);
+        secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
         TestUtils.blockThread(100);
 
         assertEquals(true, secondResult.isRequestPushed);
@@ -485,7 +485,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         };
 
         RestRequest request = new RestRequest().setResultListener(listener);
-        testTarget.perform(request);
+        testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
         // The code should return in the above defined listener once the
@@ -531,7 +531,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         };
 
         RestRequest request = new RestRequest().setResultListener(listener);
-        testTarget.perform(request);
+        testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
         // The code should return in the above defined listener once the
@@ -577,7 +577,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         };
 
         RestRequest request = new RestRequest().setResultListener(listener);
-        testTarget.perform(request);
+        testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
         // The code should return in the above defined listener once the

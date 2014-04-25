@@ -19,7 +19,7 @@ public final class MockRestClient implements RestClient {
     }
 
     @Override
-    public boolean perform(RestRequest request) {
+    public boolean enqueue(RestRequest request) {
         this.request = request;
         return true;
     }

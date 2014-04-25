@@ -23,6 +23,7 @@ public final class AppItemProvider extends ItemProvider<AppItem> {
         Filter filter = new AppItemFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(true);
+
         return fetchItems(filter);
     }
 

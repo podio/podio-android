@@ -94,7 +94,7 @@ public class CachedRestClient extends HttpRestClient {
                     // ...and then queue the request once again for the super
                     // implementation to act upon.
                     delegatedRequests.add(restRequest);
-                    super.perform(restRequest);
+                    super.enqueue(restRequest);
                 } else {
                     // Let the super implementation act upon the request.
                     delegatedRequests.remove(restRequest);
@@ -102,7 +102,7 @@ public class CachedRestClient extends HttpRestClient {
 
                     // The super implementation has delivered successfully,
                     // now also update the local cache accordingly.
-                    if (result.isSuccess()) {
+                    if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
                         if (operation == RestOperation.GET) {
                             result = delegate(RestOperation.POST, uri, item, itemType);
                         } else {
@@ -112,7 +112,7 @@ public class CachedRestClient extends HttpRestClient {
 
                     // The cache update succeeded. Get the new cached content
                     // and return it to the caller.
-                    if (result.isSuccess()) {
+                    if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
                         result = delegate(RestOperation.GET, uri, item, itemType);
                     }
                 }

@@ -1,5 +1,5 @@
 package com.podio.sdk.internal.request;
 
 public enum RestOperation {
-    GET, POST, PUT, DELETE
+    AUTHORIZE, DELETE, GET, POST, PUT
 }

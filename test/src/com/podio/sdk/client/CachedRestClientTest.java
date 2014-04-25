@@ -63,6 +63,71 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that the expected Uri is delegated to the
+     * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
+     * the {@link MockDatabaseClientDelegate} when performing a authorize
+     * request.
+     * 
+     * <pre>
+     * 
+     * 2. Add a mocked {@link DatabaseClientDelegate} to the client.
+     * 
+     * 3. Add a mocked {@link NetworkClientDelegate} to the client.
+     * 
+     * 4. Perform a "authorize" request.
+     * 
+     * 5. Verify that there is no Uri delegated to the mocked database
+     *      delegate.
+     * 
+     * 6. Verify that the expected Uri is delegated to the mocked network
+     *      delegate.
+     * 
+     * </pre>
+     */
+    public void testAuthorizeRequestDelegatesCorrectUri() {
+        RestRequest request = buildRestRequest(RestOperation.AUTHORIZE, "path");
+        targetRestClient.enqueue(request);
+
+        TestUtils.blockThread();
+
+        assertNull(targetDatabaseDelegate.mock_getAuthorizeUri());
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getAuthorizeUri());
+    }
+
+    /**
+     * Verifies that only the network delegate is triggered when a "authorize"
+     * rest request is called.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new CachedRestClient.
+     * 
+     * 2. Add a mocked {@link DatabaseClientDelegate} to the client.
+     * 
+     * 3. Add a mocked {@link NetworkClientDelegate} to the client.
+     * 
+     * 4. Perform a "authorize" request.
+     * 
+     * 5. Verify that the mocked database delegate is not triggered.
+     * 
+     * 6. Verify that the mocked network delegate is triggered.
+     * 
+     * </pre>
+     */
+    public void testAuthorizeRequestTriggersOnlyNetworkDelegate() {
+        targetNetworkDelegate.mock_setMockAuthorizeResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockAuthorizeResult(new RestResult(true, null, null));
+
+        RestRequest request = buildRestRequest(RestOperation.AUTHORIZE);
+        targetRestClient.enqueue(request);
+
+        TestUtils.blockThread();
+
+        assertEquals(1, targetNetworkDelegate.mock_getAuthorizeCallCount());
+        assertEquals(0, targetDatabaseDelegate.mock_getAuthorizeCallCount());
+    }
+
+    /**
      * Verifies that the expected Uri delegated to the
      * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
      * the {@link MockDatabaseClientDelegate} when performing a delete request.
@@ -85,7 +150,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      */
     public void testDeleteRequestDelegatesCorrectUri() {
         RestRequest request = buildRestRequest(RestOperation.DELETE, "path");
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -119,7 +184,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         targetDatabaseDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
 
         RestRequest request = buildRestRequest(RestOperation.DELETE);
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -151,7 +216,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      */
     public void testGetRequestDelegatesCorrectUri() {
         RestRequest request = buildRestRequest(RestOperation.GET, "path");
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -187,7 +252,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         expectedReportCount = 4;
 
         RestRequest request = buildRestRequest(RestOperation.GET);
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -219,7 +284,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      */
     public void testPostRequestDelegatesCorrectUri() {
         RestRequest request = buildRestRequest(RestOperation.POST, "path");
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -252,7 +317,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, null));
 
         RestRequest request = buildRestRequest(RestOperation.POST);
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -283,7 +348,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      */
     public void testPutRequestDelegatesCorrectUri() {
         RestRequest request = buildRestRequest(RestOperation.PUT, "path");
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 
@@ -316,7 +381,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         targetDatabaseDelegate.mock_setMockPutResult(new RestResult(true, null, null));
 
         RestRequest request = buildRestRequest(RestOperation.PUT);
-        targetRestClient.perform(request);
+        targetRestClient.enqueue(request);
 
         TestUtils.blockThread();
 

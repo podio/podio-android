@@ -6,6 +6,8 @@ import com.podio.sdk.client.RestResult;
 
 public interface RestClientDelegate {
 
+    public RestResult authorize(Uri uri);
+
     public RestResult delete(Uri uri);
 
     public RestResult get(Uri uri, Class<?> classOfResult);

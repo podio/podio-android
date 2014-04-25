@@ -129,7 +129,7 @@ public abstract class QueuedRestClient implements RestClient {
      * {@inheritDoc RestClient#perform(RestRequest)}
      */
     @Override
-    public boolean perform(RestRequest request) {
+    public boolean enqueue(RestRequest request) {
         boolean isPushed = request != null && queue.offer(request);
         return isPushed;
     }

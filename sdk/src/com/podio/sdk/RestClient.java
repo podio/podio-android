@@ -46,6 +46,6 @@ public interface RestClient {
      * @return Boolean true if the client accepted the request, boolean false
      *         otherwise.
      */
-    public boolean perform(RestRequest request);
+    public boolean enqueue(RestRequest request);
 
 }

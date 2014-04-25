@@ -7,20 +7,30 @@ import com.podio.sdk.client.RestResult;
 
 public class MockRestClientDelegate implements RestClientDelegate {
 
+    private RestResult authorizeResult = null;
     private RestResult deleteResult = null;
     private RestResult getResult = null;
     private RestResult postResult = null;
     private RestResult putResult = null;
 
+    private Uri authorizeUri = null;
     private Uri deleteUri = null;
     private Uri getUri = null;
     private Uri postUri = null;
     private Uri putUri = null;
 
+    private int authorizeCount = 0;
     private int deleteCount = 0;
     private int getCount = 0;
     private int postCount = 0;
     private int putCount = 0;
+
+    @Override
+    public RestResult authorize(Uri uri) {
+        authorizeCount++;
+        authorizeUri = uri;
+        return authorizeResult;
+    }
 
     @Override
     public RestResult delete(Uri uri) {
@@ -50,6 +60,10 @@ public class MockRestClientDelegate implements RestClientDelegate {
         return putResult;
     }
 
+    public Uri mock_getAuthorizeUri() {
+        return authorizeUri;
+    }
+
     public Uri mock_getDeleteUri() {
         return deleteUri;
     }
@@ -66,6 +80,10 @@ public class MockRestClientDelegate implements RestClientDelegate {
         return putUri;
     }
 
+    public int mock_getAuthorizeCallCount() {
+        return authorizeCount;
+    }
+
     public int mock_getDeleteCallCount() {
         return deleteCount;
     }
@@ -80,6 +98,10 @@ public class MockRestClientDelegate implements RestClientDelegate {
 
     public int mock_getPutCallCount() {
         return putCount;
+    }
+
+    public void mock_setMockAuthorizeResult(RestResult authorizeResult) {
+        this.authorizeResult = authorizeResult;
     }
 
     public void mock_setMockDeleteResult(RestResult deleteResult) {

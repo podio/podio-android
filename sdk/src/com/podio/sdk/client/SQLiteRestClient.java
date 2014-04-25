@@ -78,6 +78,8 @@ public final class SQLiteRestClient extends QueuedRestClient {
             Class<?> classOfContent) {
 
         switch (operation) {
+        case AUTHORIZE:
+            return databaseDelegate.authorize(uri);
         case DELETE:
             return databaseDelegate.delete(uri);
         case GET:

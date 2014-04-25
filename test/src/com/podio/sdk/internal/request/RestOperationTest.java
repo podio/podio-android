@@ -136,7 +136,7 @@ public class RestOperationTest extends AndroidTestCase {
     public void testRestOperationValues() {
         RestOperation[] targetArray = RestOperation.values();
         assertNotNull(targetArray);
-        assertEquals(4, targetArray.length);
+        assertEquals(5, targetArray.length);
 
         List<RestOperation> targetList = new ArrayList<RestOperation>();
 
@@ -144,6 +144,7 @@ public class RestOperationTest extends AndroidTestCase {
             targetList.add(operation);
         }
 
+        assertTrue(targetList.contains(RestOperation.AUTHORIZE));
         assertTrue(targetList.contains(RestOperation.DELETE));
         assertTrue(targetList.contains(RestOperation.GET));
         assertTrue(targetList.contains(RestOperation.POST));

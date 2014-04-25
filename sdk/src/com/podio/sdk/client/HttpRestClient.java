@@ -74,6 +74,8 @@ public class HttpRestClient extends QueuedRestClient {
             Class<?> classOfItem) {
 
         switch (operation) {
+        case AUTHORIZE:
+            return networkDelegate.authorize(uri);
         case DELETE:
             return networkDelegate.delete(uri);
         case GET:

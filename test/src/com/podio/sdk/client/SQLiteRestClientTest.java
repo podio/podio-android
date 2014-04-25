@@ -13,6 +13,7 @@ import com.podio.test.TestUtils;
 public class SQLiteRestClientTest extends InstrumentationTestCase {
 
     private static final class ConcurrentResult {
+        private boolean isAuthorizeCalled;
         private boolean isDeleteCalled;
         private boolean isInsertCalled;
         private boolean isQueryCalled;
@@ -29,8 +30,13 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
         Context context = instrumentation.getContext();
 
         result = new ConcurrentResult();
-
         target = new SQLiteRestClient(context, "authority", new RestClientDelegate() {
+
+            @Override
+            public RestResult authorize(Uri uri) {
+                result.isAuthorizeCalled = true;
+                return null;
+            }
 
             @Override
             public RestResult delete(Uri uri) {
@@ -60,6 +66,37 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that a authorize rest operation is delegated properly to the
+     * {@link DatabaseClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteRestClient} and add a mock
+     *      {@link DatabaseClientDelegate} to it.
+     * 
+     * 2. Push a authorize operation to the client.
+     * 
+     * 3. Verify that the authorize method of the database helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testAuthorizeOperationIsDelegatedCorrectly() {
+        RestRequest restRequest = new RestRequest() //
+                .setFilter(new ItemFilter()) //
+                .setOperation(RestOperation.AUTHORIZE);
+
+        target.enqueue(restRequest);
+        TestUtils.blockThread(20);
+
+        assertEquals(true, result.isAuthorizeCalled);
+        assertEquals(false, result.isDeleteCalled);
+        assertEquals(false, result.isInsertCalled);
+        assertEquals(false, result.isQueryCalled);
+        assertEquals(false, result.isUpdateCalled);
+    }
+
+    /**
      * Verifies that a delete rest operation is delegated correctly to the
      * {@link DatabaseClientDelegate}.
      * 
@@ -80,9 +117,10 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.DELETE);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(true, result.isDeleteCalled);
         assertEquals(false, result.isInsertCalled);
         assertEquals(false, result.isQueryCalled);
@@ -110,9 +148,10 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.GET);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
         assertEquals(false, result.isInsertCalled);
         assertEquals(true, result.isQueryCalled);
@@ -140,9 +179,10 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.POST);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
         assertEquals(true, result.isInsertCalled);
         assertEquals(false, result.isQueryCalled);
@@ -170,9 +210,10 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.PUT);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
         assertEquals(false, result.isInsertCalled);
         assertEquals(false, result.isQueryCalled);

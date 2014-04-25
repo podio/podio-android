@@ -13,6 +13,7 @@ import com.podio.test.TestUtils;
 public class HttpRestClientTest extends InstrumentationTestCase {
 
     private static final class ConcurrentResult {
+        private boolean isAuthorizeCalled;
         private boolean isDeleteCalled;
         private boolean isGetCalled;
         private boolean isPostCalled;
@@ -30,6 +31,12 @@ public class HttpRestClientTest extends InstrumentationTestCase {
 
         result = new ConcurrentResult();
         target = new HttpRestClient(context, "authority", new RestClientDelegate() {
+
+            @Override
+            public RestResult authorize(Uri uri) {
+                result.isAuthorizeCalled = true;
+                return null;
+            }
 
             @Override
             public RestResult delete(Uri uri) {
@@ -59,6 +66,37 @@ public class HttpRestClientTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that a authorize rest operation is delegated correctly to the
+     * {@link NetworkClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link HttpRestClient} and add a mock
+     *      {@link NetworkClientDelegate} to it.
+     * 
+     * 2. Push a authorize operation to the client.
+     * 
+     * 3. Verify that the authorize method of the network helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testAuthorizeOperationIsDelegatedCorrectly() {
+        RestRequest restRequest = new RestRequest() //
+                .setFilter(new ItemFilter()) //
+                .setOperation(RestOperation.AUTHORIZE);
+
+        target.enqueue(restRequest);
+        TestUtils.blockThread(20);
+
+        assertEquals(true, result.isAuthorizeCalled);
+        assertEquals(false, result.isDeleteCalled);
+        assertEquals(false, result.isGetCalled);
+        assertEquals(false, result.isPostCalled);
+        assertEquals(false, result.isPutCalled);
+    }
+
+    /**
      * Verifies that a delete rest operation is delegated correctly to the
      * {@link NetworkClientDelegate}.
      * 
@@ -79,9 +117,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.DELETE);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(true, result.isDeleteCalled);
         assertEquals(false, result.isGetCalled);
         assertEquals(false, result.isPostCalled);
@@ -109,9 +148,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.GET);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
         assertEquals(true, result.isGetCalled);
         assertEquals(false, result.isPostCalled);
@@ -139,9 +179,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.POST);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
         assertEquals(false, result.isGetCalled);
         assertEquals(true, result.isPostCalled);
@@ -169,9 +210,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setFilter(new ItemFilter()) //
                 .setOperation(RestOperation.PUT);
 
-        target.perform(restRequest);
+        target.enqueue(restRequest);
         TestUtils.blockThread(20);
 
+        assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
         assertEquals(false, result.isGetCalled);
         assertEquals(false, result.isPostCalled);

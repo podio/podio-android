@@ -28,6 +28,12 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
+    public RestResult authorize(Uri uri) {
+        throw new UnsupportedOperationException(
+                "SQLiteDatabaseDelegate doesn't support authorization requests");
+    }
+
+    @Override
     public RestResult delete(Uri uri) {
         int count = -1;
         SQLiteDatabase database = openDatabase(uri);

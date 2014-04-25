@@ -27,7 +27,7 @@ public class ItemProvider<T> implements Provider<T> {
     };
 
     private ProviderListener providerListener;
-    private RestClient client;
+    protected RestClient client;
 
     @Override
     public Object changeItem(Filter filter, T item) {
@@ -36,7 +36,7 @@ public class ItemProvider<T> implements Provider<T> {
         if (client != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item);
 
-            if (client.perform(restRequest)) {
+            if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
             }
         }
@@ -51,7 +51,7 @@ public class ItemProvider<T> implements Provider<T> {
         if (client != null && filter != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter);
 
-            if (client.perform(restRequest)) {
+            if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
             }
         }
@@ -66,7 +66,7 @@ public class ItemProvider<T> implements Provider<T> {
         if (client != null && filter != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.GET, filter);
 
-            if (client.perform(restRequest)) {
+            if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
             }
         }
@@ -81,7 +81,7 @@ public class ItemProvider<T> implements Provider<T> {
         if (client != null) {
             RestRequest restRequest = buildRestRequest(RestOperation.POST, item);
 
-            if (client.perform(restRequest)) {
+            if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
             }
         }
@@ -99,15 +99,15 @@ public class ItemProvider<T> implements Provider<T> {
         this.client = client;
     }
 
-    private RestRequest buildRestRequest(RestOperation operation, Filter filter) {
+    protected RestRequest buildRestRequest(RestOperation operation, Filter filter) {
         return buildRestRequest(operation, filter, null);
     }
 
-    private RestRequest buildRestRequest(RestOperation operation, T content) {
+    protected RestRequest buildRestRequest(RestOperation operation, T content) {
         return buildRestRequest(operation, null, content);
     }
 
-    private RestRequest buildRestRequest(RestOperation operation, Filter filter, T content) {
+    protected RestRequest buildRestRequest(RestOperation operation, Filter filter, T content) {
         Class<?> classOfContent = content != null ? content.getClass() : null;
 
         RestRequest request = new RestRequest() //
