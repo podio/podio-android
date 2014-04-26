@@ -52,8 +52,9 @@ public class CachedRestClient extends HttpRestClient {
             RestClientDelegate cacheDelegate, int queueCapacity) {
 
         super(context, authority, networkDelegate, queueCapacity);
+
         if (cacheDelegate == null) {
-            throw new IllegalArgumentException("The SQLiteClientDelegate mustn't be null");
+            throw new IllegalArgumentException("The RestClientDelegates mustn't be null");
         } else {
             this.contentScheme = "content";
             this.delegatedRequests = new ArrayList<RestRequest>();
@@ -148,7 +149,8 @@ public class CachedRestClient extends HttpRestClient {
         case PUT:
             return databaseDelegate.put(uri, item, itemType);
         default:
-            return new RestResult(false, null, null);
+            String message = "Unknown operation: " + operation.name();
+            return new RestResult(false, message, null);
         }
     }
 }

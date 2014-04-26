@@ -41,7 +41,7 @@ public class HttpRestClient extends QueuedRestClient {
         super("https", authority, queueCapacity);
 
         if (networkDelegate == null) {
-            throw new IllegalArgumentException("The HttpClientDelegate mustn't be null");
+            throw new IllegalArgumentException("The RestClientDelegate mustn't be null");
         } else {
             this.networkDelegate = networkDelegate;
         }
@@ -86,7 +86,8 @@ public class HttpRestClient extends QueuedRestClient {
             return networkDelegate.put(uri, item, classOfItem);
         default:
             // This should never happen under normal conditions.
-            return new RestResult(false, "Huh?", null);
+            String message = "Unknown operation: " + operation.name();
+            return new RestResult(false, message, null);
         }
     }
 }

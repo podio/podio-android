@@ -33,8 +33,14 @@ public final class SQLiteRestClient extends QueuedRestClient {
      */
     public SQLiteRestClient(Context context, String authority, RestClientDelegate databaseDelegate,
             int queueCapacity) {
+
         super("content", authority, queueCapacity);
-        this.databaseDelegate = databaseDelegate;
+
+        if (databaseDelegate == null) {
+            throw new IllegalArgumentException("The RestClientDelegate mustn't be null");
+        } else {
+            this.databaseDelegate = databaseDelegate;
+        }
     }
 
     /**
@@ -90,7 +96,8 @@ public final class SQLiteRestClient extends QueuedRestClient {
             return databaseDelegate.put(uri, content, classOfContent);
         default:
             // This should never happen under normal conditions.
-            return new RestResult(false, "Huh?", null);
+            String message = "Unknown operation: " + operation.name();
+            return new RestResult(false, message, null);
         }
     }
 
