@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.Session;
+import com.podio.sdk.domain.Session;
 
 public class RestResultTest extends AndroidTestCase {
 

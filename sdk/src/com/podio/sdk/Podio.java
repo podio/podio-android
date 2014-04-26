@@ -6,6 +6,7 @@ import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.AppItemProvider;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.domain.SessionProvider;
 
 /**

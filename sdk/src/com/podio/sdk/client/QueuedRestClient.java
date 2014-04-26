@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import android.os.Handler;
 
 import com.podio.sdk.RestClient;
-import com.podio.sdk.Session;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
 
 /**

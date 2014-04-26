@@ -10,10 +10,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.Session;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.client.mock.MockWebServer;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.parser.ItemToJsonParser;
 
 import fi.iki.elonen.NanoHTTPD.Method;

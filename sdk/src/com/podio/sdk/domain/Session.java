@@ -1,4 +1,4 @@
-package com.podio.sdk;
+package com.podio.sdk.domain;
 
 import org.json.JSONException;
 import org.json.JSONObject;

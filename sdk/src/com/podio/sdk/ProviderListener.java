@@ -1,5 +1,7 @@
 package com.podio.sdk;
 
+import com.podio.sdk.domain.Session;
+
 /**
  * Defines the {@link Provider} callback interface as seen by the third party
  * client application.

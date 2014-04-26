@@ -8,7 +8,7 @@ import android.util.Base64;
 import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.podio.sdk.Session;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
 
 public class PodioRequest extends StringRequest {

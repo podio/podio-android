@@ -3,9 +3,9 @@ package com.podio.sdk.client;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.Session;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.ItemFilter;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
 

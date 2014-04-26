@@ -4,7 +4,7 @@ import android.util.Base64;
 
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.podio.sdk.Session;
+import com.podio.sdk.domain.Session;
 
 public class RefreshRequest extends StringRequest {
     private final String authBody;

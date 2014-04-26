@@ -1,6 +1,6 @@
 package com.podio.sdk.client;
 
-import com.podio.sdk.Session;
+import com.podio.sdk.domain.Session;
 
 /**
  * Wraps the result of a performed {@link RestRequest}.

@@ -1,6 +1,6 @@
 package com.podio.sdk.internal.request;
 
-import com.podio.sdk.Session;
+import com.podio.sdk.domain.Session;
 
 public interface ResultListener {
 

@@ -3,8 +3,8 @@ package com.podio.sdk.client;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.Session;
 import com.podio.sdk.domain.ItemFilter;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 

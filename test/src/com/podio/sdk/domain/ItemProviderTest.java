@@ -8,7 +8,6 @@ import android.test.AndroidTestCase;
 import com.podio.sdk.Filter;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.Session;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.internal.request.RestOperation;

@@ -1,7 +1,6 @@
 package com.podio.sdk.domain;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.Session;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 
