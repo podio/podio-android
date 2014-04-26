@@ -128,6 +128,44 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that an IllegalArgumentException is thrown when trying to create
+     * a CachedRestClient with null pointer delegates.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new CachedRestClient with a null pointer network delegate.
+     * 
+     * 2. Verify that an IllegalArgumentException was thrown.
+     * 
+     * 3. Create a new CachedRestClient with a null pointer cache delegate.
+     * 
+     * 4. Verify that an IllegalArgumentException was thrown.
+     * 
+     * </pre>
+     */
+    public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
+        // Verify exception for network delegate.
+        try {
+            new CachedRestClient(null, null, null, new MockRestClientDelegate(), 0);
+            boolean didReachThisPoint = true;
+            assertFalse(didReachThisPoint);
+        } catch (IllegalArgumentException e) {
+            boolean didThrowException = true;
+            assertTrue(didThrowException);
+        }
+
+        // Verify exception for cache delegate.
+        try {
+            new CachedRestClient(null, null, new MockRestClientDelegate(), null, 0);
+            boolean didReachThisPoint = true;
+            assertFalse(didReachThisPoint);
+        } catch (IllegalArgumentException e) {
+            boolean didThrowException = true;
+            assertTrue(didThrowException);
+        }
+    }
+
+    /**
      * Verifies that the expected Uri delegated to the
      * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
      * the {@link MockDatabaseClientDelegate} when performing a delete request.
