@@ -97,6 +97,29 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that an IllegalArgumentException is thrown when trying to create
+     * an SQLiteRestClient with a null pointer delegate.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new SQLiteRestClient with a null pointer database delegate.
+     * 
+     * 2. Verify that an IllegalArgumentException was thrown.
+     * 
+     * </pre>
+     */
+    public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
+        try {
+            new SQLiteRestClient(null, null, null, 0);
+            boolean didReachThisPoint = true;
+            assertFalse(didReachThisPoint);
+        } catch (IllegalArgumentException e) {
+            boolean didThrowException = true;
+            assertTrue(didThrowException);
+        }
+    }
+
+    /**
      * Verifies that a delete rest operation is delegated correctly to the
      * {@link DatabaseClientDelegate}.
      * 
