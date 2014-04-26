@@ -97,6 +97,29 @@ public class HttpRestClientTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that an IllegalArgumentException is thrown when trying to create
+     * an HttpRestClient with a null pointer delegate.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new HttpRestClient with a null pointer network delegate.
+     * 
+     * 2. Verify that an IllegalArgumentException was thrown.
+     * 
+     * </pre>
+     */
+    public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
+        try {
+            new HttpRestClient(null, null, null, 0);
+            boolean didReachThisPoint = true;
+            assertFalse(didReachThisPoint);
+        } catch (IllegalArgumentException e) {
+            boolean didThrowException = true;
+            assertTrue(didThrowException);
+        }
+    }
+
+    /**
      * Verifies that a delete rest operation is delegated correctly to the
      * {@link NetworkClientDelegate}.
      * 
