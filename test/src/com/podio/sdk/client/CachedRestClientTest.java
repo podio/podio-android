@@ -62,10 +62,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         };
     }
 
-    public void testTemporaryPolideaReportsFailureInJenkins() {
-        assertTrue(false);
-    }
-
     /**
      * Verifies that the expected Uri is delegated to the
      * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
