@@ -110,11 +110,41 @@ public class UtilsTest extends AndroidTestCase {
         assertTrue(Utils.notEmpty(new Object[] { null }));
     }
 
+    public void testStringIsAnyEmpty() {
+        assertTrue(Utils.isAnyEmpty((String[]) null));
+        assertTrue(Utils.isAnyEmpty(new String[] {}));
+
+        assertTrue(Utils.isAnyEmpty(""));
+        assertTrue(Utils.isAnyEmpty((String) null));
+
+        assertTrue(Utils.isAnyEmpty("test1", "", "test3"));
+        assertTrue(Utils.isAnyEmpty("test1", null, "test3"));
+
+        assertFalse(Utils.isAnyEmpty(" "));
+        assertFalse(Utils.isAnyEmpty("test1", "test2", "test3"));
+        assertFalse(Utils.isAnyEmpty("test1", " ", "test3"));
+    }
+
     public void testStringIsEmpty() {
         assertTrue(Utils.isEmpty(""));
         assertTrue(Utils.isEmpty((String) null));
         assertFalse(Utils.isEmpty("test"));
         assertFalse(Utils.isEmpty(" "));
+    }
+
+    public void testStringNotAnyEmpty() {
+        assertFalse(Utils.notAnyEmpty((String[]) null));
+        assertFalse(Utils.notAnyEmpty(new String[] {}));
+
+        assertFalse(Utils.notAnyEmpty(""));
+        assertFalse(Utils.notAnyEmpty((String) null));
+
+        assertFalse(Utils.notAnyEmpty("test1", "", "test3"));
+        assertFalse(Utils.notAnyEmpty("test1", null, "test3"));
+
+        assertTrue(Utils.notAnyEmpty(" "));
+        assertTrue(Utils.notAnyEmpty("test1", "test2", "test3"));
+        assertTrue(Utils.notAnyEmpty("test1", " ", "test3"));
     }
 
     public void testStringNotEmpty() {
