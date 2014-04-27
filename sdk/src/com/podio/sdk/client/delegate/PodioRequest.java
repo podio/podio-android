@@ -3,8 +3,6 @@ package com.podio.sdk.client.delegate;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.util.Base64;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
@@ -40,8 +38,7 @@ public class PodioRequest extends StringRequest {
     @Override
     public byte[] getPostBody() {
         byte[] bytes = body.getBytes();
-        byte[] result = Base64.encode(bytes, Base64.DEFAULT);
-        return result;
+        return bytes;
     }
 
 }
