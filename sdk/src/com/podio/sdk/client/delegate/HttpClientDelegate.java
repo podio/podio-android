@@ -141,7 +141,8 @@ public class HttpClientDelegate implements RestClientDelegate {
      * @param session
      *            The new session object to use.
      */
-    public void setSession(Session session) {
+    public void revokeSession(String refreshUrl, Session session) {
+        this.refreshUrl = refreshUrl;
         this.session = session;
     }
 

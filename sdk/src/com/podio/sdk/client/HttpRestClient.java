@@ -6,6 +6,8 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.HttpClientDelegate;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 
 /**
@@ -15,6 +17,8 @@ import com.podio.sdk.internal.request.RestOperation;
  * @author László Urszuly
  */
 public class HttpRestClient extends QueuedRestClient {
+
+    private static final String SCHEME = "https";
 
     private final RestClientDelegate networkDelegate;
 
@@ -38,7 +42,7 @@ public class HttpRestClient extends QueuedRestClient {
     public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate,
             int queueCapacity) {
 
-        super("https", authority, queueCapacity);
+        super(SCHEME, authority, queueCapacity);
 
         if (networkDelegate == null) {
             throw new IllegalArgumentException("The RestClientDelegate mustn't be null");
@@ -68,6 +72,18 @@ public class HttpRestClient extends QueuedRestClient {
         }
 
         return result != null ? result : new RestResult(false, null, null);
+    }
+
+    public void revokeSession(String refreshPath, Session session) {
+        if (networkDelegate instanceof HttpClientDelegate) {
+            Uri sessionRefreshUri = new Uri.Builder() //
+                    .scheme(SCHEME) //
+                    .authority(authority) //
+                    .appendEncodedPath(refreshPath) //
+                    .build();
+            String url = sessionRefreshUri.toString();
+            ((HttpClientDelegate) networkDelegate).revokeSession(url, session);
+        }
     }
 
     private RestResult queryNetwork(RestOperation operation, Uri uri, Object item,

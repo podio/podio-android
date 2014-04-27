@@ -7,6 +7,7 @@ import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.AppItemProvider;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.domain.SessionFilter;
 import com.podio.sdk.domain.SessionProvider;
 
 /**
@@ -97,7 +98,7 @@ public final class Podio {
         }
 
         public static final void revokeSession(Session session) {
-            networkDelegate.setSession(session);
+            client.revokeSession(SessionFilter.PATH, session);
         }
     }
 

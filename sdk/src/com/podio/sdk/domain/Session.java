@@ -24,8 +24,15 @@ public class Session {
         if (jsonObject != null) {
             this.accessToken = jsonObject.optString("access_token", null);
             this.refreshToken = jsonObject.optString("refresh_token", null);
-            this.expiresMillis = System.currentTimeMillis()
-                    + (jsonObject.optLong("expires_in", 0L) * 1000);
+
+            if (jsonObject.has("expires")) {
+                this.expiresMillis = jsonObject.optLong("expires", 0L);
+            } else if (jsonObject.has("expires_in")) {
+                this.expiresMillis = System.currentTimeMillis()
+                        + (jsonObject.optLong("expires_in", 0L) * 1000);
+            } else {
+                this.expiresMillis = 0L;
+            }
         } else {
             this.accessToken = null;
             this.refreshToken = null;
@@ -44,11 +51,29 @@ public class Session {
     }
 
     public boolean shouldRefreshTokens() {
-        long timeLeft = expiresMillis - System.currentTimeMillis();
+        long currentTimeMillis = System.currentTimeMillis();
+        long timeLeft = expiresMillis - currentTimeMillis;
 
         // Recommend a refresh when there is 10 minutes or less left until the
         // auth token expires.
         return timeLeft < 600000;
+    }
+
+    public String toJson() {
+        String result;
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("access_token", accessToken);
+            jsonObject.put("refresh_token", refreshToken);
+            jsonObject.put("expires", expiresMillis);
+
+            result = jsonObject.toString();
+        } catch (JSONException e) {
+            result = "{}";
+        }
+
+        return result;
     }
 
     @Override

@@ -1,9 +1,10 @@
 package com.podio.sdk.domain;
 
 public class SessionFilter extends ItemFilter {
+    public static final String PATH = "oauth/token";
 
     public SessionFilter() {
-        super("oauth/token");
+        super(PATH);
     }
 
     public SessionFilter withClientCredentials(String clientId, String clientSecret) {
