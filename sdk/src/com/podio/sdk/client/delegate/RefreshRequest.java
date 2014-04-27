@@ -1,32 +1,23 @@
 package com.podio.sdk.client.delegate;
 
-import android.util.Base64;
+import java.util.Map;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.podio.sdk.domain.Session;
 
 public class RefreshRequest extends StringRequest {
-    private final String authBody;
+    private final Map<String, String> params;
 
-    public RefreshRequest(String url, Session session, RequestFuture<String> future) {
+    public RefreshRequest(String url, Map<String, String> params, RequestFuture<String> future) {
         super(Method.POST, url, future, future);
         setShouldCache(false);
-        authBody = buildAuthBody(session);
+
+        this.params = params;
     }
 
     @Override
-    public byte[] getPostBody() {
-        byte[] bytes = authBody.getBytes();
-        byte[] result = Base64.encode(bytes, Base64.DEFAULT);
-        return result;
+    protected Map<String, String> getParams() throws AuthFailureError {
+        return params;
     }
-
-    private String buildAuthBody(Session session) {
-        return new StringBuilder() //
-                .append("grant_type=refresh_token") //
-                .append("&refresh_token=").append(session.refreshToken) //
-                .toString();
-    }
-
 }

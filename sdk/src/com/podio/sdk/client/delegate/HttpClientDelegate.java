@@ -255,8 +255,12 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     private void refreshSession() {
+        Map<String, String> refreshParams = new HashMap<String, String>();
+        refreshParams.put("grant_type", "refresh_token");
+        refreshParams.put("refresh_token", session.refreshToken);
+
         RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new RefreshRequest(refreshUrl, session, future);
+        StringRequest request = new RefreshRequest(refreshUrl, refreshParams, future);
 
         requestQueue.add(request);
         String result = getBlockingResponse(future);
