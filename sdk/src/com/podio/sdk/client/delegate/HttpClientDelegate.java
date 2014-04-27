@@ -73,6 +73,19 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         String outputJson = request(Method.DELETE, uri, null);
+
+        if (outputJson == null && lastRequestError != null
+                && lastRequestError.networkResponse != null
+                && lastRequestError.networkResponse.statusCode == 401) {
+
+            // For some reason the server has invalidated our access token.
+            // Force refresh the access token.
+
+            refreshSession();
+            resultSession = session;
+            outputJson = request(Method.DELETE, uri, null);
+        }
+
         boolean isSuccess = Utils.notEmpty(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, null);
 
@@ -89,6 +102,19 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         String outputJson = request(Method.GET, uri, null);
+
+        if (outputJson == null && lastRequestError != null
+                && lastRequestError.networkResponse != null
+                && lastRequestError.networkResponse.statusCode == 401) {
+
+            // For some reason the server has invalidated our access token.
+            // Force refresh the access token.
+
+            refreshSession();
+            resultSession = session;
+            outputJson = request(Method.GET, uri, null);
+        }
+
         boolean isSuccess = Utils.notEmpty(outputJson);
         Object item = jsonToItemParser.parse(outputJson, classOfResult);
         RestResult result = new RestResult(isSuccess, resultSession, null, item);
@@ -108,6 +134,18 @@ public class HttpClientDelegate implements RestClientDelegate {
         String inputJson = itemToJsonParser.parse(item, classOfItem);
         String outputJson = request(Method.POST, uri, inputJson);
 
+        if (outputJson == null && lastRequestError != null
+                && lastRequestError.networkResponse != null
+                && lastRequestError.networkResponse.statusCode == 401) {
+
+            // For some reason the server has invalidated our access token.
+            // Force refresh the access token.
+
+            refreshSession();
+            resultSession = session;
+            outputJson = request(Method.POST, uri, inputJson);
+        }
+
         boolean isSuccess = Utils.notEmpty(outputJson);
         Object content = jsonToItemParser.parse(outputJson, classOfItem);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
@@ -126,6 +164,18 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         String inputJson = itemToJsonParser.parse(item, classOfItem);
         String outputJson = request(Method.PUT, uri, inputJson);
+
+        if (outputJson == null && lastRequestError != null
+                && lastRequestError.networkResponse != null
+                && lastRequestError.networkResponse.statusCode == 401) {
+
+            // For some reason the server has invalidated our access token.
+            // Force refresh the access token.
+
+            refreshSession();
+            resultSession = session;
+            outputJson = request(Method.PUT, uri, inputJson);
+        }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
         Object content = jsonToItemParser.parse(outputJson, classOfItem);
@@ -229,27 +279,15 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     private String request(int method, Uri uri, String body) {
         String url = Utils.notEmpty(uri) ? uri.toString() : null;
+        String accessToken = session != null ? session.accessToken : "";
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", "Bearer " + accessToken);
 
         RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new PodioRequest(method, url, body, session, future);
+        StringRequest request = new PodioRequest(method, url, body, headers, future);
 
         requestQueue.add(request);
         String result = getBlockingResponse(future);
-
-        if (result == null && lastRequestError != null && lastRequestError.networkResponse != null) {
-            // For some reason the server has invalidated our access token.
-            if (lastRequestError.networkResponse.statusCode == 401) {
-                // Force refresh the access token.
-                session = new Session(null);
-                refreshSession();
-
-                // Perform the request again.
-                future = RequestFuture.newFuture();
-                request = new PodioRequest(method, url, body, session, future);
-                requestQueue.add(request);
-                result = getBlockingResponse(future);
-            }
-        }
 
         return result;
     }
