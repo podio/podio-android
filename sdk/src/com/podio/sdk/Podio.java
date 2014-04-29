@@ -30,6 +30,8 @@ public final class Podio {
          * This constructor is hidden.
          */
         private App() {
+            // Hiding the constructor of this class as it's not meant to be
+            // instantiated.
         }
 
         /**
@@ -74,9 +76,36 @@ public final class Podio {
         }
     }
 
+    /**
+     * Enables means of authentication and basic session management with the
+     * Podio servers.
+     * 
+     * @author László Urszuly
+     * 
+     */
     public static final class Client {
 
-        public static final Object authenticateWithCredentials(String username, String password,
+        private Client() {
+            // Hiding the constructor of this class as it's not meant to be
+            // instantiated.
+        }
+
+        /**
+         * Authenticates the caller with the given user credentials. On success
+         * a new session object with the access and refresh tokens will be
+         * delivered through the given {@link ProviderListener}.
+         * 
+         * @param username
+         *            The user name of the Podio account to authenticate with.
+         * @param password
+         *            The corresponding password of the Podio account.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object authenticateAsUser(String username, String password,
                 ProviderListener providerListener) {
 
             SessionProvider provider = new SessionProvider();
@@ -87,7 +116,22 @@ public final class Podio {
                     password);
         }
 
-        public static final Object authenticateWithApp(String appId, String appToken,
+        /**
+         * Authenticates the caller with the given app credentials. On success a
+         * new session object with the access and refresh tokens will be
+         * delivered through the given {@link ProviderListener}.
+         * 
+         * @param appId
+         *            The id of the app to authenticate with.
+         * @param appToken
+         *            The token that has been generated for a particular app.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object authenticateAsApp(String appId, String appToken,
                 ProviderListener providerListener) {
 
             SessionProvider provider = new SessionProvider();
@@ -97,6 +141,18 @@ public final class Podio {
             return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
         }
 
+        /**
+         * Revokes a previously created Podio session. Even though the access
+         * token may have expired, the refresh token can be used to get a new
+         * access token. The idea here is to enable the caller to persist the
+         * session and avoid an unnecessary re-authentication.
+         * 
+         * NOTE! The server may very well invalidate both the access and refresh
+         * tokens, which would require a re-authentication anyway.
+         * 
+         * @param session
+         *            The previously stored session object.
+         */
         public static final void revokeSession(Session session) {
             client.revokeSession(SessionFilter.PATH, session);
         }
@@ -114,12 +170,9 @@ public final class Podio {
     private static String clientId;
     private static String clientSecret;
 
-    /**
-     * Creates a new instance of the Podio facade. You have to call the
-     * {@link Podio#setup(Context, String, String)} method before you start
-     * using this object.
-     */
-    public Podio() {
+    private Podio() {
+        // Hiding the constructor of this class as it's not meant to be
+        // instantiated.
     }
 
     public static void setup(Context context, String clientId, String clientSecret) {
