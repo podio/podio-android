@@ -54,9 +54,22 @@ public abstract class QueuedRestClient implements RestClient {
                         Object ticket = request.getTicket();
                         ResultListener resultListener = request.getResultListener();
                         RestResult result = handleRequest(request);
+
+                        // The user is no longer authorized. Remove any pending
+                        // requests before proceeding.
+                        Session session = result != null ? result.session() : null;
+                        if (session != null && !session.isAuthorized()) {
+                            queue.clear();
+                        }
+
                         reportResult(ticket, resultListener, result);
                     }
                 } catch (InterruptedException e) {
+                    // For some reason the request queue was interrupted while
+                    // waiting for a request to become available.
+
+                    // The 10.000 dollar question is what should happen in that
+                    // case?
                 }
             }
         }
