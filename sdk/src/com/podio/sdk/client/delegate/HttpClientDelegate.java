@@ -278,16 +278,20 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     private String request(int method, Uri uri, String body) {
-        String url = Utils.notEmpty(uri) ? uri.toString() : null;
-        String accessToken = session != null ? session.accessToken : "";
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Authorization", "Bearer " + accessToken);
+        String result = null;
 
-        RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new PodioRequest(method, url, body, headers, future);
+        if (Utils.notEmpty(uri)) {
+            String url = uri.toString();
+            String accessToken = session != null ? session.accessToken : "";
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Authorization", "Bearer " + accessToken);
 
-        requestQueue.add(request);
-        String result = getBlockingResponse(future);
+            RequestFuture<String> future = RequestFuture.newFuture();
+            StringRequest request = new PodioRequest(method, url, body, headers, future);
+
+            requestQueue.add(request);
+            result = getBlockingResponse(future);
+        }
 
         return result;
     }
