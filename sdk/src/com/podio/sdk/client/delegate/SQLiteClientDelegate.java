@@ -65,7 +65,7 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
             Cursor cursor = database.query("content", projection, key, value, null, null, null);
 
             if (cursor != null) {
-                json = cursor.moveToFirst() ? cursor.getString(0) : "{}";
+                json = cursor.moveToFirst() ? cursor.getString(0) : null;
             }
         }
 
