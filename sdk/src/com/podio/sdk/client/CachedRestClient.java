@@ -105,16 +105,16 @@ public class CachedRestClient extends HttpRestClient {
                     // now also update the local cache accordingly.
                     if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
                         if (operation == RestOperation.GET) {
-                            result = delegate(RestOperation.POST, uri, item);
+                            result = delegate(RestOperation.POST, uri, result.item());
                         } else {
-                            result = delegate(operation, uri, item);
+                            result = delegate(operation, uri, result.item());
                         }
                     }
 
                     // The cache update succeeded. Get the new cached content
                     // and return it to the caller.
                     if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
-                        result = delegate(RestOperation.GET, uri, item);
+                        result = delegate(RestOperation.GET, uri, null);
                     }
                 }
             }
