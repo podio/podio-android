@@ -6,7 +6,7 @@ import android.test.AndroidTestCase;
 public class AppItemFilterTest extends AndroidTestCase {
 
     /**
-     * Verifies that {@link AppItemFilter} doesn't omit any properties when
+     * Verifies that {@link ApplicationFilter} doesn't omit any properties when
      * setting them all at once.
      * 
      * <pre>
@@ -25,7 +25,7 @@ public class AppItemFilterTest extends AndroidTestCase {
         Uri reference = Uri.parse("content://test.uri/app/space/2" //
                 + "?include_inactive=true");
 
-        Uri result = new AppItemFilter() //
+        Uri result = new ApplicationFilter() //
                 .withSpaceId(2L) //
                 .withInactivesIncluded(true) //
                 .buildUri("content", "test.uri");
@@ -34,7 +34,7 @@ public class AppItemFilterTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that all methods of the {@link AppItemFilter} that set any
+     * Verifies that all methods of the {@link ApplicationFilter} that set any
      * parameter returns the actual <code>AppItemFilter</code> object (and,
      * hence, enables a chaining design pattern).
      * 
@@ -49,14 +49,14 @@ public class AppItemFilterTest extends AndroidTestCase {
      * </pre>
      */
     public void testChainingPossible() {
-        AppItemFilter target = new AppItemFilter();
+        ApplicationFilter target = new ApplicationFilter();
 
         assertEquals(target, target.withInactivesIncluded(true));
         assertEquals(target, target.withSpaceId(1L));
     }
 
     /**
-     * Verifies that the {@link AppItemFilter} adds the given "include inactive"
+     * Verifies that the {@link ApplicationFilter} adds the given "include inactive"
      * flag as a query parameter in the final Uri.
      * 
      * <pre>
@@ -73,14 +73,14 @@ public class AppItemFilterTest extends AndroidTestCase {
      */
     public void testIncludeInactiveFlagAddedAsQueryParameter() {
         Uri reference = Uri.parse("content://test.uri/app?include_inactive=false");
-        Uri result = new AppItemFilter().withInactivesIncluded(false).buildUri("content",
+        Uri result = new ApplicationFilter().withInactivesIncluded(false).buildUri("content",
                 "test.uri");
 
         assertEquals(reference, result);
     }
 
     /**
-     * Verifies that the {@link AppItemFilter} adds the given "space id" as a
+     * Verifies that the {@link ApplicationFilter} adds the given "space id" as a
      * part of the path segments in the final Uri.
      * 
      * <pre>
@@ -97,7 +97,7 @@ public class AppItemFilterTest extends AndroidTestCase {
      */
     public void testSpaceIdAddedAsPathSegment() {
         Uri reference = Uri.parse("content://test.uri/app/space/1");
-        Uri result = new AppItemFilter().withSpaceId(1L).buildUri("content", "test.uri");
+        Uri result = new ApplicationFilter().withSpaceId(1L).buildUri("content", "test.uri");
 
         assertEquals(reference, result);
     }

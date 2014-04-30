@@ -17,7 +17,7 @@ public class AppItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link AppItemProvider} doesn't request inactive app
+     * Verifies that the {@link ApplicationProvider} doesn't request inactive app
      * items by default.
      * 
      * <pre>
@@ -36,7 +36,7 @@ public class AppItemProviderTest extends AndroidTestCase {
         final MockRestClient mockClient = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
 
-        AppItemProvider target = new AppItemProvider();
+        ApplicationProvider target = new ApplicationProvider();
         target.setRestClient(mockClient);
         target.setProviderListener(new ProviderListener() {
             @Override
@@ -70,7 +70,7 @@ public class AppItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link AppItemProvider} requests inactive app items as
+     * Verifies that the {@link ApplicationProvider} requests inactive app items as
      * well through the custom fetch method.
      * 
      * <pre>
@@ -89,7 +89,7 @@ public class AppItemProviderTest extends AndroidTestCase {
         final MockRestClient mockClient = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
 
-        AppItemProvider target = new AppItemProvider();
+        ApplicationProvider target = new ApplicationProvider();
         target.setRestClient(mockClient);
         target.setProviderListener(new ProviderListener() {
             @Override

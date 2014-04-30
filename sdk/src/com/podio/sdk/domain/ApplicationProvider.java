@@ -9,10 +9,10 @@ import com.podio.sdk.Filter;
  * 
  * @author László Urszuly
  */
-public final class AppItemProvider extends ItemProvider<AppItem> {
+public final class ApplicationProvider extends ItemProvider<Application> {
 
     public Object fetchAppItemsForSpace(long spaceId) {
-        Filter filter = new AppItemFilter() //
+        Filter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(false);
 
@@ -20,7 +20,7 @@ public final class AppItemProvider extends ItemProvider<AppItem> {
     }
 
     public Object fetchAppItemsForSpaceWithInactivesIncluded(long spaceId) {
-        Filter filter = new AppItemFilter() //
+        Filter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(true);
 
