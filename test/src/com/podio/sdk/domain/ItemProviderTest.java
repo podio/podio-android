@@ -301,11 +301,8 @@ public class ItemProviderTest extends AndroidTestCase {
     private void validateRequest(RestOperation expectedOperation, Object expectedContent,
             Object expectedTicket, Filter expectedFilter, RestRequest target) {
 
-        Class<?> expectedItemType = expectedContent != null ? expectedContent.getClass() : null;
-
         assertNotNull(target);
         assertEquals(expectedContent, target.getContent());
-        assertEquals(expectedItemType, target.getItemType());
         assertEquals(expectedOperation, target.getOperation());
         assertEquals(expectedFilter, target.getFilter());
         assertEquals(expectedTicket, target.getTicket());

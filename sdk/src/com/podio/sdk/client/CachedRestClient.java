@@ -84,14 +84,13 @@ public class CachedRestClient extends HttpRestClient {
             RestOperation operation = restRequest.getOperation();
             Filter filter = restRequest.getFilter();
             Object item = restRequest.getContent();
-            Class<?> itemType = restRequest.getItemType();
 
             Uri uri = filter.buildUri(contentScheme, authority);
 
             if (Utils.notEmpty(uri)) {
                 if (operation == RestOperation.GET && !delegatedRequests.contains(restRequest)) {
                     // Query the locally cached data first...
-                    result = delegate(operation, uri, item, itemType);
+                    result = delegate(operation, uri, item);
 
                     // ...and then queue the request once again for the super
                     // implementation to act upon.
@@ -106,16 +105,16 @@ public class CachedRestClient extends HttpRestClient {
                     // now also update the local cache accordingly.
                     if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
                         if (operation == RestOperation.GET) {
-                            result = delegate(RestOperation.POST, uri, item, itemType);
+                            result = delegate(RestOperation.POST, uri, item);
                         } else {
-                            result = delegate(operation, uri, item, itemType);
+                            result = delegate(operation, uri, item);
                         }
                     }
 
                     // The cache update succeeded. Get the new cached content
                     // and return it to the caller.
                     if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
-                        result = delegate(RestOperation.GET, uri, item, itemType);
+                        result = delegate(RestOperation.GET, uri, item);
                     }
                 }
             }
@@ -134,20 +133,18 @@ public class CachedRestClient extends HttpRestClient {
      *            The key used to identify the content.
      * @param item
      *            The description of the new content.
-     * @param itemType
-     *            The definition of the new content type.
      * @return The result description of the requested operation.
      */
-    private RestResult delegate(RestOperation operation, Uri uri, Object item, Class<?> itemType) {
+    private RestResult delegate(RestOperation operation, Uri uri, Object item) {
         switch (operation) {
         case DELETE:
             return databaseDelegate.delete(uri);
         case GET:
-            return databaseDelegate.get(uri, itemType);
+            return databaseDelegate.get(uri);
         case POST:
-            return databaseDelegate.post(uri, item, itemType);
+            return databaseDelegate.post(uri, item);
         case PUT:
-            return databaseDelegate.put(uri, item, itemType);
+            return databaseDelegate.put(uri, item);
         default:
             String message = "Unknown operation: " + operation.name();
             return new RestResult(false, message, null);

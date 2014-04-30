@@ -13,18 +13,13 @@ import android.net.Uri;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.internal.utils.Utils;
-import com.podio.sdk.parser.ItemToJsonParser;
-import com.podio.sdk.parser.JsonToItemParser;
 
 public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClientDelegate {
 
-    private ItemToJsonParser itemToJsonParser;
-    private JsonToItemParser jsonToItemParser;
+    private ItemParser<?> itemParser;
 
     public SQLiteClientDelegate(Context context, String name, int version) {
         super(context, name, null, version);
-        itemToJsonParser = new ItemToJsonParser();
-        jsonToItemParser = new JsonToItemParser();
     }
 
     @Override
@@ -53,7 +48,9 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
-    public RestResult get(Uri uri, Class<?> classOfResult) {
+    public RestResult get(Uri uri) throws InvalidParserException {
+        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
+
         String json = null;
         SQLiteDatabase database = openDatabase(uri);
 
@@ -71,7 +68,7 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
 
         boolean isSuccess = json != null;
         String message = null;
-        Object item = jsonToItemParser.parse(json, classOfResult);
+        Object item = itemParser.parseToItem(json);
         RestResult result = new RestResult(isSuccess, message, item);
 
         return result;
@@ -96,12 +93,15 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+    public RestResult post(Uri uri, Object item) throws InvalidParserException {
+
+        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
+
         long id = -1L;
         SQLiteDatabase database = openDatabase(uri);
 
         if (database != null) {
-            String json = itemToJsonParser.parse(item, classOfItem);
+            String json = itemParser.parseToJson(item);
 
             ContentValues values = new ContentValues();
             values.put("uri", uri.toString());
@@ -120,12 +120,14 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+    public RestResult put(Uri uri, Object item) throws InvalidParserException {
+        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
+
         int count = -1;
         SQLiteDatabase database = openDatabase(uri);
 
         if (database != null) {
-            String json = itemToJsonParser.parse(item, classOfItem);
+            String json = itemParser.parseToJson(item);
 
             String key = "uri=?";
             String[] value = { uri.toString() };
@@ -153,24 +155,8 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
      * @param itemToJsonParser
      *            The parser to use for extracting item data.
      */
-    public void setItemToJsonParser(ItemToJsonParser itemToJsonParser) {
-        if (itemToJsonParser != null) {
-            this.itemToJsonParser = itemToJsonParser;
-        }
-    }
-
-    /**
-     * Sets the parser used for parsing the response json when performing an
-     * HTTP GET request. The parser will take the json string, parse its
-     * attributes and create new corresponding item objects from it.
-     * 
-     * @param jsonToItemParser
-     *            The parser to use for extracting cursor data.
-     */
-    public void setJsonToItemParser(JsonToItemParser jsonToItemParser) {
-        if (jsonToItemParser != null) {
-            this.jsonToItemParser = jsonToItemParser;
-        }
+    public void setItemParser(ItemParser<?> itemParser) {
+        this.itemParser = itemParser;
     }
 
     private void clearDatabase(SQLiteDatabase database) {

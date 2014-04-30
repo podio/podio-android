@@ -14,12 +14,10 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
-import com.podio.sdk.client.delegate.mock.MockItemToJsonParser;
-import com.podio.sdk.client.delegate.mock.MockJsonToItemParser;
+import com.podio.sdk.client.delegate.mock.MockItemParser;
 import com.podio.sdk.client.mock.MockWebServer;
+import com.podio.sdk.domain.ItemProvider;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.parser.ItemToJsonParser;
-import com.podio.sdk.parser.JsonToItemParser;
 
 import fi.iki.elonen.NanoHTTPD.Method;
 
@@ -38,8 +36,12 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Context context = instrumentation.getTargetContext();
         Session session = new Session("accessToken", "refreshToken", 3600L);
 
+        ItemParser<MockContentItem> itemParser = new ItemParser<MockContentItem>(
+                MockContentItem.class);
+
         target = new HttpClientDelegate(context);
         target.revokeSession("http://localhost:8080/auth/token", session);
+        target.setItemParser(itemParser);
     }
 
     @Override
@@ -47,6 +49,35 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockWebServer.stop();
         mockWebServer = null;
         super.tearDown();
+    }
+
+    /**
+     * Verifies that a authorize operation request won't throw an exception if
+     * the delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a authorize operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has not been thrown.
+     * 
+     * </pre>
+     */
+    public void testAuthorizeDoesNotThrowExceptionOnNullPointerParser() {
+        target.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            target.authorize(Uri.parse("http://localhost:8080"));
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertFalse(didThrowInvalidParserException);
     }
 
     /**
@@ -161,6 +192,35 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that a delete operation request won't throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a delete operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
+        target.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            target.delete(Uri.parse("http://localhost:8080"));
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertFalse(didThrowInvalidParserException);
+    }
+
+    /**
      * Verifies that the {@link HttpClientDelegate} returns a valid result with
      * a no-success flag set if the caller provides an empty URI.
      * 
@@ -270,6 +330,35 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that a get operation request will throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a get operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testGetDoesThrowExceptionOnNullPointerParser() {
+        target.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            target.get(Uri.parse("http://localhost:8080"));
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertTrue(didThrowInvalidParserException);
+    }
+
+    /**
      * Verifies that the {@link HttpClientDelegate} returns a valid result with
      * a no-success flag set if the caller provides an empty URI.
      * 
@@ -284,7 +373,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesEmptyUriCorrectly() {
-        RestResult result = target.get(Uri.EMPTY, null);
+        RestResult result = target.get(Uri.EMPTY);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -304,7 +393,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesNullUriCorrectly() {
-        RestResult result = target.get(null, null);
+        RestResult result = target.get(null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -339,7 +428,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.get(uri, Object.class);
+        RestResult result = target.get(uri);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -378,14 +467,14 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("json", "{text: 'test'}");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.get(uri, MockContentItem.class);
+        RestResult result = target.get(uri);
         assertNotNull(result);
         assertNotNull(result.item());
         assertEquals(true, result.isSuccess());
 
         MockContentItem item = (MockContentItem) result.item();
-        ItemToJsonParser parser = new ItemToJsonParser();
-        String fetchedJson = parser.parse(item, MockContentItem.class);
+        ItemParser<MockContentItem> parser = new ItemParser<MockContentItem>(MockContentItem.class);
+        String fetchedJson = parser.parseToJson(item);
         String mockedJson = mockResponse.toString();
         assertEquals(mockedJson, fetchedJson);
 
@@ -394,15 +483,15 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the new {@link ItemToJsonParser} is used for parsing items
-     * to JSON when one is set.
+     * Verifies that the given {@link ItemParser} is used for parsing items to
+     * JSON when one is set.
      * 
      * <pre>
      * 
      * 1. Verify that the mock web server is up and running.
      * 
-     * 2. Set a mock ItemToJsonParser to the target {@link HttpClientDelegate}
-     *      that delivers a known fake JSON.
+     * 2. Set a mock ItemParser to the target {@link HttpClientDelegate} that
+     *      delivers a known fake JSON.
      * 
      * 3. Perform a post request on the test delegate.
      * 
@@ -411,7 +500,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * </pre>
      */
-    public void testNewItemToJsonParserIsUsedWhenExplicitlySet() throws JSONException {
+    public void testNewItemParserIsUsedForParsingToJsonWhenExplicitlySet() throws JSONException {
         assertEquals(true, mockWebServer.wasStarted());
         assertEquals(true, mockWebServer.isAlive());
 
@@ -420,23 +509,25 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         Uri uri = Uri.parse("http://localhost:8080");
         String fakeJsonString = "{item: fake}";
-        target.setItemToJsonParser(new MockItemToJsonParser(fakeJsonString));
-        target.post(uri, new Object(), Object.class);
+        Object fakeItemObject = new Object();
+
+        target.setItemParser(new MockItemParser(fakeJsonString, fakeItemObject));
+        target.post(uri, new Object());
 
         String requestBody = mockWebServer.mock_getRequestBody();
         assertEquals(fakeJsonString, requestBody);
     }
 
     /**
-     * Verifies that the new {@link JsonToItemParser} is used for parsing JSON
-     * to domain objects when one is set.
+     * Verifies that the given {@link ItemParser} is used for parsing JSON to
+     * domain objects when one is set.
      * 
      * <pre>
      * 
      * 1. Verify that the mock web server is up and running.
      * 
-     * 2. Set a mock JsonToItemParser to the target {@link HttpClientDelegate}
-     *      that delivers a known fake domain object representation.
+     * 2. Set a mock ItemParser to the target {@link HttpClientDelegate} that
+     *      delivers a known fake domain object representation.
      * 
      * 3. Perform a get request on the test delegate.
      * 
@@ -445,7 +536,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * </pre>
      */
-    public void testNewJsonToItemParserIsUsedWhenExplicitlySet() throws JSONException {
+    public void testNewItemParserIsUsedForParsintToItemWhenExplicitlySet() throws JSONException {
         assertEquals(true, mockWebServer.wasStarted());
         assertEquals(true, mockWebServer.isAlive());
 
@@ -453,12 +544,43 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockWebServer.mock_setResponse(mockResponse);
 
         Uri uri = Uri.parse("http://localhost:8080");
+        String fakeJsonString = "{}";
         Object fakeDomainObject = new Object();
-        target.setJsonToItemParser(new MockJsonToItemParser(fakeDomainObject));
-        RestResult result = target.get(uri, Object.class);
+
+        target.setItemParser(new MockItemParser(fakeJsonString, fakeDomainObject));
+        RestResult result = target.get(uri);
 
         assertNotNull(result);
         assertEquals(fakeDomainObject, result.item());
+    }
+
+    /**
+     * Verifies that a post operation request will throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a post operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testPostDoesThrowExceptionOnNullPointerParser() {
+        target.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            target.post(Uri.parse("http://localhost:8080"), new Object());
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -476,7 +598,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesEmptyUriCorrectly() {
-        RestResult result = target.post(Uri.EMPTY, null, null);
+        RestResult result = target.post(Uri.EMPTY, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -496,7 +618,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesNullUriCorrectly() {
-        RestResult result = target.post(null, null, null);
+        RestResult result = target.post(null, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -531,7 +653,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.post(uri, new Object(), Object.class);
+        RestResult result = target.post(uri, new Object());
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -561,12 +683,41 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
 
         MockContentItem item = new MockContentItem(uri.toString(), "{text: 'test'}");
-        RestResult result = target.post(uri, item, MockContentItem.class);
+        RestResult result = target.post(uri, item);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.POST, servedMethod);
+    }
+
+    /**
+     * Verifies that a put operation request will throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a put operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testPutDoesThrowExceptionOnNullPointerParser() {
+        target.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            target.put(Uri.parse("http://localhost:8080"), new Object());
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -584,7 +735,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesEmptyUriCorrectly() {
-        RestResult result = target.put(Uri.EMPTY, null, null);
+        RestResult result = target.put(Uri.EMPTY, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -604,7 +755,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesNullUriCorrectly() {
-        RestResult result = target.put(null, null, null);
+        RestResult result = target.put(null, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -639,7 +790,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.put(uri, new Object(), Object.class);
+        RestResult result = target.put(uri, new Object());
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -668,7 +819,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         MockContentItem item = new MockContentItem("http://localhost:8080", "{text: 'test'}");
         Uri uri = Uri.parse(item.uri);
-        RestResult result = target.put(uri, item, MockContentItem.class);
+        RestResult result = target.put(uri, item);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 

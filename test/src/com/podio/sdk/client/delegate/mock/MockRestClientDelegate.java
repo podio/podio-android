@@ -40,21 +40,21 @@ public class MockRestClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public RestResult get(Uri uri, Class<?> classOfResult) {
+    public RestResult get(Uri uri) {
         getCount++;
         getUri = uri;
         return getResult;
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+    public RestResult post(Uri uri, Object item) {
         postCount++;
         postUri = uri;
         return postResult;
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+    public RestResult put(Uri uri, Object item) {
         putCount++;
         putUri = uri;
         return putResult;

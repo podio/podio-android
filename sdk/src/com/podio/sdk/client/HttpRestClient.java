@@ -63,11 +63,10 @@ public class HttpRestClient extends QueuedRestClient {
 
             if (filter != null) {
                 RestOperation operation = restRequest.getOperation();
-                Class<?> itemType = restRequest.getItemType();
                 Object item = restRequest.getContent();
                 Uri uri = filter.buildUri(scheme, authority);
 
-                result = queryNetwork(operation, uri, item, itemType);
+                result = queryNetwork(operation, uri, item);
             }
         }
 
@@ -86,8 +85,7 @@ public class HttpRestClient extends QueuedRestClient {
         }
     }
 
-    private RestResult queryNetwork(RestOperation operation, Uri uri, Object item,
-            Class<?> classOfItem) {
+    private RestResult queryNetwork(RestOperation operation, Uri uri, Object item) {
 
         switch (operation) {
         case AUTHORIZE:
@@ -95,11 +93,11 @@ public class HttpRestClient extends QueuedRestClient {
         case DELETE:
             return networkDelegate.delete(uri);
         case GET:
-            return networkDelegate.get(uri, classOfItem);
+            return networkDelegate.get(uri);
         case POST:
-            return networkDelegate.post(uri, item, classOfItem);
+            return networkDelegate.post(uri, item);
         case PUT:
-            return networkDelegate.put(uri, item, classOfItem);
+            return networkDelegate.put(uri, item);
         default:
             // This should never happen under normal conditions.
             String message = "Unknown operation: " + operation.name();

@@ -6,7 +6,6 @@ import com.podio.sdk.internal.request.ResultListener;
 
 public final class RestRequest {
     private Object content;
-    private Class<?> itemType;
     private RestOperation operation;
     private ResultListener resultListener;
     private Filter filter;
@@ -18,10 +17,6 @@ public final class RestRequest {
 
     public Filter getFilter() {
         return filter;
-    }
-
-    public Class<?> getItemType() {
-        return itemType;
     }
 
     public RestOperation getOperation() {
@@ -48,11 +43,6 @@ public final class RestRequest {
 
     public RestRequest setOperation(RestOperation operation) {
         this.operation = operation;
-        return this;
-    }
-
-    public RestRequest setItemType(Class<?> itemType) {
-        this.itemType = itemType;
         return this;
     }
 

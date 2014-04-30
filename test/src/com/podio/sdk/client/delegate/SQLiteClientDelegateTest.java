@@ -13,8 +13,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
-import com.podio.sdk.parser.ItemToJsonParser;
-import com.podio.sdk.parser.JsonToItemParser;
+import com.podio.sdk.domain.ItemProvider;
 
 public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
@@ -29,6 +28,121 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getTargetContext();
         context.deleteDatabase(DATABASE_NAME);
+    }
+
+    /**
+     * Verifies that the content table is reset when the database is downgraded
+     * to an older version.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Add some data to the content table.
+     * 
+     * 3. Create a new {@link SQLiteClientDelegate} object, with a lower version.
+     * 
+     * 4. Verify that the delegate object with lower version has properly reset
+     *      the tables.
+     * 
+     * </pre>
+     */
+    public void testContentTableResetOnVersionDowngrade() {
+        // Insert test data.
+        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
+        sqliteDatabase.execSQL("INSERT INTO content (uri, json) VALUES ('a://b', '{c:d}')");
+
+        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(content.uri) FROM content", null);
+        assertNotNull(cursor);
+        assertEquals(1, cursor.getCount());
+
+        cursor.moveToFirst();
+        assertEquals(1, cursor.getInt(0));
+
+        // Verify the database is reset properly.
+        SQLiteClientDelegate databaseHelper2 = getDatabaseHelper(DATABASE_VERSION - 1);
+        SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
+
+        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(content.uri) FROM content", null);
+        assertNotNull(cursor2);
+        assertEquals(1, cursor2.getCount());
+
+        cursor2.moveToFirst();
+        assertEquals(0, cursor2.getInt(0));
+    }
+
+    /**
+     * Verifies that the content table is reset when the database is upgraded to
+     * a newer version.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Add some data to the content table.
+     * 
+     * 3. Create a new {@link SQLiteClientDelegate} object, with a higher version.
+     * 
+     * 4. Verify that the delegate object with higher version has properly reset
+     *      the tables.
+     * 
+     * </pre>
+     */
+    public void testContentTableResetOnVersionUpgrade() {
+        // Insert test data.
+        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
+        sqliteDatabase.execSQL("INSERT INTO content (uri, json) VALUES ('a://b', '{c:d}')");
+
+        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(content.uri) FROM content", null);
+        assertNotNull(cursor);
+        assertEquals(1, cursor.getCount());
+
+        cursor.moveToFirst();
+        assertEquals(1, cursor.getInt(0));
+
+        // Verify the database is reset properly.
+        SQLiteClientDelegate databaseHelper2 = getDatabaseHelper(DATABASE_VERSION + 1);
+        SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
+
+        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(content.uri) FROM content", null);
+        assertNotNull(cursor2);
+        assertEquals(1, cursor2.getCount());
+
+        cursor2.moveToFirst();
+        assertEquals(0, cursor2.getInt(0));
+    }
+
+    /**
+     * Verifies that a delete operation request won't throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a delete operation.
+     * 
+     * 4. Verify that no InvalidParserException has been thrown.
+     * 
+     * </pre>
+     */
+    public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
+        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        databaseHelper.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            databaseHelper.delete(Uri.parse("test://database.delegate"));
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertFalse(didThrowInvalidParserException);
     }
 
     /**
@@ -140,6 +254,36 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
+     * Verifies that a get operation request will throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a get operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testGetDoesThrowExceptionOnNullPointerParser() {
+        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        databaseHelper.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            databaseHelper.get(Uri.parse("test://database.delegate"));
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertTrue(didThrowInvalidParserException);
+    }
+
+    /**
      * Verifies that the {@link SQLiteClientDelegate} returns a valid result to
      * a get request even if the caller provides an empty URI.
      * 
@@ -155,7 +299,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.get(Uri.EMPTY, null);
+        RestResult result = databaseHelper.get(Uri.EMPTY);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -176,7 +320,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.get(null, null);
+        RestResult result = databaseHelper.get(null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -201,12 +345,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         MockContentItem[] content = { new MockContentItem("test://uri/app/0", "{text:'test 0'}"),
                 new MockContentItem("test://uri/app/1", "{text:'test 1'}") };
 
-        ItemToJsonParser parser = new ItemToJsonParser();
+        ItemParser<MockContentItem> parser = new ItemParser<MockContentItem>(MockContentItem.class);
         ContentValues[] values = { new ContentValues(), new ContentValues() };
         values[0].put("uri", content[0].uri);
-        values[0].put("json", parser.parse(content[0], MockContentItem.class));
+        values[0].put("json", parser.parseToJson(content[0]));
         values[1].put("uri", content[1].uri);
-        values[1].put("json", parser.parse(content[1], MockContentItem.class));
+        values[1].put("json", parser.parseToJson(content[1]));
 
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
@@ -214,7 +358,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         sqliteDatabase.insert("content", null, values[1]);
 
         Uri uri = Uri.parse(content[0].uri);
-        RestResult result = databaseHelper.get(uri, MockContentItem.class);
+        RestResult result = databaseHelper.get(uri);
 
         assertNotNull(result);
         assertNotNull(result.item());
@@ -223,6 +367,36 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         MockContentItem item = (MockContentItem) result.item();
         assertEquals(content[0].uri, item.uri);
         assertEquals(content[0].json, item.json);
+    }
+
+    /**
+     * Verifies that a post operation request will throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a post operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testPostDoesThrowExceptionOnNullPointerParser() {
+        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        databaseHelper.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            databaseHelper.post(Uri.parse("test://database.delegate"), new Object());
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -241,7 +415,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(Uri.EMPTY, null, null);
+        RestResult result = databaseHelper.post(Uri.EMPTY, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -262,7 +436,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(null, null, null);
+        RestResult result = databaseHelper.post(null, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -284,9 +458,39 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse(item.uri);
 
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(uri, item, MockContentItem.class);
+        RestResult result = databaseHelper.post(uri, item);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
+    }
+
+    /**
+     * Verifies that a put operation request will throw an exception if the
+     * delegate doesn't have an assigned item parser.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SQLiteClientDelegate} object.
+     * 
+     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 
+     * 3. Request a put operation.
+     * 
+     * 4. Verify that a {@link InvalidParserException} has been thrown.
+     * 
+     * </pre>
+     */
+    public void testPutDoesThrowExceptionOnNullPointerParser() {
+        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
+        databaseHelper.setItemParser(null);
+        boolean didThrowInvalidParserException = false;
+
+        try {
+            databaseHelper.put(Uri.parse("test://database.delegate"), new Object());
+        } catch (InvalidParserException e) {
+            didThrowInvalidParserException = true;
+        }
+
+        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -305,7 +509,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.put(Uri.EMPTY, null, null);
+        RestResult result = databaseHelper.put(Uri.EMPTY, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -326,7 +530,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.put(null, null, null);
+        RestResult result = databaseHelper.put(null, null);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -360,7 +564,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         item.json = "{text: 'test-updated'}";
 
-        RestResult result = databaseHelper.put(uri, item, MockContentItem.class);
+        RestResult result = databaseHelper.put(uri, item);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -393,7 +597,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         sqliteDatabase.insert("content", null, values);
 
         item.json = "{text: 'test-updated'}";
-        databaseHelper.put(uri, item, MockContentItem.class);
+        databaseHelper.put(uri, item);
 
         String table = "content";
         String key = "uri=?";
@@ -408,9 +612,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         String fetchedUri = cursor.getString(cursor.getColumnIndex("uri"));
         String fetchedJson = cursor.getString(cursor.getColumnIndex("json"));
 
-        JsonToItemParser parser = new JsonToItemParser();
-        MockContentItem fetchedItem = (MockContentItem) parser.parse(fetchedJson,
-                MockContentItem.class);
+        ItemParser<MockContentItem> parser = new ItemParser<MockContentItem>(MockContentItem.class);
+        MockContentItem fetchedItem = parser.parseToItem(fetchedJson);
 
         assertEquals(item.uri, fetchedUri);
         assertEquals(item.uri, fetchedItem.uri);
@@ -454,90 +657,6 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the content table is reset when the database is downgraded
-     * to an older version.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteClientDelegate} object.
-     * 
-     * 2. Add some data to the content table.
-     * 
-     * 3. Create a new {@link SQLiteClientDelegate} object, with a lower version.
-     * 
-     * 4. Verify that the delegate object with lower version has properly reset
-     *      the tables.
-     * 
-     * </pre>
-     */
-    public void testTaskTableResetOnVersionDowngrade() {
-        // Insert test data.
-        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
-        sqliteDatabase.execSQL("INSERT INTO content (uri, json) VALUES ('a://b', '{c:d}')");
-
-        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(content.uri) FROM content", null);
-        assertNotNull(cursor);
-        assertEquals(1, cursor.getCount());
-
-        cursor.moveToFirst();
-        assertEquals(1, cursor.getInt(0));
-
-        // Verify the database is reset properly.
-        SQLiteClientDelegate databaseHelper2 = getDatabaseHelper(DATABASE_VERSION - 1);
-        SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
-
-        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(content.uri) FROM content", null);
-        assertNotNull(cursor2);
-        assertEquals(1, cursor2.getCount());
-
-        cursor2.moveToFirst();
-        assertEquals(0, cursor2.getInt(0));
-    }
-
-    /**
-     * Verifies that the content table is reset when the database is upgraded to
-     * a newer version.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteClientDelegate} object.
-     * 
-     * 2. Add some data to the content table.
-     * 
-     * 3. Create a new {@link SQLiteClientDelegate} object, with a higher version.
-     * 
-     * 4. Verify that the delegate object with higher version has properly reset
-     *      the tables.
-     * 
-     * </pre>
-     */
-    public void testTaskTableResetOnVersionUpgrade() {
-        // Insert test data.
-        SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
-        sqliteDatabase.execSQL("INSERT INTO content (uri, json) VALUES ('a://b', '{c:d}')");
-
-        Cursor cursor = sqliteDatabase.rawQuery("SELECT COUNT(content.uri) FROM content", null);
-        assertNotNull(cursor);
-        assertEquals(1, cursor.getCount());
-
-        cursor.moveToFirst();
-        assertEquals(1, cursor.getInt(0));
-
-        // Verify the database is reset properly.
-        SQLiteClientDelegate databaseHelper2 = getDatabaseHelper(DATABASE_VERSION + 1);
-        SQLiteDatabase sqliteDatabase2 = databaseHelper2.getReadableDatabase();
-
-        Cursor cursor2 = sqliteDatabase2.rawQuery("SELECT COUNT(content.uri) FROM content", null);
-        assertNotNull(cursor2);
-        assertEquals(1, cursor2.getCount());
-
-        cursor2.moveToFirst();
-        assertEquals(0, cursor2.getInt(0));
-    }
-
-    /**
      * Creates a new {@link SQLiteClientDelegate} object with the given version
      * number.
      * 
@@ -548,7 +667,15 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     private SQLiteClientDelegate getDatabaseHelper(int version) {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getTargetContext();
-        return new SQLiteClientDelegate(context, DATABASE_NAME, version);
+
+        ItemParser<MockContentItem> itemParser = new ItemParser<MockContentItem>(
+                MockContentItem.class);
+
+        SQLiteClientDelegate sqliteClientDelegate = new SQLiteClientDelegate(context,
+                DATABASE_NAME, version);
+        sqliteClientDelegate.setItemParser(itemParser);
+
+        return sqliteClientDelegate;
     }
 
 }

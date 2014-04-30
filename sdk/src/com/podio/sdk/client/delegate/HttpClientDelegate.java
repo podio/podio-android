@@ -20,24 +20,19 @@ import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
-import com.podio.sdk.parser.ItemToJsonParser;
-import com.podio.sdk.parser.JsonToItemParser;
 
 public class HttpClientDelegate implements RestClientDelegate {
 
     private final RequestQueue requestQueue;
 
     private VolleyError lastRequestError;
-    private ItemToJsonParser itemToJsonParser;
-    private JsonToItemParser jsonToItemParser;
+    private ItemParser<?> itemParser;
 
     private Session session;
     private String refreshUrl;
 
     public HttpClientDelegate(Context context) {
         this.requestQueue = Volley.newRequestQueue(context);
-        this.itemToJsonParser = new ItemToJsonParser();
-        this.jsonToItemParser = new JsonToItemParser();
     }
 
     @Override
@@ -86,7 +81,9 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public RestResult get(Uri uri, Class<?> classOfResult) {
+    public RestResult get(Uri uri) throws InvalidParserException {
+        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
+
         Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
@@ -102,16 +99,19 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object item = jsonToItemParser.parse(outputJson, classOfResult);
+        Object item = itemParser.parseToItem(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, item);
 
         return result;
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+    public RestResult post(Uri uri, Object item) throws InvalidParserException {
+
+        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
+
         Session resultSession = tryRefreshSession();
-        String inputJson = itemToJsonParser.parse(item, classOfItem);
+        String inputJson = itemParser.parseToJson(item);
         String outputJson = request(Method.POST, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -126,16 +126,18 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = jsonToItemParser.parse(outputJson, classOfItem);
+        Object content = itemParser.parseToItem(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+    public RestResult put(Uri uri, Object item) throws InvalidParserException {
+        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
+
         Session resultSession = tryRefreshSession();
-        String inputJson = itemToJsonParser.parse(item, classOfItem);
+        String inputJson = itemParser.parseToJson(item);
         String outputJson = request(Method.PUT, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -150,7 +152,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = jsonToItemParser.parse(outputJson, classOfItem);
+        Object content = itemParser.parseToItem(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
@@ -176,24 +178,8 @@ public class HttpClientDelegate implements RestClientDelegate {
      * @param itemToJsonParser
      *            The parser to use for extracting item data.
      */
-    public void setItemToJsonParser(ItemToJsonParser itemToJsonParser) {
-        if (itemToJsonParser != null) {
-            this.itemToJsonParser = itemToJsonParser;
-        }
-    }
-
-    /**
-     * Sets the parser used for parsing the response json when performing an
-     * HTTP GET request. The parser will take the json string, parse its
-     * attributes and create new corresponding item objects from it.
-     * 
-     * @param jsonToItemParser
-     *            The parser to use for extracting cursor data.
-     */
-    public void setJsonToItemParser(JsonToItemParser jsonToItemParser) {
-        if (jsonToItemParser != null) {
-            this.jsonToItemParser = jsonToItemParser;
-        }
+    public void setItemParser(ItemParser<?> itemParser) {
+        this.itemParser = itemParser;
     }
 
     private String getBlockingResponse(RequestFuture<String> future) {
@@ -288,5 +274,4 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         return copyOfNewSession;
     }
-
 }

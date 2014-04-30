@@ -55,11 +55,10 @@ public final class SQLiteRestClient extends QueuedRestClient {
 
             if (filter != null) {
                 RestOperation operation = restRequest.getOperation();
-                Class<?> itemType = restRequest.getItemType();
                 Object item = restRequest.getContent();
                 Uri uri = filter.buildUri(scheme, authority);
 
-                result = queryDatabase(operation, uri, item, itemType);
+                result = queryDatabase(operation, uri, item);
             }
         }
 
@@ -76,12 +75,9 @@ public final class SQLiteRestClient extends QueuedRestClient {
      *            The URI that defines the details of the operation.
      * @param content
      *            Any additional data that the operation refers to.
-     * @param classOfContent
-     *            The class definition of the additional data.
      * @return An object representation of the result of the operation.
      */
-    private RestResult queryDatabase(RestOperation operation, Uri uri, Object content,
-            Class<?> classOfContent) {
+    private RestResult queryDatabase(RestOperation operation, Uri uri, Object content) {
 
         switch (operation) {
         case AUTHORIZE:
@@ -89,11 +85,11 @@ public final class SQLiteRestClient extends QueuedRestClient {
         case DELETE:
             return databaseDelegate.delete(uri);
         case GET:
-            return databaseDelegate.get(uri, classOfContent);
+            return databaseDelegate.get(uri);
         case POST:
-            return databaseDelegate.post(uri, content, classOfContent);
+            return databaseDelegate.post(uri, content);
         case PUT:
-            return databaseDelegate.put(uri, content, classOfContent);
+            return databaseDelegate.put(uri, content);
         default:
             // This should never happen under normal conditions.
             String message = "Unknown operation: " + operation.name();

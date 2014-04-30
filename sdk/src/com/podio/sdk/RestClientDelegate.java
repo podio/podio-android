@@ -10,10 +10,10 @@ public interface RestClientDelegate {
 
     public RestResult delete(Uri uri);
 
-    public RestResult get(Uri uri, Class<?> classOfResult);
+    public RestResult get(Uri uri);
 
-    public RestResult post(Uri uri, Object item, Class<?> classOfItem);
+    public RestResult post(Uri uri, Object item);
 
-    public RestResult put(Uri uri, Object item, Class<?> classOfItem);
+    public RestResult put(Uri uri, Object item);
 
 }

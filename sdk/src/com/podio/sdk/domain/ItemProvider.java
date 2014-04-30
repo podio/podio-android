@@ -115,11 +115,8 @@ public class ItemProvider<T> implements Provider<T> {
     }
 
     protected RestRequest buildRestRequest(RestOperation operation, Filter filter, T content) {
-        Class<?> classOfContent = content != null ? content.getClass() : null;
-
         RestRequest request = new RestRequest() //
                 .setContent(content) //
-                .setItemType(classOfContent) //
                 .setOperation(operation) //
                 .setResultListener(resultListener) //
                 .setFilter(filter) //

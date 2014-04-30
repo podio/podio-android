@@ -45,19 +45,19 @@ public class HttpRestClientTest extends InstrumentationTestCase {
             }
 
             @Override
-            public RestResult get(Uri uri, Class<?> classOfItem) {
+            public RestResult get(Uri uri) {
                 result.isGetCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+            public RestResult post(Uri uri, Object item) {
                 result.isPostCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+            public RestResult put(Uri uri, Object item) {
                 result.isPutCalled = true;
                 return null;
             }

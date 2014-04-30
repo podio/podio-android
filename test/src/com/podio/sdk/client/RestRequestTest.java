@@ -27,7 +27,6 @@ public class RestRequestTest extends AndroidTestCase {
 
         assertEquals(target, target.setContent(null));
         assertEquals(target, target.setFilter(null));
-        assertEquals(target, target.setItemType(null));
         assertEquals(target, target.setOperation(null));
         assertEquals(target, target.setResultListener(null));
         assertEquals(target, target.setTicket(null));
@@ -53,7 +52,6 @@ public class RestRequestTest extends AndroidTestCase {
         RestOperation operation = RestOperation.GET;
         Object item = new Object();
         Object ticket = new Object();
-        Class<?> itemType = item.getClass();
 
         Filter filter = new ItemFilter("test") //
                 .addQueryParameter("id", "1") //
@@ -75,14 +73,12 @@ public class RestRequestTest extends AndroidTestCase {
 
         target.setContent(item) //
                 .setFilter(filter) //
-                .setItemType(itemType) //
                 .setOperation(operation) //
                 .setResultListener(resultListener) //
                 .setTicket(ticket);
 
         assertEquals(item, target.getContent());
         assertEquals(filter, target.getFilter());
-        assertEquals(itemType, target.getItemType());
         assertEquals(operation, target.getOperation());
         assertEquals(resultListener, target.getResultListener());
         assertEquals(ticket, target.getTicket());

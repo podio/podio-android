@@ -436,7 +436,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
         RestRequest request = new RestRequest() //
                 .setContent(new Object()) //
-                .setItemType(Object.class) //
                 .setOperation(operation) //
                 .setResultListener(null) //
                 .setFilter(filter) //

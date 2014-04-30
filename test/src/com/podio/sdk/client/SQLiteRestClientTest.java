@@ -45,19 +45,19 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
             }
 
             @Override
-            public RestResult get(Uri uri, Class<?> classOfResult) {
+            public RestResult get(Uri uri) {
                 result.isQueryCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
+            public RestResult post(Uri uri, Object item) {
                 result.isInsertCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
+            public RestResult put(Uri uri, Object item) {
                 result.isUpdateCalled = true;
                 return null;
             }
