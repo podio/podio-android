@@ -211,7 +211,7 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
                 database.beginTransaction();
                 database.execSQL("CREATE TABLE content (" + //
                         " uri TEXT PRIMARY KEY," + //
-                        " json TEXT NOT NULL DEFAULT ('{}'))");
+                        " json TEXT NOT NULL DEFAULT (''))");
                 database.setTransactionSuccessful();
             } finally {
                 database.endTransaction();

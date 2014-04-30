@@ -70,7 +70,7 @@ public class Session {
 
             result = jsonObject.toString();
         } catch (JSONException e) {
-            result = "{}";
+            result = null;
         }
 
         return result;
