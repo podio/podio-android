@@ -65,13 +65,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult delete(Uri uri) {
-        Session resultSession = null;
-
-        if (session.shouldRefreshTokens()) {
-            refreshSession();
-            resultSession = session;
-        }
-
+        Session resultSession = tryRefreshSession();
         String outputJson = request(Method.DELETE, uri, null);
 
         if (outputJson == null && lastRequestError != null
@@ -79,10 +73,9 @@ public class HttpClientDelegate implements RestClientDelegate {
                 && lastRequestError.networkResponse.statusCode == 401) {
 
             // For some reason the server has invalidated our access token.
-            // Force refresh the access token.
+            // Try refresh the access token again.
 
-            refreshSession();
-            resultSession = session;
+            resultSession = tryRefreshSession();
             outputJson = request(Method.DELETE, uri, null);
         }
 
@@ -94,13 +87,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult get(Uri uri, Class<?> classOfResult) {
-        Session resultSession = null;
-
-        if (session.shouldRefreshTokens()) {
-            refreshSession();
-            resultSession = session;
-        }
-
+        Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
         if (outputJson == null && lastRequestError != null
@@ -108,10 +95,9 @@ public class HttpClientDelegate implements RestClientDelegate {
                 && lastRequestError.networkResponse.statusCode == 401) {
 
             // For some reason the server has invalidated our access token.
-            // Force refresh the access token.
+            // Try refresh the access token again.
 
-            refreshSession();
-            resultSession = session;
+            resultSession = tryRefreshSession();
             outputJson = request(Method.GET, uri, null);
         }
 
@@ -124,13 +110,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult post(Uri uri, Object item, Class<?> classOfItem) {
-        Session resultSession = null;
-
-        if (session.shouldRefreshTokens()) {
-            refreshSession();
-            resultSession = session;
-        }
-
+        Session resultSession = tryRefreshSession();
         String inputJson = itemToJsonParser.parse(item, classOfItem);
         String outputJson = request(Method.POST, uri, inputJson);
 
@@ -139,10 +119,9 @@ public class HttpClientDelegate implements RestClientDelegate {
                 && lastRequestError.networkResponse.statusCode == 401) {
 
             // For some reason the server has invalidated our access token.
-            // Force refresh the access token.
+            // Try refresh the access token again.
 
-            refreshSession();
-            resultSession = session;
+            resultSession = tryRefreshSession();
             outputJson = request(Method.POST, uri, inputJson);
         }
 
@@ -155,13 +134,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult put(Uri uri, Object item, Class<?> classOfItem) {
-        Session resultSession = null;
-
-        if (session.shouldRefreshTokens()) {
-            refreshSession();
-            resultSession = session;
-        }
-
+        Session resultSession = tryRefreshSession();
         String inputJson = itemToJsonParser.parse(item, classOfItem);
         String outputJson = request(Method.PUT, uri, inputJson);
 
@@ -170,10 +143,9 @@ public class HttpClientDelegate implements RestClientDelegate {
                 && lastRequestError.networkResponse.statusCode == 401) {
 
             // For some reason the server has invalidated our access token.
-            // Force refresh the access token.
+            // Try refresh the access token again.
 
-            refreshSession();
-            resultSession = session;
+            resultSession = tryRefreshSession();
             outputJson = request(Method.PUT, uri, inputJson);
         }
 
@@ -280,9 +252,9 @@ public class HttpClientDelegate implements RestClientDelegate {
     private String request(int method, Uri uri, String body) {
         String result = null;
 
-        if (Utils.notEmpty(uri)) {
+        if (Utils.notEmpty(uri) && session != null && session.isAuthorized()) {
             String url = uri.toString();
-            String accessToken = session != null ? session.accessToken : "";
+            String accessToken = session.accessToken;
             Map<String, String> headers = new HashMap<String, String>();
             headers.put("Authorization", "Bearer " + accessToken);
 
@@ -296,16 +268,25 @@ public class HttpClientDelegate implements RestClientDelegate {
         return result;
     }
 
-    private void refreshSession() {
-        Map<String, String> refreshParams = new HashMap<String, String>();
-        refreshParams.put("grant_type", "refresh_token");
-        refreshParams.put("refresh_token", session.refreshToken);
+    private Session tryRefreshSession() {
+        Session copyOfNewSession = null;
 
-        RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new RefreshRequest(refreshUrl, refreshParams, future);
+        if (session != null && session.shouldRefreshTokens()) {
+            Map<String, String> refreshParams = new HashMap<String, String>();
+            refreshParams.put("grant_type", "refresh_token");
+            refreshParams.put("refresh_token", session.refreshToken);
 
-        requestQueue.add(request);
-        String result = getBlockingResponse(future);
-        session = new Session(result);
+            RequestFuture<String> future = RequestFuture.newFuture();
+            StringRequest request = new RefreshRequest(refreshUrl, refreshParams, future);
+
+            requestQueue.add(request);
+            String resultJson = getBlockingResponse(future);
+
+            session = new Session(resultJson);
+            copyOfNewSession = new Session(resultJson);
+        }
+
+        return copyOfNewSession;
     }
+
 }
