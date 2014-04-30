@@ -4,8 +4,10 @@ import android.content.Context;
 
 import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
+import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
-import com.podio.sdk.domain.AppItemProvider;
+import com.podio.sdk.domain.ApplicationProvider;
+import com.podio.sdk.domain.OrganizationProvider;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.domain.SessionFilter;
 import com.podio.sdk.domain.SessionProvider;
@@ -15,6 +17,7 @@ import com.podio.sdk.domain.SessionProvider;
  * be suitable for most third party developers.
  * 
  * @author László Urszuly
+ * 
  */
 public final class Podio {
 
@@ -22,14 +25,11 @@ public final class Podio {
      * Helps fetching a predefined set of AppItem items using default filters.
      * 
      * @author László Urszuly
+     * 
      */
-    public static final class App {
+    public static final class Application {
 
-        /**
-         * Creates a new instance of the AppItem section of the Podio facade.
-         * This constructor is hidden.
-         */
-        private App() {
+        private Application() {
             // Hiding the constructor of this class as it's not meant to be
             // instantiated.
         }
@@ -45,8 +45,14 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object fetch(long spaceId, ProviderListener providerListener) {
-            AppItemProvider provider = new AppItemProvider();
+        public static final Object getForSpace(long spaceId, ProviderListener providerListener) {
+            ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
+                    com.podio.sdk.domain.Application[].class);
+
+            cacheDelegate.setItemParser(parser);
+            networkDelegate.setItemParser(parser);
+
+            ApplicationProvider provider = new ApplicationProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
 
@@ -68,7 +74,13 @@ public final class Podio {
         public static final Object fetchIncludingInactive(long spaceId,
                 ProviderListener providerListener) {
 
-            AppItemProvider provider = new AppItemProvider();
+            ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
+                    com.podio.sdk.domain.Application[].class);
+
+            cacheDelegate.setItemParser(parser);
+            networkDelegate.setItemParser(parser);
+
+            ApplicationProvider provider = new ApplicationProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
 
@@ -108,6 +120,12 @@ public final class Podio {
         public static final Object authenticateAsUser(String username, String password,
                 ProviderListener providerListener) {
 
+            ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
+                    com.podio.sdk.domain.Session.class);
+
+            cacheDelegate.setItemParser(parser);
+            networkDelegate.setItemParser(parser);
+
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
@@ -134,6 +152,12 @@ public final class Podio {
         public static final Object authenticateAsApp(String appId, String appToken,
                 ProviderListener providerListener) {
 
+            ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
+                    com.podio.sdk.domain.Session.class);
+
+            cacheDelegate.setItemParser(parser);
+            networkDelegate.setItemParser(parser);
+
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
@@ -154,7 +178,49 @@ public final class Podio {
          *            The previously stored session object.
          */
         public static final void revokeSession(Session session) {
+            cacheDelegate.setItemParser(null);
+            networkDelegate.setItemParser(null);
+
             client.revokeSession(SessionFilter.PATH, session);
+        }
+
+    }
+
+    /**
+     * Enables means of easy operating on the Organization API end point.
+     * 
+     * @author László Urszuly
+     * 
+     */
+    public static final class Organization {
+
+        private Organization() {
+            // Hiding the constructor of this class as it's not meant to be
+            // instantiated.
+        }
+
+        /**
+         * Fetches all Organizations (with a minimal set of information on the
+         * contained workspaces as well) that are available to the user.
+         * 
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object getAll(ProviderListener providerListener) {
+            ItemParser<com.podio.sdk.domain.Organization[]> parser = new ItemParser<com.podio.sdk.domain.Organization[]>(
+                    com.podio.sdk.domain.Organization[].class);
+
+            cacheDelegate.setItemParser(parser);
+            networkDelegate.setItemParser(parser);
+
+            OrganizationProvider provider = new OrganizationProvider();
+            provider.setRestClient(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.getAll();
         }
     }
 
@@ -175,6 +241,21 @@ public final class Podio {
         // instantiated.
     }
 
+    /**
+     * Initializes the Podio SDK with the given client credentials. This method
+     * MUST be called before any other request is made. The caller can then
+     * either choose to revoke a previously stored session (the SDK doesn't
+     * store or cache the session), or authenticate with user or app
+     * credentials. These operations are done in the {@link Client} area.
+     * 
+     * @param context
+     *            The context to initialize the cache database and network
+     *            clients in.
+     * @param clientId
+     *            The pre-shared Podio client id.
+     * @param clientSecret
+     *            The corresponding Podio client secret.
+     */
     public static void setup(Context context, String clientId, String clientSecret) {
         Podio.clientId = clientId;
         Podio.clientSecret = clientSecret;
