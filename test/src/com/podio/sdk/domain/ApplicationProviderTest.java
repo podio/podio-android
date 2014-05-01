@@ -7,7 +7,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.domain.mock.MockRestClient;
 
-public class AppItemProviderTest extends AndroidTestCase {
+public class ApplicationProviderTest extends AndroidTestCase {
 
     private static final class ConcurrentResult {
         private boolean isSessionChangeCalled = false;
@@ -17,8 +17,8 @@ public class AppItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link ApplicationProvider} doesn't request inactive app
-     * items by default.
+     * Verifies that the {@link ApplicationProvider} doesn't request inactive
+     * app items by default.
      * 
      * <pre>
      * 
@@ -58,7 +58,7 @@ public class AppItemProviderTest extends AndroidTestCase {
             }
         });
 
-        target.fetchAppItemsForSpace(1);
+        target.fetchApplicationsForSpace(1);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, result.isSessionChangeCalled);
@@ -70,8 +70,8 @@ public class AppItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link ApplicationProvider} requests inactive app items as
-     * well through the custom fetch method.
+     * Verifies that the {@link ApplicationProvider} requests inactive app items
+     * as well through the custom fetch method.
      * 
      * <pre>
      * 
@@ -111,7 +111,7 @@ public class AppItemProviderTest extends AndroidTestCase {
             }
         });
 
-        target.fetchAppItemsForSpaceWithInactivesIncluded(2);
+        target.fetchApplicationsForSpaceWithInactivesIncluded(2);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, result.isSessionChangeCalled);

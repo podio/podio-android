@@ -1,26 +1,18 @@
 package com.podio.sdk.domain;
 
-import com.podio.sdk.Filter;
 
-/**
- * An AppItemProvider is a custom extension to the ItemProvider class. It
- * targets AppItems and enables very AppItem-specific helper methods to off-load
- * the caller from the boiler plate it takes to create and post a Podio request.
- * 
- * @author László Urszuly
- */
 public final class ApplicationProvider extends PodioProvider<Application> {
 
-    public Object fetchAppItemsForSpace(long spaceId) {
-        Filter filter = new ApplicationFilter() //
+    public Object fetchApplicationsForSpace(long spaceId) {
+        ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(false);
 
         return fetchItems(filter);
     }
 
-    public Object fetchAppItemsForSpaceWithInactivesIncluded(long spaceId) {
-        Filter filter = new ApplicationFilter() //
+    public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
+        ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(true);
 

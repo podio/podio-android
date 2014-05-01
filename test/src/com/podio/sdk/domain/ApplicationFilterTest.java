@@ -3,7 +3,7 @@ package com.podio.sdk.domain;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-public class AppItemFilterTest extends AndroidTestCase {
+public class ApplicationFilterTest extends AndroidTestCase {
 
     /**
      * Verifies that {@link ApplicationFilter} doesn't omit any properties when

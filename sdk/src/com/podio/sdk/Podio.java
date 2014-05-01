@@ -22,7 +22,7 @@ import com.podio.sdk.domain.SessionProvider;
 public final class Podio {
 
     /**
-     * Helps fetching a predefined set of AppItem items using default filters.
+     * Enables means of easy operating on the Application API end point.
      * 
      * @author László Urszuly
      * 
@@ -56,7 +56,7 @@ public final class Podio {
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
 
-            return provider.fetchAppItemsForSpace(spaceId);
+            return provider.fetchApplicationsForSpace(spaceId);
         }
 
         /**
@@ -84,7 +84,7 @@ public final class Podio {
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
 
-            return provider.fetchAppItemsForSpaceWithInactivesIncluded(spaceId);
+            return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId);
         }
     }
 
