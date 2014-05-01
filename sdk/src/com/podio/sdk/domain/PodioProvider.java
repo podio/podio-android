@@ -37,7 +37,7 @@ public class PodioProvider<T> implements Provider<T> {
     protected RestClient client;
 
     @Override
-    public Object changeItem(Filter filter, T item) {
+    public Object changeRequest(Filter filter, T item) {
         Object ticket = null;
 
         if (client != null) {
@@ -52,7 +52,7 @@ public class PodioProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Object deleteItems(Filter filter) {
+    public Object deleteRequest(Filter filter) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -67,7 +67,7 @@ public class PodioProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Object fetchItems(Filter filter) {
+    public Object fetchRequest(Filter filter) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -82,11 +82,11 @@ public class PodioProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Object pushItem(T item) {
+    public Object pushRequest(Filter filter, T item) {
         Object ticket = null;
 
-        if (client != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.POST, item);
+        if (client != null && filter != null) {
+            RestRequest restRequest = buildRestRequest(RestOperation.POST, filter, item);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -108,10 +108,6 @@ public class PodioProvider<T> implements Provider<T> {
 
     protected RestRequest buildRestRequest(RestOperation operation, Filter filter) {
         return buildRestRequest(operation, filter, null);
-    }
-
-    protected RestRequest buildRestRequest(RestOperation operation, T content) {
-        return buildRestRequest(operation, null, content);
     }
 
     protected RestRequest buildRestRequest(RestOperation operation, Filter filter, T content) {

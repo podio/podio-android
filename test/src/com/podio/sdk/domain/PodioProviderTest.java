@@ -47,7 +47,7 @@ public class PodioProviderTest extends AndroidTestCase {
         // Perform the delete request.
         PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
-        target.deleteItems(filter);
+        target.deleteRequest(filter);
 
         // Verify that the correct DELETE RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -78,7 +78,7 @@ public class PodioProviderTest extends AndroidTestCase {
         // Perform the fetch request.
         PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
-        target.fetchItems(filter);
+        target.fetchRequest(filter);
 
         // Verify that the correct GET RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -105,15 +105,16 @@ public class PodioProviderTest extends AndroidTestCase {
     public void testCorrectPostRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
         final Object item = new Object();
+        final Filter filter = new PodioFilter();
 
         // Perform the push request.
         PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
-        target.pushItem(item);
+        target.pushRequest(filter, item);
 
         // Verify that the correct POST RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.POST, item, null, null, request);
+        validateRequest(RestOperation.POST, item, filter, filter, request);
     }
 
     /**
@@ -141,7 +142,7 @@ public class PodioProviderTest extends AndroidTestCase {
         // Perform the change request.
         PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
-        target.changeItem(filter, item);
+        target.changeRequest(filter, item);
 
         // Verify that the correct PUT RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -203,7 +204,7 @@ public class PodioProviderTest extends AndroidTestCase {
         PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.setProviderListener(listener);
-        target.changeItem(itemFilter, itemObject);
+        target.changeRequest(itemFilter, itemObject);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -269,7 +270,7 @@ public class PodioProviderTest extends AndroidTestCase {
         PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.setProviderListener(listener);
-        target.changeItem(itemFilter, itemObject);
+        target.changeRequest(itemFilter, itemObject);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).

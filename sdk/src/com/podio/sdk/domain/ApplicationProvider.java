@@ -8,7 +8,7 @@ public final class ApplicationProvider extends PodioProvider<Application> {
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(false);
 
-        return fetchItems(filter);
+        return fetchRequest(filter);
     }
 
     public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
@@ -16,7 +16,7 @@ public final class ApplicationProvider extends PodioProvider<Application> {
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(true);
 
-        return fetchItems(filter);
+        return fetchRequest(filter);
     }
 
 }

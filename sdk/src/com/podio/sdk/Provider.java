@@ -20,7 +20,7 @@ public interface Provider<T> {
      * @return A ticket identifying this request.
      * 
      */
-    public Object changeItem(Filter filter, T item);
+    public Object changeRequest(Filter filter, T item);
 
     /**
      * Performs a DELETE rest operation on the given {@link RestClient}.
@@ -29,7 +29,7 @@ public interface Provider<T> {
      *            Defines the data set to delete.
      * @return A ticket identifying this request.
      */
-    public Object deleteItems(Filter filter);
+    public Object deleteRequest(Filter filter);
 
     /**
      * Performs a GET rest operation on the given {@link RestClient}.
@@ -38,16 +38,18 @@ public interface Provider<T> {
      *            Defines the data set to fetch.
      * @return A ticket identifying this request.
      */
-    public Object fetchItems(Filter filter);
+    public Object fetchRequest(Filter filter);
 
     /**
      * Performs a POST rest operation on the given {@link RestClient}.
      * 
+     * @param filter
+     *            Defines the end point where to push.
      * @param item
      *            Provides the new data.
      * @return A ticket identifying this request.
      */
-    public Object pushItem(T item);
+    public Object pushRequest(Filter filter, T item);
 
     /**
      * Sets the callback interface used to report the result through. If this
