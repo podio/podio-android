@@ -24,7 +24,7 @@ public class ItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link ItemProvider} implementation builds the
+     * Verify that the abstract {@link PodioProvider} implementation builds the
      * correct {@link RestRequest} for a DELETE request.
      * 
      * <pre>
@@ -45,7 +45,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Filter filter = new PodioFilter();
 
         // Perform the delete request.
-        ItemProvider<Object> target = new ItemProvider<Object>();
+        PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.deleteItems(filter);
 
@@ -55,7 +55,7 @@ public class ItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link ItemProvider} implementation builds the
+     * Verify that the abstract {@link PodioProvider} implementation builds the
      * correct {@link RestRequest} for a GET request.
      * 
      * <pre>
@@ -76,7 +76,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Filter filter = new PodioFilter();
 
         // Perform the fetch request.
-        ItemProvider<Object> target = new ItemProvider<Object>();
+        PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.fetchItems(filter);
 
@@ -86,7 +86,7 @@ public class ItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link ItemProvider} implementation builds the
+     * Verify that the abstract {@link PodioProvider} implementation builds the
      * correct {@link RestRequest} for a POST request.
      * 
      * <pre>
@@ -107,7 +107,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Object item = new Object();
 
         // Perform the push request.
-        ItemProvider<Object> target = new ItemProvider<Object>();
+        PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.pushItem(item);
 
@@ -117,7 +117,7 @@ public class ItemProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link ItemProvider} implementation builds the
+     * Verify that the abstract {@link PodioProvider} implementation builds the
      * correct {@link RestRequest} for a PUT request.
      * 
      * <pre>
@@ -139,7 +139,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Object item = new Object();
 
         // Perform the change request.
-        ItemProvider<Object> target = new ItemProvider<Object>();
+        PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.changeItem(filter, item);
 
@@ -200,7 +200,7 @@ public class ItemProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        ItemProvider<Object> target = new ItemProvider<Object>();
+        PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeItem(itemFilter, itemObject);
@@ -266,7 +266,7 @@ public class ItemProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        ItemProvider<Object> target = new ItemProvider<Object>();
+        PodioProvider<Object> target = new PodioProvider<Object>();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeItem(itemFilter, itemObject);

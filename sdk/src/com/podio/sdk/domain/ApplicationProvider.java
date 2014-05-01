@@ -9,7 +9,7 @@ import com.podio.sdk.Filter;
  * 
  * @author László Urszuly
  */
-public final class ApplicationProvider extends ItemProvider<Application> {
+public final class ApplicationProvider extends PodioProvider<Application> {
 
     public Object fetchAppItemsForSpace(long spaceId) {
         Filter filter = new ApplicationFilter() //

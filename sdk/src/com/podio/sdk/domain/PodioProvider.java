@@ -8,7 +8,7 @@ import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
-public class ItemProvider<T> implements Provider<T> {
+public class PodioProvider<T> implements Provider<T> {
 
     private final ResultListener resultListener = new ResultListener() {
         @Override

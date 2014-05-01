@@ -16,7 +16,7 @@ import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.client.delegate.mock.MockItemParser;
 import com.podio.sdk.client.mock.MockWebServer;
-import com.podio.sdk.domain.ItemProvider;
+import com.podio.sdk.domain.PodioProvider;
 import com.podio.sdk.domain.Session;
 
 import fi.iki.elonen.NanoHTTPD.Method;
@@ -59,7 +59,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
      * 
      * 3. Request a authorize operation.
      * 
@@ -199,7 +199,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
      * 
      * 3. Request a delete operation.
      * 
@@ -337,7 +337,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
      * 
      * 3. Request a get operation.
      * 
@@ -562,7 +562,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
      * 
      * 3. Request a post operation.
      * 
@@ -699,7 +699,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link ItemProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
      * 
      * 3. Request a put operation.
      * 

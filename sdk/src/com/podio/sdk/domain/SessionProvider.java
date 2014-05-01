@@ -4,7 +4,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 
-public class SessionProvider extends ItemProvider<Session> {
+public class SessionProvider extends PodioProvider<Session> {
 
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
             String username, String password) {
