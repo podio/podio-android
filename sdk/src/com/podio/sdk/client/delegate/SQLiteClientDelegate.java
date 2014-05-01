@@ -62,7 +62,7 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
             Cursor cursor = database.query("content", projection, key, value, null, null, null);
 
             if (cursor != null) {
-                json = cursor.moveToFirst() ? cursor.getString(0) : null;
+                json = cursor.moveToFirst() ? cursor.getString(0) : "";
             }
         }
 
@@ -94,7 +94,6 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
 
     @Override
     public RestResult post(Uri uri, Object item) throws InvalidParserException {
-
         ItemParser.raiseExceptionIfInvalidInstance(itemParser);
 
         long id = -1L;
