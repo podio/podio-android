@@ -71,7 +71,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object fetchIncludingInactive(long spaceId,
+        public static final Object getForSpaceIncludingInactive(long spaceId,
                 ProviderListener providerListener) {
 
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
