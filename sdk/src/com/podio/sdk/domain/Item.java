@@ -27,9 +27,9 @@ public final class Item {
     }
 
     public static final class FilterResult {
-        public final Integer total = 0;
-        public final Integer filtered = 0;
-        public final Item[] items = {};
+        public final Integer total = null;
+        public final Integer filtered = null;
+        public final Item[] items = null;
 
         private FilterResult() {
             // Hide the constructor.
@@ -49,11 +49,11 @@ public final class Item {
     }
 
     public static final class Revision {
-        public final Long revision = 0L;
-        public final Long app_revision = 0L;
-        public final Creator created_by = new Creator();
-        public final Client created_via = new Client();
-        public final String created_on = "";
+        public final Long revision = null;
+        public final Long app_revision = null;
+        public final Creator created_by = null;
+        public final Client created_via = null;
+        public final String created_on = null;
 
         private Revision() {
             // Hide the constructor.
@@ -67,10 +67,10 @@ public final class Item {
     }
 
     public static final class Field {
-        public static final Long field_id = 0L;
-        public static final String type = "";
-        public static final String label = "";
-        public static final Value[] values = {};
+        public static final Long field_id = null;
+        public static final String type = null;
+        public static final String label = null;
+        public static final Value[] values = null;
 
         private Field() {
             // Hide the constructor.
@@ -83,18 +83,18 @@ public final class Item {
         }
     }
 
-    public final Long item_id = 0L;
-    public final Revision initial_revision = new Revision();
-    public final Revision current_revision = new Revision();
-    public final String last_event_on = "";
-    public final Long external_id = 0L;
-    public final String title = "";
-    public final String link = "";
-    public final String[] rights = {};
-    public final Field[] fiels = {};
-    public final Integer comment_count = 0;
-    public final Rating[] ratings = {};
-    public final Integer file_count = 0;
+    public final Long item_id = null;
+    public final Revision initial_revision = null;
+    public final Revision current_revision = null;
+    public final String last_event_on = null;
+    public final Long external_id = null;
+    public final String title = null;
+    public final String link = null;
+    public final String[] rights = null;
+    public final Field[] fiels = null;
+    public final Integer comment_count = null;
+    public final Rating ratings = null;
+    public final Integer file_count = null;
 
     private Item() {
         // Hide the constructor.
