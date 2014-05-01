@@ -23,23 +23,6 @@ public class ItemParser<T> {
     }
 
     /**
-     * Performs a validation of the given ItemParser instance and throws an
-     * InvalidParserException if the validation fails. On success, the method
-     * just returns.
-     * 
-     * @param instance
-     *            The ItemParser instance to validate.
-     * @throws InvalidParserException
-     */
-    public static void raiseExceptionIfInvalidInstance(ItemParser<?> instance)
-            throws InvalidParserException {
-
-        if (instance == null) {
-            throw new InvalidParserException();
-        }
-    }
-
-    /**
      * Performs the parsing of the given json string to domain model
      * representation.
      * 

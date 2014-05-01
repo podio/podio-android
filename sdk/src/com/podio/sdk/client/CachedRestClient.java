@@ -8,6 +8,8 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.ItemParser;
+import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.utils.Utils;
 
@@ -22,7 +24,7 @@ import com.podio.sdk.internal.utils.Utils;
  */
 public class CachedRestClient extends HttpRestClient {
     private final String contentScheme;
-    private final RestClientDelegate databaseDelegate;
+    private final JsonClientDelegate databaseDelegate;
     private final ArrayList<RestRequest> delegatedRequests;
 
     /**
@@ -48,8 +50,8 @@ public class CachedRestClient extends HttpRestClient {
      *            The number of pending request this {@link RestClient} will
      *            keep in its queue.
      */
-    public CachedRestClient(Context context, String authority, RestClientDelegate networkDelegate,
-            RestClientDelegate cacheDelegate, int queueCapacity) {
+    public CachedRestClient(Context context, String authority, JsonClientDelegate networkDelegate,
+            JsonClientDelegate cacheDelegate, int queueCapacity) {
 
         super(context, authority, networkDelegate, queueCapacity);
 
@@ -150,4 +152,10 @@ public class CachedRestClient extends HttpRestClient {
             return new RestResult(false, message, null);
         }
     }
+
+    public void setItemParser(ItemParser<?> parser) {
+        networkDelegate.setItemParser(parser);
+        databaseDelegate.setItemParser(parser);
+    }
+
 }

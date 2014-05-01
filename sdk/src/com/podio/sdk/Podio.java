@@ -50,8 +50,7 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
                     com.podio.sdk.domain.Application[].class);
 
-            cacheDelegate.setItemParser(parser);
-            networkDelegate.setItemParser(parser);
+            client.setItemParser(parser);
 
             ApplicationProvider provider = new ApplicationProvider();
             provider.setRestClient(client);
@@ -78,8 +77,7 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
                     com.podio.sdk.domain.Application[].class);
 
-            cacheDelegate.setItemParser(parser);
-            networkDelegate.setItemParser(parser);
+            client.setItemParser(parser);
 
             ApplicationProvider provider = new ApplicationProvider();
             provider.setRestClient(client);
@@ -124,8 +122,7 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
                     com.podio.sdk.domain.Session.class);
 
-            cacheDelegate.setItemParser(parser);
-            networkDelegate.setItemParser(parser);
+            client.setItemParser(parser);
 
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
@@ -156,8 +153,7 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
                     com.podio.sdk.domain.Session.class);
 
-            cacheDelegate.setItemParser(parser);
-            networkDelegate.setItemParser(parser);
+            client.setItemParser(parser);
 
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
@@ -179,9 +175,7 @@ public final class Podio {
          *            The previously stored session object.
          */
         public static final void revokeSession(Session session) {
-            cacheDelegate.setItemParser(null);
-            networkDelegate.setItemParser(null);
-
+            client.setItemParser(null);
             client.revokeSession(SessionFilter.PATH, session);
         }
 
@@ -200,8 +194,7 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Item[]> parser = new ItemParser<com.podio.sdk.domain.Item[]>(
                     com.podio.sdk.domain.Item[].class);
 
-            cacheDelegate.setItemParser(parser);
-            networkDelegate.setItemParser(parser);
+            client.setItemParser(parser);
 
             ItemProvider provider = new ItemProvider();
             provider.setRestClient(client);
@@ -238,8 +231,7 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Organization[]> parser = new ItemParser<com.podio.sdk.domain.Organization[]>(
                     com.podio.sdk.domain.Organization[].class);
 
-            cacheDelegate.setItemParser(parser);
-            networkDelegate.setItemParser(parser);
+            client.setItemParser(parser);
 
             OrganizationProvider provider = new OrganizationProvider();
             provider.setRestClient(client);

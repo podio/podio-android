@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 
 /**
@@ -15,7 +16,8 @@ import com.podio.sdk.internal.request.RestOperation;
  * @author László Urszuly
  */
 public final class SQLiteRestClient extends QueuedRestClient {
-    private final RestClientDelegate databaseDelegate;
+
+    protected final JsonClientDelegate databaseDelegate;
 
     /**
      * @param context
@@ -31,13 +33,13 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @see QueuedRestClient
      * @see RestClient
      */
-    public SQLiteRestClient(Context context, String authority, RestClientDelegate databaseDelegate,
+    public SQLiteRestClient(Context context, String authority, JsonClientDelegate databaseDelegate,
             int queueCapacity) {
 
         super("content", authority, queueCapacity);
 
         if (databaseDelegate == null) {
-            throw new IllegalArgumentException("The RestClientDelegate mustn't be null");
+            throw new IllegalArgumentException("The JsonClientDelegate mustn't be null");
         } else {
             this.databaseDelegate = databaseDelegate;
         }

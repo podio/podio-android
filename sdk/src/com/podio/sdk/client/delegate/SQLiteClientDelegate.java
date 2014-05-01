@@ -7,19 +7,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
-import com.podio.sdk.internal.utils.Utils;
 
-public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClientDelegate {
+public class SQLiteClientDelegate extends JsonClientDelegate implements RestClientDelegate {
 
-    private ItemParser<?> itemParser;
+    private final SQLiteHelper sqliteHelper;
 
     public SQLiteClientDelegate(Context context, String name, int version) {
-        super(context, name, null, version);
+        sqliteHelper = new SQLiteHelper(context, name, version);
     }
 
     @Override
@@ -29,9 +27,9 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
-    public RestResult delete(Uri uri) {
+    public RestResult delete(Uri uri) throws SQLiteException {
         int count = -1;
-        SQLiteDatabase database = openDatabase(uri);
+        SQLiteDatabase database = sqliteHelper.getWritableDatabase();
 
         if (database != null) {
             String key = "uri=?";
@@ -48,11 +46,9 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
-    public RestResult get(Uri uri) throws InvalidParserException {
-        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
-
+    public RestResult get(Uri uri) throws SQLiteException, InvalidParserException {
         String json = null;
-        SQLiteDatabase database = openDatabase(uri);
+        SQLiteDatabase database = sqliteHelper.getReadableDatabase();
 
         if (database != null) {
             String[] projection = { "json" };
@@ -68,39 +64,19 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
 
         boolean isSuccess = json != null;
         String message = null;
-        Object item = itemParser.parseToItem(json);
+        Object item = parseJson(json);
         RestResult result = new RestResult(isSuccess, message, item);
 
         return result;
     }
 
     @Override
-    public void onCreate(SQLiteDatabase database) {
-        clearDatabase(database);
-        setupDatabase(database);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        clearDatabase(database);
-        setupDatabase(database);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        clearDatabase(database);
-        setupDatabase(database);
-    }
-
-    @Override
-    public RestResult post(Uri uri, Object item) throws InvalidParserException {
-        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
-
+    public RestResult post(Uri uri, Object item) throws SQLiteException, InvalidParserException {
         long id = -1L;
-        SQLiteDatabase database = openDatabase(uri);
+        SQLiteDatabase database = sqliteHelper.getWritableDatabase();
 
         if (database != null) {
-            String json = itemParser.parseToJson(item);
+            String json = parseItem(item);
 
             ContentValues values = new ContentValues();
             values.put("uri", uri.toString());
@@ -119,14 +95,12 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
     }
 
     @Override
-    public RestResult put(Uri uri, Object item) throws InvalidParserException {
-        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
-
+    public RestResult put(Uri uri, Object item) throws SQLiteException, InvalidParserException {
         int count = -1;
-        SQLiteDatabase database = openDatabase(uri);
+        SQLiteDatabase database = sqliteHelper.getWritableDatabase();
 
         if (database != null) {
-            String json = itemParser.parseToJson(item);
+            String json = parseItem(item);
 
             String key = "uri=?";
             String[] value = { uri.toString() };
@@ -146,75 +120,11 @@ public class SQLiteClientDelegate extends SQLiteOpenHelper implements RestClient
         return result;
     }
 
-    /**
-     * Sets the parser used for parsing content items when performing an HTTP
-     * POST or PUT request. The parser will take the item object, parse data
-     * from its fields and create a new JSON string from it.
-     * 
-     * @param itemToJsonParser
-     *            The parser to use for extracting item data.
-     */
-    public void setItemParser(ItemParser<?> itemParser) {
-        this.itemParser = itemParser;
+    public SQLiteDatabase getReadableDatabase() {
+        return sqliteHelper != null ? sqliteHelper.getReadableDatabase() : null;
     }
 
-    private void clearDatabase(SQLiteDatabase database) {
-        if (database != null) {
-            Cursor cursor = null;
-
-            try {
-                // Drop all tables, views and triggers in the database.
-                database.beginTransaction();
-                String query = "SELECT type, name FROM sqlite_master WHERE type IN (?, ?, ?)";
-                String[] arguments = { "table", "view", "trigger" };
-                cursor = database.rawQuery(query, arguments);
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    int typeColumn = cursor.getColumnIndex("type");
-                    int nameColumn = cursor.getColumnIndex("name");
-
-                    do {
-                        String type = cursor.getString(typeColumn);
-                        String name = cursor.getString(nameColumn);
-                        database.execSQL("DROP " + type + " IF EXISTS " + name);
-                    } while (cursor.moveToNext());
-                }
-
-                database.setTransactionSuccessful();
-            } finally {
-                if (cursor != null && !cursor.isClosed()) {
-                    cursor.close();
-                }
-                database.endTransaction();
-            }
-        }
-    }
-
-    private SQLiteDatabase openDatabase(Uri uri) {
-        SQLiteDatabase database = null;
-
-        if (Utils.notEmpty(uri)) {
-            try {
-                database = getWritableDatabase();
-            } catch (SQLiteException e) {
-                database = null;
-            }
-        }
-
-        return database;
-    }
-
-    private void setupDatabase(SQLiteDatabase database) {
-        if (database != null) {
-            try {
-                database.beginTransaction();
-                database.execSQL("CREATE TABLE content (" + //
-                        " uri TEXT PRIMARY KEY," + //
-                        " json TEXT NOT NULL DEFAULT (''))");
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
-        }
+    public SQLiteDatabase getWritableDatabase() {
+        return sqliteHelper != null ? sqliteHelper.getWritableDatabase() : null;
     }
 }

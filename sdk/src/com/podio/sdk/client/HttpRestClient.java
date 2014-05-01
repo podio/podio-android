@@ -7,6 +7,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
+import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 
@@ -20,7 +21,7 @@ public class HttpRestClient extends QueuedRestClient {
 
     private static final String SCHEME = "https";
 
-    private final RestClientDelegate networkDelegate;
+    protected final JsonClientDelegate networkDelegate;
 
     /**
      * @param context
@@ -39,13 +40,13 @@ public class HttpRestClient extends QueuedRestClient {
      * @see QueuedRestClient
      * @see RestClient
      */
-    public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate,
+    public HttpRestClient(Context context, String authority, JsonClientDelegate networkDelegate,
             int queueCapacity) {
 
         super(SCHEME, authority, queueCapacity);
 
         if (networkDelegate == null) {
-            throw new IllegalArgumentException("The RestClientDelegate mustn't be null");
+            throw new IllegalArgumentException("The JsonClientDelegate mustn't be null");
         } else {
             this.networkDelegate = networkDelegate;
         }

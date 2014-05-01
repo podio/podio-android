@@ -5,7 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
@@ -30,7 +30,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
         Context context = instrumentation.getContext();
 
         result = new ConcurrentResult();
-        target = new SQLiteRestClient(context, "authority", new RestClientDelegate() {
+        target = new SQLiteRestClient(context, "authority", new JsonClientDelegate() {
 
             @Override
             public RestResult authorize(Uri uri) {

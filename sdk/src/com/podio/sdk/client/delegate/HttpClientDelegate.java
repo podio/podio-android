@@ -16,18 +16,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
 
-public class HttpClientDelegate implements RestClientDelegate {
+public class HttpClientDelegate extends JsonClientDelegate {
 
     private final RequestQueue requestQueue;
 
     private VolleyError lastRequestError;
-    private ItemParser<?> itemParser;
-
     private Session session;
     private String refreshUrl;
 
@@ -82,8 +79,6 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult get(Uri uri) throws InvalidParserException {
-        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
-
         Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
@@ -99,7 +94,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object item = itemParser.parseToItem(outputJson);
+        Object item = parseJson(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, item);
 
         return result;
@@ -107,11 +102,8 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult post(Uri uri, Object item) throws InvalidParserException {
-
-        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
-
         Session resultSession = tryRefreshSession();
-        String inputJson = itemParser.parseToJson(item);
+        String inputJson = parseItem(item);
         String outputJson = request(Method.POST, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -126,7 +118,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = itemParser.parseToItem(outputJson);
+        Object content = parseJson(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
@@ -134,10 +126,8 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult put(Uri uri, Object item) throws InvalidParserException {
-        ItemParser.raiseExceptionIfInvalidInstance(itemParser);
-
         Session resultSession = tryRefreshSession();
-        String inputJson = itemParser.parseToJson(item);
+        String inputJson = parseItem(item);
         String outputJson = request(Method.PUT, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -152,7 +142,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = itemParser.parseToItem(outputJson);
+        Object content = parseJson(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
@@ -168,18 +158,6 @@ public class HttpClientDelegate implements RestClientDelegate {
     public void revokeSession(String refreshUrl, Session session) {
         this.refreshUrl = refreshUrl;
         this.session = session;
-    }
-
-    /**
-     * Sets the parser used for parsing content items when performing an HTTP
-     * POST or PUT request. The parser will take the item object, parse data
-     * from its fields and create a new JSON string from it.
-     * 
-     * @param itemToJsonParser
-     *            The parser to use for extracting item data.
-     */
-    public void setItemParser(ItemParser<?> itemParser) {
-        this.itemParser = itemParser;
     }
 
     private String getBlockingResponse(RequestFuture<String> future) {
