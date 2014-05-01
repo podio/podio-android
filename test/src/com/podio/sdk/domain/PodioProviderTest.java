@@ -12,7 +12,7 @@ import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.internal.request.RestOperation;
 
-public class ItemProviderTest extends AndroidTestCase {
+public class PodioProviderTest extends AndroidTestCase {
 
     private static final class ConcurrentResult {
         private boolean isSessionChangeCalled = false;

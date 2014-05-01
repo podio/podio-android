@@ -7,7 +7,7 @@ import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
 
-public class ItemFilterTest extends AndroidTestCase {
+public class PodioFilterTest extends AndroidTestCase {
 
     /**
      * Verifies that path segments can be added and are persisted in the same
