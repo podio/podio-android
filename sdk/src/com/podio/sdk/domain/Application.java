@@ -10,13 +10,14 @@ public final class Application {
         public final String usage = null;
         public final String external_id = null;
         public final String icon = null;
+        public final Integer icon_id = 0;
     }
 
-    public final long app_id = 0L;
-    public final long space_id = 0L;
+    public final Long app_id = 0L;
+    public final Long space_id = 0L;
     public final String status = null;
     public final Config config = null;
-    public final String[] rights = null;
+    public final String[] rights = {};
 
     private Application() {
         // Hide the constructor.
