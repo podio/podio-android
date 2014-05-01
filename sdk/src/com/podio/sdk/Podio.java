@@ -188,6 +188,19 @@ public final class Podio {
      * 
      */
     public static final class Item {
+
+        /**
+         * Fetches a default set of filtered items for the application with the
+         * given id.
+         * 
+         * @param applicationId
+         *            The id of the parent application.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
         public static final Object getForApplication(long applicationId,
                 ProviderListener providerListener) {
 
@@ -218,8 +231,8 @@ public final class Podio {
         }
 
         /**
-         * Fetches all Organizations (with a minimal set of information on the
-         * contained workspaces as well) that are available to the user.
+         * Fetches all Organizations (including a minimal set of information on
+         * the contained workspaces) that are available to the user.
          * 
          * @param providerListener
          *            The callback implementation called when the items are
