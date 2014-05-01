@@ -28,7 +28,7 @@ public class ItemFilterTest extends AndroidTestCase {
     public void testAddPathSegments() {
         Uri reference = Uri.parse("scheme://authority/path1/path2");
 
-        Filter filter = new ItemFilter();
+        Filter filter = new PodioFilter();
         filter.addPathSegment("path1");
         filter.addPathSegment("path2");
 
@@ -57,7 +57,7 @@ public class ItemFilterTest extends AndroidTestCase {
         String key = "test-key";
         String value = "test-value";
 
-        Filter target = new ItemFilter();
+        Filter target = new PodioFilter();
         target.addQueryParameter(key, value);
 
         Uri uri = target.buildUri("scheme", "authority");
@@ -87,7 +87,7 @@ public class ItemFilterTest extends AndroidTestCase {
         String value1 = "test-value-1";
         String value2 = "test-value-2";
 
-        Filter target = new ItemFilter();
+        Filter target = new PodioFilter();
         target.addQueryParameter(key, value1);
         target.addQueryParameter(key, value2);
 

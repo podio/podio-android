@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.domain.ItemFilter;
+import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
 
@@ -83,7 +83,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testAuthorizeOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new ItemFilter()) //
+                .setFilter(new PodioFilter()) //
                 .setOperation(RestOperation.AUTHORIZE);
 
         target.enqueue(restRequest);
@@ -137,7 +137,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testDeleteOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new ItemFilter()) //
+                .setFilter(new PodioFilter()) //
                 .setOperation(RestOperation.DELETE);
 
         target.enqueue(restRequest);
@@ -168,7 +168,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testGetOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new ItemFilter()) //
+                .setFilter(new PodioFilter()) //
                 .setOperation(RestOperation.GET);
 
         target.enqueue(restRequest);
@@ -199,7 +199,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testPostOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new ItemFilter()) //
+                .setFilter(new PodioFilter()) //
                 .setOperation(RestOperation.POST);
 
         target.enqueue(restRequest);
@@ -230,7 +230,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testPutOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new ItemFilter()) //
+                .setFilter(new PodioFilter()) //
                 .setOperation(RestOperation.PUT);
 
         target.enqueue(restRequest);

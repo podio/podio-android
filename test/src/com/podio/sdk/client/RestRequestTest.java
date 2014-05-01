@@ -3,7 +3,7 @@ package com.podio.sdk.client;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.domain.ItemFilter;
+import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -53,7 +53,7 @@ public class RestRequestTest extends AndroidTestCase {
         Object item = new Object();
         Object ticket = new Object();
 
-        Filter filter = new ItemFilter("test") //
+        Filter filter = new PodioFilter("test") //
                 .addQueryParameter("id", "1") //
                 .addQueryParameter("id", "2");
 

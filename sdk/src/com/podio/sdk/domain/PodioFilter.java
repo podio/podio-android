@@ -5,14 +5,14 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.internal.utils.Utils;
 
-public class ItemFilter implements Filter {
+public class PodioFilter implements Filter {
     private final Uri.Builder uriBuilder;
 
-    public ItemFilter() {
+    public PodioFilter() {
         this(null);
     }
 
-    public ItemFilter(String path) {
+    public PodioFilter(String path) {
         uriBuilder = new Uri.Builder();
 
         if (Utils.notEmpty(path)) {

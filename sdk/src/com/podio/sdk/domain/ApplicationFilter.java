@@ -1,6 +1,6 @@
 package com.podio.sdk.domain;
 
-public final class ApplicationFilter extends ItemFilter {
+public final class ApplicationFilter extends PodioFilter {
 
     public ApplicationFilter() {
         super("app");

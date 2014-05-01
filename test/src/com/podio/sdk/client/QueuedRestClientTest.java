@@ -4,7 +4,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.client.mock.MockRestClient;
-import com.podio.sdk.domain.ItemFilter;
+import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
@@ -97,8 +97,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueueDrainedEventually() {
-        final Filter firstFilter = new ItemFilter("first");
-        final Filter secondFilter = new ItemFilter("second");
+        final Filter firstFilter = new PodioFilter("first");
+        final Filter secondFilter = new PodioFilter("second");
 
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
@@ -327,7 +327,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      */
     public void testRequestQueuePushPopSuccess() {
         final Object expectedTicket = new Object();
-        final Filter expectedFilter = new ItemFilter("expected");
+        final Filter expectedFilter = new PodioFilter("expected");
         final ConcurrentResult result = new ConcurrentResult();
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
@@ -379,8 +379,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
 
-        final Filter firstFilter = new ItemFilter("first");
-        final Filter secondFilter = new ItemFilter("second");
+        final Filter firstFilter = new PodioFilter("first");
+        final Filter secondFilter = new PodioFilter("second");
 
         ResultListener listener = new ResultListener() {
             @Override

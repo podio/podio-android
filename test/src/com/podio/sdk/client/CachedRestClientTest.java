@@ -7,7 +7,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
-import com.podio.sdk.domain.ItemFilter;
+import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
@@ -432,7 +432,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     private RestRequest buildRestRequest(RestOperation operation, String path) {
-        Filter filter = path == null ? new ItemFilter() : new ItemFilter(path);
+        Filter filter = path == null ? new PodioFilter() : new PodioFilter(path);
 
         RestRequest request = new RestRequest() //
                 .setContent(new Object()) //

@@ -42,7 +42,7 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testCorrectDeleteRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new ItemFilter();
+        final Filter filter = new PodioFilter();
 
         // Perform the delete request.
         ItemProvider<Object> target = new ItemProvider<Object>();
@@ -73,7 +73,7 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testCorrectGetRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new ItemFilter();
+        final Filter filter = new PodioFilter();
 
         // Perform the fetch request.
         ItemProvider<Object> target = new ItemProvider<Object>();
@@ -135,7 +135,7 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testCorrectPutRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new ItemFilter();
+        final Filter filter = new PodioFilter();
         final Object item = new Object();
 
         // Perform the change request.
@@ -168,7 +168,7 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testProviderCallbackFailureCalledProperly() {
-        final Filter itemFilter = new ItemFilter();
+        final Filter itemFilter = new PodioFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
         final List<Object> resultList = new ArrayList<Object>();
@@ -236,7 +236,7 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testProviderCallbackSuccessCalledProperly() {
-        final Filter itemFilter = new ItemFilter();
+        final Filter itemFilter = new PodioFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
 
