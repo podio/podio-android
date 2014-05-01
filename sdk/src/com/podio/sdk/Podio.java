@@ -7,6 +7,7 @@ import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.ApplicationProvider;
+import com.podio.sdk.domain.ItemProvider;
 import com.podio.sdk.domain.OrganizationProvider;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.domain.SessionFilter;
@@ -184,6 +185,30 @@ public final class Podio {
             client.revokeSession(SessionFilter.PATH, session);
         }
 
+    }
+
+    /**
+     * Enables means of easy operating on the Item API end point.
+     * 
+     * @author László Urszuly
+     * 
+     */
+    public static final class Item {
+        public static final Object getForApplication(long applicationId,
+                ProviderListener providerListener) {
+
+            ItemParser<com.podio.sdk.domain.Item[]> parser = new ItemParser<com.podio.sdk.domain.Item[]>(
+                    com.podio.sdk.domain.Item[].class);
+
+            cacheDelegate.setItemParser(parser);
+            networkDelegate.setItemParser(parser);
+
+            ItemProvider provider = new ItemProvider();
+            provider.setRestClient(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.fetchItemsForApplication(applicationId);
+        }
     }
 
     /**
