@@ -49,7 +49,7 @@ public class ItemParser<T> {
      * @return A json string representation of the given item.
      */
     public String parseToJson(Object item) {
-        String result = null;
+        String result = "";
 
         if (item != null) {
             GsonBuilder builder = new GsonBuilder();
