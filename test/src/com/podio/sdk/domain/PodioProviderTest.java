@@ -45,7 +45,7 @@ public class PodioProviderTest extends AndroidTestCase {
         final Filter filter = new PodioFilter();
 
         // Perform the delete request.
-        PodioProvider<Object> target = new PodioProvider<Object>();
+        PodioProvider target = new PodioProvider();
         target.setRestClient(client);
         target.deleteRequest(filter);
 
@@ -76,7 +76,7 @@ public class PodioProviderTest extends AndroidTestCase {
         final Filter filter = new PodioFilter();
 
         // Perform the fetch request.
-        PodioProvider<Object> target = new PodioProvider<Object>();
+        PodioProvider target = new PodioProvider();
         target.setRestClient(client);
         target.fetchRequest(filter);
 
@@ -108,7 +108,7 @@ public class PodioProviderTest extends AndroidTestCase {
         final Filter filter = new PodioFilter();
 
         // Perform the push request.
-        PodioProvider<Object> target = new PodioProvider<Object>();
+        PodioProvider target = new PodioProvider();
         target.setRestClient(client);
         target.pushRequest(filter, item);
 
@@ -140,7 +140,7 @@ public class PodioProviderTest extends AndroidTestCase {
         final Object item = new Object();
 
         // Perform the change request.
-        PodioProvider<Object> target = new PodioProvider<Object>();
+        PodioProvider target = new PodioProvider();
         target.setRestClient(client);
         target.changeRequest(filter, item);
 
@@ -201,7 +201,7 @@ public class PodioProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        PodioProvider<Object> target = new PodioProvider<Object>();
+        PodioProvider target = new PodioProvider();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeRequest(itemFilter, itemObject);
@@ -267,7 +267,7 @@ public class PodioProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        PodioProvider<Object> target = new PodioProvider<Object>();
+        PodioProvider target = new PodioProvider();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeRequest(itemFilter, itemObject);

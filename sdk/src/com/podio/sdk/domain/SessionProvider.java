@@ -4,7 +4,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 
-public class SessionProvider extends PodioProvider<Session> {
+public class SessionProvider extends PodioProvider {
 
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
             String username, String password) {
@@ -30,7 +30,7 @@ public class SessionProvider extends PodioProvider<Session> {
         Object ticket = null;
 
         if (client != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter);
+            RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter, null);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();

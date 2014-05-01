@@ -8,7 +8,7 @@ package com.podio.sdk;
  * 
  * @author László Urszuly
  */
-public interface Provider<T> {
+public interface Provider {
 
     /**
      * Performs a PUT rest operation on the given {@link RestClient}.
@@ -20,7 +20,7 @@ public interface Provider<T> {
      * @return A ticket identifying this request.
      * 
      */
-    public Object changeRequest(Filter filter, T item);
+    public Object changeRequest(Filter filter, Object item);
 
     /**
      * Performs a DELETE rest operation on the given {@link RestClient}.
@@ -49,25 +49,6 @@ public interface Provider<T> {
      *            Provides the new data.
      * @return A ticket identifying this request.
      */
-    public Object pushRequest(Filter filter, T item);
-
-    /**
-     * Sets the callback interface used to report the result through. If this
-     * callback is not given, then the rest operations can still be executed
-     * silently. Note, though, that the GET operation, even though technically
-     * possible, wouldn't make any sense without this callback.
-     * 
-     * @param providerListener
-     *            The callback implementation. Null is valid.
-     */
-    public void setProviderListener(ProviderListener providerListener);
-
-    /**
-     * Sets the rest client that will perform the rest operation.
-     * 
-     * @param client
-     *            The target {@link RestClient}.
-     */
-    public void setRestClient(RestClient client);
+    public Object pushRequest(Filter filter, Object item);
 
 }

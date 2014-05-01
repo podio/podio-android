@@ -8,7 +8,7 @@ import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
-public class PodioProvider<T> implements Provider<T> {
+public class PodioProvider implements Provider {
 
     private final ResultListener resultListener = new ResultListener() {
         @Override
@@ -37,7 +37,7 @@ public class PodioProvider<T> implements Provider<T> {
     protected RestClient client;
 
     @Override
-    public Object changeRequest(Filter filter, T item) {
+    public Object changeRequest(Filter filter, Object item) {
         Object ticket = null;
 
         if (client != null) {
@@ -56,7 +56,7 @@ public class PodioProvider<T> implements Provider<T> {
         Object ticket = null;
 
         if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter);
+            RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter, null);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -71,7 +71,7 @@ public class PodioProvider<T> implements Provider<T> {
         Object ticket = null;
 
         if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.GET, filter);
+            RestRequest restRequest = buildRestRequest(RestOperation.GET, filter, null);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -82,7 +82,7 @@ public class PodioProvider<T> implements Provider<T> {
     }
 
     @Override
-    public Object pushRequest(Filter filter, T item) {
+    public Object pushRequest(Filter filter, Object item) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -96,21 +96,30 @@ public class PodioProvider<T> implements Provider<T> {
         return ticket;
     }
 
-    @Override
+    /**
+     * Sets the callback interface used to report the result through. If this
+     * callback is not given, then the rest operations can still be executed
+     * silently. Note, though, that the GET operation, even though technically
+     * possible, wouldn't make any sense without this callback.
+     * 
+     * @param providerListener
+     *            The callback implementation. Null is valid.
+     */
     public void setProviderListener(ProviderListener providerListener) {
         this.providerListener = providerListener;
     }
 
-    @Override
+    /**
+     * Sets the rest client that will perform the rest operation.
+     * 
+     * @param client
+     *            The target {@link RestClient}.
+     */
     public void setRestClient(RestClient client) {
         this.client = client;
     }
 
-    protected RestRequest buildRestRequest(RestOperation operation, Filter filter) {
-        return buildRestRequest(operation, filter, null);
-    }
-
-    protected RestRequest buildRestRequest(RestOperation operation, Filter filter, T content) {
+    protected RestRequest buildRestRequest(RestOperation operation, Filter filter, Object content) {
         RestRequest request = new RestRequest() //
                 .setContent(content) //
                 .setOperation(operation) //

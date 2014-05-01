@@ -1,7 +1,6 @@
 package com.podio.sdk.domain;
 
-
-public final class ApplicationProvider extends PodioProvider<Application> {
+public final class ApplicationProvider extends PodioProvider {
 
     public Object fetchApplicationsForSpace(long spaceId) {
         ApplicationFilter filter = new ApplicationFilter() //
