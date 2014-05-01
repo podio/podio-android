@@ -284,7 +284,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      */
     public void testGetRequestTriggersBothClientDelegates() {
         targetNetworkDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
-        targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, null));
+        targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, new Object()));
         targetDatabaseDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
 
         expectedReportCount = 4;

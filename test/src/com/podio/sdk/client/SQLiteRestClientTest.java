@@ -141,7 +141,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.DELETE);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
+        TestUtils.blockThread(40);
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(true, result.isDeleteCalled);
@@ -172,7 +172,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.GET);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
+        TestUtils.blockThread(40);
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
