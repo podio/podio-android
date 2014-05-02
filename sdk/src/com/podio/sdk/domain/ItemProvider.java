@@ -6,8 +6,7 @@ public class ItemProvider extends PodioProvider {
         ItemFilter filter = new ItemFilter() //
                 .withApplicationId(applicationId);
 
-        Item.FilterRequest filterRequest = new Item.FilterRequest(null, null, null, null, null,
-                null);
+        ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
         return pushRequest(filter, filterRequest);
     }

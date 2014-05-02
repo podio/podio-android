@@ -204,8 +204,8 @@ public final class Podio {
         public static final Object getForApplication(long applicationId,
                 ProviderListener providerListener) {
 
-            ItemParser<com.podio.sdk.domain.Item.FilterResult> parser = new ItemParser<com.podio.sdk.domain.Item.FilterResult>(
-                    com.podio.sdk.domain.Item.FilterResult.class);
+            ItemParser<com.podio.sdk.domain.ItemRequest.Result> parser = new ItemParser<com.podio.sdk.domain.ItemRequest.Result>(
+                    com.podio.sdk.domain.ItemRequest.Result.class);
 
             client.setItemParser(parser);
 
