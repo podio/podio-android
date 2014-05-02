@@ -3,7 +3,6 @@ package com.podio.sdk.domain;
 public final class Item {
 
     public static final class Filter {
-
     }
 
     public static final class FilterRequest {
@@ -36,7 +35,31 @@ public final class Item {
         }
     }
 
+    public static final class Image {
+        public final Long file_id = null;
+        public final String hosted_by = null;
+        public final String hosted_by_humanized_name = null;
+        public final String thumbnail_link = null;
+        public final String link = null;
+        public final String link_target = null;
+
+        private Image() {
+            // Hide the constructor.
+        }
+    }
+
     public static final class Creator {
+        public final Long user_id = null;
+        public final String name = null;
+        public final String url = null;
+        public final String type = null;
+        public final Image image = null;
+        public final String avatar_type = null;
+        public final Long avatar = null;
+        public final Long id = null;
+        public final Long avatar_id = null;
+        public final String last_seen_on = null;
+
         private Creator() {
             // Hide the constructor.
         }
