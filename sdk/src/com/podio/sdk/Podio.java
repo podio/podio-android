@@ -190,6 +190,30 @@ public final class Podio {
     public static final class Item {
 
         /**
+         * Fetches a single item with the given id.
+         * 
+         * @param itemId
+         *            The id of the item to fetch.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object get(long itemId, ProviderListener providerListener) {
+            ItemParser<com.podio.sdk.domain.Item> parser = new ItemParser<com.podio.sdk.domain.Item>(
+                    com.podio.sdk.domain.Item.class);
+
+            client.setItemParser(parser);
+
+            ItemProvider provider = new ItemProvider();
+            provider.setRestClient(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.fetchItem(itemId);
+        }
+
+        /**
          * Fetches a default set of filtered items for the application with the
          * given id.
          * 

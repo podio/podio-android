@@ -12,4 +12,9 @@ public final class ItemFilter extends PodioFilter {
         addPathSegment("filter");
         return this;
     }
+
+    public ItemFilter withItemId(long itemId) {
+        addPathSegment(Long.toString(itemId, 10));
+        return this;
+    }
 }

@@ -4,6 +4,13 @@ import com.podio.sdk.domain.ItemRequest;
 
 public class ItemProvider extends PodioProvider {
 
+    public Object fetchItem(long itemId) {
+        ItemFilter filter = new ItemFilter() //
+                .withItemId(itemId);
+
+        return fetchRequest(filter);
+    }
+
     public Object fetchItemsForApplication(long applicationId) {
         ItemFilter filter = new ItemFilter() //
                 .withApplicationId(applicationId);
