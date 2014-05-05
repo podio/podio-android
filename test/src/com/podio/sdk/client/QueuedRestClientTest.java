@@ -2,11 +2,11 @@ package com.podio.sdk.client;
 
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
-import com.podio.sdk.provider.PodioFilter;
+import com.podio.sdk.provider.BasicPodioFilter;
 import com.podio.test.TestUtils;
 
 public class QueuedRestClientTest extends InstrumentationTestCase {
@@ -97,8 +97,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueueDrainedEventually() {
-        final Filter firstFilter = new PodioFilter("first");
-        final Filter secondFilter = new PodioFilter("second");
+        final PodioFilter firstFilter = new BasicPodioFilter("first");
+        final PodioFilter secondFilter = new BasicPodioFilter("second");
 
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
@@ -106,7 +106,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", 2) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                Filter filter = restRequest.getFilter();
+                PodioFilter filter = restRequest.getFilter();
 
                 if (filter == firstFilter) {
                     firstResult.isRequestPopped = true;
@@ -327,7 +327,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      */
     public void testRequestQueuePushPopSuccess() {
         final Object expectedTicket = new Object();
-        final Filter expectedFilter = new PodioFilter("expected");
+        final PodioFilter expectedFilter = new BasicPodioFilter("expected");
         final ConcurrentResult result = new ConcurrentResult();
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
@@ -379,8 +379,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final ConcurrentResult firstResult = new ConcurrentResult();
         final ConcurrentResult secondResult = new ConcurrentResult();
 
-        final Filter firstFilter = new PodioFilter("first");
-        final Filter secondFilter = new PodioFilter("second");
+        final PodioFilter firstFilter = new BasicPodioFilter("first");
+        final PodioFilter secondFilter = new BasicPodioFilter("second");
 
         ResultListener listener = new ResultListener() {
             @Override
@@ -412,7 +412,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                Filter filter = restRequest.getFilter();
+                PodioFilter filter = restRequest.getFilter();
 
                 if (firstFilter == filter) {
                     firstResult.isRequestPopped = true;

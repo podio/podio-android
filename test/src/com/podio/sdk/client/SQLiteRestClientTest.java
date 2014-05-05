@@ -7,7 +7,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.provider.PodioFilter;
+import com.podio.sdk.provider.BasicPodioFilter;
 import com.podio.test.TestUtils;
 
 public class SQLiteRestClientTest extends InstrumentationTestCase {
@@ -83,7 +83,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testAuthorizeOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new PodioFilter()) //
+                .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.AUTHORIZE);
 
         target.enqueue(restRequest);
@@ -137,7 +137,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testDeleteOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new PodioFilter()) //
+                .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.DELETE);
 
         target.enqueue(restRequest);
@@ -168,7 +168,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testGetOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new PodioFilter()) //
+                .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.GET);
 
         target.enqueue(restRequest);
@@ -199,7 +199,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testPostOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new PodioFilter()) //
+                .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.POST);
 
         target.enqueue(restRequest);
@@ -230,7 +230,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
      */
     public void testPutOperationIsDelegatedCorrectly() {
         RestRequest restRequest = new RestRequest() //
-                .setFilter(new PodioFilter()) //
+                .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.PUT);
 
         target.enqueue(restRequest);

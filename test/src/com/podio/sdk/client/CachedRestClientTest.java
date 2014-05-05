@@ -5,11 +5,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
-import com.podio.sdk.provider.PodioFilter;
+import com.podio.sdk.provider.BasicPodioFilter;
 import com.podio.test.TestUtils;
 
 public class CachedRestClientTest extends InstrumentationTestCase {
@@ -432,7 +432,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     private RestRequest buildRestRequest(RestOperation operation, String path) {
-        Filter filter = path == null ? new PodioFilter() : new PodioFilter(path);
+        PodioFilter filter = path == null ? new BasicPodioFilter() : new BasicPodioFilter(path);
 
         RestRequest request = new RestRequest() //
                 .setContent(new Object()) //

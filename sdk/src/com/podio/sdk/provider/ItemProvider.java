@@ -24,7 +24,7 @@ package com.podio.sdk.provider;
 
 import com.podio.sdk.domain.ItemRequest;
 
-public class ItemProvider extends PodioProvider {
+public class ItemProvider extends BasicPodioProvider {
 
     public Object fetchItem(long itemId) {
         ItemFilter filter = new ItemFilter() //

@@ -22,7 +22,7 @@
 
 package com.podio.sdk.provider;
 
-public final class ItemFilter extends PodioFilter {
+public final class ItemFilter extends BasicPodioFilter {
 
     public ItemFilter() {
         super("item");

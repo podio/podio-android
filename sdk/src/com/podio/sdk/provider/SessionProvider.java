@@ -22,16 +22,16 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.internal.request.RestOperation;
 
-public class SessionProvider extends PodioProvider {
+public class SessionProvider extends BasicPodioProvider {
 
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
             String username, String password) {
 
-        Filter filter = new SessionFilter() //
+        PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withUserCredentials(username, password);
 
@@ -41,14 +41,14 @@ public class SessionProvider extends PodioProvider {
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
             String appId, String appToken) {
 
-        Filter filter = new SessionFilter() //
+        PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withAppCredentials(appId, appToken);
 
         return authorize(filter);
     }
 
-    private Object authorize(Filter filter) {
+    private Object authorize(PodioFilter filter) {
         Object ticket = null;
 
         if (client != null) {

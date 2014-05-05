@@ -22,7 +22,7 @@
 
 package com.podio.sdk.provider;
 
-public class SessionFilter extends PodioFilter {
+public class SessionFilter extends BasicPodioFilter {
     public static final String PATH = "oauth/token";
 
     public SessionFilter() {

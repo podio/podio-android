@@ -24,17 +24,17 @@ package com.podio.sdk.provider;
 
 import android.net.Uri;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.internal.utils.Utils;
 
-public class PodioFilter implements Filter {
+public class BasicPodioFilter implements PodioFilter {
     private final Uri.Builder uriBuilder;
 
-    public PodioFilter() {
+    public BasicPodioFilter() {
         this(null);
     }
 
-    public PodioFilter(String path) {
+    public BasicPodioFilter(String path) {
         uriBuilder = new Uri.Builder();
 
         if (Utils.notEmpty(path)) {
@@ -43,7 +43,7 @@ public class PodioFilter implements Filter {
     }
 
     @Override
-    public Filter addQueryParameter(String key, String value) {
+    public PodioFilter addQueryParameter(String key, String value) {
         if (Utils.notEmpty(key) && value != null) {
             uriBuilder.appendQueryParameter(key, value);
         }
@@ -52,7 +52,7 @@ public class PodioFilter implements Filter {
     }
 
     @Override
-    public Filter addPathSegment(String segment) {
+    public PodioFilter addPathSegment(String segment) {
         if (Utils.notEmpty(segment)) {
             uriBuilder.appendPath(segment);
         }

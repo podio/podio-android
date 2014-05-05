@@ -23,14 +23,14 @@
 package com.podio.sdk;
 
 /**
- * Defines the {@link Provider} responsibilities. Each implementing class is
+ * Defines the {@link PodioProvider} responsibilities. Each implementing class is
  * responsible for it's corresponding data and must hence be able to perform the
  * typical rest operations GET, POST, PUT and DELETE on the given
  * {@link RestClient}.
  * 
  * @author László Urszuly
  */
-public interface Provider {
+public interface PodioProvider {
 
     /**
      * Performs a PUT rest operation on the given {@link RestClient}.
@@ -42,7 +42,7 @@ public interface Provider {
      * @return A ticket identifying this request.
      * 
      */
-    public Object changeRequest(Filter filter, Object item);
+    public Object changeRequest(PodioFilter filter, Object item);
 
     /**
      * Performs a DELETE rest operation on the given {@link RestClient}.
@@ -51,7 +51,7 @@ public interface Provider {
      *            Defines the data set to delete.
      * @return A ticket identifying this request.
      */
-    public Object deleteRequest(Filter filter);
+    public Object deleteRequest(PodioFilter filter);
 
     /**
      * Performs a GET rest operation on the given {@link RestClient}.
@@ -60,7 +60,7 @@ public interface Provider {
      *            Defines the data set to fetch.
      * @return A ticket identifying this request.
      */
-    public Object fetchRequest(Filter filter);
+    public Object fetchRequest(PodioFilter filter);
 
     /**
      * Performs a POST rest operation on the given {@link RestClient}.
@@ -71,6 +71,6 @@ public interface Provider {
      *            Provides the new data.
      * @return A ticket identifying this request.
      */
-    public Object pushRequest(Filter filter, Object item);
+    public Object pushRequest(PodioFilter filter, Object item);
 
 }

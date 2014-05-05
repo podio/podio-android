@@ -22,7 +22,7 @@
 
 package com.podio.sdk.client;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
@@ -30,14 +30,14 @@ public final class RestRequest {
     private Object content;
     private RestOperation operation;
     private ResultListener resultListener;
-    private Filter filter;
+    private PodioFilter filter;
     private Object ticket;
 
     public Object getContent() {
         return content;
     }
 
-    public Filter getFilter() {
+    public PodioFilter getFilter() {
         return filter;
     }
 
@@ -58,7 +58,7 @@ public final class RestRequest {
         return this;
     }
 
-    public RestRequest setFilter(Filter filter) {
+    public RestRequest setFilter(PodioFilter filter) {
         this.filter = filter;
         return this;
     }

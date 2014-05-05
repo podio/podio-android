@@ -22,7 +22,7 @@
 
 package com.podio.sdk.provider;
 
-public final class ApplicationProvider extends PodioProvider {
+public final class ApplicationProvider extends BasicPodioProvider {
 
     public Object fetchApplicationsForSpace(long spaceId) {
         ApplicationFilter filter = new ApplicationFilter() //

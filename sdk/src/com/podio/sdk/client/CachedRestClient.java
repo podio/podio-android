@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.ItemParser;
@@ -106,7 +106,7 @@ public class CachedRestClient extends HttpRestClient {
 
         if (restRequest != null) {
             RestOperation operation = restRequest.getOperation();
-            Filter filter = restRequest.getFilter();
+            PodioFilter filter = restRequest.getFilter();
             Object item = restRequest.getContent();
 
             Uri uri = filter.buildUri(contentScheme, authority);

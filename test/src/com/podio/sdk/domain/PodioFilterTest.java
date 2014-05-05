@@ -5,8 +5,8 @@ import java.util.List;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.Filter;
-import com.podio.sdk.provider.PodioFilter;
+import com.podio.sdk.PodioFilter;
+import com.podio.sdk.provider.BasicPodioFilter;
 
 public class PodioFilterTest extends AndroidTestCase {
 
@@ -29,7 +29,7 @@ public class PodioFilterTest extends AndroidTestCase {
     public void testAddPathSegments() {
         Uri reference = Uri.parse("scheme://authority/path1/path2");
 
-        Filter filter = new PodioFilter();
+        PodioFilter filter = new BasicPodioFilter();
         filter.addPathSegment("path1");
         filter.addPathSegment("path2");
 
@@ -58,7 +58,7 @@ public class PodioFilterTest extends AndroidTestCase {
         String key = "test-key";
         String value = "test-value";
 
-        Filter target = new PodioFilter();
+        PodioFilter target = new BasicPodioFilter();
         target.addQueryParameter(key, value);
 
         Uri uri = target.buildUri("scheme", "authority");
@@ -88,7 +88,7 @@ public class PodioFilterTest extends AndroidTestCase {
         String value1 = "test-value-1";
         String value2 = "test-value-2";
 
-        Filter target = new PodioFilter();
+        PodioFilter target = new BasicPodioFilter();
         target.addQueryParameter(key, value1);
         target.addQueryParameter(key, value2);
 

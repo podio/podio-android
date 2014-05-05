@@ -25,15 +25,15 @@ package com.podio.sdk;
 import com.podio.sdk.domain.Session;
 
 /**
- * Defines the {@link Provider} callback interface as seen by the third party
+ * Defines the {@link PodioProvider} callback interface as seen by the third party
  * client application.
  * 
  * @author László Urszuly
  */
-public interface ProviderListener {
+public interface PodioProviderListener {
 
     /**
-     * Notifies the calling implementation that the {@link Provider} has
+     * Notifies the calling implementation that the {@link PodioProvider} has
      * successfully performed a request. The result of the call and the ticket
      * identifying which call the result belongs to, are delivered through the
      * method arguments.

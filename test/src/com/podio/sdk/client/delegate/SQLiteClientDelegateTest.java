@@ -13,7 +13,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
-import com.podio.sdk.provider.PodioProvider;
+import com.podio.sdk.provider.BasicPodioProvider;
 
 public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
@@ -123,7 +123,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link BasicPodioProvider} assigned to it.
      * 
      * 3. Request a delete operation.
      * 
@@ -261,7 +261,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link BasicPodioProvider} assigned to it.
      * 
      * 3. Request a get operation.
      * 
@@ -377,7 +377,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link BasicPodioProvider} assigned to it.
      * 
      * 3. Request a post operation.
      * 
@@ -471,7 +471,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      * 
      * 1. Create a new {@link SQLiteClientDelegate} object.
      * 
-     * 2. Make sure it has a null pointer {@link PodioProvider} assigned to it.
+     * 2. Make sure it has a null pointer {@link BasicPodioProvider} assigned to it.
      * 
      * 3. Request a put operation.
      * 

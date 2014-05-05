@@ -68,7 +68,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object getForSpace(long spaceId, ProviderListener providerListener) {
+        public static final Object getForSpace(long spaceId, PodioProviderListener providerListener) {
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
                     com.podio.sdk.domain.Application[].class);
 
@@ -94,7 +94,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getForSpaceIncludingInactive(long spaceId,
-                ProviderListener providerListener) {
+                PodioProviderListener providerListener) {
 
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
                     com.podio.sdk.domain.Application[].class);
@@ -126,7 +126,7 @@ public final class Podio {
         /**
          * Authenticates the caller with the given user credentials. On success
          * a new session object with the access and refresh tokens will be
-         * delivered through the given {@link ProviderListener}.
+         * delivered through the given {@link PodioProviderListener}.
          * 
          * @param username
          *            The user name of the Podio account to authenticate with.
@@ -139,7 +139,7 @@ public final class Podio {
          *         with.
          */
         public static final Object authenticateAsUser(String username, String password,
-                ProviderListener providerListener) {
+                PodioProviderListener providerListener) {
 
             ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
                     com.podio.sdk.domain.Session.class);
@@ -157,7 +157,7 @@ public final class Podio {
         /**
          * Authenticates the caller with the given app credentials. On success a
          * new session object with the access and refresh tokens will be
-         * delivered through the given {@link ProviderListener}.
+         * delivered through the given {@link PodioProviderListener}.
          * 
          * @param appId
          *            The id of the app to authenticate with.
@@ -170,7 +170,7 @@ public final class Podio {
          *         with.
          */
         public static final Object authenticateAsApp(String appId, String appToken,
-                ProviderListener providerListener) {
+                PodioProviderListener providerListener) {
 
             ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
                     com.podio.sdk.domain.Session.class);
@@ -222,7 +222,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object get(long itemId, ProviderListener providerListener) {
+        public static final Object get(long itemId, PodioProviderListener providerListener) {
             ItemParser<com.podio.sdk.domain.Item> parser = new ItemParser<com.podio.sdk.domain.Item>(
                     com.podio.sdk.domain.Item.class);
 
@@ -248,7 +248,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getForApplication(long applicationId,
-                ProviderListener providerListener) {
+                PodioProviderListener providerListener) {
 
             ItemParser<com.podio.sdk.domain.ItemRequest.Result> parser = new ItemParser<com.podio.sdk.domain.ItemRequest.Result>(
                     com.podio.sdk.domain.ItemRequest.Result.class);
@@ -286,7 +286,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object getAll(ProviderListener providerListener) {
+        public static final Object getAll(PodioProviderListener providerListener) {
             ItemParser<com.podio.sdk.domain.Organization[]> parser = new ItemParser<com.podio.sdk.domain.Organization[]>(
                     com.podio.sdk.domain.Organization[].class);
 

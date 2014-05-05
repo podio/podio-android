@@ -22,12 +22,12 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 
-public class OrganizationProvider extends PodioProvider {
+public class OrganizationProvider extends BasicPodioProvider {
 
     public Object getAll() {
-        Filter filter = new OrganizationFilter();
+        PodioFilter filter = new OrganizationFilter();
         return fetchRequest(filter);
     }
 

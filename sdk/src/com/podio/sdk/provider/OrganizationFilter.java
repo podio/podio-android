@@ -22,7 +22,7 @@
 
 package com.podio.sdk.provider;
 
-public class OrganizationFilter extends PodioFilter {
+public class OrganizationFilter extends BasicPodioFilter {
     public static final String PATH = "org";
 
     public OrganizationFilter() {

@@ -5,14 +5,14 @@ import java.util.List;
 
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.Filter;
-import com.podio.sdk.ProviderListener;
+import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.provider.PodioFilter;
-import com.podio.sdk.provider.PodioProvider;
+import com.podio.sdk.provider.BasicPodioFilter;
+import com.podio.sdk.provider.BasicPodioProvider;
 
 public class PodioProviderTest extends AndroidTestCase {
 
@@ -26,7 +26,7 @@ public class PodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link PodioProvider} implementation builds the
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds the
      * correct {@link RestRequest} for a DELETE request.
      * 
      * <pre>
@@ -44,10 +44,10 @@ public class PodioProviderTest extends AndroidTestCase {
      */
     public void testCorrectDeleteRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new PodioFilter();
+        final PodioFilter filter = new BasicPodioFilter();
 
         // Perform the delete request.
-        PodioProvider target = new PodioProvider();
+        BasicPodioProvider target = new BasicPodioProvider();
         target.setRestClient(client);
         target.deleteRequest(filter);
 
@@ -57,7 +57,7 @@ public class PodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link PodioProvider} implementation builds the
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds the
      * correct {@link RestRequest} for a GET request.
      * 
      * <pre>
@@ -75,10 +75,10 @@ public class PodioProviderTest extends AndroidTestCase {
      */
     public void testCorrectGetRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new PodioFilter();
+        final PodioFilter filter = new BasicPodioFilter();
 
         // Perform the fetch request.
-        PodioProvider target = new PodioProvider();
+        BasicPodioProvider target = new BasicPodioProvider();
         target.setRestClient(client);
         target.fetchRequest(filter);
 
@@ -88,7 +88,7 @@ public class PodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link PodioProvider} implementation builds the
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds the
      * correct {@link RestRequest} for a POST request.
      * 
      * <pre>
@@ -107,10 +107,10 @@ public class PodioProviderTest extends AndroidTestCase {
     public void testCorrectPostRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
         final Object item = new Object();
-        final Filter filter = new PodioFilter();
+        final PodioFilter filter = new BasicPodioFilter();
 
         // Perform the push request.
-        PodioProvider target = new PodioProvider();
+        BasicPodioProvider target = new BasicPodioProvider();
         target.setRestClient(client);
         target.pushRequest(filter, item);
 
@@ -120,7 +120,7 @@ public class PodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verify that the abstract {@link PodioProvider} implementation builds the
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds the
      * correct {@link RestRequest} for a PUT request.
      * 
      * <pre>
@@ -138,11 +138,11 @@ public class PodioProviderTest extends AndroidTestCase {
      */
     public void testCorrectPutRestRequestProduced() {
         final MockRestClient client = new MockRestClient();
-        final Filter filter = new PodioFilter();
+        final PodioFilter filter = new BasicPodioFilter();
         final Object item = new Object();
 
         // Perform the change request.
-        PodioProvider target = new PodioProvider();
+        BasicPodioProvider target = new BasicPodioProvider();
         target.setRestClient(client);
         target.changeRequest(filter, item);
 
@@ -152,14 +152,14 @@ public class PodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the failure method on the {@link ProviderListener} callback
+     * Verifies that the failure method on the {@link PodioProviderListener} callback
      * is called if the (mocked) {@link RestClient} fails to finish properly.
      * 
      * <pre>
      * 
      * 1. Create a new instance of the ItemProvider class and assign a mock
      *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link ProviderListener} to the
+     *      data around. Also assign a custom {@link PodioProviderListener} to the
      *      ItemProvider.
      * 
      * 2. Perform a request (any rest request) and simulate the mock RestClient
@@ -171,7 +171,7 @@ public class PodioProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testProviderCallbackFailureCalledProperly() {
-        final Filter itemFilter = new PodioFilter();
+        final PodioFilter itemFilter = new BasicPodioFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
         final List<Object> resultList = new ArrayList<Object>();
@@ -179,7 +179,7 @@ public class PodioProviderTest extends AndroidTestCase {
 
         final MockRestClient client = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
-        final ProviderListener listener = new ProviderListener() {
+        final PodioProviderListener listener = new PodioProviderListener() {
             @Override
             public void onRequestComplete(Object ticket, Object item) {
                 result.isSuccessCalled = true;
@@ -203,7 +203,7 @@ public class PodioProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        PodioProvider target = new PodioProvider();
+        BasicPodioProvider target = new BasicPodioProvider();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeRequest(itemFilter, itemObject);
@@ -220,14 +220,14 @@ public class PodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the success method on the {@link ProviderListener} callback
+     * Verifies that the success method on the {@link PodioProviderListener} callback
      * is called if the (mocked) {@link RestClient} finishes successfully.
      * 
      * <pre>
      * 
      * 1. Create a new instance of the ItemProvider class and assign a mock
      *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link ProviderListener} to the
+     *      data around. Also assign a custom {@link PodioProviderListener} to the
      *      ItemProvider.
      * 
      * 2. Perform a request (any rest request) and simulate the mock RestClient
@@ -239,13 +239,13 @@ public class PodioProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testProviderCallbackSuccessCalledProperly() {
-        final Filter itemFilter = new PodioFilter();
+        final PodioFilter itemFilter = new BasicPodioFilter();
         final Object itemObject = new Object();
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
-        final ProviderListener listener = new ProviderListener() {
+        final PodioProviderListener listener = new PodioProviderListener() {
             @Override
             public void onRequestComplete(Object ticket, Object item) {
                 result.isSuccessCalled = true;
@@ -269,7 +269,7 @@ public class PodioProviderTest extends AndroidTestCase {
         };
 
         // Simulate an update request.
-        PodioProvider target = new PodioProvider();
+        BasicPodioProvider target = new BasicPodioProvider();
         target.setRestClient(client);
         target.setProviderListener(listener);
         target.changeRequest(itemFilter, itemObject);
@@ -302,7 +302,7 @@ public class PodioProviderTest extends AndroidTestCase {
      *            expectations.
      */
     private void validateRequest(RestOperation expectedOperation, Object expectedContent,
-            Object expectedTicket, Filter expectedFilter, RestRequest target) {
+            Object expectedTicket, PodioFilter expectedFilter, RestRequest target) {
 
         assertNotNull(target);
         assertEquals(expectedContent, target.getContent());

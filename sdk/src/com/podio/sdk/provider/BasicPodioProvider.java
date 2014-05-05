@@ -22,16 +22,16 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.Filter;
-import com.podio.sdk.Provider;
-import com.podio.sdk.ProviderListener;
+import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioProvider;
+import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
-public class PodioProvider implements Provider {
+public class BasicPodioProvider implements PodioProvider {
 
     private final ResultListener resultListener = new ResultListener() {
         @Override
@@ -56,11 +56,11 @@ public class PodioProvider implements Provider {
         }
     };
 
-    private ProviderListener providerListener;
+    private PodioProviderListener providerListener;
     protected RestClient client;
 
     @Override
-    public Object changeRequest(Filter filter, Object item) {
+    public Object changeRequest(PodioFilter filter, Object item) {
         Object ticket = null;
 
         if (client != null) {
@@ -75,7 +75,7 @@ public class PodioProvider implements Provider {
     }
 
     @Override
-    public Object deleteRequest(Filter filter) {
+    public Object deleteRequest(PodioFilter filter) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -90,7 +90,7 @@ public class PodioProvider implements Provider {
     }
 
     @Override
-    public Object fetchRequest(Filter filter) {
+    public Object fetchRequest(PodioFilter filter) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -105,7 +105,7 @@ public class PodioProvider implements Provider {
     }
 
     @Override
-    public Object pushRequest(Filter filter, Object item) {
+    public Object pushRequest(PodioFilter filter, Object item) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -128,7 +128,7 @@ public class PodioProvider implements Provider {
      * @param providerListener
      *            The callback implementation. Null is valid.
      */
-    public void setProviderListener(ProviderListener providerListener) {
+    public void setProviderListener(PodioProviderListener providerListener) {
         this.providerListener = providerListener;
     }
 
@@ -142,7 +142,7 @@ public class PodioProvider implements Provider {
         this.client = client;
     }
 
-    protected RestRequest buildRestRequest(RestOperation operation, Filter filter, Object content) {
+    protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter, Object content) {
         RestRequest request = new RestRequest() //
                 .setContent(content) //
                 .setOperation(operation) //

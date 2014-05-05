@@ -3,8 +3,8 @@ package com.podio.sdk.domain;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.Filter;
-import com.podio.sdk.ProviderListener;
+import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.provider.ApplicationProvider;
 
@@ -39,7 +39,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         ApplicationProvider target = new ApplicationProvider();
         target.setRestClient(mockClient);
-        target.setProviderListener(new ProviderListener() {
+        target.setProviderListener(new PodioProviderListener() {
             @Override
             public void onRequestFailure(Object ticket, String message) {
                 result.isFailureCalled = true;
@@ -66,7 +66,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         assertEquals(true, result.isSuccessCalled);
         assertEquals(false, result.isFailureCalled);
 
-        Uri uri = ((Filter) result.ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) result.ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
 
@@ -92,7 +92,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         ApplicationProvider target = new ApplicationProvider();
         target.setRestClient(mockClient);
-        target.setProviderListener(new ProviderListener() {
+        target.setProviderListener(new PodioProviderListener() {
             @Override
             public void onRequestFailure(Object ticket, String message) {
                 result.isFailureCalled = true;
@@ -119,7 +119,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         assertEquals(true, result.isSuccessCalled);
         assertEquals(false, result.isFailureCalled);
 
-        Uri uri = ((Filter) result.ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) result.ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
 }

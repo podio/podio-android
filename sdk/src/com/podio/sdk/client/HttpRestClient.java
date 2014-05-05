@@ -25,7 +25,7 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.Filter;
+import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
@@ -82,7 +82,7 @@ public class HttpRestClient extends QueuedRestClient {
         RestResult result = null;
 
         if (restRequest != null) {
-            Filter filter = restRequest.getFilter();
+            PodioFilter filter = restRequest.getFilter();
 
             if (filter != null) {
                 RestOperation operation = restRequest.getOperation();
