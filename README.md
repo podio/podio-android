@@ -14,7 +14,7 @@ Your options of integration from here on are as wide as the Android framework en
 
 The provided Ant build script gives you the option of building a JAR file by issuing the `ant clean jar` command from the SDK root. You can then add the `podio-sdk.jar` file to your existing Android projects `libs` folder.
 
-## Use the Podio SDK ##
+## How to use the Podio SDK ##
 The use of the Podio SDK is made as straight forward as possible. A convenience "facade" is offered where you basically just make static method calls to interact with the Podio API.
 
 ### Setup your API keys ###
@@ -32,7 +32,7 @@ and by that you're ready to Podio.
 The Podio API supports multiple ways of authenticating a client. The Podio SDK for Android provides two primary options:
 
 * Authenticate with username/password.
-* Authenticate specific app tokens.
+* Authenticate with specific app tokens.
 
 Both options are described below.
 
