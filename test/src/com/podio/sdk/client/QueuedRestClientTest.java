@@ -4,9 +4,9 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.client.mock.MockRestClient;
-import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
+import com.podio.sdk.provider.PodioFilter;
 import com.podio.test.TestUtils;
 
 public class QueuedRestClientTest extends InstrumentationTestCase {

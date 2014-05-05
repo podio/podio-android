@@ -1,10 +1,11 @@
-package com.podio.sdk.domain;
+package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 

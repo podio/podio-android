@@ -1,6 +1,7 @@
 package com.podio.sdk.domain;
 
-import com.podio.sdk.domain.Item.UserInfo;
+import com.podio.sdk.domain.helper.UserInfo;
+
 
 public final class Application {
 

@@ -7,9 +7,9 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
-import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
+import com.podio.sdk.provider.PodioFilter;
 import com.podio.test.TestUtils;
 
 public class CachedRestClientTest extends InstrumentationTestCase {

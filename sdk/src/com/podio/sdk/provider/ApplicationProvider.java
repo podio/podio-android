@@ -1,4 +1,4 @@
-package com.podio.sdk.domain;
+package com.podio.sdk.provider;
 
 public final class ApplicationProvider extends PodioProvider {
 

@@ -13,7 +13,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
-import com.podio.sdk.domain.PodioProvider;
+import com.podio.sdk.provider.PodioProvider;
 
 public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 

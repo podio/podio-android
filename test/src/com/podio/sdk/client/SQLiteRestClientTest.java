@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.delegate.JsonClientDelegate;
-import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
+import com.podio.sdk.provider.PodioFilter;
 import com.podio.test.TestUtils;
 
 public class SQLiteRestClientTest extends InstrumentationTestCase {

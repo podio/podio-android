@@ -1,5 +1,7 @@
 package com.podio.sdk.domain;
 
+import com.podio.sdk.provider.ApplicationFilter;
+
 import android.net.Uri;
 import android.test.AndroidTestCase;
 

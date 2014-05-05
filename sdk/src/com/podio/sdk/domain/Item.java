@@ -1,5 +1,15 @@
 package com.podio.sdk.domain;
 
+import com.google.gson.annotations.SerializedName;
+import com.podio.sdk.domain.helper.AccountInfo;
+import com.podio.sdk.domain.helper.FileInfo;
+import com.podio.sdk.domain.helper.ParticipantInfo;
+import com.podio.sdk.domain.helper.PresenceInfo;
+import com.podio.sdk.domain.helper.RatingInfo;
+import com.podio.sdk.domain.helper.ReferenceInfo;
+import com.podio.sdk.domain.helper.UserInfo;
+import com.podio.sdk.domain.helper.ValueInfo;
+
 public final class Item {
 
     public static final class Activity {
@@ -8,20 +18,8 @@ public final class Item {
         }
     }
 
-    public static final class AccountInfo {
-        private AccountInfo() {
-            // Hide the constructor.
-        }
-    }
-
     public static final class Client {
         private Client() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class Comment {
-        private Comment() {
             // Hide the constructor.
         }
     }
@@ -42,34 +40,25 @@ public final class Item {
         }
     }
 
-    public static final class ExcerptInfo {
-        private ExcerptInfo() {
+    public static final class Excerpt {
+        public static final String label = null;
+        public static final String text = null;
+
+        private Excerpt() {
             // Hide the constructor.
         }
     }
 
     public static final class Field {
-        public static final Long field_id = null;
+        public static final Config config = null;
         public static final String external_id = null;
+        public static final Long field_id = null;
+        public static final String label = null;
         public static final String status = null;
         public static final String type = null;
-        public static final String label = null;
         public static final Value[] values = null;
 
         private Field() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class FileInfo {
-        public final Long file_id = null;
-        public final String hosted_by = null;
-        public final String hosted_by_humanized_name = null;
-        public final String thumbnail_link = null;
-        public final String link = null;
-        public final String link_target = null;
-
-        private FileInfo() {
             // Hide the constructor.
         }
     }
@@ -85,42 +74,13 @@ public final class Item {
         }
     }
 
-    public static final class ParticipantInfo {
-        private ParticipantInfo() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class PresenceInfo {
-        private PresenceInfo() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class PushInfo {
-        private PushInfo() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class RatingInfo {
-        private RatingInfo() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class ReferenceInfo {
-        private ReferenceInfo() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class Revision {
-        public final Long revision = null;
-        public final Long app_revision = null;
+    public final class Revision {
         public final UserInfo created_by = null;
-        public final Client created_via = null;
         public final String created_on = null;
+        public final Client created_via = null;
+        public final Integer item_revision_id = null;
+        public final Integer revision = null;
+        public final String type = null;
 
         private Revision() {
             // Hide the constructor.
@@ -136,70 +96,37 @@ public final class Item {
         }
     }
 
-    public static final class UserInfo {
-        public final Long user_id = null;
-        public final String name = null;
-        public final String url = null;
-        public final String type = null;
-        public final FileInfo image = null;
-        public final String avatar_type = null;
-        public final Long avatar = null;
-        public final Long id = null;
-        public final Long avatar_id = null;
-        public final String last_seen_on = null;
-
-        private UserInfo() {
-            // Hide the constructor.
-        }
-    }
-
     public static final class Value {
+        @SerializedName("value")
+        public static final String value_string = null;
+        @SerializedName("value")
+        public static final Object value_object = null;
+
         private Value() {
             // Hide the constructor.
         }
     }
 
-    public static final class ValueInfo {
-        private ValueInfo() {
+    public static final class ObjectValue {
+        // Date/time fields.
+        public final String end = null;
+        public final String end_date = null;
+        public final String end_time = null;
+        public final String start = null;
+        public final String start_date = null;
+        public final String start_time = null;
+
+        // Money fields.
+        public final Float value = null;
+        public final String currency = null;
+
+        // Embed fields
+        public final String embed = null;
+        public final String file = null;
+
+        private ObjectValue() {
             // Hide the constructor.
         }
-    }
-
-    public static final class RequestFilter {
-        private RequestFilter() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class RequestResult {
-        public final Integer total = null;
-        public final Integer filtered = null;
-        public final Item[] items = null;
-
-        private RequestResult() {
-            // Hide the constructor.
-        }
-    }
-
-    public static final class RequestDescription {
-        public final String sort_by;
-        public final Boolean sort_desc;
-        public final RequestFilter filters;
-        public final Integer limit;
-        public final Integer offset;
-        public final Boolean remember;
-
-        public RequestDescription(String sortBy, Boolean doSortDescending, RequestFilter filter,
-                Integer limit, Integer offset, Boolean doRemember) {
-
-            this.sort_by = sortBy;
-            this.sort_desc = doSortDescending;
-            this.filters = filter;
-            this.limit = limit;
-            this.offset = offset;
-            this.remember = doRemember;
-        }
-
     }
 
     public final Activity[] activity = null;
@@ -210,7 +137,7 @@ public final class Item {
     public final String created_on = null;
     public final Client created_via = null;
     public final Revision current_revision = null;
-    public final ExcerptInfo excerpt = null;
+    public final Excerpt excerpt = null;
     public final String external_id = null;
     public final Field[] fields = null;
     public final Integer file_count = null;

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.provider.PodioFilter;
 
 public class PodioFilterTest extends AndroidTestCase {
 

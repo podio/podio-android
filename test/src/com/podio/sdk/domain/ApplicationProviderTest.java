@@ -6,6 +6,7 @@ import android.test.AndroidTestCase;
 import com.podio.sdk.Filter;
 import com.podio.sdk.ProviderListener;
 import com.podio.sdk.domain.mock.MockRestClient;
+import com.podio.sdk.provider.ApplicationProvider;
 
 public class ApplicationProviderTest extends AndroidTestCase {
 

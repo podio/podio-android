@@ -3,10 +3,10 @@ package com.podio.sdk.client;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.domain.PodioFilter;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
+import com.podio.sdk.provider.PodioFilter;
 
 public class RestRequestTest extends AndroidTestCase {
 

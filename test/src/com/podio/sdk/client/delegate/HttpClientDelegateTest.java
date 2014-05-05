@@ -16,8 +16,8 @@ import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.client.delegate.mock.MockItemParser;
 import com.podio.sdk.client.mock.MockWebServer;
-import com.podio.sdk.domain.PodioProvider;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.provider.PodioProvider;
 
 import fi.iki.elonen.NanoHTTPD.Method;
 

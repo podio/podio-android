@@ -11,6 +11,8 @@ import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.mock.MockRestClient;
 import com.podio.sdk.internal.request.RestOperation;
+import com.podio.sdk.provider.PodioFilter;
+import com.podio.sdk.provider.PodioProvider;
 
 public class PodioProviderTest extends AndroidTestCase {
 

@@ -6,12 +6,12 @@ import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
-import com.podio.sdk.domain.ApplicationProvider;
-import com.podio.sdk.domain.ItemProvider;
-import com.podio.sdk.domain.OrganizationProvider;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.domain.SessionFilter;
-import com.podio.sdk.domain.SessionProvider;
+import com.podio.sdk.provider.ApplicationProvider;
+import com.podio.sdk.provider.ItemProvider;
+import com.podio.sdk.provider.OrganizationProvider;
+import com.podio.sdk.provider.SessionFilter;
+import com.podio.sdk.provider.SessionProvider;
 
 /**
  * Enables easy access to the Podio API with a basic configuration which should
