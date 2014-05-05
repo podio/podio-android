@@ -47,15 +47,15 @@ public final class Item {
     }
 
     public static final class Config {
-        public static final Value default_value = null;
-        public static final String description = null;
-        public static final Settings settings = null;
-        public static final Boolean required = null;
-        // public static final Mapping mapping = null;
-        public static final String label = null;
-        public static final Boolean visible = null;
-        public static final Integer delta = null;
-        public static final Boolean hidden = null;
+        public final Value default_value = null;
+        public final String description = null;
+        public final Settings settings = null;
+        public final Boolean required = null;
+        // public final Mapping mapping = null;
+        public final String label = null;
+        public final Boolean visible = null;
+        public final Integer delta = null;
+        public final Boolean hidden = null;
 
         private Config() {
             // Hide the constructor.
@@ -63,8 +63,8 @@ public final class Item {
     }
 
     public static final class Excerpt {
-        public static final String label = null;
-        public static final String text = null;
+        public final String label = null;
+        public final String text = null;
 
         private Excerpt() {
             // Hide the constructor.
@@ -72,13 +72,13 @@ public final class Item {
     }
 
     public static final class Field {
-        public static final Config config = null;
-        public static final String external_id = null;
-        public static final Long field_id = null;
-        public static final String label = null;
-        public static final String status = null;
-        public static final String type = null;
-        public static final Value[] values = null;
+        public final Config config = null;
+        public final String external_id = null;
+        public final Long field_id = null;
+        public final String label = null;
+        public final String status = null;
+        public final String type = null;
+        public final Value[] values = null;
 
         private Field() {
             // Hide the constructor.
@@ -86,10 +86,10 @@ public final class Item {
     }
 
     public static final class Options {
-        public static final String status = null;
-        public static final String text = null;
-        public static final Long id = null;
-        public static final String color = null;
+        public final String status = null;
+        public final String text = null;
+        public final Long id = null;
+        public final String color = null;
 
         private Options() {
             // Hide the constructor.
@@ -110,8 +110,8 @@ public final class Item {
     }
 
     public static final class Settings {
-        public static final String size = null;
-        public static final Boolean multiple = null;
+        public final String size = null;
+        public final Boolean multiple = null;
 
         private Settings() {
             // Hide the constructor.
@@ -120,9 +120,9 @@ public final class Item {
 
     public static final class Value {
         @SerializedName("value")
-        public static final String value_string = null;
+        public final String value_string = null;
         @SerializedName("value")
-        public static final Object value_object = null;
+        public final ObjectValue value_object = null;
 
         private Value() {
             // Hide the constructor.
