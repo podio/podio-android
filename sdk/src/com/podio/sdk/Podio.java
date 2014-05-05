@@ -196,9 +196,9 @@ public final class Podio {
          * @param session
          *            The previously stored session object.
          */
-        public static final void revokeSession(Session session) {
+        public static final void restoreSession(Session session) {
             client.setItemParser(null);
-            client.revokeSession(SessionFilter.PATH, session);
+            client.restoreSession(SessionFilter.PATH, session);
         }
 
     }

@@ -96,7 +96,7 @@ public class HttpRestClient extends QueuedRestClient {
         return result != null ? result : new RestResult(false, null, null);
     }
 
-    public void revokeSession(String refreshPath, Session session) {
+    public void restoreSession(String refreshPath, Session session) {
         if (networkDelegate instanceof HttpClientDelegate) {
             Uri sessionRefreshUri = new Uri.Builder() //
                     .scheme(SCHEME) //
@@ -104,7 +104,7 @@ public class HttpRestClient extends QueuedRestClient {
                     .appendEncodedPath(refreshPath) //
                     .build();
             String url = sessionRefreshUri.toString();
-            ((HttpClientDelegate) networkDelegate).revokeSession(url, session);
+            ((HttpClientDelegate) networkDelegate).restoreSession(url, session);
         }
     }
 

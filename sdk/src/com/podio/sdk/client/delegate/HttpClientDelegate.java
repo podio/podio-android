@@ -177,7 +177,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
      * @param session
      *            The new session object to use.
      */
-    public void revokeSession(String refreshUrl, Session session) {
+    public void restoreSession(String refreshUrl, Session session) {
         this.refreshUrl = refreshUrl;
         this.session = session;
     }

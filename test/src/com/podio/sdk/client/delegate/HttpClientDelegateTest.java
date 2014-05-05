@@ -40,7 +40,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
                 MockContentItem.class);
 
         target = new HttpClientDelegate(context);
-        target.revokeSession("http://localhost:8080/auth/token", session);
+        target.restoreSession("http://localhost:8080/auth/token", session);
         target.setItemParser(itemParser);
     }
 
@@ -287,7 +287,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         Session mockExpiredSession = new Session("expiredaccesstoken", "stillvalidrefreshtoken",
                 -3600000L);
-        target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
+        target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult result = target.delete(uri);
@@ -425,7 +425,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         Session mockExpiredSession = new Session("expiredaccesstoken", "stillvalidrefreshtoken",
                 -3600000L);
-        target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
+        target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult result = target.get(uri);
@@ -650,7 +650,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         Session mockExpiredSession = new Session("expiredaccesstoken", "stillvalidrefreshtoken",
                 -3600000L);
-        target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
+        target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult result = target.post(uri, new Object());
@@ -787,7 +787,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         Session mockExpiredSession = new Session("expiredaccesstoken", "stillvalidrefreshtoken",
                 -3600000L);
-        target.revokeSession("http://localhost:8080/auth/token", mockExpiredSession);
+        target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult result = target.put(uri, new Object());
