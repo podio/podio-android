@@ -22,7 +22,9 @@ But before you can communicate with the Podio API, you need to generate a set of
 
 Once you have a key and corresponding secret, you need to configure the Podio SDK to use it. You can do so by adding the following code to your `Application.onCreate()` method:
 
-    Podio.Client.setup("my_api_key", "my_secret");
+```java
+Podio.Client.setup("my_api_key", "my_secret");
+```
 
 and by that you're ready to Podio.
 
@@ -36,7 +38,9 @@ Both options are described below.
 
 Any changes to the authentication state during a call to the Podio API is reported back to the caller through the `PodioProviderListener.onSessionChange()` callback method. It can be useful to listen to this callback if you wish to persist your authentication tokens in any way you'd find convenient. You can then later on revoke a previously stored authentication session by calling:
 
-    Podio.Client.revokeSession(myPersistedSession);
+```java
+Podio.Client.revokeSession(myPersistedSession);
+```
 
 You can find more information on authentication and the Podio API [here](https://developers.podio.com/authentication).
 
@@ -45,26 +49,28 @@ This option is great when you want to have every user of your client app logging
 
 This is how you authenticate as a user:
 
-    String username = userTextView.getText().toString();
-    String password = passTextView.getText().toString();
+```java
+String username = userTextView.getText().toString();
+String password = passTextView.getText().toString();
 
-    Podio.Client.authenticateAsUser(username, password,
-            new PodioProviderListener() {
-                @Override
-                public void onRequestComplete(Object tag, Object item) {
-                    // Yeay!
-                }
+Podio.Client.authenticateAsUser(username, password,
+        new PodioProviderListener() {
+            @Override
+            public void onRequestComplete(Object tag, Object item) {
+                // Yeay!
+            }
 
-                @Override
-                public void onRequestFailure(Object tag, String msg) {
-                    // Ohno!
-                }
+            @Override
+            public void onRequestFailure(Object tag, String msg) {
+                // Ohno!
+            }
 
-                @Override
-                public void onSessionChange(Object tag, Session state) {
-                    // Persist the Session object
-                }
-            });
+            @Override
+            public void onSessionChange(Object tag, Session state) {
+                // Persist the Session object
+            }
+        });
+```
 
 Good to know is that *if* the session has changed during the request, the session change callback is always reported *before* any of the success or failure callbacks.
 
@@ -75,56 +81,62 @@ This method doesn't require any username and password but an AppId and AppToken 
 
 This is how you authenticate as an app:
 
-    public static final String MY_APP_ID = "my-app-id";
-    public static final String MY_APP_TOKEN = "my-app-token";
+```java
+public static final String MY_APP_ID = "my-app-id";
+public static final String MY_APP_TOKEN = "my-app-token";
 
-    Podio.Client.authenticateAsApp(MY_APP_ID, MY_APP_TOKEN,
-            new PodioProviderListener() {
-                @Override
-                public void onRequestComplete(Object tag, Object item) {
-                    // Yeay!
-                }
+Podio.Client.authenticateAsApp(MY_APP_ID, MY_APP_TOKEN,
+        new PodioProviderListener() {
+            @Override
+            public void onRequestComplete(Object tag, Object item) {
+                // Yeay!
+            }
 
-                @Override
-                public void onRequestFailure(Object tag, String msg) {
-                    // Ohno!
-                }
+            @Override
+            public void onRequestFailure(Object tag, String msg) {
+                // Ohno!
+            }
 
-                @Override
-                public void onSessionChange(Object tag, Session state) {
-                    // Persist the Session object
-                }
-            });
+            @Override
+            public void onSessionChange(Object tag, Session state) {
+                // Persist the Session object
+            }
+        });
+```
 
 ### Fetch items ###
 [Apps](https://developers.podio.com/doc/applications) and [Items](https://developers.podio.com/doc/items) are the cornerstones of the Podio platform. An App is a container of several Items, which in turn may have several Fields. A simple analogy would be a spreadsheet of any kind. The sheet itself would be equivalent to the App, the columns in the sheet would be the Fields and the rows would be the Items.
 
 You can use the Podio SDK to fetch Items you have already created in Podio. You can, e.g fetch all Items for a given App like this:
 
-    Podio.Item.getForApplication(myAppId,
-            new PodioProviderListener() {
-                @Override
-                public void onRequestComplete(Object tag, Object obj) {
-                    Item item = (Item) obj;
-                    Log.d("MYTAG", "App Title: " + item.title);
-                }
+```java
+Podio.Item.getForApplication(myAppId,
+        new PodioProviderListener() {
+            @Override
+            public void onRequestComplete(Object tag, Object obj) {
+                Item item = (Item) obj;
+                Log.d("MYTAG", "App Title: " + item.title);
+            }
 
-                @Override
-                public void onRequestFailure(Object tag, String msg) {
-                    // Ohno!
-                }
+            @Override
+            public void onRequestFailure(Object tag, String msg) {
+                // Ohno!
+            }
 
-                @Override
-                public void onSessionChange(Object tag, Session state) {
-                    // Persist the Session object
-                }
-            });
+            @Override
+            public void onSessionChange(Object tag, Session state) {
+                // Persist the Session object
+            }
+        });
+```
 
 Almost the same way you could also get a single Item by calling:
 
-    Podio.Item.get(myAppId, new PodioProviderListener() {
-                ...
-            });
+```java
+Podio.Item.get(myAppId, new PodioProviderListener() {
+            ...
+        });
+```
 
 ### Create items ###
 Yet to be published.

@@ -22,7 +22,6 @@
 
 package com.podio.sdk.domain;
 
-import com.google.gson.annotations.SerializedName;
 import com.podio.sdk.domain.helper.AccountInfo;
 import com.podio.sdk.domain.helper.FileInfo;
 import com.podio.sdk.domain.helper.ParticipantInfo;
@@ -119,10 +118,7 @@ public final class Item {
     }
 
     public static final class Value {
-        @SerializedName("value")
-        public final String value_string = null;
-        @SerializedName("value")
-        public final ObjectValue value_object = null;
+        public final ObjectValue value = null;
 
         private Value() {
             // Hide the constructor.
