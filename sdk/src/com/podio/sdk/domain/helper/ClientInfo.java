@@ -22,5 +22,10 @@
 
 package com.podio.sdk.domain.helper;
 
-public final class ReferenceInfo {
+public class ClientInfo {
+    public final String url = null;
+    public final Long auth_client_id = null;
+    public final Boolean display = null;
+    public final String name = null;
+    public final Long id = null;
 }

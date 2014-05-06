@@ -33,8 +33,4 @@ public final class UserInfo {
     public final Long id = null;
     public final Long avatar_id = null;
     public final String last_seen_on = null;
-
-    private UserInfo() {
-        // Hide the constructor.
-    }
 }

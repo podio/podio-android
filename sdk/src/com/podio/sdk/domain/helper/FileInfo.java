@@ -29,8 +29,4 @@ public final class FileInfo {
     public final String thumbnail_link = null;
     public final String link = null;
     public final String link_target = null;
-
-    private FileInfo() {
-        // Hide the constructor.
-    }
 }

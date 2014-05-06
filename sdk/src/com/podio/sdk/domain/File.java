@@ -20,7 +20,8 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain;
 
-public final class ReferenceInfo {
+public final class File {
+
 }

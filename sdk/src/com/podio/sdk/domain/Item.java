@@ -25,6 +25,7 @@ package com.podio.sdk.domain;
 import android.renderscript.Sampler.Value;
 
 import com.podio.sdk.domain.helper.AccountInfo;
+import com.podio.sdk.domain.helper.ClientInfo;
 import com.podio.sdk.domain.helper.FileInfo;
 import com.podio.sdk.domain.helper.ParticipantInfo;
 import com.podio.sdk.domain.helper.PresenceInfo;
@@ -36,9 +37,6 @@ import com.podio.sdk.domain.helper.ValueInfo;
 public final class Item {
 
     public static final class Activity {
-    }
-
-    public static final class Client {
     }
 
     public static final class Config {
@@ -56,6 +54,29 @@ public final class Item {
     public static final class Excerpt {
         public final String label = null;
         public final String text = null;
+    }
+
+    public static final class ApplicationField extends Field {
+        public static final class ApplicationValue {
+            public static final class Value {
+                public final Application app = null;
+                public final Long app_item_id = null;
+                public final UserInfo created_by = null;
+                public final String created_on = null;
+                public final ClientInfo created_via = null;
+                public final File[] files = null;
+                public final Revision initial_revision = null;
+                public final Long item_id = null;
+                public final String link = null;
+                public final Integer revision = null;
+                public final Space space = null;
+                public final String title = null;
+            }
+
+            public final Value value = null;
+        }
+
+        public final ApplicationValue[] values = null;
     }
 
     public static final class CalculationField extends Field {
@@ -154,12 +175,16 @@ public final class Item {
     }
 
     public static class Field {
+        public static enum Type {
+            app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title
+        }
+
         public final Config config = null;
         public final String external_id = null;
         public final Long field_id = null;
         public final String label = null;
         public final String status = null;
-        public final String type = null;
+        public final Type type = null;
     }
 
     public static final class ImageField extends Field {
@@ -226,6 +251,22 @@ public final class Item {
         public final ProgressValue[] values = null;
     }
 
+    public static final class TextField extends Field {
+        public static final class TextValue {
+            public final String value = null;
+        }
+
+        public final TextValue[] values = null;
+    }
+
+    public static final class TitleField extends Field {
+        public static final class TitleValue {
+            public final String value = null;
+        }
+
+        public final TitleValue[] values = null;
+    }
+
     public static final class Options {
         public final String status = null;
         public final String text = null;
@@ -236,10 +277,11 @@ public final class Item {
     public final class Revision {
         public final UserInfo created_by = null;
         public final String created_on = null;
-        public final Client created_via = null;
+        public final ClientInfo created_via = null;
         public final Integer item_revision_id = null;
         public final Integer revision = null;
         public final String type = null;
+        public final UserInfo user = null;
     }
 
     public static final class Settings {
@@ -253,7 +295,7 @@ public final class Item {
     public final Comment[] comments = null;
     public final UserInfo created_by = null;
     public final String created_on = null;
-    public final Client created_via = null;
+    public final ClientInfo created_via = null;
     public final Revision current_revision = null;
     public final Excerpt excerpt = null;
     public final String external_id = null;

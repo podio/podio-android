@@ -32,6 +32,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.podio.sdk.domain.Item.ApplicationField;
 import com.podio.sdk.domain.Item.CalculationField;
 import com.podio.sdk.domain.Item.CategoryField;
 import com.podio.sdk.domain.Item.ContactField;
@@ -44,6 +45,8 @@ import com.podio.sdk.domain.Item.LocationField;
 import com.podio.sdk.domain.Item.MoneyField;
 import com.podio.sdk.domain.Item.NumberField;
 import com.podio.sdk.domain.Item.ProgressField;
+import com.podio.sdk.domain.Item.TextField;
+import com.podio.sdk.domain.Item.TitleField;
 import com.podio.sdk.internal.utils.Utils;
 
 /**
@@ -60,13 +63,6 @@ public class ItemParser<T> {
 
     private static final class FieldDeserializer implements JsonDeserializer<Field> {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * com.google.gson.JsonDeserializer#deserialize(com.google.gson.JsonElement
-         * , java.lang.reflect.Type, com.google.gson.JsonDeserializationContext)
-         */
         @Override
         public Field deserialize(JsonElement element, Type type,
                 JsonDeserializationContext gsonContext) throws JsonParseException {
@@ -75,7 +71,9 @@ public class ItemParser<T> {
             JsonElement fieldType = jsonObject != null ? jsonObject.get("type") : null;
             String fieldTypeName = fieldType != null ? fieldType.getAsString() : null;
 
-            if ("calculation".equals(fieldTypeName)) {
+            if ("app".equals(fieldTypeName)) {
+                return gsonContext.deserialize(element, ApplicationField.class);
+            } else if ("calculation".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, CalculationField.class);
             } else if ("category".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, CategoryField.class);
@@ -97,8 +95,12 @@ public class ItemParser<T> {
                 return gsonContext.deserialize(element, NumberField.class);
             } else if ("progress".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, ProgressField.class);
+            } else if ("text".equals(fieldTypeName)) {
+                return gsonContext.deserialize(element, TextField.class);
+            } else if ("title".equals(fieldTypeName)) {
+                return gsonContext.deserialize(element, TitleField.class);
             } else {
-                return new Field();
+                return gsonContext.deserialize(null, Field.class);
             }
         }
     }
