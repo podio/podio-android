@@ -88,17 +88,39 @@ public final class Item {
     }
 
     public static final class CategoryField extends Field {
+
+        public static final class CategoryConfig {
+
+            public static final class Settings {
+
+                public static final class Option {
+                    public final String status = null;
+                    public final String text = null;
+                    public final Integer id = null;
+                    public final String color = null;
+                }
+
+                public final Boolean multiple = null;
+                public final Option[] options = null;
+                public final String display = null;
+            }
+
+            public final Settings settings = null;
+        }
+
         public static final class CategoryValue {
+
             public static final class Value {
                 public final String status = null;
                 public final String text = null;
-                public final Long id = null;
+                public final Integer id = null;
                 public final String color = null;
             }
 
             public final Value value = null;
         }
 
+        public final CategoryConfig config = null;
         public final CategoryValue[] values = null;
     }
 
@@ -179,7 +201,6 @@ public final class Item {
             app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title
         }
 
-        public final Config config = null;
         public final String external_id = null;
         public final Long field_id = null;
         public final String label = null;
