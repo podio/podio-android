@@ -5,10 +5,12 @@ The SDK requires Android API level 11 as a minimum and it also requires  `androi
 
 Apart from above Android requirements, the SDK also uses the [Android Volley](https://android.googlesource.com/platform/frameworks/volley/) framework for the network traffic and the [Google Gson](https://code.google.com/p/google-gson/) library for parsing JSON. Both dependencies are included as pre-build jar files in the Podio SDK project sources.
 
+The test project is using the [NanoHTTPD](http://nanohttpd.com/) web server for mocking the Internet on the test target.
+
 The Podio SDK for Android is currently in a very early development stage where the entire feature set has not yet been fully implemented. We are working very actively on making it feature complete within the near future.
 
 ## Integrate with your Android project ##
-The project is currently made available as raw source code. You can get the source by cloning the git repository like this: `git clone git@github.com:podio/android-sdk.git`.
+The project is currently made available as raw source code. You can get the source by cloning the git repository like this: `git clone git@github.com:podio/podio-android.git`.
 
 Your options of integration from here on are as wide as the Android framework enables: You can e.g. choose to import the cloned source as an Android Library Project or build a JAR file out of it (don't forget to manually add the Volley and Gson jars as they are not included in the podio-sdk JAR) and add it to your projects `libs` folder.
 
