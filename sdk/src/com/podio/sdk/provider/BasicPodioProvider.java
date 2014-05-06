@@ -27,6 +27,7 @@ import com.podio.sdk.PodioProvider;
 import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -57,6 +58,7 @@ public class BasicPodioProvider implements PodioProvider {
     };
 
     private PodioProviderListener providerListener;
+    private ItemParser<?> itemParser;
     protected RestClient client;
 
     @Override
@@ -142,12 +144,18 @@ public class BasicPodioProvider implements PodioProvider {
         this.client = client;
     }
 
-    protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter, Object content) {
+    public void setItemParser(ItemParser<?> itemParser) {
+        this.itemParser = itemParser;
+    }
+
+    protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter,
+            Object content) {
         RestRequest request = new RestRequest() //
                 .setContent(content) //
+                .setFilter(filter) //
+                .setItemParser(itemParser) //
                 .setOperation(operation) //
                 .setResultListener(resultListener) //
-                .setFilter(filter) //
                 .setTicket(filter);
 
         return request;

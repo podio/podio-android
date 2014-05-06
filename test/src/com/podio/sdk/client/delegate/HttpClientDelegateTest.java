@@ -46,6 +46,7 @@ import fi.iki.elonen.NanoHTTPD.Method;
 public class HttpClientDelegateTest extends InstrumentationTestCase {
 
     private MockWebServer mockWebServer;
+    private ItemParser<MockContentItem> itemParser;
     private HttpClientDelegate target;
 
     @Override
@@ -58,12 +59,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Context context = instrumentation.getTargetContext();
         Session session = new Session("accessToken", "refreshToken", 3600L);
 
-        ItemParser<MockContentItem> itemParser = new ItemParser<MockContentItem>(
-                MockContentItem.class);
+        itemParser = new ItemParser<MockContentItem>(MockContentItem.class);
 
         target = new HttpClientDelegate(context);
         target.restoreSession("http://localhost:8080/auth/token", session);
-        target.setItemParser(itemParser);
     }
 
     @Override
@@ -90,11 +89,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeDoesNotThrowExceptionOnNullPointerParser() {
-        target.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            target.authorize(Uri.parse("http://localhost:8080"));
+            target.authorize(Uri.parse("http://localhost:8080"), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -117,7 +115,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeHandlesEmptyUriCorrectly() {
-        RestResult result = target.authorize(Uri.EMPTY);
+        RestResult result = target.authorize(Uri.EMPTY, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -137,7 +135,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeHandlesNullUriCorrectly() {
-        RestResult result = target.authorize(null);
+        RestResult result = target.authorize(null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -169,7 +167,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         String mockAuthUri = "http://localhost:8080";
 
         Uri authUri = Uri.parse(mockAuthUri + "?" + mockAuthQueryParams);
-        target.authorize(authUri);
+        target.authorize(authUri, itemParser);
 
         String requestBody = mockWebServer.mock_getRequestBody();
         String[] particlesArray = requestBody.split("&");
@@ -205,7 +203,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("value", "test");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.authorize(Uri.parse("http://localhost:8080"));
+        RestResult result = target.authorize(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
@@ -230,11 +228,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
-        target.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            target.delete(Uri.parse("http://localhost:8080"));
+            target.delete(Uri.parse("http://localhost:8080"), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -257,7 +254,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesEmptyUriCorrectly() {
-        RestResult result = target.delete(Uri.EMPTY);
+        RestResult result = target.delete(Uri.EMPTY, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -277,7 +274,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesNullUriCorrectly() {
-        RestResult result = target.delete(null);
+        RestResult result = target.delete(null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -312,7 +309,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.delete(uri);
+        RestResult result = target.delete(uri, itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -343,7 +340,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("value", "test");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.delete(Uri.parse("http://localhost:8080"));
+        RestResult result = target.delete(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
@@ -368,11 +365,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetDoesThrowExceptionOnNullPointerParser() {
-        target.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            target.get(Uri.parse("http://localhost:8080"));
+            target.get(Uri.parse("http://localhost:8080"), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -395,7 +391,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesEmptyUriCorrectly() {
-        RestResult result = target.get(Uri.EMPTY);
+        RestResult result = target.get(Uri.EMPTY, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -415,7 +411,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesNullUriCorrectly() {
-        RestResult result = target.get(null);
+        RestResult result = target.get(null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -450,7 +446,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.get(uri);
+        RestResult result = target.get(uri, itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -489,7 +485,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("json", "{text: 'test'}");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.get(uri);
+        RestResult result = target.get(uri, itemParser);
         assertNotNull(result);
         assertNotNull(result.item());
         assertEquals(true, result.isSuccess());
@@ -533,8 +529,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         String fakeJsonString = "{item: fake}";
         Object fakeItemObject = new Object();
 
-        target.setItemParser(new MockItemParser(fakeJsonString, fakeItemObject));
-        target.post(uri, new Object());
+        target.post(uri, new Object(), new MockItemParser(fakeJsonString, fakeItemObject));
 
         String requestBody = mockWebServer.mock_getRequestBody();
         assertEquals(fakeJsonString, requestBody);
@@ -569,8 +564,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         String fakeJsonString = "{}";
         Object fakeDomainObject = new Object();
 
-        target.setItemParser(new MockItemParser(fakeJsonString, fakeDomainObject));
-        RestResult result = target.get(uri);
+        RestResult result = target.get(uri, new MockItemParser(fakeJsonString, fakeDomainObject));
 
         assertNotNull(result);
         assertEquals(fakeDomainObject, result.item());
@@ -593,11 +587,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostDoesThrowExceptionOnNullPointerParser() {
-        target.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            target.post(Uri.parse("http://localhost:8080"), new Object());
+            target.post(Uri.parse("http://localhost:8080"), new Object(), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -620,7 +613,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesEmptyUriCorrectly() {
-        RestResult result = target.post(Uri.EMPTY, null);
+        RestResult result = target.post(Uri.EMPTY, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -640,7 +633,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesNullUriCorrectly() {
-        RestResult result = target.post(null, null);
+        RestResult result = target.post(null, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -675,7 +668,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.post(uri, new Object());
+        RestResult result = target.post(uri, new Object(), itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -705,7 +698,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
 
         MockContentItem item = new MockContentItem(uri.toString(), "{text: 'test'}");
-        RestResult result = target.post(uri, item);
+        RestResult result = target.post(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
@@ -730,11 +723,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutDoesThrowExceptionOnNullPointerParser() {
-        target.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            target.put(Uri.parse("http://localhost:8080"), new Object());
+            target.put(Uri.parse("http://localhost:8080"), new Object(), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -757,7 +749,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesEmptyUriCorrectly() {
-        RestResult result = target.put(Uri.EMPTY, null);
+        RestResult result = target.put(Uri.EMPTY, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -777,7 +769,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesNullUriCorrectly() {
-        RestResult result = target.put(null, null);
+        RestResult result = target.put(null, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -812,7 +804,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.put(uri, new Object());
+        RestResult result = target.put(uri, new Object(), itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -841,7 +833,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         MockContentItem item = new MockContentItem("http://localhost:8080", "{text: 'test'}");
         Uri uri = Uri.parse(item.uri);
-        RestResult result = target.put(uri, item);
+        RestResult result = target.put(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 

@@ -55,7 +55,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult authorize(Uri uri) {
+    public RestResult authorize(Uri uri, ItemParser<?> itemParser) {
         String jsonString = null;
         String url = null;
 
@@ -78,7 +78,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult delete(Uri uri) {
+    public RestResult delete(Uri uri, ItemParser<?> itemParser) {
         Session resultSession = tryRefreshSession();
         String outputJson = request(Method.DELETE, uri, null);
 
@@ -100,7 +100,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult get(Uri uri) throws InvalidParserException {
+    public RestResult get(Uri uri, ItemParser<?> itemParser) throws InvalidParserException {
         Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
@@ -116,16 +116,17 @@ public class HttpClientDelegate extends JsonClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object item = parseJson(outputJson);
+        Object item = parseJson(outputJson, itemParser);
         RestResult result = new RestResult(isSuccess, resultSession, null, item);
 
         return result;
     }
 
     @Override
-    public RestResult post(Uri uri, Object item) throws InvalidParserException {
+    public RestResult post(Uri uri, Object item, ItemParser<?> itemParser)
+            throws InvalidParserException {
         Session resultSession = tryRefreshSession();
-        String inputJson = parseItem(item);
+        String inputJson = parseItem(item, itemParser);
         String outputJson = request(Method.POST, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -140,16 +141,17 @@ public class HttpClientDelegate extends JsonClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = parseJson(outputJson);
+        Object content = parseJson(outputJson, itemParser);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
     }
 
     @Override
-    public RestResult put(Uri uri, Object item) throws InvalidParserException {
+    public RestResult put(Uri uri, Object item, ItemParser<?> itemParser)
+            throws InvalidParserException {
         Session resultSession = tryRefreshSession();
-        String inputJson = parseItem(item);
+        String inputJson = parseItem(item, itemParser);
         String outputJson = request(Method.PUT, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -164,7 +166,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = parseJson(outputJson);
+        Object content = parseJson(outputJson, itemParser);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;

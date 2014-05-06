@@ -29,6 +29,7 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
+import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
@@ -85,11 +86,13 @@ public class HttpRestClient extends QueuedRestClient {
             PodioFilter filter = restRequest.getFilter();
 
             if (filter != null) {
-                RestOperation operation = restRequest.getOperation();
-                Object item = restRequest.getContent();
                 Uri uri = filter.buildUri(scheme, authority);
 
-                result = queryNetwork(operation, uri, item);
+                RestOperation operation = restRequest.getOperation();
+                Object item = restRequest.getContent();
+                ItemParser<?> parser = restRequest.getItemParser();
+
+                result = queryNetwork(operation, uri, item, parser);
             }
         }
 
@@ -108,19 +111,20 @@ public class HttpRestClient extends QueuedRestClient {
         }
     }
 
-    private RestResult queryNetwork(RestOperation operation, Uri uri, Object item) {
+    private RestResult queryNetwork(RestOperation operation, Uri uri, Object item,
+            ItemParser<?> parser) {
 
         switch (operation) {
         case AUTHORIZE:
-            return networkDelegate.authorize(uri);
+            return networkDelegate.authorize(uri, parser);
         case DELETE:
-            return networkDelegate.delete(uri);
+            return networkDelegate.delete(uri, parser);
         case GET:
-            return networkDelegate.get(uri);
+            return networkDelegate.get(uri, parser);
         case POST:
-            return networkDelegate.post(uri, item);
+            return networkDelegate.post(uri, item, parser);
         case PUT:
-            return networkDelegate.put(uri, item);
+            return networkDelegate.put(uri, item, parser);
         default:
             // This should never happen under normal conditions.
             String message = "Unknown operation: " + operation.name();

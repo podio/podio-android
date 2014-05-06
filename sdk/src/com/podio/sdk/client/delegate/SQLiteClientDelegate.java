@@ -31,11 +31,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 
-import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.internal.utils.Utils;
 
-public class SQLiteClientDelegate extends JsonClientDelegate implements RestClientDelegate {
+public class SQLiteClientDelegate extends JsonClientDelegate {
 
     private final SQLiteHelper sqliteHelper;
 
@@ -44,13 +43,13 @@ public class SQLiteClientDelegate extends JsonClientDelegate implements RestClie
     }
 
     @Override
-    public RestResult authorize(Uri uri) {
+    public RestResult authorize(Uri uri, ItemParser<?> parser) {
         throw new UnsupportedOperationException(
                 "SQLiteDatabaseDelegate doesn't support authorization requests");
     }
 
     @Override
-    public RestResult delete(Uri uri) throws SQLiteException {
+    public RestResult delete(Uri uri, ItemParser<?> parser) throws SQLiteException {
         int count = -1;
 
         if (Utils.notEmpty(uri)) {
@@ -69,7 +68,9 @@ public class SQLiteClientDelegate extends JsonClientDelegate implements RestClie
     }
 
     @Override
-    public RestResult get(Uri uri) throws SQLiteException, InvalidParserException {
+    public RestResult get(Uri uri, ItemParser<?> parser) throws SQLiteException,
+            InvalidParserException {
+
         String json = null;
 
         if (Utils.notEmpty(uri)) {
@@ -87,19 +88,20 @@ public class SQLiteClientDelegate extends JsonClientDelegate implements RestClie
 
         boolean isSuccess = json != null;
         String message = null;
-        Object item = parseJson(json);
+        Object item = parseJson(json, parser);
         RestResult result = new RestResult(isSuccess, message, item);
 
         return result;
     }
 
     @Override
-    public RestResult post(Uri uri, Object item) throws SQLiteException, InvalidParserException {
+    public RestResult post(Uri uri, Object item, ItemParser<?> parser) throws SQLiteException,
+            InvalidParserException {
         long id = -1L;
 
         if (Utils.notEmpty(uri)) {
             SQLiteDatabase database = sqliteHelper.getWritableDatabase();
-            String json = parseItem(item);
+            String json = parseItem(item, parser);
 
             ContentValues values = new ContentValues();
             values.put("uri", uri.toString());
@@ -118,12 +120,14 @@ public class SQLiteClientDelegate extends JsonClientDelegate implements RestClie
     }
 
     @Override
-    public RestResult put(Uri uri, Object item) throws SQLiteException, InvalidParserException {
+    public RestResult put(Uri uri, Object item, ItemParser<?> parser) throws SQLiteException,
+            InvalidParserException {
+
         int count = -1;
 
         if (Utils.notEmpty(uri)) {
             SQLiteDatabase database = sqliteHelper.getWritableDatabase();
-            String json = parseItem(item);
+            String json = parseItem(item, parser);
 
             String key = "uri=?";
             String[] value = { uri.toString() };

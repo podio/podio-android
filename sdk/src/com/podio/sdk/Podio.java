@@ -72,11 +72,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
                     com.podio.sdk.domain.Application[].class);
 
-            client.setItemParser(parser);
-
             ApplicationProvider provider = new ApplicationProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.fetchApplicationsForSpace(spaceId);
         }
@@ -99,11 +98,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
                     com.podio.sdk.domain.Application[].class);
 
-            client.setItemParser(parser);
-
             ApplicationProvider provider = new ApplicationProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId);
         }
@@ -144,11 +142,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
                     com.podio.sdk.domain.Session.class);
 
-            client.setItemParser(parser);
-
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.authenticateWithUserCredentials(clientId, clientSecret, username,
                     password);
@@ -175,11 +172,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
                     com.podio.sdk.domain.Session.class);
 
-            client.setItemParser(parser);
-
             SessionProvider provider = new SessionProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
         }
@@ -197,7 +193,6 @@ public final class Podio {
          *            The previously stored session object.
          */
         public static final void restoreSession(Session session) {
-            client.setItemParser(null);
             client.restoreSession(SessionFilter.PATH, session);
         }
 
@@ -226,11 +221,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Item> parser = new ItemParser<com.podio.sdk.domain.Item>(
                     com.podio.sdk.domain.Item.class);
 
-            client.setItemParser(parser);
-
             ItemProvider provider = new ItemProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.fetchItem(itemId);
         }
@@ -253,11 +247,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.ItemRequest.Result> parser = new ItemParser<com.podio.sdk.domain.ItemRequest.Result>(
                     com.podio.sdk.domain.ItemRequest.Result.class);
 
-            client.setItemParser(parser);
-
             ItemProvider provider = new ItemProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.fetchItemsForApplication(applicationId);
         }
@@ -290,11 +283,10 @@ public final class Podio {
             ItemParser<com.podio.sdk.domain.Organization[]> parser = new ItemParser<com.podio.sdk.domain.Organization[]>(
                     com.podio.sdk.domain.Organization[].class);
 
-            client.setItemParser(parser);
-
             OrganizationProvider provider = new OrganizationProvider();
             provider.setRestClient(client);
             provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
 
             return provider.getAll();
         }

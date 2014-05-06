@@ -41,6 +41,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
     private static final String DATABASE_NAME = "test.db";
     private static final int DATABASE_VERSION = 2;
+    private ItemParser<MockContentItem> itemParser;
 
     @Override
     protected void setUp() throws Exception {
@@ -50,6 +51,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getTargetContext();
         context.deleteDatabase(DATABASE_NAME);
+
+        itemParser = new ItemParser<MockContentItem>(MockContentItem.class);
     }
 
     /**
@@ -155,11 +158,10 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        databaseHelper.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            databaseHelper.delete(Uri.parse("test://database.delegate"));
+            databaseHelper.delete(Uri.parse("test://database.delegate"), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -183,7 +185,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.delete(Uri.EMPTY);
+        RestResult result = databaseHelper.delete(Uri.EMPTY, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
         assertNull(result.message());
@@ -206,7 +208,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.delete(null);
+        RestResult result = databaseHelper.delete(null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -239,7 +241,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         sqliteDatabase.insert("content", null, values);
 
-        RestResult result = databaseHelper.delete(validUri);
+        RestResult result = databaseHelper.delete(validUri, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -270,7 +272,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         sqliteDatabase.insert("content", null, values);
 
-        RestResult result = databaseHelper.delete(validUri);
+        RestResult result = databaseHelper.delete(validUri, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -293,11 +295,10 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetDoesThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        databaseHelper.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            databaseHelper.get(Uri.parse("test://database.delegate"));
+            databaseHelper.get(Uri.parse("test://database.delegate"), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -321,7 +322,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.get(Uri.EMPTY);
+        RestResult result = databaseHelper.get(Uri.EMPTY, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -342,7 +343,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.get(null);
+        RestResult result = databaseHelper.get(null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -380,7 +381,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         sqliteDatabase.insert("content", null, values[1]);
 
         Uri uri = Uri.parse(content[0].uri);
-        RestResult result = databaseHelper.get(uri);
+        RestResult result = databaseHelper.get(uri, itemParser);
 
         assertNotNull(result);
         assertNotNull(result.item());
@@ -409,11 +410,10 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostDoesThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        databaseHelper.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            databaseHelper.post(Uri.parse("test://database.delegate"), new Object());
+            databaseHelper.post(Uri.parse("test://database.delegate"), new Object(), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -437,7 +437,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(Uri.EMPTY, null);
+        RestResult result = databaseHelper.post(Uri.EMPTY, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -458,7 +458,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(null, null);
+        RestResult result = databaseHelper.post(null, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -480,7 +480,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse(item.uri);
 
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(uri, item);
+        RestResult result = databaseHelper.post(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -503,11 +503,10 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutDoesThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        databaseHelper.setItemParser(null);
         boolean didThrowInvalidParserException = false;
 
         try {
-            databaseHelper.put(Uri.parse("test://database.delegate"), new Object());
+            databaseHelper.put(Uri.parse("test://database.delegate"), new Object(), null);
         } catch (InvalidParserException e) {
             didThrowInvalidParserException = true;
         }
@@ -531,7 +530,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.put(Uri.EMPTY, null);
+        RestResult result = databaseHelper.put(Uri.EMPTY, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -552,7 +551,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.put(null, null);
+        RestResult result = databaseHelper.put(null, null, itemParser);
         assertNotNull(result);
         assertEquals(false, result.isSuccess());
     }
@@ -586,7 +585,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         item.json = "{text: 'test-updated'}";
 
-        RestResult result = databaseHelper.put(uri, item);
+        RestResult result = databaseHelper.put(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -619,7 +618,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         sqliteDatabase.insert("content", null, values);
 
         item.json = "{text: 'test-updated'}";
-        databaseHelper.put(uri, item);
+        databaseHelper.put(uri, item, itemParser);
 
         String table = "content";
         String key = "uri=?";
@@ -690,12 +689,8 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getTargetContext();
 
-        ItemParser<MockContentItem> itemParser = new ItemParser<MockContentItem>(
-                MockContentItem.class);
-
         SQLiteClientDelegate sqliteClientDelegate = new SQLiteClientDelegate(context,
                 DATABASE_NAME, version);
-        sqliteClientDelegate.setItemParser(itemParser);
 
         return sqliteClientDelegate;
     }

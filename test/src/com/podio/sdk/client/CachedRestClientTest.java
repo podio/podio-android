@@ -254,7 +254,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the expected Uri delegated to both the
+     * Verifies that the expected Uri is delegated to both the
      * {@link MockHttpClientDelegate}, and the
      * {@link MockDatabaseClientDelegate} when performing a get request.
      * 
@@ -266,7 +266,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * 
      * 4. Perform a "get" request.
      * 
-     * 5. Verify that the expected Uri delegated to the mocked database
+     * 5. Verify that the expected Uri is delegated to the mocked database
      *      delegate.
      * 
      * 6. Verify that the expected Uri is delegated to the mocked network
@@ -322,9 +322,9 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the expected Uri delegated to the
-     * {@link MockHttpClientDelegate}, while there is no Uri delegated at all to
-     * the {@link MockDatabaseClientDelegate} when performing a post request.
+     * Verifies that the expected Uri is delegated to both the
+     * {@link MockHttpClientDelegate}, and the
+     * {@link MockDatabaseClientDelegate} when performing a post request.
      * 
      * <pre>
      * 
@@ -334,7 +334,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * 
      * 4. Perform a "post" request.
      * 
-     * 5. Verify that there is no Uri delegated to the mocked database
+     * 5. Verify that the expected Uri is delegated to the mocked database
      *      delegate.
      * 
      * 6. Verify that the expected Uri is delegated to the mocked network
@@ -348,13 +348,13 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread();
 
-        assertNull(targetDatabaseDelegate.mock_getPostUri());
+        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getPostUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPostUri());
     }
 
     /**
-     * Verifies that only the network delegate is triggered when a "post" rest
-     * request is called.
+     * Verifies that both the database delegate and the network delegate are
+     * triggered when a "post" rest request is called.
      * 
      * <pre>
      * 
@@ -366,13 +366,13 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * 
      * 4. Perform a "post" request.
      * 
-     * 5. Verify that the mocked database delegate is not triggered.
+     * 5. Verify that the mocked database delegate is triggered.
      * 
      * 6. Verify that the mocked network delegate is triggered.
      * 
      * </pre>
      */
-    public void testPostRequestTriggersOnlyNetworkDelegate() {
+    public void testPostRequestTriggersBothClientDelegates() {
         targetNetworkDelegate.mock_setMockPostResult(new RestResult(true, null, null));
         targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, null));
 
@@ -382,7 +382,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         TestUtils.blockThread();
 
         assertEquals(1, targetNetworkDelegate.mock_getPostCallCount());
-        assertEquals(1, targetDatabaseDelegate.mock_getPostCallCount());
+        assertEquals(2, targetDatabaseDelegate.mock_getPostCallCount());
     }
 
     /**

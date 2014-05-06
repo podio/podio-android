@@ -23,14 +23,16 @@
 package com.podio.sdk.client;
 
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
 public final class RestRequest {
     private Object content;
+    private PodioFilter filter;
+    private ItemParser<?> itemParser;
     private RestOperation operation;
     private ResultListener resultListener;
-    private PodioFilter filter;
     private Object ticket;
 
     public Object getContent() {
@@ -39,6 +41,10 @@ public final class RestRequest {
 
     public PodioFilter getFilter() {
         return filter;
+    }
+
+    public ItemParser<?> getItemParser() {
+        return itemParser;
     }
 
     public RestOperation getOperation() {
@@ -60,6 +66,11 @@ public final class RestRequest {
 
     public RestRequest setFilter(PodioFilter filter) {
         this.filter = filter;
+        return this;
+    }
+
+    public RestRequest setItemParser(ItemParser<?> itemParser) {
+        this.itemParser = itemParser;
         return this;
     }
 

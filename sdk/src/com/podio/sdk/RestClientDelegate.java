@@ -25,17 +25,18 @@ package com.podio.sdk;
 import android.net.Uri;
 
 import com.podio.sdk.client.RestResult;
+import com.podio.sdk.client.delegate.ItemParser;
 
 public interface RestClientDelegate {
 
-    public RestResult authorize(Uri uri);
+    public RestResult authorize(Uri uri, ItemParser<?> parser);
 
-    public RestResult delete(Uri uri);
+    public RestResult delete(Uri uri, ItemParser<?> parser);
 
-    public RestResult get(Uri uri);
+    public RestResult get(Uri uri, ItemParser<?> parser);
 
-    public RestResult post(Uri uri, Object item);
+    public RestResult post(Uri uri, Object item, ItemParser<?> parser);
 
-    public RestResult put(Uri uri, Object item);
+    public RestResult put(Uri uri, Object item, ItemParser<?> parser);
 
 }

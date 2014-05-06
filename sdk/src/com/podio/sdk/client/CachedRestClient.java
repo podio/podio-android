@@ -107,38 +107,37 @@ public class CachedRestClient extends HttpRestClient {
         if (restRequest != null) {
             RestOperation operation = restRequest.getOperation();
             PodioFilter filter = restRequest.getFilter();
+            ItemParser<?> itemParser = restRequest.getItemParser();
             Object item = restRequest.getContent();
 
             Uri uri = filter.buildUri(contentScheme, authority);
 
             if (Utils.notEmpty(uri)) {
-                if (operation == RestOperation.GET && !delegatedRequests.contains(restRequest)) {
-                    // Query the locally cached data first...
-                    result = delegate(operation, uri, item);
+                if (operation != RestOperation.DELETE //
+                        && operation != RestOperation.PUT //
+                        && operation != RestOperation.AUTHORIZE //
+                        && !delegatedRequests.contains(restRequest)) {
 
-                    // ...and then queue the request once again for the super
-                    // implementation to act upon.
+                    // Query the locally cached data first and then queue the
+                    // request again for the super implementation to act upon.
+
+                    result = delegate(operation, uri, item, itemParser);
                     delegatedRequests.add(restRequest);
                     super.enqueue(restRequest);
                 } else {
-                    // Let the super implementation act upon the request.
                     delegatedRequests.remove(restRequest);
                     result = super.handleRequest(restRequest);
 
-                    // The super implementation has delivered successfully,
-                    // now also update the local cache accordingly.
                     if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
                         if (operation == RestOperation.GET) {
-                            result = delegate(RestOperation.POST, uri, result.item());
+                            result = delegate(RestOperation.POST, uri, result.item(), itemParser);
                         } else {
-                            result = delegate(operation, uri, result.item());
+                            result = delegate(operation, uri, result.item(), itemParser);
                         }
-                    }
 
-                    // The cache update succeeded. Get the new cached content
-                    // and return it to the caller.
-                    if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
-                        result = delegate(RestOperation.GET, uri, null);
+                        if (result.isSuccess()) {
+                            result = delegate(RestOperation.GET, uri, null, itemParser);
+                        }
                     }
                 }
             }
@@ -159,25 +158,22 @@ public class CachedRestClient extends HttpRestClient {
      *            The description of the new content.
      * @return The result description of the requested operation.
      */
-    private RestResult delegate(RestOperation operation, Uri uri, Object item) {
+    private RestResult delegate(RestOperation operation, Uri uri, Object item,
+            ItemParser<?> itemParser) {
+
         switch (operation) {
         case DELETE:
-            return databaseDelegate.delete(uri);
+            return databaseDelegate.delete(uri, itemParser);
         case GET:
-            return databaseDelegate.get(uri);
+            return databaseDelegate.get(uri, itemParser);
         case POST:
-            return databaseDelegate.post(uri, item);
+            return databaseDelegate.post(uri, item, itemParser);
         case PUT:
-            return databaseDelegate.put(uri, item);
+            return databaseDelegate.put(uri, item, itemParser);
         default:
             String message = "Unknown operation: " + operation.name();
             return new RestResult(false, message, null);
         }
-    }
-
-    public void setItemParser(ItemParser<?> parser) {
-        networkDelegate.setItemParser(parser);
-        databaseDelegate.setItemParser(parser);
     }
 
 }

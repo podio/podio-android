@@ -27,6 +27,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
+import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.provider.BasicPodioFilter;
@@ -55,31 +56,31 @@ public class HttpRestClientTest extends InstrumentationTestCase {
         target = new HttpRestClient(context, "authority", new JsonClientDelegate() {
 
             @Override
-            public RestResult authorize(Uri uri) {
+            public RestResult authorize(Uri uri, ItemParser<?> itemParser) {
                 result.isAuthorizeCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult delete(Uri uri) {
+            public RestResult delete(Uri uri, ItemParser<?> itemParser) {
                 result.isDeleteCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult get(Uri uri) {
+            public RestResult get(Uri uri, ItemParser<?> itemParser) {
                 result.isGetCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult post(Uri uri, Object item) {
+            public RestResult post(Uri uri, Object item, ItemParser<?> itemParser) {
                 result.isPostCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult put(Uri uri, Object item) {
+            public RestResult put(Uri uri, Object item, ItemParser<?> itemParser) {
                 result.isPutCalled = true;
                 return null;
             }

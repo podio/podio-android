@@ -28,6 +28,7 @@ import android.net.Uri;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 
@@ -76,13 +77,14 @@ public final class SQLiteRestClient extends QueuedRestClient {
 
         if (restRequest != null) {
             PodioFilter filter = restRequest.getFilter();
+            ItemParser<?> itemParser = restRequest.getItemParser();
 
             if (filter != null) {
                 RestOperation operation = restRequest.getOperation();
                 Object item = restRequest.getContent();
                 Uri uri = filter.buildUri(scheme, authority);
 
-                result = queryDatabase(operation, uri, item);
+                result = queryDatabase(operation, uri, item, itemParser);
             }
         }
 
@@ -101,19 +103,20 @@ public final class SQLiteRestClient extends QueuedRestClient {
      *            Any additional data that the operation refers to.
      * @return An object representation of the result of the operation.
      */
-    private RestResult queryDatabase(RestOperation operation, Uri uri, Object content) {
+    private RestResult queryDatabase(RestOperation operation, Uri uri, Object content,
+            ItemParser<?> itemParser) {
 
         switch (operation) {
         case AUTHORIZE:
-            return databaseDelegate.authorize(uri);
+            return databaseDelegate.authorize(uri, itemParser);
         case DELETE:
-            return databaseDelegate.delete(uri);
+            return databaseDelegate.delete(uri, itemParser);
         case GET:
-            return databaseDelegate.get(uri);
+            return databaseDelegate.get(uri, itemParser);
         case POST:
-            return databaseDelegate.post(uri, content);
+            return databaseDelegate.post(uri, content, itemParser);
         case PUT:
-            return databaseDelegate.put(uri, content);
+            return databaseDelegate.put(uri, content, itemParser);
         default:
             // This should never happen under normal conditions.
             String message = "Unknown operation: " + operation.name();
