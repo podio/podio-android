@@ -42,7 +42,8 @@ public class ItemProvider extends BasicPodioProvider {
     }
 
     public Object fetchItemsForApplication(long applicationId) {
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<ItemRequest.Result> parser = new PodioParser<ItemRequest.Result>(
+                ItemRequest.Result.class);
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
