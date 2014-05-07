@@ -56,6 +56,18 @@ public final class Podio {
             // instantiated.
         }
 
+        /**
+         * Fetches the full content set of the Podio Application with the given
+         * id.
+         * 
+         * @param applicationId
+         *            The id of the application to fetch.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
         public static final Object get(long applicationId, PodioProviderListener providerListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
             provider.setProviderListener(providerListener);
@@ -100,6 +112,69 @@ public final class Podio {
             provider.setProviderListener(providerListener);
 
             return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId);
+        }
+
+        /**
+         * Fetches a micro content subset of the Podio Application with the
+         * given id.
+         * 
+         * @param applicationId
+         *            The id of the application to fetch.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object getMicro(long applicationId,
+                PodioProviderListener providerListener) {
+
+            ApplicationProvider provider = new ApplicationProvider(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.fetchApplicationMicro(applicationId);
+        }
+
+        /**
+         * Fetches a mini content subset of the Podio Application with the given
+         * id.
+         * 
+         * @param applicationId
+         *            The id of the application to fetch.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object getMini(long applicationId,
+                PodioProviderListener providerListener) {
+
+            ApplicationProvider provider = new ApplicationProvider(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.fetchApplicationMini(applicationId);
+        }
+
+        /**
+         * Fetches a short content subset of the Podio Application with the
+         * given id.
+         * 
+         * @param applicationId
+         *            The id of the application to fetch.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object getShort(long applicationId,
+                PodioProviderListener providerListener) {
+
+            ApplicationProvider provider = new ApplicationProvider(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.fetchApplicationShort(applicationId);
         }
     }
 
