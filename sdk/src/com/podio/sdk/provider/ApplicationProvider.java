@@ -24,6 +24,38 @@ package com.podio.sdk.provider;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
+    public Object fetchApplication(long applicationId) {
+        ApplicationFilter filter = new ApplicationFilter() //
+                .withApplicationId(applicationId) //
+                .withType("full");
+
+        return fetchRequest(filter);
+    }
+
+    public Object fetchApplicationShort(long applicationId) {
+        ApplicationFilter filter = new ApplicationFilter() //
+                .withApplicationId(applicationId) //
+                .withType("short");
+
+        return fetchRequest(filter);
+    }
+
+    public Object fetchApplicationMini(long applicationId) {
+        ApplicationFilter filter = new ApplicationFilter() //
+                .withApplicationId(applicationId) //
+                .withType("mini");
+
+        return fetchRequest(filter);
+    }
+
+    public Object fetchApplicationMicro(long applicationId) {
+        ApplicationFilter filter = new ApplicationFilter() //
+                .withApplicationId(applicationId) //
+                .withType("micro");
+
+        return fetchRequest(filter);
+    }
+
     public Object fetchApplicationsForSpace(long spaceId) {
         ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //

@@ -28,6 +28,11 @@ public final class ApplicationFilter extends BasicPodioFilter {
         super("app");
     }
 
+    public ApplicationFilter withApplicationId(long applicationId) {
+        addPathSegment(Long.toString(applicationId, 10));
+        return this;
+    }
+
     public ApplicationFilter withInactivesIncluded(boolean doInclude) {
         addQueryParameter("include_inactive", doInclude ? "true" : "false");
         return this;
@@ -39,4 +44,8 @@ public final class ApplicationFilter extends BasicPodioFilter {
         return this;
     }
 
+    public ApplicationFilter withType(String type) {
+        addQueryParameter("type", type);
+        return this;
+    }
 }

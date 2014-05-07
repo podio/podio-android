@@ -57,6 +57,18 @@ public final class Podio {
             // instantiated.
         }
 
+        public static final Object get(long applicationId, PodioProviderListener providerListener) {
+            ItemParser<com.podio.sdk.domain.Application> parser = new ItemParser<com.podio.sdk.domain.Application>(
+                    com.podio.sdk.domain.Application.class);
+
+            ApplicationProvider provider = new ApplicationProvider();
+            provider.setRestClient(client);
+            provider.setProviderListener(providerListener);
+            provider.setItemParser(parser);
+
+            return provider.fetchApplication(applicationId);
+        }
+
         /**
          * Fetches all App items in the workspace with the given id.
          * 
