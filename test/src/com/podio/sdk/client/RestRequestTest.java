@@ -26,9 +26,9 @@ import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
-import com.podio.sdk.provider.BasicPodioFilter;
 
 public class RestRequestTest extends AndroidTestCase {
 

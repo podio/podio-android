@@ -34,6 +34,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.client.delegate.mock.MockItemParser;
@@ -46,7 +47,7 @@ import fi.iki.elonen.NanoHTTPD.Method;
 public class HttpClientDelegateTest extends InstrumentationTestCase {
 
     private MockWebServer mockWebServer;
-    private ItemParser<MockContentItem> itemParser;
+    private PodioParser<MockContentItem> itemParser;
     private HttpClientDelegate target;
 
     @Override
@@ -59,7 +60,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Context context = instrumentation.getTargetContext();
         Session session = new Session("accessToken", "refreshToken", 3600L);
 
-        itemParser = new ItemParser<MockContentItem>(MockContentItem.class);
+        itemParser = new PodioParser<MockContentItem>(MockContentItem.class);
 
         target = new HttpClientDelegate(context);
         target.restoreSession("http://localhost:8080/auth/token", session);
@@ -491,7 +492,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         assertEquals(true, result.isSuccess());
 
         MockContentItem item = (MockContentItem) result.item();
-        ItemParser<MockContentItem> parser = new ItemParser<MockContentItem>(MockContentItem.class);
+        PodioParser<MockContentItem> parser = new PodioParser<MockContentItem>(MockContentItem.class);
         String fetchedJson = parser.parseToJson(item);
         String mockedJson = mockResponse.toString();
         assertEquals(mockedJson, fetchedJson);
@@ -501,7 +502,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the given {@link ItemParser} is used for parsing items to
+     * Verifies that the given {@link PodioParser} is used for parsing items to
      * JSON when one is set.
      * 
      * <pre>
@@ -536,7 +537,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that the given {@link ItemParser} is used for parsing JSON to
+     * Verifies that the given {@link PodioParser} is used for parsing JSON to
      * domain objects when one is set.
      * 
      * <pre>

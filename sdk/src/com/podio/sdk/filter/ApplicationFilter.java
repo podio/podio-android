@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.provider;
+package com.podio.sdk.filter;
 
 public final class ApplicationFilter extends BasicPodioFilter {
 

@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.client.delegate;
+package com.podio.sdk;
 
 import java.lang.reflect.Type;
 
@@ -59,7 +59,7 @@ import com.podio.sdk.internal.utils.Utils;
  * @author László Urszuly
  * 
  */
-public class ItemParser<T> {
+public class PodioParser<T> {
 
     private static final class FieldDeserializer implements JsonDeserializer<Field> {
 
@@ -107,7 +107,7 @@ public class ItemParser<T> {
 
     private final Class<T> classOfItem;
 
-    public ItemParser(Class<T> classOfItem) {
+    public PodioParser(Class<T> classOfItem) {
         this.classOfItem = classOfItem;
     }
 

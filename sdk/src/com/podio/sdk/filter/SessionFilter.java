@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.provider;
+package com.podio.sdk.filter;
 
 public class SessionFilter extends BasicPodioFilter {
     public static final String PATH = "oauth/token";

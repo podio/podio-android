@@ -27,8 +27,8 @@ import android.test.InstrumentationTestCase;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.ResultListener;
-import com.podio.sdk.provider.BasicPodioFilter;
 import com.podio.test.TestUtils;
 
 public class QueuedRestClientTest extends InstrumentationTestCase {

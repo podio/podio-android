@@ -22,10 +22,11 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.domain.Organization;
+import com.podio.sdk.filter.OrganizationFilter;
 
 public class OrganizationProvider extends BasicPodioProvider {
 
@@ -34,7 +35,7 @@ public class OrganizationProvider extends BasicPodioProvider {
     }
 
     public Object getAll() {
-        ItemParser<Organization[]> parser = new ItemParser<Organization[]>(Organization[].class);
+        PodioParser<Organization[]> parser = new PodioParser<Organization[]>(Organization[].class);
         PodioFilter filter = new OrganizationFilter();
 
         return fetchRequest(filter, parser);

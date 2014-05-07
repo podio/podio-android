@@ -22,11 +22,12 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.internal.request.RestOperation;
 
 public class SessionProvider extends BasicPodioProvider {
@@ -38,7 +39,7 @@ public class SessionProvider extends BasicPodioProvider {
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
             String username, String password) {
 
-        ItemParser<Session> parser = new ItemParser<Session>(Session.class);
+        PodioParser<Session> parser = new PodioParser<Session>(Session.class);
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
@@ -50,7 +51,7 @@ public class SessionProvider extends BasicPodioProvider {
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
             String appId, String appToken) {
 
-        ItemParser<Session> parser = new ItemParser<Session>(Session.class);
+        PodioParser<Session> parser = new PodioParser<Session>(Session.class);
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
@@ -59,7 +60,7 @@ public class SessionProvider extends BasicPodioProvider {
         return authorize(filter, parser);
     }
 
-    private Object authorize(PodioFilter filter, ItemParser<Session> itemParser) {
+    private Object authorize(PodioFilter filter, PodioParser<Session> itemParser) {
         Object ticket = null;
 
         if (client != null) {

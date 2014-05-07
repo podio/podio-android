@@ -22,12 +22,12 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioProvider;
 import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -65,7 +65,7 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object changeRequest(PodioFilter filter, Object item, ItemParser<?> itemParser) {
+    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null) {
@@ -80,7 +80,7 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object deleteRequest(PodioFilter filter, ItemParser<?> itemParser) {
+    public Object deleteRequest(PodioFilter filter, PodioParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -96,7 +96,7 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object fetchRequest(PodioFilter filter, ItemParser<?> itemParser) {
+    public Object fetchRequest(PodioFilter filter, PodioParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -111,7 +111,7 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object pushRequest(PodioFilter filter, Object item, ItemParser<?> itemParser) {
+    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null && filter != null) {
@@ -139,7 +139,7 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter,
-            Object content, ItemParser<?> itemParser) {
+            Object content, PodioParser<?> itemParser) {
 
         RestRequest request = new RestRequest() //
                 .setContent(content) //

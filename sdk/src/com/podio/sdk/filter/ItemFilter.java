@@ -20,54 +20,23 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.provider;
+package com.podio.sdk.filter;
 
-import android.net.Uri;
+public final class ItemFilter extends BasicPodioFilter {
 
-import com.podio.sdk.PodioFilter;
-import com.podio.sdk.internal.utils.Utils;
-
-public class BasicPodioFilter implements PodioFilter {
-    private final Uri.Builder uriBuilder;
-
-    public BasicPodioFilter() {
-        this(null);
+    public ItemFilter() {
+        super("item");
     }
 
-    public BasicPodioFilter(String path) {
-        uriBuilder = new Uri.Builder();
-
-        if (Utils.notEmpty(path)) {
-            uriBuilder.appendEncodedPath(path);
-        }
-    }
-
-    @Override
-    public PodioFilter addQueryParameter(String key, String value) {
-        if (Utils.notEmpty(key) && value != null) {
-            uriBuilder.appendQueryParameter(key, value);
-        }
-
+    public ItemFilter withApplicationId(long applicationId) {
+        addPathSegment("app");
+        addPathSegment(Long.toString(applicationId, 10));
+        addPathSegment("filter");
         return this;
     }
 
-    @Override
-    public PodioFilter addPathSegment(String segment) {
-        if (Utils.notEmpty(segment)) {
-            uriBuilder.appendPath(segment);
-        }
-
+    public ItemFilter withItemId(long itemId) {
+        addPathSegment(Long.toString(itemId, 10));
         return this;
-    }
-
-    @Override
-    public Uri buildUri(String scheme, String authority) {
-        Uri uri = null;
-
-        if (Utils.notEmpty(scheme) && Utils.notEmpty(authority)) {
-            uri = uriBuilder.scheme(scheme).authority(authority).build();
-        }
-
-        return uri;
     }
 }

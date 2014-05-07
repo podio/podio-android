@@ -25,10 +25,10 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 
@@ -77,7 +77,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
 
         if (restRequest != null) {
             PodioFilter filter = restRequest.getFilter();
-            ItemParser<?> itemParser = restRequest.getItemParser();
+            PodioParser<?> itemParser = restRequest.getItemParser();
 
             if (filter != null) {
                 RestOperation operation = restRequest.getOperation();
@@ -104,7 +104,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @return An object representation of the result of the operation.
      */
     private RestResult queryDatabase(RestOperation operation, Uri uri, Object content,
-            ItemParser<?> itemParser) {
+            PodioParser<?> itemParser) {
 
         switch (operation) {
         case AUTHORIZE:

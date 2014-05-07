@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
 import com.podio.sdk.provider.BasicPodioProvider;
@@ -41,7 +42,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
     private static final String DATABASE_NAME = "test.db";
     private static final int DATABASE_VERSION = 2;
-    private ItemParser<MockContentItem> itemParser;
+    private PodioParser<MockContentItem> itemParser;
 
     @Override
     protected void setUp() throws Exception {
@@ -52,7 +53,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Context context = instrumentation.getTargetContext();
         context.deleteDatabase(DATABASE_NAME);
 
-        itemParser = new ItemParser<MockContentItem>(MockContentItem.class);
+        itemParser = new PodioParser<MockContentItem>(MockContentItem.class);
     }
 
     /**
@@ -368,7 +369,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         MockContentItem[] content = { new MockContentItem("test://uri/app/0", "{text:'test 0'}"),
                 new MockContentItem("test://uri/app/1", "{text:'test 1'}") };
 
-        ItemParser<MockContentItem> parser = new ItemParser<MockContentItem>(MockContentItem.class);
+        PodioParser<MockContentItem> parser = new PodioParser<MockContentItem>(MockContentItem.class);
         ContentValues[] values = { new ContentValues(), new ContentValues() };
         values[0].put("uri", content[0].uri);
         values[0].put("json", parser.parseToJson(content[0]));
@@ -633,7 +634,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         String fetchedUri = cursor.getString(cursor.getColumnIndex("uri"));
         String fetchedJson = cursor.getString(cursor.getColumnIndex("json"));
 
-        ItemParser<MockContentItem> parser = new ItemParser<MockContentItem>(MockContentItem.class);
+        PodioParser<MockContentItem> parser = new PodioParser<MockContentItem>(MockContentItem.class);
         MockContentItem fetchedItem = parser.parseToItem(fetchedJson);
 
         assertEquals(item.uri, fetchedUri);

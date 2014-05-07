@@ -28,10 +28,10 @@ import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
-import com.podio.sdk.provider.SessionFilter;
 import com.podio.sdk.provider.SessionProvider;
 
 /**

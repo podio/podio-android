@@ -22,9 +22,10 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.domain.Application;
+import com.podio.sdk.filter.ApplicationFilter;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
@@ -33,7 +34,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
     }
 
     public Object fetchApplication(long applicationId) {
-        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
 
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
@@ -43,7 +44,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
     }
 
     public Object fetchApplicationShort(long applicationId) {
-        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
 
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
@@ -53,7 +54,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
     }
 
     public Object fetchApplicationMini(long applicationId) {
-        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
 
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
@@ -63,7 +64,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
     }
 
     public Object fetchApplicationMicro(long applicationId) {
-        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
 
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
@@ -73,7 +74,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
     }
 
     public Object fetchApplicationsForSpace(long spaceId) {
-        ItemParser<Application[]> parser = new ItemParser<Application[]>(Application[].class);
+        PodioParser<Application[]> parser = new PodioParser<Application[]>(Application[].class);
 
         ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
@@ -83,7 +84,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
     }
 
     public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
-        ItemParser<Application[]> parser = new ItemParser<Application[]>(Application[].class);
+        PodioParser<Application[]> parser = new PodioParser<Application[]>(Application[].class);
 
         ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //

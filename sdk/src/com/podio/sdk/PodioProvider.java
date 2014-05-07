@@ -22,7 +22,6 @@
 
 package com.podio.sdk;
 
-import com.podio.sdk.client.delegate.ItemParser;
 
 /**
  * Defines the {@link PodioProvider} responsibilities. Each implementing class
@@ -46,7 +45,7 @@ public interface PodioProvider {
      * @return A ticket identifying this request.
      * 
      */
-    public Object changeRequest(PodioFilter filter, Object item, ItemParser<?> itemParser);
+    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> itemParser);
 
     /**
      * Performs a DELETE rest operation on the given {@link RestClient}.
@@ -57,7 +56,7 @@ public interface PodioProvider {
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object deleteRequest(PodioFilter filter, ItemParser<?> itemParser);
+    public Object deleteRequest(PodioFilter filter, PodioParser<?> itemParser);
 
     /**
      * Performs a GET rest operation on the given {@link RestClient}.
@@ -68,7 +67,7 @@ public interface PodioProvider {
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object fetchRequest(PodioFilter filter, ItemParser<?> itemParser);
+    public Object fetchRequest(PodioFilter filter, PodioParser<?> itemParser);
 
     /**
      * Performs a POST rest operation on the given {@link RestClient}.
@@ -81,6 +80,6 @@ public interface PodioProvider {
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object pushRequest(PodioFilter filter, Object item, ItemParser<?> itemParser);
+    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> itemParser);
 
 }

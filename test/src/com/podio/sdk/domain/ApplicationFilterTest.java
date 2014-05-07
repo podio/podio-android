@@ -25,7 +25,7 @@ package com.podio.sdk.domain;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.provider.ApplicationFilter;
+import com.podio.sdk.filter.ApplicationFilter;
 
 public class ApplicationFilterTest extends AndroidTestCase {
 

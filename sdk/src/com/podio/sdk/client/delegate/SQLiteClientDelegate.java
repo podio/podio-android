@@ -31,6 +31,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.internal.utils.Utils;
 
@@ -43,13 +44,13 @@ public class SQLiteClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult authorize(Uri uri, ItemParser<?> parser) {
+    public RestResult authorize(Uri uri, PodioParser<?> parser) {
         throw new UnsupportedOperationException(
                 "SQLiteDatabaseDelegate doesn't support authorization requests");
     }
 
     @Override
-    public RestResult delete(Uri uri, ItemParser<?> parser) throws SQLiteException {
+    public RestResult delete(Uri uri, PodioParser<?> parser) throws SQLiteException {
         int count = -1;
 
         if (Utils.notEmpty(uri)) {
@@ -68,7 +69,7 @@ public class SQLiteClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult get(Uri uri, ItemParser<?> parser) throws SQLiteException,
+    public RestResult get(Uri uri, PodioParser<?> parser) throws SQLiteException,
             InvalidParserException {
 
         String json = null;
@@ -95,7 +96,7 @@ public class SQLiteClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, ItemParser<?> parser) throws SQLiteException,
+    public RestResult post(Uri uri, Object item, PodioParser<?> parser) throws SQLiteException,
             InvalidParserException {
         long id = -1L;
 
@@ -120,7 +121,7 @@ public class SQLiteClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, ItemParser<?> parser) throws SQLiteException,
+    public RestResult put(Uri uri, Object item, PodioParser<?> parser) throws SQLiteException,
             InvalidParserException {
 
         int count = -1;

@@ -22,10 +22,11 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.domain.ItemRequest;
+import com.podio.sdk.filter.ItemFilter;
 
 public class ItemProvider extends BasicPodioProvider {
 
@@ -34,14 +35,14 @@ public class ItemProvider extends BasicPodioProvider {
     }
 
     public Object fetchItem(long itemId) {
-        ItemParser<Item> parser = new ItemParser<Item>(Item.class);
+        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
         return fetchRequest(filter, parser);
     }
 
     public Object fetchItemsForApplication(long applicationId) {
-        ItemParser<Item> parser = new ItemParser<Item>(Item.class);
+        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 

@@ -22,9 +22,9 @@
 
 package com.podio.sdk.client.delegate.mock;
 
-import com.podio.sdk.client.delegate.ItemParser;
+import com.podio.sdk.PodioParser;
 
-public class MockItemParser extends ItemParser<Object> {
+public class MockItemParser extends PodioParser<Object> {
 
     private final String mockJsonContent;
     private final Object mockItemContent;

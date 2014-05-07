@@ -24,8 +24,8 @@ package com.podio.sdk.client.delegate.mock;
 
 import android.net.Uri;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 
 public class MockRestClientDelegate extends JsonClientDelegate {
@@ -49,35 +49,35 @@ public class MockRestClientDelegate extends JsonClientDelegate {
     private int putCount = 0;
 
     @Override
-    public RestResult authorize(Uri uri, ItemParser<?> itemParser) {
+    public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
         authorizeCount++;
         authorizeUri = uri;
         return authorizeResult;
     }
 
     @Override
-    public RestResult delete(Uri uri, ItemParser<?> itemParser) {
+    public RestResult delete(Uri uri, PodioParser<?> itemParser) {
         deleteCount++;
         deleteUri = uri;
         return deleteResult;
     }
 
     @Override
-    public RestResult get(Uri uri, ItemParser<?> itemParser) {
+    public RestResult get(Uri uri, PodioParser<?> itemParser) {
         getCount++;
         getUri = uri;
         return getResult;
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, ItemParser<?> itemParser) {
+    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
         postCount++;
         postUri = uri;
         return postResult;
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, ItemParser<?> itemParser) {
+    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
         putCount++;
         putUri = uri;
         return putResult;

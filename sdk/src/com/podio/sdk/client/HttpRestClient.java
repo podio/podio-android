@@ -25,11 +25,11 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
@@ -90,7 +90,7 @@ public class HttpRestClient extends QueuedRestClient {
 
                 RestOperation operation = restRequest.getOperation();
                 Object item = restRequest.getContent();
-                ItemParser<?> parser = restRequest.getItemParser();
+                PodioParser<?> parser = restRequest.getItemParser();
 
                 result = queryNetwork(operation, uri, item, parser);
             }
@@ -112,7 +112,7 @@ public class HttpRestClient extends QueuedRestClient {
     }
 
     private RestResult queryNetwork(RestOperation operation, Uri uri, Object item,
-            ItemParser<?> parser) {
+            PodioParser<?> parser) {
 
         switch (operation) {
         case AUTHORIZE:

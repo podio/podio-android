@@ -27,10 +27,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.client.delegate.ItemParser;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
+import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.provider.BasicPodioFilter;
 import com.podio.test.TestUtils;
 
 public class HttpRestClientTest extends InstrumentationTestCase {
@@ -56,31 +56,31 @@ public class HttpRestClientTest extends InstrumentationTestCase {
         target = new HttpRestClient(context, "authority", new JsonClientDelegate() {
 
             @Override
-            public RestResult authorize(Uri uri, ItemParser<?> itemParser) {
+            public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
                 result.isAuthorizeCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult delete(Uri uri, ItemParser<?> itemParser) {
+            public RestResult delete(Uri uri, PodioParser<?> itemParser) {
                 result.isDeleteCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult get(Uri uri, ItemParser<?> itemParser) {
+            public RestResult get(Uri uri, PodioParser<?> itemParser) {
                 result.isGetCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult post(Uri uri, Object item, ItemParser<?> itemParser) {
+            public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isPostCalled = true;
                 return null;
             }
 
             @Override
-            public RestResult put(Uri uri, Object item, ItemParser<?> itemParser) {
+            public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isPutCalled = true;
                 return null;
             }

@@ -38,6 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
@@ -55,7 +56,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult authorize(Uri uri, ItemParser<?> itemParser) {
+    public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
         String jsonString = null;
         String url = null;
 
@@ -78,7 +79,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult delete(Uri uri, ItemParser<?> itemParser) {
+    public RestResult delete(Uri uri, PodioParser<?> itemParser) {
         Session resultSession = tryRefreshSession();
         String outputJson = request(Method.DELETE, uri, null);
 
@@ -100,7 +101,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult get(Uri uri, ItemParser<?> itemParser) throws InvalidParserException {
+    public RestResult get(Uri uri, PodioParser<?> itemParser) throws InvalidParserException {
         Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
@@ -123,7 +124,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, ItemParser<?> itemParser)
+    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser)
             throws InvalidParserException {
         Session resultSession = tryRefreshSession();
         String inputJson = parseItem(item, itemParser);
@@ -148,7 +149,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, ItemParser<?> itemParser)
+    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser)
             throws InvalidParserException {
         Session resultSession = tryRefreshSession();
         String inputJson = parseItem(item, itemParser);

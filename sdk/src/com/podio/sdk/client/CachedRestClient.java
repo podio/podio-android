@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.utils.Utils;
@@ -107,7 +107,7 @@ public class CachedRestClient extends HttpRestClient {
         if (restRequest != null) {
             RestOperation operation = restRequest.getOperation();
             PodioFilter filter = restRequest.getFilter();
-            ItemParser<?> itemParser = restRequest.getItemParser();
+            PodioParser<?> itemParser = restRequest.getItemParser();
             Object item = restRequest.getContent();
 
             Uri uri = filter.buildUri(contentScheme, authority);
@@ -159,7 +159,7 @@ public class CachedRestClient extends HttpRestClient {
      * @return The result description of the requested operation.
      */
     private RestResult delegate(RestOperation operation, Uri uri, Object item,
-            ItemParser<?> itemParser) {
+            PodioParser<?> itemParser) {
 
         switch (operation) {
         case DELETE:

@@ -28,7 +28,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.provider.BasicPodioFilter;
+import com.podio.sdk.filter.BasicPodioFilter;
 
 public class PodioFilterTest extends AndroidTestCase {
 
