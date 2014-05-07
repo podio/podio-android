@@ -22,24 +22,30 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.RestClient;
+import com.podio.sdk.client.delegate.ItemParser;
+import com.podio.sdk.domain.Item;
 import com.podio.sdk.domain.ItemRequest;
 
 public class ItemProvider extends BasicPodioProvider {
 
-    public Object fetchItem(long itemId) {
-        ItemFilter filter = new ItemFilter() //
-                .withItemId(itemId);
+    public ItemProvider(RestClient client) {
+        super(client);
+    }
 
-        return fetchRequest(filter);
+    public Object fetchItem(long itemId) {
+        ItemParser<Item> parser = new ItemParser<Item>(Item.class);
+        ItemFilter filter = new ItemFilter().withItemId(itemId);
+
+        return fetchRequest(filter, parser);
     }
 
     public Object fetchItemsForApplication(long applicationId) {
-        ItemFilter filter = new ItemFilter() //
-                .withApplicationId(applicationId);
-
+        ItemParser<Item> parser = new ItemParser<Item>(Item.class);
+        ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
-        return pushRequest(filter, filterRequest);
+        return pushRequest(filter, filterRequest, parser);
     }
 
 }

@@ -26,7 +26,6 @@ import android.content.Context;
 
 import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
-import com.podio.sdk.client.delegate.ItemParser;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.provider.ApplicationProvider;
@@ -58,13 +57,8 @@ public final class Podio {
         }
 
         public static final Object get(long applicationId, PodioProviderListener providerListener) {
-            ItemParser<com.podio.sdk.domain.Application> parser = new ItemParser<com.podio.sdk.domain.Application>(
-                    com.podio.sdk.domain.Application.class);
-
-            ApplicationProvider provider = new ApplicationProvider();
-            provider.setRestClient(client);
+            ApplicationProvider provider = new ApplicationProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.fetchApplication(applicationId);
         }
@@ -81,13 +75,8 @@ public final class Podio {
          *         with.
          */
         public static final Object getForSpace(long spaceId, PodioProviderListener providerListener) {
-            ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
-                    com.podio.sdk.domain.Application[].class);
-
-            ApplicationProvider provider = new ApplicationProvider();
-            provider.setRestClient(client);
+            ApplicationProvider provider = new ApplicationProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.fetchApplicationsForSpace(spaceId);
         }
@@ -107,13 +96,8 @@ public final class Podio {
         public static final Object getForSpaceIncludingInactive(long spaceId,
                 PodioProviderListener providerListener) {
 
-            ItemParser<com.podio.sdk.domain.Application[]> parser = new ItemParser<com.podio.sdk.domain.Application[]>(
-                    com.podio.sdk.domain.Application[].class);
-
-            ApplicationProvider provider = new ApplicationProvider();
-            provider.setRestClient(client);
+            ApplicationProvider provider = new ApplicationProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId);
         }
@@ -151,13 +135,8 @@ public final class Podio {
         public static final Object authenticateAsUser(String username, String password,
                 PodioProviderListener providerListener) {
 
-            ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
-                    com.podio.sdk.domain.Session.class);
-
-            SessionProvider provider = new SessionProvider();
-            provider.setRestClient(client);
+            SessionProvider provider = new SessionProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.authenticateWithUserCredentials(clientId, clientSecret, username,
                     password);
@@ -181,13 +160,8 @@ public final class Podio {
         public static final Object authenticateAsApp(String appId, String appToken,
                 PodioProviderListener providerListener) {
 
-            ItemParser<com.podio.sdk.domain.Session> parser = new ItemParser<com.podio.sdk.domain.Session>(
-                    com.podio.sdk.domain.Session.class);
-
-            SessionProvider provider = new SessionProvider();
-            provider.setRestClient(client);
+            SessionProvider provider = new SessionProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
         }
@@ -230,13 +204,8 @@ public final class Podio {
          *         with.
          */
         public static final Object get(long itemId, PodioProviderListener providerListener) {
-            ItemParser<com.podio.sdk.domain.Item> parser = new ItemParser<com.podio.sdk.domain.Item>(
-                    com.podio.sdk.domain.Item.class);
-
-            ItemProvider provider = new ItemProvider();
-            provider.setRestClient(client);
+            ItemProvider provider = new ItemProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.fetchItem(itemId);
         }
@@ -256,13 +225,8 @@ public final class Podio {
         public static final Object getForApplication(long applicationId,
                 PodioProviderListener providerListener) {
 
-            ItemParser<com.podio.sdk.domain.ItemRequest.Result> parser = new ItemParser<com.podio.sdk.domain.ItemRequest.Result>(
-                    com.podio.sdk.domain.ItemRequest.Result.class);
-
-            ItemProvider provider = new ItemProvider();
-            provider.setRestClient(client);
+            ItemProvider provider = new ItemProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.fetchItemsForApplication(applicationId);
         }
@@ -292,13 +256,8 @@ public final class Podio {
          *         with.
          */
         public static final Object getAll(PodioProviderListener providerListener) {
-            ItemParser<com.podio.sdk.domain.Organization[]> parser = new ItemParser<com.podio.sdk.domain.Organization[]>(
-                    com.podio.sdk.domain.Organization[].class);
-
-            OrganizationProvider provider = new OrganizationProvider();
-            provider.setRestClient(client);
+            OrganizationProvider provider = new OrganizationProvider(client);
             provider.setProviderListener(providerListener);
-            provider.setItemParser(parser);
 
             return provider.getAll();
         }

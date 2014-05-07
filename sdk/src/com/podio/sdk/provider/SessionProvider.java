@@ -23,36 +23,48 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.client.delegate.ItemParser;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 
 public class SessionProvider extends BasicPodioProvider {
 
+    public SessionProvider(RestClient client) {
+        super(client);
+    }
+
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
             String username, String password) {
+
+        ItemParser<Session> parser = new ItemParser<Session>(Session.class);
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withUserCredentials(username, password);
 
-        return authorize(filter);
+        return authorize(filter, parser);
     }
 
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
             String appId, String appToken) {
 
+        ItemParser<Session> parser = new ItemParser<Session>(Session.class);
+
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withAppCredentials(appId, appToken);
 
-        return authorize(filter);
+        return authorize(filter, parser);
     }
 
-    private Object authorize(PodioFilter filter) {
+    private Object authorize(PodioFilter filter, ItemParser<Session> itemParser) {
         Object ticket = null;
 
         if (client != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter, null);
+            RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter, null,
+                    itemParser);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();

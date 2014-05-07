@@ -22,54 +22,74 @@
 
 package com.podio.sdk.provider;
 
+import com.podio.sdk.RestClient;
+import com.podio.sdk.client.delegate.ItemParser;
+import com.podio.sdk.domain.Application;
+
 public final class ApplicationProvider extends BasicPodioProvider {
 
+    public ApplicationProvider(RestClient client) {
+        super(client);
+    }
+
     public Object fetchApplication(long applicationId) {
+        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
                 .withType("full");
 
-        return fetchRequest(filter);
+        return fetchRequest(filter, parser);
     }
 
     public Object fetchApplicationShort(long applicationId) {
+        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
                 .withType("short");
 
-        return fetchRequest(filter);
+        return fetchRequest(filter, parser);
     }
 
     public Object fetchApplicationMini(long applicationId) {
+        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
                 .withType("mini");
 
-        return fetchRequest(filter);
+        return fetchRequest(filter, parser);
     }
 
     public Object fetchApplicationMicro(long applicationId) {
+        ItemParser<Application> parser = new ItemParser<Application>(Application.class);
+
         ApplicationFilter filter = new ApplicationFilter() //
                 .withApplicationId(applicationId) //
                 .withType("micro");
 
-        return fetchRequest(filter);
+        return fetchRequest(filter, parser);
     }
 
     public Object fetchApplicationsForSpace(long spaceId) {
+        ItemParser<Application[]> parser = new ItemParser<Application[]>(Application[].class);
+
         ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(false);
 
-        return fetchRequest(filter);
+        return fetchRequest(filter, parser);
     }
 
     public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
+        ItemParser<Application[]> parser = new ItemParser<Application[]>(Application[].class);
+
         ApplicationFilter filter = new ApplicationFilter() //
                 .withSpaceId(spaceId) //
                 .withInactivesIncluded(true);
 
-        return fetchRequest(filter);
+        return fetchRequest(filter, parser);
     }
 
 }

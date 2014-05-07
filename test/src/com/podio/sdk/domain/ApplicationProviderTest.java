@@ -59,8 +59,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockRestClient mockClient = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
 
-        ApplicationProvider target = new ApplicationProvider();
-        target.setRestClient(mockClient);
+        ApplicationProvider target = new ApplicationProvider(mockClient);
         target.setProviderListener(new PodioProviderListener() {
             @Override
             public void onRequestFailure(Object ticket, String message) {
@@ -112,8 +111,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockRestClient mockClient = new MockRestClient();
         final ConcurrentResult result = new ConcurrentResult();
 
-        ApplicationProvider target = new ApplicationProvider();
-        target.setRestClient(mockClient);
+        ApplicationProvider target = new ApplicationProvider(mockClient);
         target.setProviderListener(new PodioProviderListener() {
             @Override
             public void onRequestFailure(Object ticket, String message) {

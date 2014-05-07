@@ -22,10 +22,12 @@
 
 package com.podio.sdk;
 
+import com.podio.sdk.client.delegate.ItemParser;
+
 /**
- * Defines the {@link PodioProvider} responsibilities. Each implementing class is
- * responsible for it's corresponding data and must hence be able to perform the
- * typical rest operations GET, POST, PUT and DELETE on the given
+ * Defines the {@link PodioProvider} responsibilities. Each implementing class
+ * is responsible for it's corresponding data and must hence be able to perform
+ * the typical rest operations GET, POST, PUT and DELETE on the given
  * {@link RestClient}.
  * 
  * @author László Urszuly
@@ -39,28 +41,34 @@ public interface PodioProvider {
      *            Defines the data set to change.
      * @param item
      *            Provides the new values to put.
+     * @param itemParser
+     *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      * 
      */
-    public Object changeRequest(PodioFilter filter, Object item);
+    public Object changeRequest(PodioFilter filter, Object item, ItemParser<?> itemParser);
 
     /**
      * Performs a DELETE rest operation on the given {@link RestClient}.
      * 
      * @param filter
      *            Defines the data set to delete.
+     * @param itemParser
+     *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object deleteRequest(PodioFilter filter);
+    public Object deleteRequest(PodioFilter filter, ItemParser<?> itemParser);
 
     /**
      * Performs a GET rest operation on the given {@link RestClient}.
      * 
      * @param filter
      *            Defines the data set to fetch.
+     * @param itemParser
+     *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object fetchRequest(PodioFilter filter);
+    public Object fetchRequest(PodioFilter filter, ItemParser<?> itemParser);
 
     /**
      * Performs a POST rest operation on the given {@link RestClient}.
@@ -69,8 +77,10 @@ public interface PodioProvider {
      *            Defines the end point where to push.
      * @param item
      *            Provides the new data.
+     * @param itemParser
+     *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object pushRequest(PodioFilter filter, Object item);
+    public Object pushRequest(PodioFilter filter, Object item, ItemParser<?> itemParser);
 
 }

@@ -58,15 +58,18 @@ public class BasicPodioProvider implements PodioProvider {
     };
 
     private PodioProviderListener providerListener;
-    private ItemParser<?> itemParser;
     protected RestClient client;
 
+    public BasicPodioProvider(RestClient client) {
+        this.client = client;
+    }
+
     @Override
-    public Object changeRequest(PodioFilter filter, Object item) {
+    public Object changeRequest(PodioFilter filter, Object item, ItemParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item);
+            RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item, itemParser);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -77,11 +80,12 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object deleteRequest(PodioFilter filter) {
+    public Object deleteRequest(PodioFilter filter, ItemParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter, null);
+            RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter, null,
+                    itemParser);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -92,11 +96,11 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object fetchRequest(PodioFilter filter) {
+    public Object fetchRequest(PodioFilter filter, ItemParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.GET, filter, null);
+            RestRequest restRequest = buildRestRequest(RestOperation.GET, filter, null, itemParser);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -107,11 +111,11 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     @Override
-    public Object pushRequest(PodioFilter filter, Object item) {
+    public Object pushRequest(PodioFilter filter, Object item, ItemParser<?> itemParser) {
         Object ticket = null;
 
         if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.POST, filter, item);
+            RestRequest restRequest = buildRestRequest(RestOperation.POST, filter, item, itemParser);
 
             if (client.enqueue(restRequest)) {
                 ticket = restRequest.getTicket();
@@ -124,32 +128,19 @@ public class BasicPodioProvider implements PodioProvider {
     /**
      * Sets the callback interface used to report the result through. If this
      * callback is not given, then the rest operations can still be executed
-     * silently. Note, though, that the GET operation, even though technically
-     * possible, wouldn't make any sense without this callback.
+     * silently.
      * 
      * @param providerListener
      *            The callback implementation. Null is valid.
+     * @return This instance of the <code>BasicPodioProvider</code>.
      */
     public void setProviderListener(PodioProviderListener providerListener) {
         this.providerListener = providerListener;
     }
 
-    /**
-     * Sets the rest client that will perform the rest operation.
-     * 
-     * @param client
-     *            The target {@link RestClient}.
-     */
-    public void setRestClient(RestClient client) {
-        this.client = client;
-    }
-
-    public void setItemParser(ItemParser<?> itemParser) {
-        this.itemParser = itemParser;
-    }
-
     protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter,
-            Object content) {
+            Object content, ItemParser<?> itemParser) {
+
         RestRequest request = new RestRequest() //
                 .setContent(content) //
                 .setFilter(filter) //
