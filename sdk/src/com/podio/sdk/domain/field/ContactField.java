@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain.field;
 
-import java.util.Date;
-
 public final class ContactField extends Field {
 
     public static final class ContactValue {
@@ -37,7 +35,7 @@ public final class ContactField extends Field {
             public final String link = null;
             public final String[] mail = null;
             public final String external_id = null;
-            public final Date last_seen_on = null;
+            public final String last_seen_on = null;
             public final String name = null;
         }
 

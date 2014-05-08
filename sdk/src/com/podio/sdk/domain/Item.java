@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain;
 
-import java.util.Date;
-
 import android.renderscript.Sampler.Value;
 
 import com.podio.sdk.domain.field.Field;
@@ -60,7 +58,7 @@ public final class Item {
 
     public final Application app = null;
     public final UserInfo created_by = null;
-    public final Date created_on = null;
+    public final String created_on = null;
     public final Excerpt excerpt = null;
     public final String external_id = null;
     public final Field[] fields = null;
