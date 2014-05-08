@@ -20,10 +20,14 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.field;
 
-public final class Comment {
-    private Comment() {
-        // Hide the constructor.
+public final class MoneyField extends Field {
+
+    public static final class MoneyValue {
+        public final String currency = null;
+        public final String value = null;
     }
+
+    public final MoneyField.MoneyValue[] values = null;
 }

@@ -20,13 +20,29 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public final class FileInfo {
-    public final Long file_id = null;
-    public final String hosted_by = null;
-    public final String hosted_by_humanized_name = null;
-    public final String thumbnail_link = null;
-    public final String link = null;
-    public final String link_target = null;
+import java.util.Date;
+
+public final class ContactField extends Field {
+
+    public static final class ContactValue {
+
+        public static final class Value {
+            public final Long user_id = null;
+            public final Long space_id = null;
+            public final String type = null;
+            public final Long profile_id = null;
+            public final Long org_id = null;
+            public final String link = null;
+            public final String[] mail = null;
+            public final String external_id = null;
+            public final Date last_seen_on = null;
+            public final String name = null;
+        }
+
+        public final ContactValue.Value value = null;
+    }
+
+    public final ContactField.ContactValue[] values = null;
 }

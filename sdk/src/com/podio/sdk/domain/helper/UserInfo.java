@@ -27,7 +27,6 @@ public final class UserInfo {
     public final String name = null;
     public final String url = null;
     public final String type = null;
-    public final FileInfo image = null;
     public final String avatar_type = null;
     public final Long avatar = null;
     public final Long id = null;

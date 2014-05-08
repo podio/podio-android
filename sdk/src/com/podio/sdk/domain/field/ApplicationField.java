@@ -20,10 +20,31 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.field;
 
-public final class PushInfo {
-    private PushInfo() {
-        // Hide the constructor.
+import java.util.Date;
+
+import com.podio.sdk.domain.Application;
+import com.podio.sdk.domain.Space;
+import com.podio.sdk.domain.helper.UserInfo;
+
+public final class ApplicationField extends Field {
+
+    public static final class ApplicationValue {
+
+        public static final class Value {
+            public final Application app = null;
+            public final Long app_item_id = null;
+            public final UserInfo created_by = null;
+            public final Date created_on = null;
+            public final Long item_id = null;
+            public final String link = null;
+            public final Space space = null;
+            public final String title = null;
+        }
+
+        public final ApplicationValue.Value value = null;
     }
+
+    public final ApplicationValue[] values = null;
 }

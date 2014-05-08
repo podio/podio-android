@@ -32,21 +32,20 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.Item.ApplicationField;
-import com.podio.sdk.domain.Item.CalculationField;
-import com.podio.sdk.domain.Item.CategoryField;
-import com.podio.sdk.domain.Item.ContactField;
-import com.podio.sdk.domain.Item.DateField;
-import com.podio.sdk.domain.Item.DurationField;
-import com.podio.sdk.domain.Item.EmbedField;
-import com.podio.sdk.domain.Item.Field;
-import com.podio.sdk.domain.Item.ImageField;
-import com.podio.sdk.domain.Item.LocationField;
-import com.podio.sdk.domain.Item.MoneyField;
-import com.podio.sdk.domain.Item.NumberField;
-import com.podio.sdk.domain.Item.ProgressField;
-import com.podio.sdk.domain.Item.TextField;
-import com.podio.sdk.domain.Item.TitleField;
+import com.podio.sdk.domain.field.ApplicationField;
+import com.podio.sdk.domain.field.CalculationField;
+import com.podio.sdk.domain.field.CategoryField;
+import com.podio.sdk.domain.field.ContactField;
+import com.podio.sdk.domain.field.DateField;
+import com.podio.sdk.domain.field.DurationField;
+import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.field.ImageField;
+import com.podio.sdk.domain.field.LocationField;
+import com.podio.sdk.domain.field.MoneyField;
+import com.podio.sdk.domain.field.NumberField;
+import com.podio.sdk.domain.field.ProgressField;
+import com.podio.sdk.domain.field.TextField;
+import com.podio.sdk.domain.field.TitleField;
 import com.podio.sdk.internal.utils.Utils;
 
 /**
@@ -83,8 +82,8 @@ public class PodioParser<T> {
                 return gsonContext.deserialize(element, DateField.class);
             } else if ("duration".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, DurationField.class);
-            } else if ("embed".equals(fieldTypeName)) {
-                return gsonContext.deserialize(element, EmbedField.class);
+                // } else if ("embed".equals(fieldTypeName)) {
+                // return gsonContext.deserialize(element, EmbedField.class);
             } else if ("image".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, ImageField.class);
             } else if ("location".equals(fieldTypeName)) {

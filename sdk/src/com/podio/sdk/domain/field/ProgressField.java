@@ -20,7 +20,13 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public final class RatingInfo {
+public final class ProgressField extends Field {
+
+    public static final class ProgressValue {
+        public final Integer value = null;
+    }
+
+    public final ProgressField.ProgressValue[] values = null;
 }

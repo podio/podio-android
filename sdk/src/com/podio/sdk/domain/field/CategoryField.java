@@ -20,35 +20,41 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.field;
 
-public final class ItemRequest {
+public final class CategoryField extends Field {
 
-    public static final class Filter {
+    public static final class CategoryConfig {
+
+        public static final class Settings {
+
+            public static final class Option {
+                public final String status = null;
+                public final String text = null;
+                public final Integer id = null;
+                public final String color = null;
+            }
+
+            public final Boolean multiple = null;
+            public final Settings.Option[] options = null;
+            public final String display = null;
+        }
+
+        public final CategoryConfig.Settings settings = null;
     }
 
-    public static final class Result {
-        public final Integer total = null;
-        public final Integer filtered = null;
-        public final Item[] items = null;
+    public static final class CategoryValue {
+
+        public static final class Value {
+            public final String status = null;
+            public final String text = null;
+            public final Integer id = null;
+            public final String color = null;
+        }
+
+        public final CategoryValue.Value value = null;
     }
 
-    public final String sort_by;
-    public final Boolean sort_desc;
-    public final Filter filters;
-    public final Integer limit;
-    public final Integer offset;
-    public final Boolean remember;
-
-    public ItemRequest(String sortBy, Boolean doSortDescending, Filter filter, Integer limit,
-            Integer offset, Boolean doRemember) {
-
-        this.sort_by = sortBy;
-        this.sort_desc = doSortDescending;
-        this.filters = filter;
-        this.limit = limit;
-        this.offset = offset;
-        this.remember = doRemember;
-    }
-
+    public final CategoryField.CategoryConfig config = null;
+    public final CategoryField.CategoryValue[] values = null;
 }

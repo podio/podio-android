@@ -20,7 +20,17 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public final class ValueInfo {
+public class Field {
+
+    public static enum Type {
+        app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title
+    }
+
+    public final String external_id = null;
+    public final Long field_id = null;
+    public final String label = null;
+    public final String status = null;
+    public final Field.Type type = null;
 }

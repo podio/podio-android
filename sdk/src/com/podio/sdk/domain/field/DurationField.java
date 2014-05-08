@@ -20,12 +20,12 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public class ClientInfo {
-    public final String url = null;
-    public final Long auth_client_id = null;
-    public final Boolean display = null;
-    public final String name = null;
-    public final Long id = null;
+public final class DurationField extends Field {
+    public static final class DurationValue {
+        public final Integer value = null;
+    }
+
+    public final DurationField.DurationValue[] values = null;
 }

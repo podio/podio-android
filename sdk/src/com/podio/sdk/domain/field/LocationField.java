@@ -20,8 +20,22 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.field;
 
-public final class File {
+public final class LocationField extends Field {
 
+    public static final class LocationValue {
+        public final String city = null;
+        public final String street_number = null;
+        public final String country = null;
+        public final String street_name = null;
+        public final String formatted = null;
+        public final String value = null;
+        public final String state = null;
+        public final String postal_code = null;
+        public final Double lat = null;
+        public final Double lng = null;
+    }
+
+    public final LocationField.LocationValue[] values = null;
 }

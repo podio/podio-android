@@ -20,35 +20,13 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.field;
 
-public final class ItemRequest {
+public final class NumberField extends Field {
 
-    public static final class Filter {
+    public static final class NumberValue {
+        public final String value = null;
     }
 
-    public static final class Result {
-        public final Integer total = null;
-        public final Integer filtered = null;
-        public final Item[] items = null;
-    }
-
-    public final String sort_by;
-    public final Boolean sort_desc;
-    public final Filter filters;
-    public final Integer limit;
-    public final Integer offset;
-    public final Boolean remember;
-
-    public ItemRequest(String sortBy, Boolean doSortDescending, Filter filter, Integer limit,
-            Integer offset, Boolean doRemember) {
-
-        this.sort_by = sortBy;
-        this.sort_desc = doSortDescending;
-        this.filters = filter;
-        this.limit = limit;
-        this.offset = offset;
-        this.remember = doRemember;
-    }
-
+    public final NumberField.NumberValue[] values = null;
 }

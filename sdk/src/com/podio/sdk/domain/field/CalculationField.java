@@ -20,7 +20,13 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public final class AccountInfo {
+public final class CalculationField extends Field {
+
+    public static final class CalculationValue {
+        public final String value = null;
+    }
+
+    public final CalculationField[] values = null;
 }

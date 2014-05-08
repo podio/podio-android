@@ -20,7 +20,13 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public final class ParticipantInfo {
+public final class TextField extends Field {
+
+    public static final class TextValue {
+        public final String value = null;
+    }
+
+    public final TextField.TextValue[] values = null;
 }

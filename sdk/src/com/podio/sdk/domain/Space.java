@@ -30,8 +30,4 @@ public final class Space {
     public final String role = null;
     public final String type = null;
     public final String[] rights = null;
-
-    private Space() {
-        // Hide the constructor.
-    }
 }

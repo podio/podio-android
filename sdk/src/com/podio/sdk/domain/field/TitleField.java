@@ -20,7 +20,13 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field;
 
-public final class PresenceInfo {
+public final class TitleField extends Field {
+
+    public static final class TitleValue {
+        public final String value = null;
+    }
+
+    public final TitleField.TitleValue[] values = null;
 }
