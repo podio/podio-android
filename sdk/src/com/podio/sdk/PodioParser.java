@@ -32,9 +32,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.ApplicationField;
+import com.podio.sdk.domain.field.ApplicationReference;
 import com.podio.sdk.domain.field.CalculationField;
-import com.podio.sdk.domain.field.CategoryField;
+import com.podio.sdk.domain.field.Category;
 import com.podio.sdk.domain.field.ContactField;
 import com.podio.sdk.domain.field.DateField;
 import com.podio.sdk.domain.field.DurationField;
@@ -71,11 +71,11 @@ public class PodioParser<T> {
             String fieldTypeName = fieldType != null ? fieldType.getAsString() : null;
 
             if ("app".equals(fieldTypeName)) {
-                return gsonContext.deserialize(element, ApplicationField.class);
+                return gsonContext.deserialize(element, ApplicationReference.class);
             } else if ("calculation".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, CalculationField.class);
             } else if ("category".equals(fieldTypeName)) {
-                return gsonContext.deserialize(element, CategoryField.class);
+                return gsonContext.deserialize(element, Category.class);
             } else if ("contact".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, ContactField.class);
             } else if ("date".equals(fieldTypeName)) {
@@ -99,7 +99,7 @@ public class PodioParser<T> {
             } else if ("title".equals(fieldTypeName)) {
                 return gsonContext.deserialize(element, TitleField.class);
             } else {
-                return gsonContext.deserialize(null, Field.class);
+                return gsonContext.deserialize(element, TextField.class);
             }
         }
     }

@@ -22,27 +22,39 @@
 
 package com.podio.sdk.domain.field;
 
-import com.podio.sdk.domain.Application;
-import com.podio.sdk.domain.Space;
-import com.podio.sdk.domain.helper.UserInfo;
+public final class Category extends Field {
 
-public final class ApplicationField extends Field {
+    public static final class Config {
 
-    public static final class ApplicationValue {
+        public static final class Settings {
 
-        public static final class Value {
-            public final Application app = null;
-            public final Long app_item_id = null;
-            public final UserInfo created_by = null;
-            public final String created_on = null;
-            public final Long item_id = null;
-            public final String link = null;
-            public final Space space = null;
-            public final String title = null;
+            public static final class Option {
+                public final String status = null;
+                public final String text = null;
+                public final Integer id = null;
+                public final String color = null;
+            }
+
+            public final Boolean multiple = null;
+            public final Settings.Option[] options = null;
+            public final String display = null;
         }
 
-        public final ApplicationValue.Value value = null;
+        public final Config.Settings settings = null;
     }
 
-    public final ApplicationValue[] values = null;
+    public static final class Value {
+
+        public static final class Data {
+            public final String status = null;
+            public final String text = null;
+            public final Integer id = null;
+            public final String color = null;
+        }
+
+        public final Value.Data value = null;
+    }
+
+    public final Category.Config config = null;
+    public final Category.Value[] values = null;
 }
