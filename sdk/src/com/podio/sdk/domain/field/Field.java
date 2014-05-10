@@ -25,7 +25,7 @@ package com.podio.sdk.domain.field;
 public class Field {
 
     public static enum Type {
-        app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title
+        app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title, undefined
     }
 
     public final String external_id = null;
