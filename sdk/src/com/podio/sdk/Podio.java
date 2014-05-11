@@ -267,6 +267,34 @@ public final class Podio {
      */
     public static final class Item {
 
+        private Item() {
+            // Hiding the constructor of this class as it's not meant to be
+            // instantiated.
+        }
+
+        /**
+         * Sends a new item to the Podio servers.
+         * 
+         * @param applicationId
+         *            The id of the application to which this item is to be
+         *            added.
+         * @param data
+         *            The definition of the item content to push.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object add(long applicationId, Object data,
+                PodioProviderListener providerListener) {
+
+            ItemProvider provider = new ItemProvider(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.addItem(applicationId, data);
+        }
+
         /**
          * Fetches a single item with the given id.
          * 
@@ -304,6 +332,29 @@ public final class Podio {
             provider.setProviderListener(providerListener);
 
             return provider.fetchItemsForApplication(applicationId);
+        }
+
+        /**
+         * Sends the new values for the fields of an item to the API.
+         * 
+         * @param itemId
+         *            The id of the item to update.
+         * @param data
+         *            The changed data bundle.
+         * @param providerListener
+         *            The callback implementation called when the items are
+         *            fetched. Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         */
+        public static final Object update(long itemId, Object data,
+                PodioProviderListener providerListener) {
+
+            ItemProvider provider = new ItemProvider(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.updateItem(itemId, data);
+
         }
     }
 

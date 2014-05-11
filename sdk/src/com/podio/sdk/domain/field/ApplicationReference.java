@@ -31,18 +31,33 @@ public final class ApplicationReference extends Field {
     public static final class Value {
 
         public static final class Data {
+            public final Long app_item_id;
+            public final Long item_id;
+
             public final Application app = null;
-            public final Long app_item_id = null;
             public final UserInfo created_by = null;
             public final String created_on = null;
-            public final Long item_id = null;
             public final String link = null;
             public final Space space = null;
             public final String title = null;
+
+            public Data(Long itemId, Long appItemId) {
+                this.app_item_id = appItemId;
+                this.item_id = itemId;
+            }
         }
 
-        public final Value.Data value = null;
+        public final Data value;
+
+        public Value(Long itemId, Long appItemId) {
+
+            this.value = new Data(itemId, appItemId);
+        }
     }
 
-    public final Value[] values = null;
+    public final Value[] values;
+
+    public ApplicationReference(Value[] values) {
+        this.values = values;
+    }
 }

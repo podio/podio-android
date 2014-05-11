@@ -22,15 +22,38 @@
 
 package com.podio.sdk.domain;
 
-import android.renderscript.Sampler.Value;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.helper.UserInfo;
 
 public final class Item {
 
+    public static final class PushData {
+        public final String external_id;
+        public final Map<String, Object> fields;
+
+        public PushData(String externalId) {
+            this.external_id = externalId;
+            this.fields = new HashMap<String, Object>();
+        }
+
+        public void addFieldValue(int fieldId, Object value) {
+            if (fieldId > 0 && value != null) {
+                String idString = Integer.toString(fieldId, 10);
+                fields.put(idString, value);
+            }
+        }
+    }
+
+    public static final class PushResult {
+        public final Long item_id = null;
+        public final String title = null;
+    }
+
     public static final class Config {
-        public final Value default_value = null;
+        // public final Value default_value = null;
         public final String description = null;
         public final Settings settings = null;
         public final Boolean required = null;

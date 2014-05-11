@@ -22,6 +22,7 @@
 
 package com.podio.sdk.domain.field;
 
+
 public final class Category extends Field {
 
     public static final class Config {
@@ -35,12 +36,12 @@ public final class Category extends Field {
                 public final String color = null;
             }
 
-            public final Boolean multiple = null;
-            public final Settings.Option[] options = null;
             public final String display = null;
+            public final Boolean multiple = null;
+            public final Option[] options = null;
         }
 
-        public final Config.Settings settings = null;
+        public final Settings settings = null;
     }
 
     public static final class Value {
@@ -52,9 +53,9 @@ public final class Category extends Field {
             public final String color = null;
         }
 
-        public final Value.Data value = null;
+        public final Data value = null;
     }
 
-    public final Category.Config config = null;
-    public final Category.Value[] values = null;
+    public final Config config = null;
+    public final Value[] values = null;
 }

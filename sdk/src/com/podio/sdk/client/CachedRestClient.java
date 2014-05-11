@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.JsonClientDelegate;

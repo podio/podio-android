@@ -29,6 +29,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 
 public class PodioRequest extends StringRequest {
+    private static final String PROTOCOL_CONTENT_TYPE = "application/json; charset=utf-8";
 
     private final Map<String, String> headers;
     private final String body;
@@ -52,6 +53,11 @@ public class PodioRequest extends StringRequest {
     public byte[] getBody() {
         byte[] bytes = body.getBytes();
         return bytes;
+    }
+
+    @Override
+    public String getBodyContentType() {
+        return PROTOCOL_CONTENT_TYPE;
     }
 
 }

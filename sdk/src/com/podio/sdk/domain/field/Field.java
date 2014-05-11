@@ -29,8 +29,8 @@ public class Field {
     }
 
     public final String external_id = null;
-    public final Long field_id = null;
+    public final Integer field_id = null;
     public final String label = null;
     public final String status = null;
-    public final Field.Type type = null;
+    public final Type type = null;
 }

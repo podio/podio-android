@@ -22,6 +22,8 @@
 
 package com.podio.sdk.provider;
 
+import android.util.Log;
+
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Item;
@@ -34,6 +36,16 @@ public class ItemProvider extends BasicPodioProvider {
         super(client);
     }
 
+    public Object addItem(long applicationId, Object data) {
+        ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
+        PodioParser<Item.PushResult> parser = new PodioParser<Item.PushResult>(
+                Item.PushResult.class);
+
+        Log.d("MYTAG", parser.parseToJson(data));
+
+        return pushRequest(filter, data, parser);
+    }
+
     public Object fetchItem(long itemId) {
         PodioParser<Item> parser = new PodioParser<Item>(Item.class);
         ItemFilter filter = new ItemFilter().withItemId(itemId);
@@ -42,12 +54,22 @@ public class ItemProvider extends BasicPodioProvider {
     }
 
     public Object fetchItemsForApplication(long applicationId) {
+        ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
         PodioParser<ItemRequest.Result> parser = new PodioParser<ItemRequest.Result>(
                 ItemRequest.Result.class);
-        ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
         return pushRequest(filter, filterRequest, parser);
+    }
+
+    public Object updateItem(long itemId, Object data) {
+        ItemFilter filter = new ItemFilter().withItemId(itemId);
+        PodioParser<Item.PushResult> parser = new PodioParser<Item.PushResult>(
+                Item.PushResult.class);
+
+        Log.d("MYTAG", parser.parseToJson(data));
+
+        return changeRequest(filter, data, parser);
     }
 
 }
