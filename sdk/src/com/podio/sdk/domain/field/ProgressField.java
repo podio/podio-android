@@ -29,4 +29,9 @@ public final class ProgressField extends Field {
     }
 
     public final ProgressField.ProgressValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

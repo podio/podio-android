@@ -29,4 +29,9 @@ public final class TextField extends Field {
     }
 
     public final TextField.TextValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

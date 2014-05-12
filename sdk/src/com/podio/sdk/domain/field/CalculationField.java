@@ -29,4 +29,9 @@ public final class CalculationField extends Field {
     }
 
     public final CalculationField[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

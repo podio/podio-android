@@ -40,4 +40,9 @@ public final class DateField extends Field {
     }
 
     public final DateField.DateValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

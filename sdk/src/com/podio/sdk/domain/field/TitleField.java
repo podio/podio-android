@@ -29,4 +29,9 @@ public final class TitleField extends Field {
     }
 
     public final TitleField.TitleValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

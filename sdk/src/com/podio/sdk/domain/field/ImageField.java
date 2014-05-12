@@ -44,4 +44,9 @@ public final class ImageField extends Field {
     }
 
     public final ImageField.ImageValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

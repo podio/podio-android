@@ -22,7 +22,7 @@
 
 package com.podio.sdk.domain.field;
 
-public class Field {
+public abstract class Field implements Pushable {
 
     public static enum Type {
         app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title, undefined
@@ -33,4 +33,5 @@ public class Field {
     public final String label = null;
     public final String status = null;
     public final Type type = null;
+
 }

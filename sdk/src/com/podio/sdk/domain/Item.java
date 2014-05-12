@@ -34,12 +34,12 @@ public final class Item {
         public final String external_id;
         public final Map<String, Object> fields;
 
-        public PushData(String externalId) {
+        private PushData(String externalId) {
             this.external_id = externalId;
             this.fields = new HashMap<String, Object>();
         }
 
-        public void addFieldValue(int fieldId, Object value) {
+        private void addData(int fieldId, Object value) {
             if (fieldId > 0 && value != null) {
                 String idString = Integer.toString(fieldId, 10);
                 fields.put(idString, value);
@@ -48,6 +48,7 @@ public final class Item {
     }
 
     public static final class PushResult {
+        public final Integer revision = null;
         public final Long item_id = null;
         public final String title = null;
     }
@@ -98,4 +99,14 @@ public final class Item {
     public final Integer subscribed_count = null;
     public final String[] tags = null;
     public final String title = null;
+
+    public Object getPushData() {
+        PushData pushData = new PushData(external_id);
+
+        for (Field field : fields) {
+            pushData.addData(field.field_id, field.getPushData());
+        }
+
+        return pushData;
+    }
 }

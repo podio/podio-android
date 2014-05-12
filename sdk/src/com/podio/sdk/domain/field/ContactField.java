@@ -43,4 +43,9 @@ public final class ContactField extends Field {
     }
 
     public final ContactField.ContactValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

@@ -29,4 +29,9 @@ public final class NumberField extends Field {
     }
 
     public final NumberField.NumberValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

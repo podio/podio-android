@@ -22,33 +22,38 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class Category extends Field {
 
+    public static final class Option implements Pushable {
+        public final String status = null;
+        public final String text = null;
+        public final Integer id = null;
+        public final String color = null;
+
+        private boolean isPicked = false;
+
+        public boolean isPicked() {
+            return isPicked;
+        }
+
+        public void setPicked(boolean isPicked) {
+            this.isPicked = isPicked;
+        }
+
+        @Override
+        public Object getPushData() {
+            HashMap<String, Integer> pushData = new HashMap<String, Integer>();
+            pushData.put("value", id);
+            return pushData;
+        }
+    }
+
     public static final class Config {
 
         public static final class Settings {
-
-            public static final class Option implements Pushable {
-                public final String status = null;
-                public final String text = null;
-                public final Integer id = null;
-                public final String color = null;
-
-                @Override
-                public Object getPushData() {
-                    HashMap<String, Integer> pushData = null;
-
-                    if (id != null) {
-                        pushData = new HashMap<String, Integer>();
-                        pushData.put("value", id);
-                    }
-
-                    return pushData;
-                }
-            }
-
             public final String display = null;
             public final Boolean multiple = null;
             public final Option[] options = null;
@@ -57,30 +62,23 @@ public final class Category extends Field {
         public final Settings settings = null;
     }
 
-    public static final class Value implements Pushable {
-
-        public static final class Data {
-            public final String status = null;
-            public final String text = null;
-            public final Integer id = null;
-            public final String color = null;
-        }
-
-        public final Data value = null;
-
-        @Override
-        public Object getPushData() {
-            HashMap<String, Integer> pushData = null;
-
-            if (value != null && value.id != null) {
-                pushData = new HashMap<String, Integer>();
-                pushData.put("value", value.id);
-            }
-
-            return pushData;
-        }
+    public static final class Value {
+        public final Option value = null;
     }
 
     public final Config config = null;
     public final Value[] values = null;
+
+    @Override
+    public Object getPushData() {
+        ArrayList<Object> pushData = new ArrayList<Object>();
+
+        for (Option option : config.settings.options) {
+            if (option.isPicked) {
+                pushData.add(option.getPushData());
+            }
+        }
+
+        return pushData;
+    }
 }

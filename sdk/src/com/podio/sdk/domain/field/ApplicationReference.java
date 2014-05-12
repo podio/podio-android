@@ -60,4 +60,9 @@ public final class ApplicationReference extends Field {
     public ApplicationReference(Value[] values) {
         this.values = values;
     }
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

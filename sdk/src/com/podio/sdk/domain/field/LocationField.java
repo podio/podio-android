@@ -38,4 +38,9 @@ public final class LocationField extends Field {
     }
 
     public final LocationField.LocationValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

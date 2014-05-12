@@ -28,4 +28,9 @@ public final class DurationField extends Field {
     }
 
     public final DurationField.DurationValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }

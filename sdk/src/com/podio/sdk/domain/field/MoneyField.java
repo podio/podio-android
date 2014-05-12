@@ -30,4 +30,9 @@ public final class MoneyField extends Field {
     }
 
     public final MoneyField.MoneyValue[] values = null;
+
+    @Override
+    public Object getPushData() {
+        return null;
+    }
 }
