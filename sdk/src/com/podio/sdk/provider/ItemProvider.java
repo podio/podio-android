@@ -22,8 +22,6 @@
 
 package com.podio.sdk.provider;
 
-import android.util.Log;
-
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Item;
@@ -40,8 +38,6 @@ public class ItemProvider extends BasicPodioProvider {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         PodioParser<Item.PushResult> parser = new PodioParser<Item.PushResult>(
                 Item.PushResult.class);
-
-        Log.d("MYTAG", parser.parseToJson(data));
 
         return pushRequest(filter, data, parser);
     }
@@ -66,8 +62,6 @@ public class ItemProvider extends BasicPodioProvider {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
         PodioParser<Item.PushResult> parser = new PodioParser<Item.PushResult>(
                 Item.PushResult.class);
-
-        Log.d("MYTAG", parser.parseToJson(data));
 
         return changeRequest(filter, data, parser);
     }
