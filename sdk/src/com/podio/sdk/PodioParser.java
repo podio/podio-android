@@ -145,7 +145,7 @@ public class PodioParser<T> {
         if (item != null) {
             GsonBuilder builder = new GsonBuilder();
             builder.disableHtmlEscaping();
-            builder.setPrettyPrinting();
+            // builder.setPrettyPrinting();
             Gson gson = builder.create();
             result = gson.toJson(item);
         }

@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +31,11 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.domain.mock.MockRestClient;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.provider.BasicPodioProvider;
+import com.podio.sdk.provider.mock.MockRestClient;
 
 public class PodioProviderTest extends AndroidTestCase {
 

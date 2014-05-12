@@ -20,15 +20,16 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.provider;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioProviderListener;
-import com.podio.sdk.domain.mock.MockRestClient;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.provider.ApplicationProvider;
+import com.podio.sdk.provider.mock.MockRestClient;
 
 public class ApplicationProviderTest extends AndroidTestCase {
 

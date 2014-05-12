@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.mock;
+package com.podio.sdk.provider.mock;
 
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;

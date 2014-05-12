@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.filter;
 
 import java.util.List;
 
