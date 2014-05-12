@@ -25,8 +25,6 @@ package com.podio.sdk.filter;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.filter.ApplicationFilter;
-
 public class ApplicationFilterTest extends AndroidTestCase {
 
     /**
@@ -35,7 +33,7 @@ public class ApplicationFilterTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Create a new AppItemFilter object.
+     * 1. Create a new ApplicationFilter object.
      * 
      * 2. Add a value for all properties.
      * 
@@ -58,13 +56,36 @@ public class ApplicationFilterTest extends AndroidTestCase {
     }
 
     /**
+     * Verifies that the {@link ApplicationFilter} adds the given application id
+     * as a part of the path segments in the final Uri.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ApplicationFilter.
+     * 
+     * 2. Specify an application id for it.
+     * 
+     * 3. Make it build the result Uri.
+     * 
+     * 4. Verify that the id is a part of the path segments.
+     * 
+     * </pre>
+     */
+    public void testApplicationIdAddedAsPathSegment() {
+        Uri reference = Uri.parse("content://test.uri/app/1");
+        Uri result = new ApplicationFilter().withApplicationId(1L).buildUri("content", "test.uri");
+
+        assertEquals(reference, result);
+    }
+
+    /**
      * Verifies that all methods of the {@link ApplicationFilter} that set any
      * parameter returns the actual <code>AppItemFilter</code> object (and,
      * hence, enables a chaining design pattern).
      * 
      * <pre>
      * 
-     * 1. Create a new AppItemFilter object.
+     * 1. Create a new ApplicationFilter object.
      * 
      * 2. Call the class specific methods on the object.
      * 
@@ -85,7 +106,7 @@ public class ApplicationFilterTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Create a new AppItemFilter.
+     * 1. Create a new ApplicationFilter.
      * 
      * 2. Specify the "include inactive" flag for it.
      * 
@@ -109,7 +130,7 @@ public class ApplicationFilterTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Create a new AppItemFilter.
+     * 1. Create a new ApplicationFilter.
      * 
      * 2. Specify a "space id" for it.
      * 
@@ -122,6 +143,29 @@ public class ApplicationFilterTest extends AndroidTestCase {
     public void testSpaceIdAddedAsPathSegment() {
         Uri reference = Uri.parse("content://test.uri/app/space/1");
         Uri result = new ApplicationFilter().withSpaceId(1L).buildUri("content", "test.uri");
+
+        assertEquals(reference, result);
+    }
+
+    /**
+     * Verifies that the {@link ApplicationFilter} adds the given "type" flag as
+     * a query parameter in the final Uri.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ApplicationFilter.
+     * 
+     * 2. Specify the "type" flag for it.
+     * 
+     * 3. Make it build the result Uri.
+     * 
+     * 4. Verify that the flag is a query parameter.
+     * 
+     * </pre>
+     */
+    public void testTypeFlagAddedAsQueryParameter() {
+        Uri reference = Uri.parse("content://test.uri/app?type=test");
+        Uri result = new ApplicationFilter().withType("test").buildUri("content", "test.uri");
 
         assertEquals(reference, result);
     }
