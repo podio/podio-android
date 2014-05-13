@@ -27,10 +27,6 @@ import com.podio.sdk.domain.helper.UserInfo;
 
 public final class Application {
 
-    public static enum Status {
-        active, inactive, deleted
-    }
-
     public static final class Configuration {
         public static enum Type {
             standard, meeting
