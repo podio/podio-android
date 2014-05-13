@@ -24,14 +24,9 @@ package com.podio.sdk.domain.field;
 
 public final class TitleField extends Field {
 
-    public static final class TitleValue {
-        public final String value = null;
-    }
-
-    public final TitleField.TitleValue[] values = null;
-
     @Override
     public Object getPushData() {
         return null;
     }
+
 }

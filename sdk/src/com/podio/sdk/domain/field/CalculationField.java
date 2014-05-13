@@ -24,14 +24,9 @@ package com.podio.sdk.domain.field;
 
 public final class CalculationField extends Field {
 
-    public static final class CalculationValue {
-        public final String value = null;
-    }
-
-    public final CalculationField[] values = null;
-
     @Override
     public Object getPushData() {
         return null;
     }
+
 }

@@ -24,25 +24,9 @@ package com.podio.sdk.domain.field;
 
 public final class DateField extends Field {
 
-    public static final class DateValue {
-        public final String end = null;
-        public final String end_date = null;
-        public final String end_date_utc = null;
-        public final String end_time = null;
-        public final String end_time_utc = null;
-        public final String end_utc = null;
-        public final String start = null;
-        public final String start_date = null;
-        public final String start_date_utc = null;
-        public final String start_time = null;
-        public final String start_time_utc = null;
-        public final String start_utc = null;
-    }
-
-    public final DateField.DateValue[] values = null;
-
     @Override
     public Object getPushData() {
         return null;
     }
+
 }

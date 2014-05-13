@@ -24,14 +24,9 @@ package com.podio.sdk.domain.field;
 
 public final class TextField extends Field {
 
-    public static final class TextValue {
-        public final String value = null;
-    }
-
-    public final TextField.TextValue[] values = null;
-
     @Override
     public Object getPushData() {
         return null;
     }
+
 }

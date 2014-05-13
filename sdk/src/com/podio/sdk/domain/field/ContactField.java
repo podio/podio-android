@@ -24,28 +24,9 @@ package com.podio.sdk.domain.field;
 
 public final class ContactField extends Field {
 
-    public static final class ContactValue {
-
-        public static final class Value {
-            public final Long user_id = null;
-            public final Long space_id = null;
-            public final String type = null;
-            public final Long profile_id = null;
-            public final Long org_id = null;
-            public final String link = null;
-            public final String[] mail = null;
-            public final String external_id = null;
-            public final String last_seen_on = null;
-            public final String name = null;
-        }
-
-        public final ContactValue.Value value = null;
-    }
-
-    public final ContactField.ContactValue[] values = null;
-
     @Override
     public Object getPushData() {
         return null;
     }
+
 }

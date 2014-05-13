@@ -24,14 +24,9 @@ package com.podio.sdk.domain.field;
 
 public final class NumberField extends Field {
 
-    public static final class NumberValue {
-        public final String value = null;
-    }
-
-    public final NumberField.NumberValue[] values = null;
-
     @Override
     public Object getPushData() {
         return null;
     }
+
 }
