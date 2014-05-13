@@ -85,7 +85,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
 
         if (outputJson == null && lastRequestError != null
                 && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 401) {
+                && lastRequestError.networkResponse.statusCode == 400) {
 
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
@@ -107,7 +107,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
 
         if (outputJson == null && lastRequestError != null
                 && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 401) {
+                && lastRequestError.networkResponse.statusCode == 400) {
 
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
@@ -132,7 +132,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
 
         if (outputJson == null && lastRequestError != null
                 && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 401) {
+                && lastRequestError.networkResponse.statusCode == 400) {
 
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
@@ -157,7 +157,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
 
         if (outputJson == null && lastRequestError != null
                 && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 401) {
+                && lastRequestError.networkResponse.statusCode == 400) {
 
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
@@ -178,7 +178,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
      * session object when authenticating API calls.
      * 
      * @param session
-     *            The new session object to use.
+     *        The new session object to use.
      */
     public void restoreSession(String refreshUrl, Session session) {
         this.refreshUrl = refreshUrl;
