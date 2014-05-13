@@ -1,3 +1,5 @@
+//@formatter:off
+
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
@@ -19,6 +21,8 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  *  SOFTWARE.
  */
+
+//@formatter:on
 
 package com.podio.sdk.domain.field;
 
@@ -73,9 +77,11 @@ public final class Category extends Field {
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        for (Option option : config.settings.options) {
-            if (option.isPicked) {
-                pushData.add(option.getPushData());
+        if (config != null && config.settings != null && config.settings.options != null) {
+            for (Option option : config.settings.options) {
+                if (option.isPicked) {
+                    pushData.add(option.getPushData());
+                }
             }
         }
 

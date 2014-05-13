@@ -108,9 +108,16 @@ public final class Session {
 
         if (isEqual) {
             Session other = (Session) o;
-            isEqual = accessToken.equals(other.accessToken) //
-                    && refreshToken.equals(other.refreshToken) //
-                    && expiresMillis == other.expiresMillis;
+
+            boolean accessTokensEquals = accessToken == null && other.accessToken == null
+                    || accessToken.equals(other.accessToken);
+
+            boolean refreshTokensEquals = refreshToken == null && other.refreshToken == null
+                    || refreshToken.equals(other.refreshToken);
+
+            boolean timeStampsEquals = expiresMillis == other.expiresMillis;
+
+            isEqual = accessTokensEquals && refreshTokensEquals && timeStampsEquals;
         }
 
         return isEqual;
