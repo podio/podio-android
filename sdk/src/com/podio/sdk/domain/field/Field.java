@@ -1,3 +1,5 @@
+//@formatter:off
+
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
@@ -20,9 +22,15 @@
  *  SOFTWARE.
  */
 
+//@formatter:on
+
 package com.podio.sdk.domain.field;
 
 public abstract class Field implements Pushable {
+
+    public static enum Status {
+        active, deleted
+    }
 
     public static enum Type {
         app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title, undefined
@@ -31,7 +39,7 @@ public abstract class Field implements Pushable {
     public final String external_id = null;
     public final Integer field_id = null;
     public final String label = null;
-    public final String status = null;
+    public final Status status = null;
     public final Type type = null;
 
 }
