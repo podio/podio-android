@@ -34,19 +34,10 @@ import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.provider.BasicPodioProvider;
+import com.podio.sdk.provider.mock.MockProviderListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
-public class PodioProviderTest extends AndroidTestCase {
-
-    private static final class ConcurrentResult {
-        private boolean isSessionChangeCalled = false;
-        private boolean isSuccessCalled = false;
-        private boolean isFailureCalled = false;
-        private Object ticket = null;
-        private Object item = null;
-        private String message = null;
-    }
+public class BasicPodioProviderTest extends AndroidTestCase {
 
     /**
      * Verify that the abstract {@link BasicPodioProvider} implementation builds
@@ -198,44 +189,116 @@ public class PodioProviderTest extends AndroidTestCase {
         resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
-        final ConcurrentResult result = new ConcurrentResult();
-        final PodioProviderListener listener = new PodioProviderListener() {
-            @Override
-            public void onRequestComplete(Object ticket, Object item) {
-                result.isSuccessCalled = true;
-                result.ticket = ticket;
-                result.item = item;
-            }
+        final MockProviderListener mockListener = new MockProviderListener();
 
-            @Override
-            public void onSessionChange(Object ticket, Session session) {
-                result.isSessionChangeCalled = true;
-                result.ticket = ticket;
-                result.item = null;
-            }
-
-            @Override
-            public void onRequestFailure(Object ticket, String message) {
-                result.isFailureCalled = true;
-                result.ticket = ticket;
-                result.message = message;
-            }
-        };
-
-        // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.setProviderListener(listener);
+        target.setProviderListener(mockListener);
         target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(false, errorMessage, resultList);
 
-        assertEquals(false, result.isSessionChangeCalled);
-        assertEquals(false, result.isSuccessCalled);
-        assertEquals(true, result.isFailureCalled);
-        assertEquals(itemFilter, result.ticket);
-        assertEquals(errorMessage, result.message);
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(false, mockListener.mock_isSuccessCalled);
+        assertEquals(true, mockListener.mock_isFailureCalled);
+        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(errorMessage, mockListener.mock_message);
+    }
+
+    /**
+     * Verifies that the session change method on the
+     * {@link PodioProviderListener} callback is called if the (mocked)
+     * {@link RestClient} decides to change the session object.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around. Also assign a custom {@link PodioProviderListener} to the
+     *      ItemProvider.
+     * 
+     * 2. Perform a request (any rest request) and simulate the mock RestClient
+     *      working successfully on it (the {@link MockRestClient} holds the
+     *      details), but having the session changed.
+     * 
+     * 3. Verify that the success is propagated properly to your custom callback.
+     * 
+     * </pre>
+     */
+    public void testProviderCallbackSessionChangeAndSuccessCalledProperly() {
+        final PodioFilter itemFilter = new BasicPodioFilter();
+        final Object itemObject = new Object();
+        final Session session = new Session("accessToken", "refreshToken", 3600);
+        final String errorMessage = "ohno";
+
+        final MockRestClient client = new MockRestClient();
+        final MockProviderListener mockListener = new MockProviderListener();
+
+        // Setup the mock session.
+        client.mock_setMockSession(session);
+
+        BasicPodioProvider target = new BasicPodioProvider(client);
+        target.setProviderListener(mockListener);
+        target.changeRequest(itemFilter, itemObject, null);
+
+        // Allow the mock client to "process" the request (basically allow the
+        // callbacks to execute).
+        client.mock_processLastPushedRestRequest(true, errorMessage, itemObject);
+
+        assertEquals(true, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(itemObject, mockListener.mock_item);
+        assertEquals(session, mockListener.mock_session);
+    }
+
+    /**
+     * Verifies that the session change method on the
+     * {@link PodioProviderListener} callback is called if the (mocked)
+     * {@link RestClient} decides to change the session object.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around. Also assign a custom {@link PodioProviderListener} to the
+     *      ItemProvider.
+     * 
+     * 2. Perform a request (any rest request) and simulate the mock RestClient
+     *      working successfully on it (the {@link MockRestClient} holds the
+     *      details), but having the session changed.
+     * 
+     * 3. Verify that the success is propagated properly to your custom callback.
+     * 
+     * </pre>
+     */
+    public void testProviderCallbackSessionChangeAndFailureCalledProperly() {
+        final PodioFilter itemFilter = new BasicPodioFilter();
+        final Session session = new Session("accessToken", "refreshToken", 3600);
+        final String errorMessage = "ohno";
+
+        final MockRestClient client = new MockRestClient();
+        final MockProviderListener mockListener = new MockProviderListener();
+
+        // Setup the mock session.
+        client.mock_setMockSession(session);
+
+        BasicPodioProvider target = new BasicPodioProvider(client);
+        target.setProviderListener(mockListener);
+        target.changeRequest(itemFilter, null, null);
+
+        // Allow the mock client to "process" the request (basically allow the
+        // callbacks to execute).
+        client.mock_processLastPushedRestRequest(false, errorMessage, null);
+
+        assertEquals(true, mockListener.mock_isSessionChangeCalled);
+        assertEquals(false, mockListener.mock_isSuccessCalled);
+        assertEquals(true, mockListener.mock_isFailureCalled);
+        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(session, mockListener.mock_session);
+        assertEquals(errorMessage, mockListener.mock_message);
     }
 
     /**
@@ -264,44 +327,22 @@ public class PodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final ConcurrentResult result = new ConcurrentResult();
-        final PodioProviderListener listener = new PodioProviderListener() {
-            @Override
-            public void onRequestComplete(Object ticket, Object item) {
-                result.isSuccessCalled = true;
-                result.ticket = ticket;
-                result.item = item;
-            }
-
-            @Override
-            public void onSessionChange(Object ticket, Session session) {
-                result.isSessionChangeCalled = true;
-                result.ticket = ticket;
-                result.item = null;
-            }
-
-            @Override
-            public void onRequestFailure(Object ticket, String message) {
-                result.isFailureCalled = true;
-                result.ticket = ticket;
-                result.message = message;
-            }
-        };
+        final MockProviderListener mockListener = new MockProviderListener();
 
         // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.setProviderListener(listener);
+        target.setProviderListener(mockListener);
         target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(true, errorMessage, itemObject);
 
-        assertEquals(false, result.isSessionChangeCalled);
-        assertEquals(true, result.isSuccessCalled);
-        assertEquals(false, result.isFailureCalled);
-        assertEquals(itemFilter, result.ticket);
-        assertEquals(itemObject, result.item);
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(itemObject, mockListener.mock_item);
     }
 
     /**

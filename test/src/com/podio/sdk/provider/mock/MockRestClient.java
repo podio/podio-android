@@ -24,11 +24,13 @@ package com.podio.sdk.provider.mock;
 
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
 
 public final class MockRestClient implements RestClient {
 
     private RestRequest request;
+    private Session session;
 
     @Override
     public String getAuthority() {
@@ -59,6 +61,10 @@ public final class MockRestClient implements RestClient {
             if (listener != null) {
                 Object ticket = request.getTicket();
 
+                if (session != null) {
+                    listener.onSessionChange(ticket, session);
+                }
+
                 if (shouldBeSuccess) {
                     listener.onSuccess(ticket, withMockItem);
                 } else {
@@ -66,6 +72,10 @@ public final class MockRestClient implements RestClient {
                 }
             }
         }
+    }
+
+    public void mock_setMockSession(Session session) {
+        this.session = session;
     }
 
 }

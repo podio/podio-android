@@ -26,18 +26,111 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.PodioProviderListener;
-import com.podio.sdk.domain.Session;
-import com.podio.sdk.provider.ApplicationProvider;
+import com.podio.sdk.provider.mock.MockProviderListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
 public class ApplicationProviderTest extends AndroidTestCase {
 
-    private static final class ConcurrentResult {
-        private boolean isSessionChangeCalled = false;
-        private boolean isSuccessCalled = false;
-        private boolean isFailureCalled = false;
-        private Object ticket = null;
+    /**
+     * Verifies that the {@link ApplicationProvider} requests a full set of
+     * contents by default when requesting a single application.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ApplicationProvider.
+     * 
+     * 2. Make a default request for a specific app item.
+     * 
+     * 3. Verify that the designated rest client is called with a Uri that
+     *      explicitly has set the "type" property to full.
+     * 
+     * </pre>
+     */
+    public void testFetchApplicationRequestsFullItemSetByDefault() {
+        final Uri reference = Uri.parse("content://test.uri/app/2?type=full");
+        final MockRestClient mockClient = new MockRestClient();
+        final MockProviderListener mockListener = new MockProviderListener();
+
+        ApplicationProvider target = new ApplicationProvider(mockClient);
+        target.setProviderListener(mockListener);
+
+        target.fetchApplication(2L);
+        mockClient.mock_processLastPushedRestRequest(true, null, null);
+
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
+
+        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        assertEquals(reference, uri);
+    }
+
+    /**
+     * Verifies that the {@link ApplicationProvider} requests a micro set of
+     * contents when requesting so.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ApplicationProvider.
+     * 
+     * 2. Make an explicit micro request for a specific app item.
+     * 
+     * 3. Verify that the designated rest client is called with a Uri that
+     *      has set the "type" property to micro.
+     * 
+     * </pre>
+     */
+    public void testFetchApplicationMicroRequestsMicroItemSet() {
+        final Uri reference = Uri.parse("content://test.uri/app/2?type=micro");
+        final MockRestClient mockClient = new MockRestClient();
+        final MockProviderListener mockListener = new MockProviderListener();
+
+        ApplicationProvider target = new ApplicationProvider(mockClient);
+        target.setProviderListener(mockListener);
+
+        target.fetchApplicationMicro(2L);
+        mockClient.mock_processLastPushedRestRequest(true, null, null);
+
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
+
+        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        assertEquals(reference, uri);
+    }
+
+    /**
+     * Verifies that the {@link ApplicationProvider} requests a mini set of
+     * contents when requesting so.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ApplicationProvider.
+     * 
+     * 2. Make an explicit mini request for a specific app item.
+     * 
+     * 3. Verify that the designated rest client is called with a Uri that
+     *      has set the "type" property to mini.
+     * 
+     * </pre>
+     */
+    public void testFetchApplicationMiniRequestsMiniItemSet() {
+        final Uri reference = Uri.parse("content://test.uri/app/2?type=mini");
+        final MockRestClient mockClient = new MockRestClient();
+        final MockProviderListener mockListener = new MockProviderListener();
+
+        ApplicationProvider target = new ApplicationProvider(mockClient);
+        target.setProviderListener(mockListener);
+
+        target.fetchApplicationMini(2L);
+        mockClient.mock_processLastPushedRestRequest(true, null, null);
+
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
+
+        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        assertEquals(reference, uri);
     }
 
     /**
@@ -55,40 +148,22 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * 
      * </pre>
      */
-    public void testFetchAppItemsForSpaceDoesntRequestInactiveItems() {
+    public void testFetchApplicationsForSpaceDoesntRequestInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/1?include_inactive=false");
         final MockRestClient mockClient = new MockRestClient();
-        final ConcurrentResult result = new ConcurrentResult();
+        final MockProviderListener mockListener = new MockProviderListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(new PodioProviderListener() {
-            @Override
-            public void onRequestFailure(Object ticket, String message) {
-                result.isFailureCalled = true;
-                result.ticket = ticket;
-            }
-
-            @Override
-            public void onSessionChange(Object ticket, Session session) {
-                result.isSessionChangeCalled = true;
-                result.ticket = ticket;
-            }
-
-            @Override
-            public void onRequestComplete(Object ticket, Object item) {
-                result.isSuccessCalled = true;
-                result.ticket = ticket;
-            }
-        });
+        target.setProviderListener(mockListener);
 
         target.fetchApplicationsForSpace(1);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
-        assertEquals(false, result.isSessionChangeCalled);
-        assertEquals(true, result.isSuccessCalled);
-        assertEquals(false, result.isFailureCalled);
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
 
-        Uri uri = ((PodioFilter) result.ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
 
@@ -107,40 +182,57 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * 
      * </pre>
      */
-    public void testfetchAppItemsForSpaceWithInactivesIncludedRequestsInactiveItems() {
+    public void testFetchApplicationsForSpaceWithInactivesIncludedRequestsInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/2?include_inactive=true");
         final MockRestClient mockClient = new MockRestClient();
-        final ConcurrentResult result = new ConcurrentResult();
+        final MockProviderListener mockListener = new MockProviderListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(new PodioProviderListener() {
-            @Override
-            public void onRequestFailure(Object ticket, String message) {
-                result.isFailureCalled = true;
-                result.ticket = ticket;
-            }
-
-            @Override
-            public void onSessionChange(Object ticket, Session session) {
-                result.isSessionChangeCalled = true;
-                result.ticket = ticket;
-            }
-
-            @Override
-            public void onRequestComplete(Object ticket, Object item) {
-                result.isSuccessCalled = true;
-                result.ticket = ticket;
-            }
-        });
+        target.setProviderListener(mockListener);
 
         target.fetchApplicationsForSpaceWithInactivesIncluded(2);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
-        assertEquals(false, result.isSessionChangeCalled);
-        assertEquals(true, result.isSuccessCalled);
-        assertEquals(false, result.isFailureCalled);
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
 
-        Uri uri = ((PodioFilter) result.ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
+
+    /**
+     * Verifies that the {@link ApplicationProvider} requests a short set of
+     * contents when requesting so.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ApplicationProvider.
+     * 
+     * 2. Make an explicit short request for a specific app item.
+     * 
+     * 3. Verify that the designated rest client is called with a Uri that
+     *      has set the "type" property to short.
+     * 
+     * </pre>
+     */
+    public void testFetchApplicationShortRequestsShortItemSet() {
+        final Uri reference = Uri.parse("content://test.uri/app/2?type=short");
+        final MockRestClient mockClient = new MockRestClient();
+        final MockProviderListener mockListener = new MockProviderListener();
+
+        ApplicationProvider target = new ApplicationProvider(mockClient);
+        target.setProviderListener(mockListener);
+
+        target.fetchApplicationShort(2L);
+        mockClient.mock_processLastPushedRestRequest(true, null, null);
+
+        assertEquals(false, mockListener.mock_isSessionChangeCalled);
+        assertEquals(true, mockListener.mock_isSuccessCalled);
+        assertEquals(false, mockListener.mock_isFailureCalled);
+
+        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        assertEquals(reference, uri);
+    }
+
 }
