@@ -38,13 +38,14 @@ import com.podio.sdk.domain.field.Category;
 import com.podio.sdk.domain.field.ContactField;
 import com.podio.sdk.domain.field.DateField;
 import com.podio.sdk.domain.field.DurationField;
+import com.podio.sdk.domain.field.EmbedField;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.field.ImageField;
 import com.podio.sdk.domain.field.LocationField;
 import com.podio.sdk.domain.field.MoneyField;
 import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.TextField;
+import com.podio.sdk.domain.field.Text;
 import com.podio.sdk.domain.field.TitleField;
 import com.podio.sdk.internal.utils.Utils;
 
@@ -53,10 +54,8 @@ import com.podio.sdk.internal.utils.Utils;
  * structures.
  * 
  * @param <T>
- *            The type of the domain model data structure.
- * 
+ *        The type of the domain model data structure.
  * @author László Urszuly
- * 
  */
 public class PodioParser<T> {
 
@@ -69,37 +68,39 @@ public class PodioParser<T> {
             JsonObject jsonObject = element != null ? element.getAsJsonObject() : null;
             JsonElement fieldType = jsonObject != null ? jsonObject.get("type") : null;
             String fieldTypeName = fieldType != null ? fieldType.getAsString() : null;
+            Field.Type typeEnum = Field.Type.valueOf(fieldTypeName);
 
-            if ("app".equals(fieldTypeName)) {
+            switch (typeEnum) {
+            case app:
                 return gsonContext.deserialize(element, ApplicationReference.class);
-            } else if ("calculation".equals(fieldTypeName)) {
+            case calculation:
                 return gsonContext.deserialize(element, CalculationField.class);
-            } else if ("category".equals(fieldTypeName)) {
+            case category:
                 return gsonContext.deserialize(element, Category.class);
-            } else if ("contact".equals(fieldTypeName)) {
+            case contact:
                 return gsonContext.deserialize(element, ContactField.class);
-            } else if ("date".equals(fieldTypeName)) {
+            case date:
                 return gsonContext.deserialize(element, DateField.class);
-            } else if ("duration".equals(fieldTypeName)) {
+            case duration:
                 return gsonContext.deserialize(element, DurationField.class);
-                // } else if ("embed".equals(fieldTypeName)) {
-                // return gsonContext.deserialize(element, EmbedField.class);
-            } else if ("image".equals(fieldTypeName)) {
+            case embed:
+                return gsonContext.deserialize(element, EmbedField.class);
+            case image:
                 return gsonContext.deserialize(element, ImageField.class);
-            } else if ("location".equals(fieldTypeName)) {
+            case location:
                 return gsonContext.deserialize(element, LocationField.class);
-            } else if ("money".equals(fieldTypeName)) {
+            case money:
                 return gsonContext.deserialize(element, MoneyField.class);
-            } else if ("number".equals(fieldTypeName)) {
+            case number:
                 return gsonContext.deserialize(element, NumberField.class);
-            } else if ("progress".equals(fieldTypeName)) {
+            case progress:
                 return gsonContext.deserialize(element, ProgressField.class);
-            } else if ("text".equals(fieldTypeName)) {
-                return gsonContext.deserialize(element, TextField.class);
-            } else if ("title".equals(fieldTypeName)) {
+            case text:
+                return gsonContext.deserialize(element, Text.class);
+            case title:
                 return gsonContext.deserialize(element, TitleField.class);
-            } else {
-                return gsonContext.deserialize(element, TextField.class);
+            default:
+                return gsonContext.deserialize(element, Text.class);
             }
         }
     }
@@ -115,17 +116,17 @@ public class PodioParser<T> {
      * representation.
      * 
      * @param json
-     *            The json string to parse.
+     *        The json string to parse.
      * @return A domain model representation of the given json string.
      */
     public T parseToItem(String source) {
         T result = null;
 
         if (Utils.notEmpty(source)) {
-            result = new GsonBuilder() //
-                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES) //
-                    .registerTypeAdapter(Field.class, new FieldDeserializer()) //
-                    .create() //
+            result = new GsonBuilder()
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .registerTypeAdapter(Field.class, new FieldDeserializer())
+                    .create()
                     .fromJson(source, classOfItem);
         }
 
@@ -136,7 +137,7 @@ public class PodioParser<T> {
      * Performs the parsing of the given domain model object to a json string.
      * 
      * @param item
-     *            The item to parse.
+     *        The item to parse.
      * @return A json string representation of the given item.
      */
     public String parseToJson(Object item) {
