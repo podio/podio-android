@@ -39,13 +39,14 @@ import com.podio.sdk.domain.field.ContactField;
 import com.podio.sdk.domain.field.DateField;
 import com.podio.sdk.domain.field.DurationField;
 import com.podio.sdk.domain.field.EmbedField;
+import com.podio.sdk.domain.field.EmptyField;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.field.ImageField;
 import com.podio.sdk.domain.field.LocationField;
 import com.podio.sdk.domain.field.MoneyField;
 import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.Text;
+import com.podio.sdk.domain.field.TextField;
 import com.podio.sdk.domain.field.TitleField;
 import com.podio.sdk.internal.utils.Utils;
 
@@ -65,10 +66,22 @@ public class PodioParser<T> {
         public Field deserialize(JsonElement element, Type type,
                 JsonDeserializationContext gsonContext) throws JsonParseException {
 
-            JsonObject jsonObject = element != null ? element.getAsJsonObject() : null;
-            JsonElement fieldType = jsonObject != null ? jsonObject.get("type") : null;
-            String fieldTypeName = fieldType != null ? fieldType.getAsString() : null;
-            Field.Type typeEnum = Field.Type.valueOf(fieldTypeName);
+            JsonObject jsonObject = element != null && !element.isJsonNull() ?
+                    element.getAsJsonObject() : null;
+
+            JsonElement fieldType = jsonObject != null && !jsonObject.isJsonNull() ?
+                    jsonObject.get("type") : null;
+
+            String fieldTypeName = fieldType != null && !fieldType.isJsonNull() ?
+                    fieldType.getAsString() : Field.Type.undefined.name();
+
+            Field.Type typeEnum;
+
+            try {
+                typeEnum = Field.Type.valueOf(fieldTypeName);
+            } catch (IllegalArgumentException e) {
+                typeEnum = Field.Type.undefined;
+            }
 
             switch (typeEnum) {
             case app:
@@ -96,11 +109,13 @@ public class PodioParser<T> {
             case progress:
                 return gsonContext.deserialize(element, ProgressField.class);
             case text:
-                return gsonContext.deserialize(element, Text.class);
+                return gsonContext.deserialize(element, TextField.class);
             case title:
                 return gsonContext.deserialize(element, TitleField.class);
             default:
-                return gsonContext.deserialize(element, Text.class);
+                JsonObject empty = new JsonObject();
+                empty.addProperty("type", Field.Type.undefined.name());
+                return gsonContext.deserialize(empty, EmptyField.class);
             }
         }
     }
@@ -122,7 +137,7 @@ public class PodioParser<T> {
     public T parseToItem(String source) {
         T result = null;
 
-        if (Utils.notEmpty(source)) {
+        if (source != null && Utils.notEmpty(source.trim())) {
             result = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(Field.class, new FieldDeserializer())
@@ -141,7 +156,7 @@ public class PodioParser<T> {
      * @return A json string representation of the given item.
      */
     public String parseToJson(Object item) {
-        String result = "";
+        String result = null;
 
         if (item != null) {
             GsonBuilder builder = new GsonBuilder();
