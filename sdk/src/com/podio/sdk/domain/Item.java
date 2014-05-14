@@ -53,31 +53,9 @@ public final class Item {
         public final String title = null;
     }
 
-    public static final class Config {
-        // public final Value default_value = null;
-        public final String description = null;
-        public final Settings settings = null;
-        public final Boolean required = null;
-        public final String label = null;
-        public final Boolean visible = null;
-        public final Boolean hidden = null;
-    }
-
     public static final class Excerpt {
         public final String label = null;
         public final String text = null;
-    }
-
-    public static final class Options {
-        public final String status = null;
-        public final String text = null;
-        public final Long id = null;
-        public final String color = null;
-    }
-
-    public static final class Settings {
-        public final String size = null;
-        public final Boolean multiple = null;
     }
 
     public final Application app = null;
