@@ -106,7 +106,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(Boolean.TRUE, application.config.yesno);
         assertEquals("YESNOLABEL", application.config.yesno_label);
         assertNotNull(application.fields);
-        assertEquals(0, application.fields.length);
+        assertEquals(0, application.fields.size());
         assertEquals("LINK", application.link);
         assertEquals("LINKADD", application.link_add);
         assertNotNull(application.owner);

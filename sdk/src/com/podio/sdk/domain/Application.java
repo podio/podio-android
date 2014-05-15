@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain;
 
+import java.util.List;
+
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.helper.UserInfo;
 
@@ -55,7 +57,7 @@ public final class Application {
 
     public final Long app_id = null;
     public final Configuration config = null;
-    public final Field[] fields = null;
+    public final List<Field> fields = null;
     public final String link = null;
     public final String link_add = null;
     public final UserInfo owner = null;

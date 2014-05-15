@@ -24,9 +24,23 @@ package com.podio.sdk.domain.field;
 
 public class EmptyField extends Field {
 
+    public EmptyField() {
+        super(null);
+    }
+
+    @Override
+    public boolean clear(Object value) throws FieldTypeMismatchException {
+        return true;
+    }
+
     @Override
     public Object getPushData() {
         return null;
+    }
+
+    @Override
+    public boolean set(Object value) throws FieldTypeMismatchException {
+        return true;
     }
 
 }

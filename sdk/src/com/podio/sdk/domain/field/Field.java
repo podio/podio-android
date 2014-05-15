@@ -29,17 +29,56 @@ package com.podio.sdk.domain.field;
 public abstract class Field implements Pushable {
 
     public static enum Status {
-        active, deleted
+        active, deleted, undefined
     }
 
     public static enum Type {
-        app, calculation, category, contact, date, duration, embed, image, location, money, number, progress, text, title, undefined
+        app, calculation, category, contact, date, duration, embed, image, location, money, number,
+        progress, text, title, undefined
     }
 
-    public final String external_id = null;
     public final Integer field_id = null;
     public final String label = null;
     public final Status status = null;
     public final Type type = null;
 
+    public final String external_id;
+
+    public Field(String externalId) {
+        this.external_id = externalId;
+    }
+
+    /**
+     * Tries to locally clear the given value from the current field. The
+     * changes are NOT updated on the servers by this method call.
+     * 
+     * @param value
+     *        The value domain object to clear.
+     * @return Always boolean true.
+     * @throws FieldTypeMismatchException
+     *         If the value can't be applied to this field type.
+     */
+    public abstract boolean clear(Object value) throws FieldTypeMismatchException;
+
+    /**
+     * Tries to locally set the given value to the current field. The changes
+     * are NOT updated on the servers by this method call.
+     * 
+     * @param value
+     *        The value domain object to set.
+     * @return Always boolean true.
+     * @throws FieldTypeMismatchException
+     *         If the value can't be applied to this field type.
+     */
+    public abstract boolean set(Object value) throws FieldTypeMismatchException;
+
+    @Override
+    public boolean equals(Object o) {
+        return o != null && o instanceof Field && field_id == ((Field) o).field_id;
+    }
+
+    @Override
+    public int hashCode() {
+        return field_id;
+    }
 }

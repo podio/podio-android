@@ -22,11 +22,25 @@
 
 package com.podio.sdk.domain.field;
 
-public final class TextField extends Field {
+/**
+ * @author László Urszuly
+ */
+public class FieldTypeMismatchException extends RuntimeException {
+    private static final long serialVersionUID = 1258932595336995880L;
 
-    @Override
-    public Object getPushData() {
-        return null;
+    public FieldTypeMismatchException() {
+        super();
     }
 
+    public FieldTypeMismatchException(String detailMessage) {
+        super(detailMessage);
+    }
+
+    public FieldTypeMismatchException(Throwable cause) {
+        super(cause);
+    }
+
+    public FieldTypeMismatchException(String detailMessage, Throwable cause) {
+        super(detailMessage, cause);
+    }
 }

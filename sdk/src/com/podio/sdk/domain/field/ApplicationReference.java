@@ -22,47 +22,143 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.domain.Space;
 import com.podio.sdk.domain.helper.UserInfo;
 
 public final class ApplicationReference extends Field {
 
-    public static final class Value {
+    /**
+     * The value content of this field.
+     * 
+     * @author László Urszuly
+     */
+    public static final class Data implements Pushable {
+        public final Application app = null;
+        public final Integer app_item_id = null;
+        public final UserInfo created_by = null;
+        public final String created_on = null;
+        public final String link = null;
+        public final Space space = null;
+        public final String title = null;
 
-        public static final class Data {
-            public final Long app_item_id;
-            public final Long item_id;
+        public final Integer item_id;
 
-            public final Application app = null;
-            public final UserInfo created_by = null;
-            public final String created_on = null;
-            public final String link = null;
-            public final Space space = null;
-            public final String title = null;
-
-            public Data(Long itemId, Long appItemId) {
-                this.app_item_id = appItemId;
-                this.item_id = itemId;
-            }
+        public Data(Integer itemId) {
+            this.item_id = itemId;
         }
 
-        public final Data value;
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof Data && item_id == ((Data) o).item_id;
+        }
 
-        public Value(Long itemId, Long appItemId) {
+        @Override
+        public Object getPushData() {
+            HashMap<String, Integer> pushData = new HashMap<String, Integer>();
+            pushData.put("value", item_id);
+            return pushData;
+        }
 
-            this.value = new Data(itemId, appItemId);
+        @Override
+        public int hashCode() {
+            return item_id;
         }
     }
 
-    public final Value[] values;
+    /**
+     * The value of this field.
+     * 
+     * @author László Urszuly
+     */
+    public static final class Value {
+        public final Data value;
 
-    public ApplicationReference(Value[] values) {
-        this.values = values;
+        public Value(Data data) {
+            this.value = data;
+        }
+
+        public Value(Integer itemId) {
+            this.value = new Data(itemId);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof Value && ((Value) o).value.equals(value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value != null ? value.hashCode() : 0;
+        }
+    }
+
+    public final List<Value> values;
+
+    public ApplicationReference(String externalId) {
+        super(externalId);
+        this.values = new ArrayList<Value>();
+    }
+
+    @Override
+    public boolean clear(Object value) throws FieldTypeMismatchException {
+        Data data = tryCast(value);
+        Value v = new Value(data);
+
+        try {
+            values.remove(v);
+        } catch (UnsupportedOperationException e) {
+            throw new FieldTypeMismatchException(e);
+        }
+
+        return true;
     }
 
     @Override
     public Object getPushData() {
-        return null;
+        ArrayList<Object> pushData = new ArrayList<Object>();
+
+        if (values != null) {
+            for (Value value : values) {
+                Data data = value.value;
+
+                if (data != null) {
+                    pushData.add(data.getPushData());
+                }
+            }
+        }
+
+        return pushData;
+    }
+
+    @Override
+    public boolean set(Object value) throws FieldTypeMismatchException {
+        Data data = tryCast(value);
+
+        clear(data);
+
+        try {
+            values.add(new Value(data));
+        } catch (UnsupportedOperationException e) {
+            throw new FieldTypeMismatchException(e);
+        } catch (ClassCastException e) {
+            throw new FieldTypeMismatchException(e);
+        } catch (IllegalArgumentException e) {
+            throw new FieldTypeMismatchException(e);
+        }
+
+        return true;
+    }
+
+    private Data tryCast(Object value) {
+        if (value instanceof Data) {
+            return (Data) value;
+        } else {
+            throw new FieldTypeMismatchException();
+        }
     }
 }

@@ -28,23 +28,29 @@ package com.podio.sdk.domain.field;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public final class Category extends Field {
 
+    /**
+     * A category option.
+     * 
+     * @author László Urszuly
+     */
     public static final class Option implements Pushable {
         public final String status = null;
         public final String text = null;
-        public final Integer id = null;
         public final String color = null;
 
-        private boolean isPicked = false;
+        public final Integer id;
 
-        public boolean isPicked() {
-            return isPicked;
+        public Option(int id) {
+            this.id = id;
         }
 
-        public void setPicked(boolean isPicked) {
-            this.isPicked = isPicked;
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof Option && id == ((Option) o).id;
         }
 
         @Override
@@ -53,38 +59,119 @@ public final class Category extends Field {
             pushData.put("value", id);
             return pushData;
         }
+
+        @Override
+        public int hashCode() {
+            return id;
+        }
     }
 
+    /**
+     * The category field settings.
+     * 
+     * @author László Urszuly
+     */
+    public static final class Settings {
+        public final String display = null;
+        public final Boolean multiple = null;
+        public final List<Option> options = null;
+    }
+
+    /**
+     * The category field configuration. This object holds the field settings.
+     * 
+     * @author László Urszuly
+     */
     public static final class Config {
-
-        public static final class Settings {
-            public final String display = null;
-            public final Boolean multiple = null;
-            public final Option[] options = null;
-        }
-
         public final Settings settings = null;
     }
 
+    /**
+     * A picked category option.
+     * 
+     * @author László Urszuly
+     */
     public static final class Value {
-        public final Option value = null;
+        public final Option value;
+
+        public Value(Option option) {
+            this.value = option;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof Value && ((Value) o).value.equals(value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value != null ? value.hashCode() : 0;
+        }
     }
 
     public final Config config = null;
-    public final Value[] values = null;
+    public final List<Value> values;
+
+    public Category(String externalId) {
+        super(externalId);
+        this.values = new ArrayList<Value>();
+    }
+
+    @Override
+    public boolean clear(Object value) throws FieldTypeMismatchException {
+        Option option = tryCast(value);
+        Value v = new Value(option);
+
+        try {
+            values.remove(v);
+        } catch (UnsupportedOperationException e) {
+            throw new FieldTypeMismatchException(e);
+        }
+
+        return true;
+    }
 
     @Override
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        if (config != null && config.settings != null && config.settings.options != null) {
-            for (Option option : config.settings.options) {
-                if (option.isPicked) {
+        if (values != null) {
+            for (Value value : values) {
+                Option option = value.value;
+
+                if (option != null) {
                     pushData.add(option.getPushData());
                 }
             }
         }
 
         return pushData;
+    }
+
+    @Override
+    public boolean set(Object value) throws FieldTypeMismatchException {
+        Option option = tryCast(value);
+
+        clear(option);
+
+        try {
+            values.add(new Value(option));
+        } catch (UnsupportedOperationException e) {
+            throw new FieldTypeMismatchException(e);
+        } catch (ClassCastException e) {
+            throw new FieldTypeMismatchException(e);
+        } catch (IllegalArgumentException e) {
+            throw new FieldTypeMismatchException(e);
+        }
+
+        return true;
+    }
+
+    private Option tryCast(Object value) throws FieldTypeMismatchException {
+        if (value instanceof Option) {
+            return (Option) value;
+        } else {
+            throw new FieldTypeMismatchException();
+        }
     }
 }

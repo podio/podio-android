@@ -92,7 +92,7 @@ public class ItemTest extends AndroidTestCase {
         assertEquals("TEXT", item.excerpt.text);
         assertEquals("EXTERNALID", item.external_id);
         assertNotNull(item.fields);
-        assertEquals(0, item.fields.length);
+        assertEquals(0, item.fields.size());
         assertNotNull(item.grant);
         assertEquals(0, item.grant.length);
         assertEquals(Integer.valueOf(1), item.grant_count);
@@ -144,8 +144,7 @@ public class ItemTest extends AndroidTestCase {
                 .append("      options: [{")
                 .append("        id:2")
                 .append("      },{")
-                .append("        id:3,")
-                .append("        isPicked:true")
+                .append("        id:3")
                 .append("      }]")
                 .append("    }")
                 .append("  }")
@@ -161,8 +160,7 @@ public class ItemTest extends AndroidTestCase {
                 .append("      options: [{")
                 .append("        id:5")
                 .append("      },{")
-                .append("        id:6,")
-                .append("        isPicked:true")
+                .append("        id:6")
                 .append("      }]")
                 .append("    }")
                 .append("  }")
@@ -178,7 +176,7 @@ public class ItemTest extends AndroidTestCase {
 
         Object pushData = item.getPushData();
         String actualPushJson = gson.toJson(pushData);
-        String expectedPushJson = "{\"external_id\":\"EXTERNALID\",\"fields\":{\"1\":[{\"value\":3}],\"4\":[{\"value\":6}]}}";
+        String expectedPushJson = "{\"external_id\":\"EXTERNALID\",\"fields\":{\"1\":[{\"value\":2}],\"4\":[{\"value\":5}]}}";
 
         assertEquals(expectedPushJson, actualPushJson);
     }

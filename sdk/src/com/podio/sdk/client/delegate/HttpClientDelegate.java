@@ -124,8 +124,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser)
-            throws InvalidParserException {
+    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) throws InvalidParserException {
         Session resultSession = tryRefreshSession();
         String inputJson = parseItem(item, itemParser);
         String outputJson = request(Method.POST, uri, inputJson);
@@ -149,8 +148,7 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser)
-            throws InvalidParserException {
+    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) throws InvalidParserException {
         Session resultSession = tryRefreshSession();
         String inputJson = parseItem(item, itemParser);
         String outputJson = request(Method.PUT, uri, inputJson);

@@ -24,9 +24,23 @@ package com.podio.sdk.domain.field;
 
 public final class CalculationField extends Field {
 
+    public CalculationField(String externalId) {
+        super(externalId);
+    }
+
+    @Override
+    public boolean clear(Object value) throws FieldTypeMismatchException {
+        return true;
+    }
+
     @Override
     public Object getPushData() {
         return null;
+    }
+
+    @Override
+    public boolean set(Object value) throws FieldTypeMismatchException {
+        return true;
     }
 
 }
