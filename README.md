@@ -3,7 +3,7 @@ The Podio SDK for Android is a client library for communicating with the [Podio 
 
 The SDK requires Android API level 11 as a minimum and it also requires  `android.permission.INTERNET` permissions being requested in your `AndroidManifest.xml` file.
 
-Apart from above Android requirements, the SDK also uses the [Android Volley](https://android.googlesource.com/platform/frameworks/volley/) framework for the network traffic and the [Google Gson](https://code.google.com/p/google-gson/) library for parsing JSON. Both dependencies are included as pre-build jar files in the Podio SDK project sources.
+Apart from above Android requirements, the SDK also uses the [Android Volley](https://android.googlesource.com/platform/frameworks/volley/) framework for the network traffic and the [Google Gson](https://code.google.com/p/google-gson/) library for parsing JSON. Both dependencies are included as pre-built jar files in the Podio SDK project sources.
 
 The test project is using the [NanoHTTPD](http://nanohttpd.com/) web server for mocking the Internet on the test target.
 
@@ -25,7 +25,7 @@ But before you can communicate with the Podio API, you need to generate a set of
 Once you have a key and corresponding secret, you need to configure the Podio SDK to use it. You can do so by adding the following code to your `Application.onCreate()` method:
 
 ```java
-Podio.Client.setup("my_api_key", "my_secret");
+Podio.Client.setup(context, "my_api_key", "my_secret");
 ```
 
 and by that you're ready to Podio.
