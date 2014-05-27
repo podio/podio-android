@@ -25,6 +25,7 @@ package com.podio.sdk;
 import java.util.Date;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.HttpRestClient;
@@ -253,9 +254,13 @@ public final class Podio {
          *        The previously stored session object.
          */
         public static final void restoreSession(Session session) {
-            if (client instanceof HttpRestClient) {
-                ((HttpRestClient) client).restoreSession(SessionFilter.PATH, session);
-            }
+            Uri sessionRefreshUri = new Uri.Builder()
+                    .scheme(client.getScheme())
+                    .authority(client.getAuthority())
+                    .appendEncodedPath(SessionFilter.PATH)
+                    .build();
+            String url = sessionRefreshUri.toString();
+            networkDelegate.restoreSession(url, session);
         }
 
     }

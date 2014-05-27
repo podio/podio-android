@@ -27,18 +27,31 @@ import com.podio.sdk.client.RestRequest;
 /**
  * Manages the communication between the client application and the content
  * infrastructure.
- * 
+ * <p>
  * The RestClient is responsible for validating all the possible result states
  * once the given request is performed and return either a generic success or
  * failure state. The client application should not be given any further
  * possibilities for analyzing state; it's either success or failure.
- * 
+ * <p>
  * The RestClient is also responsible for maintaining proper means of spawning
  * worker threads (if necessary) on which the actual request is performed.
  * 
  * @author László Urszuly
  */
 public interface RestClient {
+
+    /**
+     * Performs an initial validation of the request and returns a boolean flag
+     * depending on whether the request is accepted for future processing or
+     * not.
+     * 
+     * @param request
+     *        The request that this client should perform at some time in the
+     *        near future.
+     * @return Boolean true if the client accepted the request, boolean false
+     *         otherwise.
+     */
+    public <T> boolean enqueue(RestRequest<T> request);
 
     /**
      * Returns the authority string for this rest client. The authority is the
@@ -56,18 +69,5 @@ public interface RestClient {
      * @return The scheme of this client.
      */
     public String getScheme();
-
-    /**
-     * Performs an initial validation of the request and returns a boolean flag
-     * depending on whether the request is accepted for future processing or
-     * not.
-     * 
-     * @param request
-     *            The request that this client should perform at some time in
-     *            the near future.
-     * @return Boolean true if the client accepted the request, boolean false
-     *         otherwise.
-     */
-    public <T> boolean enqueue(RestRequest<T> request);
 
 }
