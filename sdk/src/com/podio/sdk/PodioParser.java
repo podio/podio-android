@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -68,6 +69,12 @@ public class PodioParser<T> {
 
             JsonObject jsonObject = element != null && !element.isJsonNull() ?
                     element.getAsJsonObject() : null;
+
+            // Ensure that we always have a "values" array, even if it's empty,
+            // as this is needed when creating new items.
+            if (!jsonObject.has("values")) {
+                jsonObject.add("values", new JsonArray());
+            }
 
             JsonElement fieldType = jsonObject != null && !jsonObject.isJsonNull() ?
                     jsonObject.get("type") : null;
