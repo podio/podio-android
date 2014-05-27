@@ -89,6 +89,25 @@ public final class Item implements Pushable {
         this.fields = new ArrayList<Field>();
     }
 
+    /**
+     * Creates a new, empty {@link Item} with the fields from the given
+     * application template.
+     * 
+     * @param application
+     *        The application to use as a template.
+     * @return A new, empty item.
+     */
+    public static Item newInstance(Application application) {
+        Item item = null;
+
+        if (application != null) {
+            item = new Item(null);
+            item.fields.addAll(application.fields);
+        }
+
+        return item;
+    }
+
     @Override
     public Object getPushData() {
         PushData pushData = new PushData(external_id);
