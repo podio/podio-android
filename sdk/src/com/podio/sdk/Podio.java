@@ -25,6 +25,7 @@ package com.podio.sdk;
 import android.content.Context;
 
 import com.podio.sdk.client.CachedRestClient;
+import com.podio.sdk.client.HttpRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.Session;
@@ -39,7 +40,6 @@ import com.podio.sdk.provider.SessionProvider;
  * be suitable for most third party developers.
  * 
  * @author László Urszuly
- * 
  */
 public final class Podio {
 
@@ -47,7 +47,6 @@ public final class Podio {
      * Enables means of easy operating on the Application API end point.
      * 
      * @author László Urszuly
-     * 
      */
     public static final class Application {
 
@@ -61,10 +60,10 @@ public final class Podio {
          * id.
          * 
          * @param applicationId
-         *            The id of the application to fetch.
+         *        The id of the application to fetch.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -79,10 +78,10 @@ public final class Podio {
          * Fetches all App items in the workspace with the given id.
          * 
          * @param spaceId
-         *            The id of the parent workspace.
+         *        The id of the parent workspace.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -98,10 +97,10 @@ public final class Podio {
          * with the given id.
          * 
          * @param spaceId
-         *            The id of the parent workspace.
+         *        The id of the parent workspace.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -119,10 +118,10 @@ public final class Podio {
          * given id.
          * 
          * @param applicationId
-         *            The id of the application to fetch.
+         *        The id of the application to fetch.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -140,10 +139,10 @@ public final class Podio {
          * id.
          * 
          * @param applicationId
-         *            The id of the application to fetch.
+         *        The id of the application to fetch.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -161,10 +160,10 @@ public final class Podio {
          * given id.
          * 
          * @param applicationId
-         *            The id of the application to fetch.
+         *        The id of the application to fetch.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -183,7 +182,6 @@ public final class Podio {
      * Podio servers.
      * 
      * @author László Urszuly
-     * 
      */
     public static final class Client {
 
@@ -198,12 +196,12 @@ public final class Podio {
          * delivered through the given {@link PodioProviderListener}.
          * 
          * @param username
-         *            The user name of the Podio account to authenticate with.
+         *        The user name of the Podio account to authenticate with.
          * @param password
-         *            The corresponding password of the Podio account.
+         *        The corresponding password of the Podio account.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -223,12 +221,12 @@ public final class Podio {
          * delivered through the given {@link PodioProviderListener}.
          * 
          * @param appId
-         *            The id of the app to authenticate with.
+         *        The id of the app to authenticate with.
          * @param appToken
-         *            The token that has been generated for a particular app.
+         *        The token that has been generated for a particular app.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -245,16 +243,17 @@ public final class Podio {
          * Revokes a previously created Podio session. Even though the access
          * token may have expired, the refresh token can be used to get a new
          * access token. The idea here is to enable the caller to persist the
-         * session and avoid an unnecessary re-authentication.
-         * 
-         * NOTE! The server may very well invalidate both the access and refresh
-         * tokens, which would require a re-authentication anyway.
+         * session and avoid an unnecessary re-authentication. NOTE! The server
+         * may very well invalidate both the access and refresh tokens, which
+         * would require a re-authentication anyway.
          * 
          * @param session
-         *            The previously stored session object.
+         *        The previously stored session object.
          */
         public static final void restoreSession(Session session) {
-            client.restoreSession(SessionFilter.PATH, session);
+            if (client instanceof HttpRestClient) {
+                ((HttpRestClient) client).restoreSession(SessionFilter.PATH, session);
+            }
         }
 
     }
@@ -263,7 +262,6 @@ public final class Podio {
      * Enables means of easy operating on the Item API end point.
      * 
      * @author László Urszuly
-     * 
      */
     public static final class Item {
 
@@ -276,13 +274,12 @@ public final class Podio {
          * Sends a new item to the Podio servers.
          * 
          * @param applicationId
-         *            The id of the application to which this item is to be
-         *            added.
+         *        The id of the application to which this item is to be added.
          * @param data
-         *            The definition of the item content to push.
+         *        The definition of the item content to push.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -299,10 +296,10 @@ public final class Podio {
          * Fetches a single item with the given id.
          * 
          * @param itemId
-         *            The id of the item to fetch.
+         *        The id of the item to fetch.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -318,10 +315,10 @@ public final class Podio {
          * given id.
          * 
          * @param applicationId
-         *            The id of the parent application.
+         *        The id of the parent application.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -338,12 +335,12 @@ public final class Podio {
          * Sends the new values for the fields of an item to the API.
          * 
          * @param itemId
-         *            The id of the item to update.
+         *        The id of the item to update.
          * @param data
-         *            The changed data bundle.
+         *        The changed data bundle.
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -362,7 +359,6 @@ public final class Podio {
      * Enables means of easy operating on the Organization API end point.
      * 
      * @author László Urszuly
-     * 
      */
     public static final class Organization {
 
@@ -376,8 +372,8 @@ public final class Podio {
          * the contained workspaces) that are available to the user.
          * 
          * @param providerListener
-         *            The callback implementation called when the items are
-         *            fetched. Null is valid, but doesn't make any sense.
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
@@ -389,6 +385,19 @@ public final class Podio {
         }
     }
 
+    /**
+     * Describes the behavior of the {@link RestClient} implementation used by
+     * the SDK. The {@link RestBehavior#HTTP_ONLY} option doesn't cache any
+     * content locally, but hits the API for each call. The
+     * {@link RestBehavior#CACHED_HTTP} option on the other hand, tries to cache
+     * some content. It also returns the cached content first when requested and
+     * then hits the API. The caller will therefore sometimes get two callback
+     * calls; once for the cache request and once for the API request.
+     */
+    public static enum RestBehavior {
+        HTTP_ONLY, CACHED_HTTP
+    }
+
     private static final String AUTHORITY = "api.podio.com";
     private static final String DATABASE_NAME = "podio.db";
     private static final int DATABASE_VERSION = 1;
@@ -397,7 +406,7 @@ public final class Podio {
     private static SQLiteClientDelegate cacheDelegate;
     private static HttpClientDelegate networkDelegate;
 
-    private static CachedRestClient client;
+    private static RestClient client;
     private static String clientId;
     private static String clientSecret;
 
@@ -414,19 +423,51 @@ public final class Podio {
      * credentials. These operations are done in the {@link Client} area.
      * 
      * @param context
-     *            The context to initialize the cache database and network
-     *            clients in.
+     *        The context to initialize the cache database and network clients
+     *        in.
      * @param clientId
-     *            The pre-shared Podio client id.
+     *        The pre-shared Podio client id.
      * @param clientSecret
-     *            The corresponding Podio client secret.
+     *        The corresponding Podio client secret.
      */
     public static void setup(Context context, String clientId, String clientSecret) {
+        Podio.setup(context, clientId, clientSecret, RestBehavior.HTTP_ONLY);
+    }
+
+    /**
+     * Initializes the Podio SDK with the given client credentials. This method
+     * MUST be called before any other request is made. The caller can then
+     * either choose to revoke a previously stored session (the SDK doesn't
+     * store or cache the session), or authenticate with user or app
+     * credentials. These operations are done in the {@link Client} area.
+     * 
+     * @param context
+     *        The context to initialize the cache database and network clients
+     *        in.
+     * @param clientId
+     *        The pre-shared Podio client id.
+     * @param clientSecret
+     *        The corresponding Podio client secret.
+     * @param behavior
+     *        The behavior to expect from the {@link RestClient} implementation.
+     */
+    public static void setup(Context context, String clientId, String clientSecret, RestBehavior behavior) {
         Podio.clientId = clientId;
         Podio.clientSecret = clientSecret;
         Podio.networkDelegate = new HttpClientDelegate(context);
         Podio.cacheDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
-        Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheDelegate,
-                QUEUE_CAPACITY);
+
+        switch (behavior) {
+        case HTTP_ONLY:
+            Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate, QUEUE_CAPACITY);
+            break;
+        case CACHED_HTTP:
+            Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheDelegate,
+                    QUEUE_CAPACITY);
+            break;
+        default:
+            Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate, QUEUE_CAPACITY);
+            break;
+        }
     }
 }
