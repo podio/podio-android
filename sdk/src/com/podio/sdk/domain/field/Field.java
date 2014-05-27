@@ -54,7 +54,8 @@ public abstract class Field implements Pushable {
      * 
      * @param value
      *        The value domain object to clear.
-     * @return Always boolean true.
+     * @return Boolean true if the value could be cleared, boolean false
+     *         otherwise.
      * @throws FieldTypeMismatchException
      *         If the value can't be applied to this field type.
      */
@@ -66,7 +67,8 @@ public abstract class Field implements Pushable {
      * 
      * @param value
      *        The value domain object to set.
-     * @return Always boolean true.
+     * @return Boolean true if the new value could be set, boolean false
+     *         otherwise.
      * @throws FieldTypeMismatchException
      *         If the value can't be applied to this field type.
      */

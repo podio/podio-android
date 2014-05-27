@@ -110,6 +110,9 @@ public final class Category extends Field {
     }
 
     public final Config config = null;
+
+    // TODO: This isn't good. We shouldn't make a member field publicly
+    // modifiable like this. Have a second look at it.
     public final List<Value> values;
 
     public Category(String externalId) {
@@ -119,16 +122,16 @@ public final class Category extends Field {
 
     @Override
     public boolean clear(Object value) throws FieldTypeMismatchException {
+        boolean isSuccess = false;
         Option option = tryCast(value);
         Value v = new Value(option);
 
-        try {
+        if (values != null) {
             values.remove(v);
-        } catch (UnsupportedOperationException e) {
-            throw new FieldTypeMismatchException(e);
+            isSuccess = true;
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override
@@ -150,21 +153,16 @@ public final class Category extends Field {
 
     @Override
     public boolean set(Object value) throws FieldTypeMismatchException {
+        boolean isSuccess = false;
         Option option = tryCast(value);
 
         clear(option);
 
-        try {
-            values.add(new Value(option));
-        } catch (UnsupportedOperationException e) {
-            throw new FieldTypeMismatchException(e);
-        } catch (ClassCastException e) {
-            throw new FieldTypeMismatchException(e);
-        } catch (IllegalArgumentException e) {
-            throw new FieldTypeMismatchException(e);
+        if (values != null) {
+            isSuccess = values.add(new Value(option));
         }
 
-        return true;
+        return isSuccess;
     }
 
     private Option tryCast(Object value) throws FieldTypeMismatchException {

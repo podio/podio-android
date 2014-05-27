@@ -96,11 +96,25 @@ public final class Text extends Field {
     }
 
     @Override
+    public boolean clear(Object value) throws FieldTypeMismatchException {
+        boolean isSuccess = false;
+
+        if (values != null) {
+            values.clear();
+            isSuccess = true;
+        }
+
+        return isSuccess;
+    }
+
+    @Override
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        for (Value value : values) {
-            pushData.add(value.getPushData());
+        if (values != null) {
+            for (Value value : values) {
+                pushData.add(value.getPushData());
+            }
         }
 
         return pushData;
@@ -108,22 +122,15 @@ public final class Text extends Field {
 
     @Override
     public boolean set(Object value) throws FieldTypeMismatchException {
+        boolean isSuccess = false;
         String text = tryCast(value);
+        clear(value);
 
-        values.clear();
-        values.add(new Value(text));
+        if (values != null) {
+            isSuccess = values.add(new Value(text));
+        }
 
-        return true;
-    }
-
-    /**
-     * @see com.podio.sdk.domain.field.Field#clear(java.lang.Object)
-     */
-    @Override
-    public boolean clear(Object value) throws FieldTypeMismatchException {
-        values.clear();
-
-        return true;
+        return isSuccess;
     }
 
     private String tryCast(Object value) throws FieldTypeMismatchException {

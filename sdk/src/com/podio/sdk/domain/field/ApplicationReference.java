@@ -106,16 +106,16 @@ public final class ApplicationReference extends Field {
 
     @Override
     public boolean clear(Object value) throws FieldTypeMismatchException {
+        boolean isSuccess = false;
         Data data = tryCast(value);
         Value v = new Value(data);
 
-        try {
+        if (values != null) {
             values.remove(v);
-        } catch (UnsupportedOperationException e) {
-            throw new FieldTypeMismatchException(e);
+            isSuccess = true;
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override
@@ -137,21 +137,15 @@ public final class ApplicationReference extends Field {
 
     @Override
     public boolean set(Object value) throws FieldTypeMismatchException {
+        boolean isSuccess = false;
         Data data = tryCast(value);
-
         clear(data);
 
-        try {
-            values.add(new Value(data));
-        } catch (UnsupportedOperationException e) {
-            throw new FieldTypeMismatchException(e);
-        } catch (ClassCastException e) {
-            throw new FieldTypeMismatchException(e);
-        } catch (IllegalArgumentException e) {
-            throw new FieldTypeMismatchException(e);
+        if (values != null) {
+            isSuccess = values.add(new Value(data));
         }
 
-        return true;
+        return isSuccess;
     }
 
     private Data tryCast(Object value) {
