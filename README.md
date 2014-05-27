@@ -25,7 +25,7 @@ But before you can communicate with the Podio API, you need to generate a set of
 Once you have a key and corresponding secret, you need to configure the Podio SDK to use it. You can do so by adding the following code to your `Application.onCreate()` method:
 
 ```java
-Podio.Client.setup(context, "my_api_key", "my_secret");
+Podio.setup(context, "my_api_key", "my_secret");
 ```
 
 and by that you're ready to Podio.
@@ -116,8 +116,11 @@ Podio.Item.getForApplication(myAppId,
         new PodioProviderListener() {
             @Override
             public void onRequestComplete(Object tag, Object obj) {
-                Item[] items = (Item[]) obj;
-                Log.d("MYTAG", "App count: " + item.length);
+                if (obj != null) {
+                    ItemRequest.Result res = (ItemRequest.Result) obj;
+                    Item[] items = res.items
+                    Log.d("MYTAG", "App count: " + item.length);
+                }
             }
 
             @Override
