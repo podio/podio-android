@@ -23,3 +23,7 @@ local.properties
 proguard/
 
 proguard-project.txt
+
+sdk/.classpath
+
+sdk/.project

@@ -22,6 +22,8 @@
 
 package com.podio.sdk;
 
+import java.util.Date;
+
 import android.content.Context;
 
 import com.podio.sdk.client.CachedRestClient;
@@ -31,6 +33,7 @@ import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.provider.ApplicationProvider;
+import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.SessionProvider;
@@ -382,6 +385,41 @@ public final class Podio {
             provider.setProviderListener(providerListener);
 
             return provider.getAll();
+        }
+    }
+
+    /**
+     * Enables means of easy operating on the Calendar API end point.
+     * 
+     * @author Tobias Lindberg
+     */
+    public static final class Calendar {
+
+        private Calendar() {
+            // Hiding the constructor of this class as it's not meant to be
+            // instantiated.
+        }
+
+        /**
+         * Fetches all global Calendar events.
+         * 
+         * @param from
+         *        The Date from which the result should start from.
+         * @param to
+         *        The Date from which the result should end at.
+         * @param priority
+         *        The priority level of the results.
+         * @param providerListener
+         *        The callback implementation called when the calendar events
+         *        are fetched. Null is valid, but doesn't make any sense.
+         * @return
+         */
+        public static final Object getGlobalCalendar(Date from, Date to, int priority,
+                PodioProviderListener providerListener) {
+            CalendarProvider provider = new CalendarProvider(client);
+            provider.setProviderListener(providerListener);
+
+            return provider.fetchGlobalCalendar(from, to, priority);
         }
     }
 
