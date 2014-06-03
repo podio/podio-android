@@ -29,7 +29,7 @@ import com.podio.sdk.domain.field.ApplicationReferenceField;
 import com.podio.sdk.domain.field.CalculationField;
 import com.podio.sdk.domain.field.CategoryField;
 import com.podio.sdk.domain.field.ContactField;
-import com.podio.sdk.domain.field.DateField;
+import com.podio.sdk.domain.field.Date;
 import com.podio.sdk.domain.field.DurationField;
 import com.podio.sdk.domain.field.EmbedField;
 import com.podio.sdk.domain.field.EmptyField;
@@ -218,7 +218,7 @@ public class PodioParserTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Describe an {@link Item} with an {@link DateField} field as a JSON
+     * 1. Describe an {@link Item} with an {@link Date} field as a JSON
      *      string.
      * 
      * 2. Try to parse the JSON.
@@ -239,7 +239,7 @@ public class PodioParserTest extends AndroidTestCase {
 
         Field field = item.fields.get(0);
         assertNotNull(field);
-        assertTrue(field instanceof DateField);
+        assertTrue(field instanceof Date);
         assertEquals(Field.Type.date, field.type);
     }
 

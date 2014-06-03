@@ -30,14 +30,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class CategoryField extends Field {
+public final class Category extends Field {
 
     /**
      * A category option.
      * 
      * @author László Urszuly
      */
-    public static final class Option implements Pushable {
+    public static final class Option {
         public final String status = null;
         public final String text = null;
         public final String color = null;
@@ -51,13 +51,6 @@ public final class CategoryField extends Field {
         @Override
         public boolean equals(Object o) {
             return o != null && o instanceof Option && id == ((Option) o).id;
-        }
-
-        @Override
-        public Object getPushData() {
-            HashMap<String, Integer> pushData = new HashMap<String, Integer>();
-            pushData.put("value", id);
-            return pushData;
         }
 
         @Override
@@ -95,9 +88,6 @@ public final class CategoryField extends Field {
         public final Option value;
 
         public Value(Option option) {
-        	if (option == null) {
-        		throw new NullPointerException("option cannot be null");
-        	}
             this.value = option;
         }
 
@@ -108,7 +98,7 @@ public final class CategoryField extends Field {
 
         @Override
         public int hashCode() {
-            return value.hashCode();
+            return value != null && value.id != null ? value.id.intValue() : 0;
         }
     }
 
@@ -118,13 +108,13 @@ public final class CategoryField extends Field {
     // modifiable like this. Have a second look at it.
     public final List<Value> values;
 
-    public CategoryField(String externalId) {
+    public Category(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }
 
     @Override
-    public void clear(Object value) throws FieldTypeMismatchException {
+    public void removeValue(Object value) throws FieldTypeMismatchException {
         Option option = tryCast(value);
         Value v = new Value(option);
         values.remove(v);
@@ -134,23 +124,34 @@ public final class CategoryField extends Field {
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        for (Value value : values) {
-            pushData.add(value.value.getPushData());
+        if (values != null) {
+            for (Value value : values) {
+                Option option = value.value;
+
+                if (option != null) {
+                    HashMap<String, Integer> data = new HashMap<String, Integer>();
+                    data.put("value", option.id);
+                    pushData.add(data);
+                }
+            }
         }
 
         return pushData;
     }
 
     @Override
-    public void set(Object value) throws FieldTypeMismatchException {
+    public void addValue(Object value) throws FieldTypeMismatchException {
         Option option = tryCast(value);
         clear(option);
         values.add(new Value(option));
     }
 
-    private Option tryCast(Object value) throws FieldTypeMismatchException {
-        if (value instanceof Option) {
-            return (Option) value;
+    private Value tryCast(Object value) throws FieldTypeMismatchException {
+        if (value instanceof Value) {
+            return (Value) value;
+        } else if (value instanceof Integer) {
+            Option option = new Option(((Integer) value).intValue());
+            return new Value(option);
         } else {
             throw new FieldTypeMismatchException();
         }

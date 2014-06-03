@@ -44,10 +44,9 @@ public final class Item implements Pushable {
             this.fields = new HashMap<String, Object>();
         }
 
-        private void addData(int fieldId, Object value) {
-            if (fieldId > 0 && value != null) {
-                String idString = Integer.toString(fieldId);
-                fields.put(idString, value);
+        private void setValues(String field, Object values) {
+            if (field != null && values != null) {
+                fields.put(field, values);
             }
         }
     }
@@ -84,6 +83,11 @@ public final class Item implements Pushable {
     public final String external_id;
     public final List<Field> fields;
 
+    private transient final HashMap<String, List<Object>> data = new HashMap<String, List<Object>>();
+
+    /**
+     * Creates a new, empty {@link Item} with no fields.
+     */
     public Item() {
     	this(null);
     }
@@ -101,23 +105,25 @@ public final class Item implements Pushable {
      *        The application to use as a template.
      * @return A new, empty item.
      */
-    public static Item newInstance(Application application) {
-    	if (application == null) {
-    		throw new NullPointerException("application cannot be null");
-    	}
-    	
-        Item item = new Item(null);
-        item.fields.addAll(application.fields);
-        return item;
+    public Item(Application application) {
+        this();
+
+        if (application != null) {
+            this.fields.addAll(application.fields);
+        }
     }
 
     @Override
-    public PushData getPushData() {
+    public Object getPushData() {
         PushData pushData = new PushData(external_id);
 
         for (Field field : fields) {
             Object data = field.getPushData();
-            pushData.addData(field.field_id, data);
+            pushData.setValues(field.external_id, data);
+        }
+
+        for (Entry<String, List<Object>> entry : data.entrySet()) {
+            pushData.setValues(entry.getKey(), entry.getValue());
         }
 
         return pushData;
@@ -135,11 +141,23 @@ public final class Item implements Pushable {
      * @throws FieldTypeMismatchException
      *         If the passed value doesn't match the field with the given name.
      */
-    public boolean setValue(String field, Object value) throws FieldTypeMismatchException {
-        Field f = findField(field);
+    public boolean addValue(String field, Object value) throws FieldTypeMismatchException {
+        if (field != null && value != null && fields != null) {
+            Field f = findField(field, fields);
 
-        if (f != null) {
-            f.set(value);
+            if (f != null) {
+                f.addValue(value);
+            } else {
+                List<Object> d = data.get(field);
+
+                if (d == null) {
+                    d = new ArrayList<Object>();
+                    data.put(field, d);
+                }
+
+                Object newValue = Field.buildPushData(value);
+                d.add(newValue);
+            }
         }
 
         return true;
@@ -157,11 +175,17 @@ public final class Item implements Pushable {
      * @throws FieldTypeMismatchException
      *         If the passed value doesn't match the field with the given name.
      */
-    public boolean clearValue(String field, Object value) throws FieldTypeMismatchException {
-        Field f = findField(field);
+    public boolean removeValue(String field, Object value) throws FieldTypeMismatchException {
+        Field f = findField(field, fields);
 
         if (f != null) {
-            f.clear(value);
+            f.removeValue(value);
+        } else {
+            List<Object> d = data.get(field);
+
+            if (d != null) {
+                d.remove(value);
+            }
         }
 
         return true;

@@ -29,7 +29,7 @@ public final class NumberField extends Field {
     }
 
     @Override
-    public void clear(Object value) throws FieldTypeMismatchException {
+    public void removeValue(Object value) throws FieldTypeMismatchException {
     	//FIXME: Implement
     	throw new UnsupportedOperationException();
     }
@@ -41,7 +41,7 @@ public final class NumberField extends Field {
     }
 
     @Override
-    public void set(Object value) throws FieldTypeMismatchException {
+    public void addValue(Object value) throws FieldTypeMismatchException {
     	//FIXME: Implement
     	throw new UnsupportedOperationException();
     }

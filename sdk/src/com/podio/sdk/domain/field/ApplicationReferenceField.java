@@ -30,7 +30,7 @@ import com.podio.sdk.domain.Application;
 import com.podio.sdk.domain.Space;
 import com.podio.sdk.domain.helper.UserInfo;
 
-public final class ApplicationReferenceField extends Field {
+public final class ApplicationReference extends Field {
 
     /**
      * The value content of this field.
@@ -99,13 +99,13 @@ public final class ApplicationReferenceField extends Field {
 
     public final List<Value> values;
 
-    public ApplicationReferenceField(String externalId) {
+    public ApplicationReference(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }
 
     @Override
-    public void clear(Object value) throws FieldTypeMismatchException {
+    public void removeValue(Object value) throws FieldTypeMismatchException {
         Data data = tryCast(value);
         Value v = new Value(data);
         values.remove(v);
@@ -115,19 +115,21 @@ public final class ApplicationReferenceField extends Field {
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        for (Value value : values) {
-            Data data = value.value;
+        if (values != null) {
+            for (Value value : values) {
+                Data data = value.value;
 
-            if (data != null) {
-                pushData.add(data.getPushData());
+                if (data != null) {
+                    pushData.add(data.getPushData());
+                }
             }
         }
-        
+
         return pushData;
     }
 
     @Override
-    public void set(Object value) throws FieldTypeMismatchException {
+    public void addValue(Object value) throws FieldTypeMismatchException {
         Data data = tryCast(value);
         clear(data);
         values.add(new Value(data));

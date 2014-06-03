@@ -33,7 +33,22 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.podio.sdk.domain.field.ApplicationReference;
+import com.podio.sdk.domain.field.CalculationField;
+import com.podio.sdk.domain.field.Category;
+import com.podio.sdk.domain.field.ContactField;
+import com.podio.sdk.domain.field.DateField;
+import com.podio.sdk.domain.field.DurationField;
+import com.podio.sdk.domain.field.EmbedField;
+import com.podio.sdk.domain.field.EmptyField;
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.field.ImageField;
+import com.podio.sdk.domain.field.LocationField;
+import com.podio.sdk.domain.field.MoneyField;
+import com.podio.sdk.domain.field.NumberField;
+import com.podio.sdk.domain.field.ProgressField;
+import com.podio.sdk.domain.field.Text;
+import com.podio.sdk.domain.field.TitleField;
 import com.podio.sdk.internal.utils.Utils;
 
 /**
@@ -89,7 +104,7 @@ public class PodioParser<T> {
 
     private final Class<T> classOfItem;
 
-    public PodioParser(Class<T> classOfItem) {    	
+    public PodioParser(Class<T> classOfItem) {
         this.classOfItem = classOfItem;
     }
 

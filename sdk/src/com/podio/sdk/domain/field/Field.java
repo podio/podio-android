@@ -79,7 +79,7 @@ public abstract class Field implements Pushable {
      * @throws FieldTypeMismatchException
      *         If the value can't be applied to this field type.
      */
-    public abstract void clear(Object value) throws FieldTypeMismatchException;
+    public abstract void removeValue(Object value) throws FieldTypeMismatchException;
 
     /**
      * Tries to locally set the given value to the current field. The changes
@@ -90,7 +90,7 @@ public abstract class Field implements Pushable {
      * @throws FieldTypeMismatchException
      *         If the value can't be applied to this field type.
      */
-    public abstract void set(Object value) throws FieldTypeMismatchException;
+    public abstract void addValue(Object value) throws FieldTypeMismatchException;
 
     @Override
     public boolean equals(Object o) {

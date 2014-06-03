@@ -439,6 +439,9 @@ public final class Podio {
     private static final int DATABASE_VERSION = 1;
     private static final int QUEUE_CAPACITY = 10;
 
+    private static SQLiteClientDelegate cacheDelegate;
+    private static HttpClientDelegate networkDelegate;
+
     private static RestClient client;
     private static String clientId;
     private static String clientSecret;
@@ -495,9 +498,7 @@ public final class Podio {
             break;
         case CACHED_HTTP:
         	CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
-
-            Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient,
-                    QUEUE_CAPACITY);
+            Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient, QUEUE_CAPACITY);
             break;
         default:
             Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate, QUEUE_CAPACITY);

@@ -72,18 +72,11 @@ public final class TextField extends Field {
      * 
      * @author László Urszuly
      */
-    public static final class Value implements Pushable {
+    public static final class Value {
         public String value;
 
         public Value(String value) {
             this.value = value;
-        }
-
-        @Override
-        public Object getPushData() {
-            HashMap<String, String> pushData = new HashMap<String, String>();
-            pushData.put("value", value.toString());
-            return pushData;
         }
     }
 
@@ -96,26 +89,35 @@ public final class TextField extends Field {
     }
 
     @Override
-    public void clear(Object value) throws FieldTypeMismatchException {
-        values.clear();
+    public void removeValue(Object value) throws FieldTypeMismatchException {
+        if (values != null) {
+            values.clear();
+        }
     }
 
     @Override
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        for (Value value : values) {
-            pushData.add(value.getPushData());
+        if (values != null) {
+            for (Value value : values) {
+                HashMap<String, String> data = new HashMap<String, String>();
+                data.put("value", value.value);
+                pushData.add(data);
+            }
         }
 
         return pushData;
     }
 
     @Override
-    public void set(Object value) throws FieldTypeMismatchException {
+    public void addValue(Object value) throws FieldTypeMismatchException {
         String text = tryCast(value);
-        clear(value);
-        values.add(new Value(text));
+        removeValue(value);
+
+        if (values != null) {
+            values.add(new Value(text));
+        }
     }
 
     private String tryCast(Object value) throws FieldTypeMismatchException {
