@@ -160,11 +160,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
     public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
 
-        try {
-            databaseHelper.delete(Uri.parse("test://database.delegate"), null);
-            fail();
-        } catch (InvalidParserException e) {
-        }
+        databaseHelper.delete(Uri.parse("test://database.delegate"), null);
     }
 
     /**

@@ -90,11 +90,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeDoesNotThrowExceptionOnNullPointerParser() {
-        try {
-            target.authorize(Uri.parse("http://localhost:8080"), null);
-            fail();
-        } catch (InvalidParserException e) {
-        }
+    	target.authorize(Uri.parse("http://localhost:8080"), null);
     }
 
     /**
@@ -225,12 +221,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
-        try {
-            target.delete(Uri.parse("http://localhost:8080"), null);
-            
-            fail();
-        } catch (InvalidParserException e) {
-        }
+    	target.delete(Uri.parse("http://localhost:8080"), null);
     }
 
     /**
