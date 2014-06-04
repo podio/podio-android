@@ -301,12 +301,12 @@ public class SessionTest extends AndroidTestCase {
         Session session1 = new Session(sourceJson1);
         Session session2 = new Session(sourceJson2);
 
-        assertFalse(session1 == session2);
+        assertNotSame(session1, session2);
         assertFalse(session1.equals(session2));
         assertFalse(session2.equals(session1));
-        assertFalse(session1.equals(null));
-        assertFalse(session2.equals(null));
-        assertFalse(session1.hashCode() == session2.hashCode());
+        assertNotNull(session1);
+        assertNotNull(session2);
+        assertFalse(session1.hashCode() == session2.hashCode()); //This is not really proper as objects can have the same hashcode
     }
 
     /**
@@ -334,8 +334,8 @@ public class SessionTest extends AndroidTestCase {
         Session session2 = new Session(sourceJson);
 
         assertFalse(session1 == session2);
-        assertTrue(session1.equals(session2));
-        assertTrue(session2.equals(session1));
+        assertEquals(session1, session2);
+        assertEquals(session2, session1);
         assertEquals(session1.hashCode(), session2.hashCode());
     }
 
@@ -364,8 +364,8 @@ public class SessionTest extends AndroidTestCase {
         Session session2 = new Session(sourceJson);
 
         assertFalse(session1 == session2);
-        assertTrue(session1.equals(session2));
-        assertTrue(session2.equals(session1));
+        assertEquals(session1, session2);
+        assertEquals(session2, session1);
         assertEquals(session1.hashCode(), session2.hashCode());
     }
 }

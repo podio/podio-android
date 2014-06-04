@@ -59,16 +59,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseEmptyDomainObjectToJsonStringDoesNotCrashParser() {
         PodioParser<Object> parser = new PodioParser<Object>(Object.class);
-        boolean didCrash;
 
-        try {
-            assertNull(parser.parseToJson(null));
-            didCrash = false;
-        } catch (Throwable t) {
-            didCrash = true;
-        }
-
-        assertFalse(didCrash);
+        assertNull(parser.parseToJson(null));
     }
 
     /**
@@ -91,18 +83,10 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseEmptyJsonStringToDomainObjectDoesNotCrashParser() {
         PodioParser<Object> parser = new PodioParser<Object>(Object.class);
-        boolean didCrash;
 
-        try {
-            assertNull(parser.parseToItem(null));
-            assertNull(parser.parseToItem(""));
-            assertNull(parser.parseToItem(" "));
-            didCrash = false;
-        } catch (Throwable t) {
-            didCrash = true;
-        }
-
-        assertFalse(didCrash);
+        assertNull(parser.parseToItem(null));
+        assertNull(parser.parseToItem(""));
+        assertNull(parser.parseToItem(" "));
     }
 
     /**

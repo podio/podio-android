@@ -182,20 +182,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                boolean isCalled = true;
-                assertTrue(isCalled);
             }
 
             @Override
             public void onSessionChange(Object ticket, Session session) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSuccess(Object ticket, Object item) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
         };
 
@@ -319,8 +315,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                assertFalse("Unexpected request processing", true);
-                return new RestResult(false, null, null);
+            	fail();
+            	return null;
             }
         };
 
@@ -407,26 +403,18 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSessionChange(Object ticket, Session session) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSuccess(Object ticket, Object item) {
-                boolean isSuccess = true;
-
-                if (firstFilter == ticket) {
-                    assertTrue(isSuccess);
-                } else if (secondFilter == ticket) {
-                    assertTrue(isSuccess);
-                } else {
-                    assertFalse(isSuccess);
+                if (firstFilter != ticket && secondFilter != ticket) {
+                	fail();
                 }
             }
         };
@@ -501,14 +489,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSessionChange(Object object, Session session) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
@@ -555,20 +541,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                boolean isCalled = true;
-                assertTrue(isCalled);
             }
 
             @Override
             public void onSessionChange(Object ticket, Session session) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSuccess(Object ticket, Object item) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
         };
 
@@ -608,20 +590,15 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSessionChange(Object ticket, Session session) {
-                boolean isCalled = true;
-                assertTrue(isCalled);
             }
 
             @Override
             public void onSuccess(Object ticket, Object item) {
-                boolean isCalled = true;
-                assertTrue(isCalled);
             }
         };
 
@@ -661,20 +638,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         ResultListener listener = new ResultListener() {
             @Override
             public void onFailure(Object ticket, String message) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSessionChange(Object ticket, Session session) {
-                boolean isCalled = true;
-                assertFalse(isCalled);
+            	fail();
             }
 
             @Override
             public void onSuccess(Object ticket, Object item) {
-                boolean isCalled = true;
-                assertTrue(isCalled);
             }
         };
 

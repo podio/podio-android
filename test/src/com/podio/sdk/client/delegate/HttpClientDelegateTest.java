@@ -90,15 +90,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeDoesNotThrowExceptionOnNullPointerParser() {
-        boolean didThrowInvalidParserException = false;
-
         try {
             target.authorize(Uri.parse("http://localhost:8080"), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertFalse(didThrowInvalidParserException);
     }
 
     /**
@@ -229,15 +225,12 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
-        boolean didThrowInvalidParserException = false;
-
         try {
             target.delete(Uri.parse("http://localhost:8080"), null);
+            
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertFalse(didThrowInvalidParserException);
     }
 
     /**
@@ -366,15 +359,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetDoesThrowExceptionOnNullPointerParser() {
-        boolean didThrowInvalidParserException = false;
-
         try {
             target.get(Uri.parse("http://localhost:8080"), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -588,15 +577,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostDoesThrowExceptionOnNullPointerParser() {
-        boolean didThrowInvalidParserException = false;
-
         try {
             target.post(Uri.parse("http://localhost:8080"), new Object(), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -724,15 +709,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutDoesThrowExceptionOnNullPointerParser() {
-        boolean didThrowInvalidParserException = false;
-
         try {
             target.put(Uri.parse("http://localhost:8080"), new Object(), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertTrue(didThrowInvalidParserException);
     }
 
     /**

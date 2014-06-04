@@ -169,21 +169,15 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         // Verify exception for network delegate.
         try {
             new CachedRestClient(null, null, null, new MockRestClientDelegate(), 0);
-            boolean didReachThisPoint = true;
-            assertFalse(didReachThisPoint);
+            fail();
         } catch (IllegalArgumentException e) {
-            boolean didThrowException = true;
-            assertTrue(didThrowException);
         }
 
         // Verify exception for cache delegate.
         try {
             new CachedRestClient(null, null, new MockRestClientDelegate(), null, 0);
-            boolean didReachThisPoint = true;
-            assertFalse(didReachThisPoint);
+            fail();
         } catch (IllegalArgumentException e) {
-            boolean didThrowException = true;
-            assertTrue(didThrowException);
         }
     }
 

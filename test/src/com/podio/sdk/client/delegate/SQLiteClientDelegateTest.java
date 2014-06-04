@@ -159,15 +159,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        boolean didThrowInvalidParserException = false;
 
         try {
             databaseHelper.delete(Uri.parse("test://database.delegate"), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertFalse(didThrowInvalidParserException);
     }
 
     /**
@@ -296,15 +293,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetDoesThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        boolean didThrowInvalidParserException = false;
 
         try {
             databaseHelper.get(Uri.parse("test://database.delegate"), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -411,15 +405,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostDoesThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        boolean didThrowInvalidParserException = false;
 
         try {
             databaseHelper.post(Uri.parse("test://database.delegate"), new Object(), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertTrue(didThrowInvalidParserException);
     }
 
     /**
@@ -504,15 +495,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutDoesThrowExceptionOnNullPointerParser() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        boolean didThrowInvalidParserException = false;
 
         try {
             databaseHelper.put(Uri.parse("test://database.delegate"), new Object(), null);
+            fail();
         } catch (InvalidParserException e) {
-            didThrowInvalidParserException = true;
         }
-
-        assertTrue(didThrowInvalidParserException);
     }
 
     /**
