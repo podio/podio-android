@@ -31,7 +31,6 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.utils.Utils;
 
@@ -46,7 +45,7 @@ import com.podio.sdk.internal.utils.Utils;
  */
 public class CachedRestClient extends HttpRestClient {
     private final String contentScheme;
-    private final JsonClientDelegate databaseDelegate;
+    private final RestClientDelegate databaseDelegate;
     private final ArrayList<RestRequest> delegatedRequests;
 
     /**
@@ -72,8 +71,8 @@ public class CachedRestClient extends HttpRestClient {
      *            The number of pending request this {@link RestClient} will
      *            keep in its queue.
      */
-    public CachedRestClient(Context context, String authority, JsonClientDelegate networkDelegate,
-            JsonClientDelegate cacheDelegate, int queueCapacity) {
+    public CachedRestClient(Context context, String authority, RestClientDelegate networkDelegate,
+    		RestClientDelegate cacheDelegate, int queueCapacity) {
 
         super(context, authority, networkDelegate, queueCapacity);
 
