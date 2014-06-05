@@ -224,8 +224,12 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * 
      * </pre>
      */
-    public void testDeleteDoesNotThrowExceptionOnNullPointerParser() {
-    	target.delete(Uri.parse("http://localhost:8080"), null);
+    public void testDeleteThrowExceptionOnNullPointerParser() {
+    	try {
+    		target.delete(Uri.parse("http://localhost:8080"), null);
+    		fail("Should have thrown exception");
+    	} catch (NullPointerException e) {
+    	}
     }
 
     /**
