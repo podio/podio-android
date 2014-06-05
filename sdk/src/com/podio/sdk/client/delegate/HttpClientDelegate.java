@@ -107,6 +107,7 @@ public class HttpClientDelegate implements RestClientDelegate {
     		throw new NullPointerException("itemParser cannot be null");
     	}
     	
+    	Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
         if (outputJson == null && lastRequestError != null
@@ -121,7 +122,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object item = parseJson(outputJson, itemParser);
+        Object item = itemParser.parseToItem(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, item);
 
         return result;
@@ -133,6 +134,7 @@ public class HttpClientDelegate implements RestClientDelegate {
     		throw new NullPointerException("itemParser cannot be null");
     	}
     	
+    	Session resultSession = tryRefreshSession();
         String inputJson = itemParser.parseToJson(item);
         String outputJson = request(Method.POST, uri, inputJson);
 
@@ -148,7 +150,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = parseJson(outputJson, itemParser);
+        Object content = itemParser.parseToItem(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
@@ -160,6 +162,7 @@ public class HttpClientDelegate implements RestClientDelegate {
     		throw new NullPointerException("itemParser cannot be null");
     	}
     	
+    	Session resultSession = tryRefreshSession();
         String inputJson = itemParser.parseToJson(item);
         String outputJson = request(Method.PUT, uri, inputJson);
 
@@ -175,7 +178,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = parseJson(outputJson, itemParser);
+        Object content = itemParser.parseToItem(outputJson);
         RestResult result = new RestResult(isSuccess, resultSession, null, content);
 
         return result;
