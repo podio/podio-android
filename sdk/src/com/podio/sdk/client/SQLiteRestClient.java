@@ -25,11 +25,8 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.PodioFilter;
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.internal.request.RestOperation;
 
 /**
  * This class manages the communication between the client application and the
@@ -57,14 +54,13 @@ public final class SQLiteRestClient extends QueuedRestClient {
      */
     public SQLiteRestClient(Context context, String authority, RestClientDelegate databaseDelegate,
             int queueCapacity) {
-
         super("content", authority, queueCapacity);
 
         if (databaseDelegate == null) {
             throw new IllegalArgumentException("The JsonClientDelegate mustn't be null");
-        } else {
-            this.databaseDelegate = databaseDelegate;
         }
+        	
+        this.databaseDelegate = databaseDelegate;
     }
 
     /**
@@ -77,46 +73,10 @@ public final class SQLiteRestClient extends QueuedRestClient {
 		}
 		restRequest.validate();
 
-		PodioFilter filter = restRequest.getFilter();
-		PodioParser<?> parser = restRequest.getParser();
-
-		RestOperation operation = restRequest.getOperation();
-		Object item = restRequest.getContent();
-		Uri uri = filter.buildUri(scheme, authority);
-
-		return queryDatabase(operation, uri, item, parser);
-    }
-
-    /**
-     * Delegates the requested operation to the {@link DatabaseClientDelegate}
-     * to execute.
-     * 
-     * @param operation
-     *            The type of rest operation to perform.
-     * @param uri
-     *            The URI that defines the details of the operation.
-     * @param content
-     *            Any additional data that the operation refers to.
-     * @return An object representation of the result of the operation.
-     */
-    private RestResult queryDatabase(RestOperation operation, Uri uri, Object content,
-            PodioParser<?> parser) {
-
-        switch (operation) {
-        case AUTHORIZE:
-            return databaseDelegate.authorize(uri, parser);
-        case DELETE:
-            return databaseDelegate.delete(uri, parser);
-        case GET:
-            return databaseDelegate.get(uri, parser);
-        case POST:
-            return databaseDelegate.post(uri, content, parser);
-        case PUT:
-            return databaseDelegate.put(uri, content, parser);
-        default:
-            String message = "Unknown operation: " + operation.name();
-            throw new IllegalArgumentException(message);
-        }
+		Uri uri = restRequest.getFilter().buildUri(scheme, authority);
+		
+		return restRequest.getOperation().invoke(databaseDelegate, uri, 
+				restRequest.getContent(), restRequest.getParser());
     }
 
 }

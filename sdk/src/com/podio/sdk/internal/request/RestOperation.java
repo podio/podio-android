@@ -22,6 +22,45 @@
 
 package com.podio.sdk.internal.request;
 
+import android.net.Uri;
+
+import com.podio.sdk.PodioParser;
+import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.RestResult;
+
 public enum RestOperation {
-    AUTHORIZE, DELETE, GET, POST, PUT
+    AUTHORIZE() {
+		@Override
+		public RestResult invoke(RestClientDelegate delegate, Uri uri, Object item, PodioParser<?> parser) {
+			return delegate.authorize(uri, parser);
+			
+		}}
+    , DELETE {
+		@Override
+		public RestResult invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<?> parser) {
+			return delegate.delete(uri, parser);
+		}
+	}, GET {
+		@Override
+		public RestResult invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<?> parser) {
+			return delegate.get(uri, parser);
+		}
+	}, POST {
+		@Override
+		public RestResult invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<?> parser) {
+			return delegate.post(uri, item, parser);
+		}
+	}, PUT {
+		@Override
+		public RestResult invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<?> parser) {
+			return delegate.put(uri, item, parser);
+		}
+	};
+    
+    public abstract RestResult invoke(RestClientDelegate delegate, Uri uri, Object item,
+            PodioParser<?> parser);
 }

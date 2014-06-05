@@ -43,7 +43,6 @@ import com.podio.sdk.internal.request.RestOperation;
  * @author László Urszuly
  */
 public class CachedRestClient extends HttpRestClient {
-    private final String contentScheme;
     private final RestClientDelegate databaseDelegate;
     private final ArrayList<RestRequest> delegatedRequests;
 
@@ -79,7 +78,6 @@ public class CachedRestClient extends HttpRestClient {
             throw new NullPointerException("The cacheDelegate must not be null");
         }
             
-        this.contentScheme = "content";
         this.delegatedRequests = new ArrayList<RestRequest>();
         this.databaseDelegate = cacheDelegate;
     }
@@ -112,7 +110,7 @@ public class CachedRestClient extends HttpRestClient {
         PodioParser<?> parser = restRequest.getParser();
         Object item = restRequest.getContent();
 
-        Uri uri = filter.buildUri(contentScheme, authority);
+        Uri uri = filter.buildUri("content", authority);
 
         if (operation != RestOperation.DELETE //
                 && operation != RestOperation.PUT //
@@ -122,7 +120,7 @@ public class CachedRestClient extends HttpRestClient {
             // Query the locally cached data first and then queue the
             // request again for the super implementation to act upon.
 
-            result = delegate(operation, uri, item, parser);
+            result = operation.invoke(databaseDelegate, uri, item, parser);
             assert result != null;
             
             delegatedRequests.add(restRequest);
@@ -134,48 +132,18 @@ public class CachedRestClient extends HttpRestClient {
 
             if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
                 if (operation == RestOperation.GET) {
-                    result = delegate(RestOperation.POST, uri, result.item(), parser);
+                    result = RestOperation.POST.invoke(databaseDelegate, uri, result.item(), parser);
                 } else {
-                    result = delegate(operation, uri, result.item(), parser);
+                    result = operation.invoke(databaseDelegate,  uri, result.item(), parser);
                 }
 
                 if (result.isSuccess()) {
-                    result = delegate(RestOperation.GET, uri, null, parser);
+                    result = RestOperation.GET.invoke(databaseDelegate, uri, null, parser);
                 }
             }
         }
 
         return result;
-    }
-
-    /**
-     * Lets the assigned {@link RestClientDelegate} implementation act upon the
-     * underlying content as requested per operation and Uri.
-     * 
-     * @param operation
-     *            The operation to perform.
-     * @param uri
-     *            The key used to identify the content.
-     * @param item
-     *            The description of the new content.
-     * @return The result description of the requested operation.
-     */
-    private RestResult delegate(RestOperation operation, Uri uri, Object item,
-            PodioParser<?> parser) {
-
-        switch (operation) {
-        case DELETE:
-            return databaseDelegate.delete(uri, parser);
-        case GET:
-            return databaseDelegate.get(uri, parser);
-        case POST:
-            return databaseDelegate.post(uri, item, parser);
-        case PUT:
-            return databaseDelegate.put(uri, item, parser);
-        default:
-        	String message = "Illegal operation: " + operation.name();
-        	throw new IllegalArgumentException(message);
-        }
     }
 
 }

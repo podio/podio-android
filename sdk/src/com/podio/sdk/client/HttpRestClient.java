@@ -25,13 +25,10 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.PodioFilter;
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.internal.request.RestOperation;
 
 /**
  * This class manages the communication between the client application and the
@@ -83,16 +80,11 @@ public class HttpRestClient extends QueuedRestClient {
     		throw new NullPointerException("restRequest cannot be null");
     	}
     	restRequest.validate();
-		
-    	PodioFilter filter = restRequest.getFilter();
 
-		Uri uri = filter.buildUri(scheme, authority);
+		Uri uri = restRequest.getFilter().buildUri(scheme, authority);
 
-		RestOperation operation = restRequest.getOperation();
-		Object item = restRequest.getContent();
-		PodioParser<?> parser = restRequest.getParser();
-
-		return queryNetwork(operation, uri, item, parser);
+		return restRequest.getOperation().invoke(networkDelegate, uri, 
+				restRequest.getContent(), restRequest.getParser());
     }
 
     public void restoreSession(String refreshPath, Session session) {
@@ -104,26 +96,6 @@ public class HttpRestClient extends QueuedRestClient {
                     .build();
             String url = sessionRefreshUri.toString();
             ((HttpClientDelegate) networkDelegate).restoreSession(url, session);
-        }
-    }
-
-    private RestResult queryNetwork(RestOperation operation, Uri uri, Object item,
-            PodioParser<?> parser) {
-
-        switch (operation) {
-        case AUTHORIZE:
-            return networkDelegate.authorize(uri, parser);
-        case DELETE:
-            return networkDelegate.delete(uri, parser);
-        case GET:
-            return networkDelegate.get(uri, parser);
-        case POST:
-            return networkDelegate.post(uri, item, parser);
-        case PUT:
-            return networkDelegate.put(uri, item, parser);
-        default:
-            String message = "Unknown operation: " + operation.name();
-        	throw new IllegalArgumentException(message);
         }
     }
 }
