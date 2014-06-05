@@ -33,21 +33,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.ApplicationReferenceField;
-import com.podio.sdk.domain.field.CalculationField;
-import com.podio.sdk.domain.field.CategoryField;
-import com.podio.sdk.domain.field.ContactField;
-import com.podio.sdk.domain.field.DateField;
-import com.podio.sdk.domain.field.DurationField;
-import com.podio.sdk.domain.field.EmbedField;
 import com.podio.sdk.domain.field.EmptyField;
 import com.podio.sdk.domain.field.Field;
-import com.podio.sdk.domain.field.ImageField;
-import com.podio.sdk.domain.field.LocationField;
-import com.podio.sdk.domain.field.MoneyField;
-import com.podio.sdk.domain.field.NumberField;
-import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.TextField;
 import com.podio.sdk.internal.utils.Utils;
 
 /**
@@ -65,9 +52,11 @@ public class PodioParser<T> {
         @Override
         public Field deserialize(JsonElement element, Type type,
                 JsonDeserializationContext gsonContext) throws JsonParseException {
+        	if (element == null || element.isJsonNull()) {
+        		return null;
+        	}
 
-            JsonObject jsonObject = element != null && !element.isJsonNull() ?
-                    element.getAsJsonObject() : null;
+            JsonObject jsonObject = element.getAsJsonObject();
 
             // Ensure that we always have a "values" array, even if it's empty,
             // as this is needed when creating new items.
@@ -75,52 +64,22 @@ public class PodioParser<T> {
                 jsonObject.add("values", new JsonArray());
             }
 
-            JsonElement fieldType = jsonObject != null && !jsonObject.isJsonNull() ?
-                    jsonObject.get("type") : null;
-
-            String fieldTypeName = fieldType != null && !fieldType.isJsonNull() ?
-                    fieldType.getAsString() : Field.Type.undefined.name();
-
-            Field.Type typeEnum;
-
-            try {
-                typeEnum = Field.Type.valueOf(fieldTypeName);
-            } catch (IllegalArgumentException e) {
-                typeEnum = Field.Type.undefined;
-            }
-
-            switch (typeEnum) {
-            case app:
-                return gsonContext.deserialize(element, ApplicationReferenceField.class);
-            case calculation:
-                return gsonContext.deserialize(element, CalculationField.class);
-            case category:
-                return gsonContext.deserialize(element, CategoryField.class);
-            case contact:
-                return gsonContext.deserialize(element, ContactField.class);
-            case date:
-                return gsonContext.deserialize(element, DateField.class);
-            case duration:
-                return gsonContext.deserialize(element, DurationField.class);
-            case embed:
-                return gsonContext.deserialize(element, EmbedField.class);
-            case image:
-                return gsonContext.deserialize(element, ImageField.class);
-            case location:
-                return gsonContext.deserialize(element, LocationField.class);
-            case money:
-                return gsonContext.deserialize(element, MoneyField.class);
-            case number:
-                return gsonContext.deserialize(element, NumberField.class);
-            case progress:
-                return gsonContext.deserialize(element, ProgressField.class);
-            case text:
-                return gsonContext.deserialize(element, TextField.class);
-            default:
-                JsonObject empty = new JsonObject();
-                empty.addProperty("type", Field.Type.undefined.name());
-                return gsonContext.deserialize(empty, EmptyField.class);
-            }
+            Field.Type typeEnum = Field.Type.undefined;
+            
+            JsonElement fieldType = jsonObject.get("type");
+			if (fieldType != null && !fieldType.isJsonNull()) {
+				try {
+					typeEnum = Field.Type.valueOf(fieldType.getAsString());
+				} catch (IllegalArgumentException e) {
+				}
+			}
+			
+			if (typeEnum == Field.Type.undefined) {
+				//Overwrite the type in the json so we get undefined instead of null
+				jsonObject.addProperty("type", Field.Type.undefined.name());
+			}
+			
+			return gsonContext.deserialize(jsonObject, typeEnum.getFieldClass());
         }
     }
 

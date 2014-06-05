@@ -33,8 +33,30 @@ public abstract class Field implements Pushable {
     }
 
     public static enum Type {
-        app, calculation, category, contact, date, duration, embed, image, location, money, number,
-        progress, text, title, undefined
+        app(ApplicationReferenceField.class), 
+        calculation(CalculationField.class), 
+        category(CategoryField.class), 
+        contact(ContactField.class), 
+        date(DateField.class), 
+        duration(DurationField.class), 
+        embed(EmbedField.class), 
+        image(ImageField.class), 
+        location(LocationField.class), 
+        money(MoneyField.class), 
+        number(NumberField.class),
+        progress(ProgressField.class), 
+        text(TextField.class),
+        undefined(EmptyField.class);
+        
+        private final Class<? extends Field> fieldClass;
+
+		private Type(Class<? extends Field> fieldClass) {
+			this.fieldClass = fieldClass;
+		}
+
+		public Class<? extends Field> getFieldClass() {
+			return fieldClass;
+		}
     }
 
     public final Integer field_id = null;
