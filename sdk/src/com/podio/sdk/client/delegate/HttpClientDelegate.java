@@ -80,7 +80,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult delete(Uri uri, PodioParser<?> parser) {
-    	return request(Method.PUT, uri, null, parser, true);
+    	return request(Method.DELETE, uri, null, parser, true);
     }
 
     @Override
