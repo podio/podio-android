@@ -53,7 +53,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Context context = instrumentation.getTargetContext();
         context.deleteDatabase(DATABASE_NAME);
 
-        itemParser = new PodioParser<MockContentItem>(MockContentItem.class);
+        itemParser = PodioParser.fromClass(MockContentItem.class);
     }
 
     /**
@@ -359,7 +359,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         MockContentItem[] content = { new MockContentItem("test://uri/app/0", "{text:'test 0'}"),
                 new MockContentItem("test://uri/app/1", "{text:'test 1'}") };
 
-        PodioParser<MockContentItem> parser = new PodioParser<MockContentItem>(MockContentItem.class);
+        PodioParser<MockContentItem> parser = PodioParser.fromClass(MockContentItem.class);
         ContentValues[] values = { new ContentValues(), new ContentValues() };
         values[0].put("uri", content[0].uri);
         values[0].put("json", parser.parseToJson(content[0]));
@@ -618,7 +618,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         String fetchedUri = cursor.getString(cursor.getColumnIndex("uri"));
         String fetchedJson = cursor.getString(cursor.getColumnIndex("json"));
 
-        PodioParser<MockContentItem> parser = new PodioParser<MockContentItem>(MockContentItem.class);
+        PodioParser<MockContentItem> parser = PodioParser.fromClass(MockContentItem.class);
         MockContentItem fetchedItem = parser.parseToItem(fetchedJson);
 
         assertEquals(item.uri, fetchedUri);

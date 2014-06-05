@@ -60,7 +60,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Context context = instrumentation.getTargetContext();
         Session session = new Session("accessToken", "refreshToken", 3600L);
 
-        itemParser = new PodioParser<MockContentItem>(MockContentItem.class);
+        itemParser = PodioParser.fromClass(MockContentItem.class);
 
         target = new HttpClientDelegate(context);
         target.restoreSession("http://localhost:8080/auth/token", session);
@@ -472,7 +472,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         assertEquals(true, result.isSuccess());
 
         MockContentItem item = (MockContentItem) result.item();
-        PodioParser<MockContentItem> parser = new PodioParser<MockContentItem>(MockContentItem.class);
+        PodioParser<MockContentItem> parser = PodioParser.fromClass(MockContentItem.class);
         String fetchedJson = parser.parseToJson(item);
         String mockedJson = mockResponse.toString();
         assertEquals(mockedJson, fetchedJson);

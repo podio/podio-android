@@ -40,34 +40,34 @@ public interface PodioProvider {
      *            Defines the data set to change.
      * @param item
      *            Provides the new values to put.
-     * @param itemParser
+     * @param parser
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      * 
      */
-    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> itemParser);
+    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> parser);
 
     /**
      * Performs a DELETE rest operation on the given {@link RestClient}.
      * 
      * @param filter
      *            Defines the data set to delete.
-     * @param itemParser
+     * @param parser
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object deleteRequest(PodioFilter filter, PodioParser<?> itemParser);
+    public Object deleteRequest(PodioFilter filter, PodioParser<?> parser);
 
     /**
      * Performs a GET rest operation on the given {@link RestClient}.
      * 
      * @param filter
      *            Defines the data set to fetch.
-     * @param itemParser
+     * @param parser
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object fetchRequest(PodioFilter filter, PodioParser<?> itemParser);
+    public Object fetchRequest(PodioFilter filter, PodioParser<?> parser);
 
     /**
      * Performs a POST rest operation on the given {@link RestClient}.
@@ -76,10 +76,10 @@ public interface PodioProvider {
      *            Defines the end point where to push.
      * @param item
      *            Provides the new data.
-     * @param itemParser
+     * @param parser
      *            The parser to use when interpreting the result.
      * @return A ticket identifying this request.
      */
-    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> itemParser);
+    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> parser);
 
 }

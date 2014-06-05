@@ -35,10 +35,9 @@ public class OrganizationProvider extends BasicPodioProvider {
     }
 
     public Object getAll() {
-        PodioParser<Organization[]> parser = new PodioParser<Organization[]>(Organization[].class);
         PodioFilter filter = new OrganizationFilter();
 
-        return fetchRequest(filter, parser);
+        return fetchRequest(filter, PodioParser.fromClass(Organization[].class));
     }
 
 }

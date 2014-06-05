@@ -58,7 +58,7 @@ public class PodioParserTest extends AndroidTestCase {
      * </pre>
      */
     public void testParseEmptyDomainObjectToJsonStringDoesNotCrashParser() {
-        PodioParser<Object> parser = new PodioParser<Object>(Object.class);
+        PodioParser<Object> parser = PodioParser.fromClass(Object.class);
 
         assertNull(parser.parseToJson(null));
     }
@@ -82,7 +82,7 @@ public class PodioParserTest extends AndroidTestCase {
      * </pre>
      */
     public void testParseEmptyJsonStringToDomainObjectDoesNotCrashParser() {
-        PodioParser<Object> parser = new PodioParser<Object>(Object.class);
+        PodioParser<Object> parser = PodioParser.fromClass(Object.class);
 
         assertNull(parser.parseToItem(null));
         assertNull(parser.parseToItem(""));
@@ -107,7 +107,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToApplicationReferenceField() {
         String json = "{fields:[{type:'app'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -138,7 +138,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToCalculationField() {
         String json = "{fields:[{type:'calculation'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -169,7 +169,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToCategoryField() {
         String json = "{fields:[{type:'category'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -200,7 +200,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToContactField() {
         String json = "{fields:[{type:'contact'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -231,7 +231,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToDateField() {
         String json = "{fields:[{type:'date'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -262,7 +262,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToDurationField() {
         String json = "{fields:[{type:'duration'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -293,7 +293,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmbedField() {
         String json = "{fields:[{type:'embed'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -324,7 +324,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmptyFieldWhenNullPointerType() {
         String json = "{fields:[{type:null}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -356,7 +356,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmptyFieldWhenUndefinedType() {
         String json = "{fields:[{field_id:1}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -386,7 +386,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmptyFieldWhenUnknownType() {
         String json = "{fields:[{type:'bla'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -417,7 +417,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToImageField() {
         String json = "{fields:[{type:'image'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -448,7 +448,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToLocationField() {
         String json = "{fields:[{type:'location'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -479,7 +479,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToMoneyField() {
         String json = "{fields:[{type:'money'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -510,7 +510,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToNumberField() {
         String json = "{fields:[{type:'number'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -541,7 +541,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToProgressField() {
         String json = "{fields:[{type:'progress'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -572,7 +572,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToTextField() {
         String json = "{fields:[{type:'text'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
@@ -603,7 +603,7 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToTitleField() {
         String json = "{fields:[{type:'title'}]}";
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
+        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);

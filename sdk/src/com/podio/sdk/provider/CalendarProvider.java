@@ -38,8 +38,6 @@ public class CalendarProvider extends BasicPodioProvider {
 	public Object fetchGlobalCalendar(Date from, Date to, int priority) {
 		CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
 				.withPriority(priority);
-		PodioParser<CalendarEvent[]> parser = new PodioParser<CalendarEvent[]>(
-				CalendarEvent[].class);
-		return fetchRequest(filter, parser);
+		return fetchRequest(filter, PodioParser.fromClass(CalendarEvent[].class));
 	}
 }

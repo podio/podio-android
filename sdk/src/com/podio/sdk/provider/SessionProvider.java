@@ -39,25 +39,21 @@ public class SessionProvider extends BasicPodioProvider {
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
             String username, String password) {
 
-        PodioParser<Session> parser = new PodioParser<Session>(Session.class);
-
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withUserCredentials(username, password);
 
-        return authorize(filter, parser);
+        return authorize(filter, PodioParser.fromClass(Session.class));
     }
 
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
             String appId, String appToken) {
 
-        PodioParser<Session> parser = new PodioParser<Session>(Session.class);
-
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withAppCredentials(appId, appToken);
 
-        return authorize(filter, parser);
+        return authorize(filter, PodioParser.fromClass(Session.class));
     }
 
     private Object authorize(PodioFilter filter, PodioParser<Session> itemParser) {

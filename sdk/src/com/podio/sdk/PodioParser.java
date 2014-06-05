@@ -174,6 +174,9 @@ public class PodioParser<T> {
         }
 
         return result;
+    
+    public static <T> PodioParser<T> fromClass(Class<T> classOfItem) {
+    	return new PodioParser<T>(classOfItem);
     }
 
 }

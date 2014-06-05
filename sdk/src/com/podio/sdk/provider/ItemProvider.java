@@ -36,34 +36,27 @@ public class ItemProvider extends BasicPodioProvider {
 
     public Object addItem(long applicationId, Object data) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
-        PodioParser<Item.PushResult> parser = new PodioParser<Item.PushResult>(
-                Item.PushResult.class);
 
-        return pushRequest(filter, data, parser);
+        return pushRequest(filter, data, PodioParser.fromClass(Item.PushResult.class));
     }
 
     public Object fetchItem(long itemId) {
-        PodioParser<Item> parser = new PodioParser<Item>(Item.class);
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
-        return fetchRequest(filter, parser);
+        return fetchRequest(filter, PodioParser.fromClass(Item.class));
     }
 
     public Object fetchItemsForApplication(long applicationId) {
         ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
-        PodioParser<ItemRequest.Result> parser = new PodioParser<ItemRequest.Result>(
-                ItemRequest.Result.class);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
-        return pushRequest(filter, filterRequest, parser);
+        return pushRequest(filter, filterRequest, PodioParser.fromClass(ItemRequest.Result.class));
     }
 
     public Object updateItem(long itemId, Object data) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
-        PodioParser<Item.PushResult> parser = new PodioParser<Item.PushResult>(
-                Item.PushResult.class);
 
-        return changeRequest(filter, data, parser);
+        return changeRequest(filter, data, PodioParser.fromClass(Item.PushResult.class));
     }
 
 }

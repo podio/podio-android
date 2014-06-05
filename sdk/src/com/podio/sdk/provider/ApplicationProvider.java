@@ -29,68 +29,56 @@ import com.podio.sdk.filter.ApplicationFilter;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
-    public ApplicationProvider(RestClient client) {
-        super(client);
-    }
+	public ApplicationProvider(RestClient client) {
+		super(client);
+	}
 
-    public Object fetchApplication(long applicationId) {
-        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
+	public Object fetchApplication(long applicationId) {
+		ApplicationFilter filter = new ApplicationFilter() //
+				.withApplicationId(applicationId) //
+				.withType("full");
 
-        ApplicationFilter filter = new ApplicationFilter() //
-                .withApplicationId(applicationId) //
-                .withType("full");
+		return fetchRequest(filter, PodioParser.fromClass(Application.class));
+	}
 
-        return fetchRequest(filter, parser);
-    }
+	public Object fetchApplicationShort(long applicationId) {
+		ApplicationFilter filter = new ApplicationFilter() //
+				.withApplicationId(applicationId) //
+				.withType("short");
 
-    public Object fetchApplicationShort(long applicationId) {
-        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
+		return fetchRequest(filter, PodioParser.fromClass(Application.class));
+	}
 
-        ApplicationFilter filter = new ApplicationFilter() //
-                .withApplicationId(applicationId) //
-                .withType("short");
+	public Object fetchApplicationMini(long applicationId) {
+		ApplicationFilter filter = new ApplicationFilter() //
+				.withApplicationId(applicationId) //
+				.withType("mini");
 
-        return fetchRequest(filter, parser);
-    }
+		return fetchRequest(filter, PodioParser.fromClass(Application.class));
+	}
 
-    public Object fetchApplicationMini(long applicationId) {
-        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
+	public Object fetchApplicationMicro(long applicationId) {
+		ApplicationFilter filter = new ApplicationFilter() //
+				.withApplicationId(applicationId) //
+				.withType("micro");
 
-        ApplicationFilter filter = new ApplicationFilter() //
-                .withApplicationId(applicationId) //
-                .withType("mini");
+		return fetchRequest(filter, PodioParser.fromClass(Application.class));
+	}
 
-        return fetchRequest(filter, parser);
-    }
+	public Object fetchApplicationsForSpace(long spaceId) {
+		ApplicationFilter filter = new ApplicationFilter() //
+				.withSpaceId(spaceId) //
+				.withInactivesIncluded(false);
 
-    public Object fetchApplicationMicro(long applicationId) {
-        PodioParser<Application> parser = new PodioParser<Application>(Application.class);
+		return fetchRequest(filter, PodioParser.fromClass(Application[].class));
+	}
 
-        ApplicationFilter filter = new ApplicationFilter() //
-                .withApplicationId(applicationId) //
-                .withType("micro");
+	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
+		ApplicationFilter filter = new ApplicationFilter() //
+				.withSpaceId(spaceId) //
+				.withInactivesIncluded(true);
 
-        return fetchRequest(filter, parser);
-    }
-
-    public Object fetchApplicationsForSpace(long spaceId) {
-        PodioParser<Application[]> parser = new PodioParser<Application[]>(Application[].class);
-
-        ApplicationFilter filter = new ApplicationFilter() //
-                .withSpaceId(spaceId) //
-                .withInactivesIncluded(false);
-
-        return fetchRequest(filter, parser);
-    }
-
-    public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
-        PodioParser<Application[]> parser = new PodioParser<Application[]>(Application[].class);
-
-        ApplicationFilter filter = new ApplicationFilter() //
-                .withSpaceId(spaceId) //
-                .withInactivesIncluded(true);
-
-        return fetchRequest(filter, parser);
-    }
+		return fetchRequest(filter, PodioParser.fromClass(Application[].class));
+	}
 
 }
