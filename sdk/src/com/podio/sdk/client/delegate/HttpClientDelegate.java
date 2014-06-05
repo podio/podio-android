@@ -156,19 +156,16 @@ public class HttpClientDelegate implements RestClientDelegate {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
+    	if (parser == null) {
+    		throw new NullPointerException("parser cannot be null");
+    	}
     	
     	boolean refreshedSession = checkSession();
 
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + session.accessToken);
         
-        String body = null;
-        if (item != null) {
-        	if (parser == null) {
-        		throw new NullPointerException("parser cannot be null");
-        	}
-        	body = parser.parseToJson(item);
-        } 
+        String body = item != null ? body = parser.parseToJson(item) : null;
 
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new PodioRequest(method, uri.toString(), body, headers, future);
