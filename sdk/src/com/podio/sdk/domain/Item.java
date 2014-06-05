@@ -46,7 +46,7 @@ public final class Item implements Pushable {
 
         private void addData(int fieldId, Object value) {
             if (fieldId > 0 && value != null) {
-                String idString = Integer.toString(fieldId, 10);
+                String idString = Integer.toString(fieldId);
                 fields.put(idString, value);
             }
         }
@@ -98,13 +98,12 @@ public final class Item implements Pushable {
      * @return A new, empty item.
      */
     public static Item newInstance(Application application) {
-        Item item = null;
-
-        if (application != null) {
-            item = new Item(null);
-            item.fields.addAll(application.fields);
-        }
-
+    	if (application == null) {
+    		throw new NullPointerException("application cannot be null");
+    	}
+    	
+        Item item = new Item(null);
+        item.fields.addAll(application.fields);
         return item;
     }
 
@@ -172,17 +171,19 @@ public final class Item implements Pushable {
      * @return The field domain object if found, or null.
      */
     private Field findField(String externalId) {
-        Field result = null;
+    	if (fields == null) {
+    		throw new IllegalStateException("fields has not been loaded");
+    	}
+    	if (Utils.isEmpty(externalId)) {
+    		throw new IllegalArgumentException("externalId cannot be empty");
+    	}
 
-        if (Utils.notEmpty(externalId) && fields != null) {
-            for (Field field : fields) {
-                if (externalId.equals(field.external_id)) {
-                    result = field;
-                    break;
-                }
+        for (Field field : fields) {
+            if (field.external_id.equals(externalId)) {
+                return field;
             }
         }
-
-        return result;
+        
+        return null;
     }
 }

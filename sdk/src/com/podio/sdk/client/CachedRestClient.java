@@ -32,7 +32,6 @@ import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.utils.Utils;
 
 /**
  * A RestClient that, when requesting data, returns content from a local
@@ -77,12 +76,12 @@ public class CachedRestClient extends HttpRestClient {
         super(context, authority, networkDelegate, queueCapacity);
 
         if (cacheDelegate == null) {
-            throw new IllegalArgumentException("The RestClientDelegates mustn't be null");
-        } else {
-            this.contentScheme = "content";
-            this.delegatedRequests = new ArrayList<RestRequest>();
-            this.databaseDelegate = cacheDelegate;
+            throw new NullPointerException("The cacheDelegate must not be null");
         }
+            
+        this.contentScheme = "content";
+        this.delegatedRequests = new ArrayList<RestRequest>();
+        this.databaseDelegate = cacheDelegate;
     }
 
     /**
@@ -101,48 +100,52 @@ public class CachedRestClient extends HttpRestClient {
      */
     @Override
     protected RestResult handleRequest(RestRequest restRequest) {
-        RestResult result = null;
+    	if (restRequest == null) {
+    		throw new NullPointerException("restRequest cannot be null");
+    	}
+    	restRequest.validate();
+    	
+        RestResult result;
 
-        if (restRequest != null) {
-            RestOperation operation = restRequest.getOperation();
-            PodioFilter filter = restRequest.getFilter();
-            PodioParser<?> itemParser = restRequest.getItemParser();
-            Object item = restRequest.getContent();
+        RestOperation operation = restRequest.getOperation();
+        PodioFilter filter = restRequest.getFilter();
+        PodioParser<?> parser = restRequest.getParser();
+        Object item = restRequest.getContent();
 
-            Uri uri = filter.buildUri(contentScheme, authority);
+        Uri uri = filter.buildUri(contentScheme, authority);
 
-            if (Utils.notEmpty(uri)) {
-                if (operation != RestOperation.DELETE //
-                        && operation != RestOperation.PUT //
-                        && operation != RestOperation.AUTHORIZE //
-                        && !delegatedRequests.contains(restRequest)) {
+        if (operation != RestOperation.DELETE //
+                && operation != RestOperation.PUT //
+                && operation != RestOperation.AUTHORIZE //
+                && !delegatedRequests.contains(restRequest)) {
 
-                    // Query the locally cached data first and then queue the
-                    // request again for the super implementation to act upon.
+            // Query the locally cached data first and then queue the
+            // request again for the super implementation to act upon.
 
-                    result = delegate(operation, uri, item, itemParser);
-                    delegatedRequests.add(restRequest);
-                    super.enqueue(restRequest);
+            result = delegate(operation, uri, item, parser);
+            assert result != null;
+            
+            delegatedRequests.add(restRequest);
+            super.enqueue(restRequest);
+        } else {
+            delegatedRequests.remove(restRequest);
+            result = super.handleRequest(restRequest);
+            assert result != null;
+
+            if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
+                if (operation == RestOperation.GET) {
+                    result = delegate(RestOperation.POST, uri, result.item(), parser);
                 } else {
-                    delegatedRequests.remove(restRequest);
-                    result = super.handleRequest(restRequest);
+                    result = delegate(operation, uri, result.item(), parser);
+                }
 
-                    if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
-                        if (operation == RestOperation.GET) {
-                            result = delegate(RestOperation.POST, uri, result.item(), itemParser);
-                        } else {
-                            result = delegate(operation, uri, result.item(), itemParser);
-                        }
-
-                        if (result.isSuccess()) {
-                            result = delegate(RestOperation.GET, uri, null, itemParser);
-                        }
-                    }
+                if (result.isSuccess()) {
+                    result = delegate(RestOperation.GET, uri, null, parser);
                 }
             }
         }
 
-        return result != null ? result : new RestResult(false, null, null);
+        return result;
     }
 
     /**
@@ -158,20 +161,20 @@ public class CachedRestClient extends HttpRestClient {
      * @return The result description of the requested operation.
      */
     private RestResult delegate(RestOperation operation, Uri uri, Object item,
-            PodioParser<?> itemParser) {
+            PodioParser<?> parser) {
 
         switch (operation) {
         case DELETE:
-            return databaseDelegate.delete(uri, itemParser);
+            return databaseDelegate.delete(uri, parser);
         case GET:
-            return databaseDelegate.get(uri, itemParser);
+            return databaseDelegate.get(uri, parser);
         case POST:
-            return databaseDelegate.post(uri, item, itemParser);
+            return databaseDelegate.post(uri, item, parser);
         case PUT:
-            return databaseDelegate.put(uri, item, itemParser);
+            return databaseDelegate.put(uri, item, parser);
         default:
-            String message = "Unknown operation: " + operation.name();
-            return new RestResult(false, message, null);
+        	String message = "Illegal operation: " + operation.name();
+        	throw new IllegalArgumentException(message);
         }
     }
 

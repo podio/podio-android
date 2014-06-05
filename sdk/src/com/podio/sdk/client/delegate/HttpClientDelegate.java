@@ -57,131 +57,122 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
-        String jsonString = null;
-        String url = null;
+    public RestResult authorize(Uri uri, PodioParser<?> parser) {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
 
-        if (Utils.notEmpty(uri)) {
-            url = parseUrl(uri);
-            Map<String, String> body = parseBody(uri);
+        String url = removeQuery(uri);
+        Map<String, String> body = queryToBody(uri);
 
-            RequestFuture<String> future = RequestFuture.newFuture();
-            StringRequest request = new AuthRequest(url, body, future);
-            requestQueue.add(request);
-            jsonString = getBlockingResponse(future);
-            session = new Session(jsonString);
-        }
+        RequestFuture<String> future = RequestFuture.newFuture();
+        StringRequest request = new AuthRequest(url, body, future);
+        requestQueue.add(request);
+        String jsonString = getBlockingResponse(future);
+        
+        session = new Session(jsonString);
 
         boolean isSuccess = Utils.notEmpty(jsonString);
         refreshUrl = isSuccess ? url : null;
-        RestResult result = new RestResult(isSuccess, session, null, null);
-
-        return result;
+        
+        return new RestResult(isSuccess, session, null, null);
     }
 
     @Override
-    public RestResult delete(Uri uri, PodioParser<?> itemParser) {
-        Session resultSession = tryRefreshSession();
+    public RestResult delete(Uri uri, PodioParser<?> parser) {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	
         String outputJson = request(Method.DELETE, uri, null);
 
-        if (outputJson == null && lastRequestError != null
-                && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 400) {
-
+        if (wasTokenExpiredError()) {
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
+        	refreshSession();
 
-            resultSession = tryRefreshSession();
             outputJson = request(Method.DELETE, uri, null);
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        RestResult result = new RestResult(isSuccess, resultSession, null, null);
-
-        return result;
+        
+        return new RestResult(isSuccess, session, null, null);
     }
 
     @Override
-    public RestResult get(Uri uri, PodioParser<?> itemParser) {
-    	if (itemParser == null) {
-    		throw new NullPointerException("itemParser cannot be null");
+    public RestResult get(Uri uri, PodioParser<?> parser) {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	if (parser == null) {
+    		throw new NullPointerException("parser cannot be null");
     	}
     	
-    	Session resultSession = tryRefreshSession();
         String outputJson = request(Method.GET, uri, null);
 
-        if (outputJson == null && lastRequestError != null
-                && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 400) {
-
+        if (wasTokenExpiredError()) {
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
-
-            resultSession = tryRefreshSession();
+        	refreshSession();
+        	
             outputJson = request(Method.GET, uri, null);
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object item = itemParser.parseToItem(outputJson);
-        RestResult result = new RestResult(isSuccess, resultSession, null, item);
-
-        return result;
+        Object item = parser.parseToItem(outputJson);
+        
+        return new RestResult(isSuccess, session, null, item);
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
-    	if (itemParser == null) {
-    		throw new NullPointerException("itemParser cannot be null");
+    public RestResult post(Uri uri, Object item, PodioParser<?> parser) {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
     	}
-    	
-    	Session resultSession = tryRefreshSession();
-        String inputJson = itemParser.parseToJson(item);
+    	if (parser == null) {
+    		throw new NullPointerException("parser cannot be null");
+    	}
+        String inputJson = parser.parseToJson(item);
         String outputJson = request(Method.POST, uri, inputJson);
 
-        if (outputJson == null && lastRequestError != null
-                && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 400) {
-
+        if (wasTokenExpiredError()) {
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
+        	refreshSession();
 
-            resultSession = tryRefreshSession();
             outputJson = request(Method.POST, uri, inputJson);
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = itemParser.parseToItem(outputJson);
-        RestResult result = new RestResult(isSuccess, resultSession, null, content);
-
-        return result;
+        Object content = parser.parseToItem(outputJson);
+        
+        return new RestResult(isSuccess, session, null, content);
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
-    	if (itemParser == null) {
-    		throw new NullPointerException("itemParser cannot be null");
+    public RestResult put(Uri uri, Object item, PodioParser<?> parser) {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	if (parser == null) {
+    		throw new NullPointerException("parser cannot be null");
     	}
     	
-    	Session resultSession = tryRefreshSession();
-        String inputJson = itemParser.parseToJson(item);
+        String inputJson = parser.parseToJson(item);
         String outputJson = request(Method.PUT, uri, inputJson);
 
-        if (outputJson == null && lastRequestError != null
-                && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 400) {
-
+        if (wasTokenExpiredError()) {
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
+        	refreshSession();
 
-            resultSession = tryRefreshSession();
             outputJson = request(Method.PUT, uri, inputJson);
         }
 
         boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = itemParser.parseToItem(outputJson);
-        RestResult result = new RestResult(isSuccess, resultSession, null, content);
-
-        return result;
+        Object content = parser.parseToItem(outputJson);
+        
+        return new RestResult(isSuccess, session, null, content);
     }
 
     /**
@@ -197,95 +188,95 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     private String getBlockingResponse(RequestFuture<String> future) {
-        String response;
+    	//FIXME: We need to bubble up these errors, not just swallow them
         lastRequestError = null;
 
         try {
-            response = future.get(10, TimeUnit.SECONDS);
+            return future.get(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            response = null;
+            return null;
         } catch (ExecutionException e) {
             lastRequestError = (VolleyError) e.getCause();
             e.printStackTrace();
-            response = null;
+            return null;
         } catch (TimeoutException e) {
             e.printStackTrace();
-            response = null;
+            return null;
         }
-
-        return response;
     }
 
-    private String parseUrl(Uri uri) {
-        String url = "";
+    private String removeQuery(Uri uri) {
+        String url = uri.toString();
 
-        if (Utils.notEmpty(uri)) {
-            url = uri.toString();
-
-            int queryStart = url.indexOf("?");
-            if (queryStart > 0) {
-                url = url.substring(0, queryStart);
-            }
+        int queryStart = url.indexOf("?");
+        if (queryStart > 0) {
+            url = url.substring(0, queryStart);
         }
 
         return url;
     }
 
-    private Map<String, String> parseBody(Uri uri) {
+    private Map<String, String> queryToBody(Uri uri) {
         Map<String, String> params = new HashMap<String, String>();
 
-        if (Utils.notEmpty(uri)) {
-            Set<String> keys = uri.getQueryParameterNames();
-
-            if (Utils.notEmpty(keys)) {
-                for (String key : keys) {
-                    String value = uri.getQueryParameter(key);
-                    params.put(key, value);
-                }
-            }
+        Set<String> keys = uri.getQueryParameterNames();
+        for (String key : keys) {
+            String value = uri.getQueryParameter(key);
+            params.put(key, value);
         }
 
         return params;
     }
 
     private String request(int method, Uri uri, String body) {
-        String result = null;
+    	checkSession();
 
-        if (Utils.notEmpty(uri) && session != null && session.isAuthorized()) {
-            String url = uri.toString();
-            String accessToken = session.accessToken;
-            Map<String, String> headers = new HashMap<String, String>();
-            headers.put("Authorization", "Bearer " + accessToken);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Authorization", "Bearer " + session.accessToken);
 
-            RequestFuture<String> future = RequestFuture.newFuture();
-            StringRequest request = new PodioRequest(method, url, body, headers, future);
+        RequestFuture<String> future = RequestFuture.newFuture();
+        StringRequest request = new PodioRequest(method, uri.toString(), body, headers, future);
 
-            requestQueue.add(request);
-            result = getBlockingResponse(future);
-        }
+        requestQueue.add(request);
+        
+        return getBlockingResponse(future);
+    }
+    
+    private boolean wasTokenExpiredError() {
+    	//FIXME: Should also check that:
+    	//error="unauthorized"
+    	//error_description=expired_token
+    	
+		return lastRequestError != null
+				&& lastRequestError.networkResponse != null
+				&& lastRequestError.networkResponse.statusCode == 401;
+    }
+    
+    private void refreshSession() {
+    	Map<String, String> refreshParams = new HashMap<String, String>();
+        refreshParams.put("grant_type", "refresh_token");
+        refreshParams.put("refresh_token", session.refreshToken);
 
-        return result;
+        RequestFuture<String> future = RequestFuture.newFuture();
+        StringRequest request = new RefreshRequest(refreshUrl, refreshParams, future);
+
+        requestQueue.add(request);
+        String resultJson = getBlockingResponse(future);
+
+        session = new Session(resultJson);
     }
 
-    private Session tryRefreshSession() {
-        Session copyOfNewSession = null;
+    private void checkSession() {
+    	if (session == null) {
+    		throw new IllegalStateException("No session is active");
+    	}
+    	if (!session.isAuthorized()) {
+    		throw new IllegalStateException("Session is not authorized");
+    	}
 
-        if (session != null && session.shouldRefreshTokens()) {
-            Map<String, String> refreshParams = new HashMap<String, String>();
-            refreshParams.put("grant_type", "refresh_token");
-            refreshParams.put("refresh_token", session.refreshToken);
-
-            RequestFuture<String> future = RequestFuture.newFuture();
-            StringRequest request = new RefreshRequest(refreshUrl, refreshParams, future);
-
-            requestQueue.add(request);
-            String resultJson = getBlockingResponse(future);
-
-            session = new Session(resultJson);
-            copyOfNewSession = new Session(resultJson);
+        if (session.shouldRefreshTokens()) {
+            refreshSession();
         }
-
-        return copyOfNewSession;
     }
 }

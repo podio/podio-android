@@ -30,11 +30,11 @@ import com.podio.sdk.client.RestResult;
 
 public class MockRestClientDelegate implements RestClientDelegate {
 
-    private RestResult authorizeResult = null;
-    private RestResult deleteResult = null;
-    private RestResult getResult = null;
-    private RestResult postResult = null;
-    private RestResult putResult = null;
+    private RestResult authorizeResult = RestResult.success();
+    private RestResult deleteResult = RestResult.success();
+    private RestResult getResult = RestResult.success();
+    private RestResult postResult = RestResult.success();
+    private RestResult putResult = RestResult.success();
 
     private Uri authorizeUri = null;
     private Uri deleteUri = null;

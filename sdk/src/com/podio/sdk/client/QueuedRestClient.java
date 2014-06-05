@@ -68,24 +68,23 @@ public abstract class QueuedRestClient implements RestClient {
                 try {
                     RestRequest request = queue.take();
 
-                    if (request != null) {
-                        state = State.PROCESSING;
+                    state = State.PROCESSING;
 
-                        // Let the extending class define how to process the
-                        // request and analyze the result.
-                        Object ticket = request.getTicket();
-                        ResultListener resultListener = request.getResultListener();
-                        RestResult result = handleRequest(request);
+                    // Let the extending class define how to process the
+                    // request and analyze the result.
+                    Object ticket = request.getTicket();
+                    ResultListener resultListener = request.getResultListener();
+                    RestResult result = handleRequest(request);
+                    assert result != null;
 
-                        // The user is no longer authorized. Remove any pending
-                        // requests before proceeding.
-                        Session session = result != null ? result.session() : null;
-                        if (session != null && !session.isAuthorized()) {
-                            queue.clear();
-                        }
-
-                        reportResult(ticket, resultListener, result);
+                    // The user is no longer authorized. Remove any pending
+                    // requests before proceeding.
+                    Session session = result.session();
+                    if (session != null && !session.isAuthorized()) {
+                        queue.clear();
                     }
+
+                    reportResult(ticket, resultListener, result);
                 } catch (InterruptedException e) {
                     // For some reason the request queue was interrupted while
                     // waiting for a request to become available.
@@ -166,8 +165,12 @@ public abstract class QueuedRestClient implements RestClient {
      */
     @Override
     public boolean enqueue(RestRequest request) {
-        boolean isPushed = request != null && queue.offer(request);
-        return isPushed;
+    	if (request == null) {
+    		throw new NullPointerException("request cannot be null");
+    	}
+    	request.validate();
+    	
+        return queue.offer(request);
     }
 
     /**
@@ -193,29 +196,26 @@ public abstract class QueuedRestClient implements RestClient {
      */
     protected void reportResult(final Object ticket, final ResultListener resultListener,
             final RestResult result) {
+    	if (resultListener == null) {
+    		return;
+    	}
 
-        if (resultListener != null) {
-            // Make sure to post to the caller thread.
-            callerHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (result == null) {
-                        resultListener.onFailure(ticket, null);
-                    } else {
-                        Session session = result.session();
-                        if (session != null) {
-                            resultListener.onSessionChange(ticket, session);
-                        }
+		// Make sure to post to the caller thread.
+		callerHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Session session = result.session();
+				if (session != null) {
+					resultListener.onSessionChange(ticket, session);
+				}
 
-                        if (result.isSuccess()) {
-                            resultListener.onSuccess(ticket, result.item());
-                        } else {
-                            resultListener.onFailure(ticket, result.message());
-                        }
-                    }
-                }
-            });
-        }
+				if (result.isSuccess()) {
+					resultListener.onSuccess(ticket, result.item());
+				} else {
+					resultListener.onFailure(ticket, result.message());
+				}
+			}
+		});
     }
 
     /**

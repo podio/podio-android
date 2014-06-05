@@ -52,48 +52,52 @@ final class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     private void clearDatabase(SQLiteDatabase database) {
-        if (database != null) {
-            Cursor cursor = null;
+    	if (database == null) {
+    		throw new NullPointerException("database cannot be null");
+    	}
+    	
+        Cursor cursor = null;
 
-            try {
-                // Drop all tables, views and triggers in the database.
-                database.beginTransaction();
-                String query = "SELECT type, name FROM sqlite_master WHERE type IN (?, ?, ?)";
-                String[] arguments = { "table", "view", "trigger" };
-                cursor = database.rawQuery(query, arguments);
+        database.beginTransaction();
+        try {
+            // Drop all tables, views and triggers in the database.
+            String query = "SELECT type, name FROM sqlite_master WHERE type IN (?, ?, ?)";
+            String[] arguments = { "table", "view", "trigger" };
+            cursor = database.rawQuery(query, arguments);
 
-                if (cursor != null && cursor.moveToFirst()) {
-                    int typeColumn = cursor.getColumnIndex("type");
-                    int nameColumn = cursor.getColumnIndex("name");
+            if (cursor != null && cursor.moveToFirst()) {
+                int typeColumn = cursor.getColumnIndex("type");
+                int nameColumn = cursor.getColumnIndex("name");
 
-                    do {
-                        String type = cursor.getString(typeColumn);
-                        String name = cursor.getString(nameColumn);
-                        database.execSQL("DROP " + type + " IF EXISTS " + name);
-                    } while (cursor.moveToNext());
-                }
-
-                database.setTransactionSuccessful();
-            } finally {
-                if (cursor != null && !cursor.isClosed()) {
-                    cursor.close();
-                }
-                database.endTransaction();
+                do {
+                    String type = cursor.getString(typeColumn);
+                    String name = cursor.getString(nameColumn);
+                    database.execSQL("DROP " + type + " IF EXISTS " + name);
+                } while (cursor.moveToNext());
             }
+
+            database.setTransactionSuccessful();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+            database.endTransaction();
         }
     }
 
     private void setupDatabase(SQLiteDatabase database) {
-        if (database != null) {
-            try {
-                database.beginTransaction();
-                database.execSQL("CREATE TABLE content (" + //
-                        " uri TEXT PRIMARY KEY," + //
-                        " json TEXT NOT NULL DEFAULT (''))");
-                database.setTransactionSuccessful();
-            } finally {
-                database.endTransaction();
-            }
+    	if (database == null) {
+    		throw new NullPointerException("database cannot be null");
+    	}
+
+        database.beginTransaction();
+        try {
+            database.execSQL("CREATE TABLE content (" + //
+                    " uri TEXT PRIMARY KEY," + //
+                    " json TEXT NOT NULL DEFAULT (''))");
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
         }
     }
 

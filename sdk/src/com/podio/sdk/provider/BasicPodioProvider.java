@@ -58,71 +58,58 @@ public class BasicPodioProvider implements PodioProvider {
     };
 
     private PodioProviderListener providerListener;
-    protected RestClient client;
+    protected final RestClient client;
 
     public BasicPodioProvider(RestClient client) {
+    	if (client == null) {
+    		throw new NullPointerException("client cannot be null");
+    	}
         this.client = client;
     }
 
     @Override
-    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> itemParser) {
-        Object ticket = null;
+    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> parser) {
+        RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item, parser);
 
-        if (client != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item, itemParser);
-
-            if (client.enqueue(restRequest)) {
-                ticket = restRequest.getTicket();
-            }
+        if (client.enqueue(restRequest)) {
+            return restRequest.getTicket();
+        } else {
+        	return null;
         }
-
-        return ticket;
     }
 
     @Override
-    public Object deleteRequest(PodioFilter filter, PodioParser<?> itemParser) {
-        Object ticket = null;
+    public Object deleteRequest(PodioFilter filter, PodioParser<?> parser) {
+        RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter, null,
+                parser);
 
-        if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter, null,
-                    itemParser);
-
-            if (client.enqueue(restRequest)) {
-                ticket = restRequest.getTicket();
-            }
+        if (client.enqueue(restRequest)) {
+            return restRequest.getTicket();
+        } else {
+        	return null;
         }
-
-        return ticket;
     }
 
     @Override
-    public Object fetchRequest(PodioFilter filter, PodioParser<?> itemParser) {
-        Object ticket = null;
+    public Object fetchRequest(PodioFilter filter, PodioParser<?> parser) {
+        RestRequest restRequest = buildRestRequest(RestOperation.GET, filter, null, parser);
 
-        if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.GET, filter, null, itemParser);
-
-            if (client.enqueue(restRequest)) {
-                ticket = restRequest.getTicket();
-            }
+        if (client.enqueue(restRequest)) {
+            return restRequest.getTicket();
+        } else {
+        	return null;
         }
-
-        return ticket;
     }
 
     @Override
-    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> itemParser) {
-        Object ticket = null;
+    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> parser) {
+        RestRequest restRequest = buildRestRequest(RestOperation.POST, filter, item, parser);
 
-        if (client != null && filter != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.POST, filter, item, itemParser);
-
-            if (client.enqueue(restRequest)) {
-                ticket = restRequest.getTicket();
-            }
+        if (client.enqueue(restRequest)) {
+            return restRequest.getTicket();
+        } else {
+        	return null;
         }
-
-        return ticket;
     }
 
     /**
@@ -139,16 +126,14 @@ public class BasicPodioProvider implements PodioProvider {
     }
 
     protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter,
-            Object content, PodioParser<?> itemParser) {
+            Object content, PodioParser<?> parser) {
 
-        RestRequest request = new RestRequest() //
+        return new RestRequest() //
                 .setContent(content) //
                 .setFilter(filter) //
-                .setItemParser(itemParser) //
+                .setParser(parser) //
                 .setOperation(operation) //
                 .setResultListener(resultListener) //
                 .setTicket(filter);
-
-        return request;
     }
 }

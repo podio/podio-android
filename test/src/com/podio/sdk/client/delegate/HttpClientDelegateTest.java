@@ -108,9 +108,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeHandlesEmptyUriCorrectly() {
-        RestResult result = target.authorize(Uri.EMPTY, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {    	
+    		target.authorize(Uri.EMPTY, itemParser);
+			fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -128,9 +130,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeHandlesNullUriCorrectly() {
-        RestResult result = target.authorize(null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {    	
+    		target.authorize(null, itemParser);
+    		fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -239,9 +243,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesEmptyUriCorrectly() {
-        RestResult result = target.delete(Uri.EMPTY, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {
+    		target.delete(Uri.EMPTY, itemParser);
+    		fail("Should have thrown exception");
+    	} catch (IllegalArgumentException e) {
+    	}
     }
 
     /**
@@ -259,9 +265,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesNullUriCorrectly() {
-        RestResult result = target.delete(null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {    	
+    		target.delete(null, itemParser);
+    		fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -352,7 +360,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     public void testGetDoesThrowExceptionOnNullPointerParser() {
         try {
             target.get(Uri.parse("http://localhost:8080"), null);
-            fail();
+            fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
     }
@@ -372,9 +380,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesEmptyUriCorrectly() {
-        RestResult result = target.get(Uri.EMPTY, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+		try {
+			target.get(Uri.EMPTY, itemParser);
+			fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -392,9 +402,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesNullUriCorrectly() {
-        RestResult result = target.get(null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {    	
+	        target.get(null, itemParser);
+			fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -570,7 +582,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     public void testPostDoesThrowExceptionOnNullPointerParser() {
         try {
             target.post(Uri.parse("http://localhost:8080"), new Object(), null);
-            fail();
+            fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
     }
@@ -590,9 +602,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesEmptyUriCorrectly() {
-        RestResult result = target.post(Uri.EMPTY, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+		try {
+			target.post(Uri.EMPTY, null, itemParser);
+			fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -610,9 +624,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesNullUriCorrectly() {
-        RestResult result = target.post(null, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {    	
+	        target.post(null, null, itemParser);
+			fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
     }
 
     /**
@@ -702,7 +718,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     public void testPutDoesThrowExceptionOnNullPointerParser() {
         try {
             target.put(Uri.parse("http://localhost:8080"), new Object(), null);
-            fail();
+            fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
     }
@@ -722,9 +738,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesEmptyUriCorrectly() {
-        RestResult result = target.put(Uri.EMPTY, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        try {
+        	target.put(Uri.EMPTY, null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -742,9 +760,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesNullUriCorrectly() {
-        RestResult result = target.put(null, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+    	try {    	
+    		target.put(null, null, itemParser);
+    		fail("Should have thrown exception");
+    	} catch (IllegalArgumentException e) {
+    	}
     }
 
     /**

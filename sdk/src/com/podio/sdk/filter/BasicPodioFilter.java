@@ -44,30 +44,35 @@ public class BasicPodioFilter implements PodioFilter {
 
     @Override
     public PodioFilter addQueryParameter(String key, String value) {
-        if (Utils.notEmpty(key) && value != null) {
-            uriBuilder.appendQueryParameter(key, value);
-        }
+    	if (Utils.isEmpty(key)) {
+    		throw new IllegalArgumentException("key cannot be empty");
+    	}
+    	
+        uriBuilder.appendQueryParameter(key, value);
 
         return this;
     }
 
     @Override
     public PodioFilter addPathSegment(String segment) {
-        if (Utils.notEmpty(segment)) {
-            uriBuilder.appendPath(segment);
+        if (Utils.isEmpty(segment)) {
+        	throw new IllegalArgumentException("segment cannot be empty");
         }
+        
+        uriBuilder.appendPath(segment);
 
         return this;
     }
 
     @Override
     public Uri buildUri(String scheme, String authority) {
-        Uri uri = null;
+    	if (Utils.isEmpty(scheme)) {
+    		throw new IllegalArgumentException("scheme cannot be empty");
+    	}
+    	if (Utils.isEmpty(authority)) {
+    		throw new IllegalArgumentException("authority cannot be empty");
+    	}
 
-        if (Utils.notEmpty(scheme) && Utils.notEmpty(authority)) {
-            uri = uriBuilder.scheme(scheme).authority(authority).build();
-        }
-
-        return uri;
+        return uriBuilder.scheme(scheme).authority(authority).build();
     }
 }

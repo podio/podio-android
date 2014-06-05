@@ -27,7 +27,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
@@ -137,9 +136,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeRequestTriggersOnlyNetworkDelegate() {
-        targetNetworkDelegate.mock_setMockAuthorizeResult(new RestResult(true, null, null));
-        targetDatabaseDelegate.mock_setMockAuthorizeResult(new RestResult(true, null, null));
-
         RestRequest request = buildRestRequest(RestOperation.AUTHORIZE);
         targetRestClient.enqueue(request);
 
@@ -169,15 +165,15 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         // Verify exception for network delegate.
         try {
             new CachedRestClient(null, null, null, new MockRestClientDelegate(), 0);
-            fail();
-        } catch (IllegalArgumentException e) {
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
         }
 
         // Verify exception for cache delegate.
         try {
             new CachedRestClient(null, null, new MockRestClientDelegate(), null, 0);
-            fail();
-        } catch (IllegalArgumentException e) {
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
         }
     }
 
@@ -208,7 +204,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
         TestUtils.blockThread();
 
-        assertNull(targetDatabaseDelegate.mock_getDeleteUri());
+        assertEquals(targetDatabaseDelegate.mock_getAuthorizeCallCount(), 0);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getDeleteUri());
     }
 
@@ -233,10 +229,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteRequestTriggersOnlyNetworkDelegate() {
-        targetNetworkDelegate.mock_setMockDeleteResult(new RestResult(true, null, null));
-        targetDatabaseDelegate.mock_setMockDeleteResult(new RestResult(true, null, null));
-        targetDatabaseDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
-
         RestRequest request = buildRestRequest(RestOperation.DELETE);
         targetRestClient.enqueue(request);
 
@@ -299,10 +291,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetRequestTriggersBothClientDelegates() {
-        targetNetworkDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
-        targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, new Object()));
-        targetDatabaseDelegate.mock_setMockGetResult(new RestResult(true, null, new Object()));
-
         expectedReportCount = 4;
 
         RestRequest request = buildRestRequest(RestOperation.GET);
@@ -367,9 +355,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostRequestTriggersBothClientDelegates() {
-        targetNetworkDelegate.mock_setMockPostResult(new RestResult(true, null, null));
-        targetDatabaseDelegate.mock_setMockPostResult(new RestResult(true, null, null));
-
         RestRequest request = buildRestRequest(RestOperation.POST);
         targetRestClient.enqueue(request);
 
@@ -431,9 +416,6 @@ public class CachedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutRequestTriggersOnlyNetworkDelegate() {
-        targetNetworkDelegate.mock_setMockPutResult(new RestResult(true, null, null));
-        targetDatabaseDelegate.mock_setMockPutResult(new RestResult(true, null, null));
-
         RestRequest request = buildRestRequest(RestOperation.PUT);
         targetRestClient.enqueue(request);
 
@@ -448,9 +430,8 @@ public class CachedRestClientTest extends InstrumentationTestCase {
     }
 
     private RestRequest buildRestRequest(RestOperation operation, String path) {
-        PodioFilter filter = path == null ? new BasicPodioFilter() : new BasicPodioFilter(path);
-
-        RestRequest request = new RestRequest() //
+        BasicPodioFilter filter = new BasicPodioFilter(path);
+		RestRequest request = new RestRequest() //
                 .setContent(new Object()) //
                 .setOperation(operation) //
                 .setResultListener(null) //

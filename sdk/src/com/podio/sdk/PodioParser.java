@@ -142,17 +142,15 @@ public class PodioParser<T> {
      * @return A domain model representation of the given json string.
      */
     public T parseToItem(String source) {
-        T result = null;
-
-        if (source != null && Utils.notEmpty(source.trim())) {
-            result = new GsonBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                    .registerTypeAdapter(Field.class, new FieldDeserializer())
-                    .create()
-                    .fromJson(source, classOfItem);
+        if (source == null || Utils.isEmpty(source.trim())) {
+        	return null;
         }
 
-        return result;
+        return new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Field.class, new FieldDeserializer())
+                .create()
+                .fromJson(source, classOfItem);
     }
 
     /**
@@ -163,17 +161,17 @@ public class PodioParser<T> {
      * @return A json string representation of the given item.
      */
     public String parseToJson(Object item) {
-        String result = null;
+    	if (item == null) {
+    		return null;
+    	}
 
-        if (item != null) {
-            GsonBuilder builder = new GsonBuilder();
-            builder.disableHtmlEscaping();
-            // builder.setPrettyPrinting();
-            Gson gson = builder.create();
-            result = gson.toJson(item);
-        }
-
-        return result;
+        GsonBuilder builder = new GsonBuilder();
+        builder.disableHtmlEscaping();
+        // builder.setPrettyPrinting();
+        Gson gson = builder.create();
+            
+        return gson.toJson(item);
+    }
     
     public static <T> PodioParser<T> fromClass(Class<T> classOfItem) {
     	return new PodioParser<T>(classOfItem);

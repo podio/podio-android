@@ -179,11 +179,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.delete(Uri.EMPTY, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
-        assertNull(result.message());
-        assertNull(result.item());
+        
+        try {
+        	databaseHelper.delete(Uri.EMPTY, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -202,9 +203,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testDeleteHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.delete(null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.delete(null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -292,7 +296,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         try {
             databaseHelper.get(Uri.parse("test://database.delegate"), null);
-            fail();
+            fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
     }
@@ -313,9 +317,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.get(Uri.EMPTY, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.get(Uri.EMPTY, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -334,9 +341,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testGetHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.get(null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.get(null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -404,7 +414,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         try {
             databaseHelper.post(Uri.parse("test://database.delegate"), new Object(), null);
-            fail();
+            fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
     }
@@ -425,9 +435,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(Uri.EMPTY, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.post(Uri.EMPTY, null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -446,9 +459,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPostHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(null, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.post(null, null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -494,7 +510,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         try {
             databaseHelper.put(Uri.parse("test://database.delegate"), new Object(), null);
-            fail();
+            fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
     }
@@ -515,9 +531,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesEmptyUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.put(Uri.EMPTY, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.put(Uri.EMPTY, null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -536,9 +555,12 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesNullUriCorrectly() {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.put(null, null, itemParser);
-        assertNotNull(result);
-        assertEquals(false, result.isSuccess());
+        
+        try {
+        	databaseHelper.put(null, null, itemParser);
+        	fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**

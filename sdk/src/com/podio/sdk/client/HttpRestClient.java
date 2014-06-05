@@ -66,12 +66,12 @@ public class HttpRestClient extends QueuedRestClient {
             int queueCapacity) {
 
         super(SCHEME, authority, queueCapacity);
-
+        
         if (networkDelegate == null) {
-            throw new IllegalArgumentException("The JsonClientDelegate mustn't be null");
-        } else {
-            this.networkDelegate = networkDelegate;
+            throw new NullPointerException("The networkDelegate must not be null");
         }
+
+        this.networkDelegate = networkDelegate;
     }
 
     /**
@@ -79,23 +79,20 @@ public class HttpRestClient extends QueuedRestClient {
      */
     @Override
     protected RestResult handleRequest(RestRequest restRequest) {
-        RestResult result = null;
+    	if (restRequest == null) {
+    		throw new NullPointerException("restRequest cannot be null");
+    	}
+    	restRequest.validate();
+		
+    	PodioFilter filter = restRequest.getFilter();
 
-        if (restRequest != null) {
-            PodioFilter filter = restRequest.getFilter();
+		Uri uri = filter.buildUri(scheme, authority);
 
-            if (filter != null) {
-                Uri uri = filter.buildUri(scheme, authority);
+		RestOperation operation = restRequest.getOperation();
+		Object item = restRequest.getContent();
+		PodioParser<?> parser = restRequest.getParser();
 
-                RestOperation operation = restRequest.getOperation();
-                Object item = restRequest.getContent();
-                PodioParser<?> parser = restRequest.getItemParser();
-
-                result = queryNetwork(operation, uri, item, parser);
-            }
-        }
-
-        return result != null ? result : new RestResult(false, null, null);
+		return queryNetwork(operation, uri, item, parser);
     }
 
     public void restoreSession(String refreshPath, Session session) {
@@ -125,9 +122,8 @@ public class HttpRestClient extends QueuedRestClient {
         case PUT:
             return networkDelegate.put(uri, item, parser);
         default:
-            // This should never happen under normal conditions.
             String message = "Unknown operation: " + operation.name();
-            return new RestResult(false, message, null);
+        	throw new IllegalArgumentException(message);
         }
     }
 }

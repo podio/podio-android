@@ -56,18 +56,14 @@ public class SessionProvider extends BasicPodioProvider {
         return authorize(filter, PodioParser.fromClass(Session.class));
     }
 
-    private Object authorize(PodioFilter filter, PodioParser<Session> itemParser) {
-        Object ticket = null;
+    private Object authorize(PodioFilter filter, PodioParser<Session> parser) {
+        RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter, null,
+                parser);
 
-        if (client != null) {
-            RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter, null,
-                    itemParser);
-
-            if (client.enqueue(restRequest)) {
-                ticket = restRequest.getTicket();
-            }
+        if (client.enqueue(restRequest)) {
+            return restRequest.getTicket();
+        } else {
+        	return null;
         }
-
-        return ticket;
     }
 }

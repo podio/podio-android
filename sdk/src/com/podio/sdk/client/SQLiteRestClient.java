@@ -72,22 +72,19 @@ public final class SQLiteRestClient extends QueuedRestClient {
      */
     @Override
     protected RestResult handleRequest(RestRequest restRequest) {
-        RestResult result = null;
+		if (restRequest == null) {
+			throw new NullPointerException("restRequest cannot be null");
+		}
+		restRequest.validate();
 
-        if (restRequest != null) {
-            PodioFilter filter = restRequest.getFilter();
-            PodioParser<?> itemParser = restRequest.getItemParser();
+		PodioFilter filter = restRequest.getFilter();
+		PodioParser<?> parser = restRequest.getParser();
 
-            if (filter != null) {
-                RestOperation operation = restRequest.getOperation();
-                Object item = restRequest.getContent();
-                Uri uri = filter.buildUri(scheme, authority);
+		RestOperation operation = restRequest.getOperation();
+		Object item = restRequest.getContent();
+		Uri uri = filter.buildUri(scheme, authority);
 
-                result = queryDatabase(operation, uri, item, itemParser);
-            }
-        }
-
-        return result;
+		return queryDatabase(operation, uri, item, parser);
     }
 
     /**
@@ -103,23 +100,22 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @return An object representation of the result of the operation.
      */
     private RestResult queryDatabase(RestOperation operation, Uri uri, Object content,
-            PodioParser<?> itemParser) {
+            PodioParser<?> parser) {
 
         switch (operation) {
         case AUTHORIZE:
-            return databaseDelegate.authorize(uri, itemParser);
+            return databaseDelegate.authorize(uri, parser);
         case DELETE:
-            return databaseDelegate.delete(uri, itemParser);
+            return databaseDelegate.delete(uri, parser);
         case GET:
-            return databaseDelegate.get(uri, itemParser);
+            return databaseDelegate.get(uri, parser);
         case POST:
-            return databaseDelegate.post(uri, content, itemParser);
+            return databaseDelegate.post(uri, content, parser);
         case PUT:
-            return databaseDelegate.put(uri, content, itemParser);
+            return databaseDelegate.put(uri, content, parser);
         default:
-            // This should never happen under normal conditions.
             String message = "Unknown operation: " + operation.name();
-            return new RestResult(false, message, null);
+            throw new IllegalArgumentException(message);
         }
     }
 

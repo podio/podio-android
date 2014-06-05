@@ -58,31 +58,31 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
             @Override
             public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
                 result.isAuthorizeCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult delete(Uri uri, PodioParser<?> itemParser) {
                 result.isDeleteCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult get(Uri uri, PodioParser<?> itemParser) {
                 result.isQueryCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isInsertCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isUpdateCalled = true;
-                return null;
+                return RestResult.success();
             }
 
         }, 10);
@@ -134,7 +134,7 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
     public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
         try {
             new SQLiteRestClient(null, null, null, 0);
-            fail();
+            fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
         }
     }

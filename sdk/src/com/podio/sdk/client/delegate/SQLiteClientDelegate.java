@@ -22,8 +22,6 @@
 
 package com.podio.sdk.client.delegate;
 
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -52,106 +50,101 @@ public class SQLiteClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult delete(Uri uri, PodioParser<?> parser) throws SQLiteException {
-        int count = -1;
-
-        if (Utils.notEmpty(uri)) {
-            SQLiteDatabase database = sqliteHelper.getWritableDatabase();
-            String key = "uri=?";
-            String[] value = { uri.toString() };
-            count = database.delete("content", key, value);
-        }
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	
+        SQLiteDatabase database = sqliteHelper.getWritableDatabase();
+        String key = "uri=?";
+        String[] value = { uri.toString() };
+        int count = database.delete("content", key, value);
 
         boolean isSuccess = count != -1;
-        String message = null;
-        List<?> items = null;
-        RestResult result = new RestResult(isSuccess, message, items);
-
-        return result;
+        
+        return new RestResult(isSuccess, null, null);
     }
 
     @Override
     public RestResult get(Uri uri, PodioParser<?> parser) throws SQLiteException {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
     	if (parser == null) {
-    		throw new NullPointerException("itemParser cannot be null");
+    		throw new NullPointerException("parser cannot be null");
     	}
 
-        String json = null;
+        SQLiteDatabase database = sqliteHelper.getReadableDatabase();
+        String[] projection = { "json" };
+        String key = "uri=?";
+        String[] value = { uri.toString() };
 
-        if (Utils.notEmpty(uri)) {
-            SQLiteDatabase database = sqliteHelper.getReadableDatabase();
-            String[] projection = { "json" };
-            String key = "uri=?";
-            String[] value = { uri.toString() };
+        Cursor cursor = database.query("content", projection, key, value, null, null, null);
 
-            Cursor cursor = database.query("content", projection, key, value, null, null, null);
-
-            if (cursor != null) {
-                json = cursor.moveToFirst() ? cursor.getString(0) : "";
-            }
+        if (cursor == null || !cursor.moveToFirst()) {
+        	return new RestResult(false, null, null);
         }
+        
+        String json = cursor.getString(0);
 
-        boolean isSuccess = json != null;
         Object item = parser.parseToItem(json);
         
-        return new RestResult(isSuccess, null, item);
+        return new RestResult(true, null, item);
     }
 
     @Override
     public RestResult post(Uri uri, Object item, PodioParser<?> parser) throws SQLiteException {
-        long id = -1L;
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	if (parser == null) {
+    		throw new NullPointerException("parser cannot be null");
+    	}
+    	
+        SQLiteDatabase database = sqliteHelper.getWritableDatabase();
+        String json = parser.parseToJson(item);
 
-        if (Utils.notEmpty(uri)) {
-            SQLiteDatabase database = sqliteHelper.getWritableDatabase();
-            String json = parser.parseToJson(item);
+        ContentValues values = new ContentValues();
+        values.put("uri", uri.toString());
+        values.put("json", json);
 
-            ContentValues values = new ContentValues();
-            values.put("uri", uri.toString());
-            values.put("json", json);
-
-            id = database.insertWithOnConflict("content", null, values,
-                    SQLiteDatabase.CONFLICT_REPLACE);
-        }
-
-        boolean isSuccess = id != -1L;
-        String message = null;
-        List<?> items = null;
-        RestResult result = new RestResult(isSuccess, message, items);
-
-        return result;
+        long id = database.insertWithOnConflict("content", null, values,
+                SQLiteDatabase.CONFLICT_REPLACE);
+        
+        boolean isSuccess = id != -1;
+        
+        return new RestResult(isSuccess, null, null);
     }
 
     @Override
     public RestResult put(Uri uri, Object item, PodioParser<?> parser) throws SQLiteException {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	if (parser == null) {
+    		throw new NullPointerException("parser cannot be null");
+    	}
+    	
+        SQLiteDatabase database = sqliteHelper.getWritableDatabase();
+        String json = parser.parseToJson(item);
 
-        int count = -1;
+        String key = "uri=?";
+        String[] value = { uri.toString() };
+        ContentValues values = new ContentValues();
+        values.put("json", json);
 
-        if (Utils.notEmpty(uri)) {
-            SQLiteDatabase database = sqliteHelper.getWritableDatabase();
-            String json = parser.parseToJson(item);
-
-            String key = "uri=?";
-            String[] value = { uri.toString() };
-            ContentValues values = new ContentValues();
-            values.put("json", json);
-
-            count = database.updateWithOnConflict("content", values, key, value,
-                    SQLiteDatabase.CONFLICT_IGNORE);
-
-        }
+        int count = database.updateWithOnConflict("content", values, key, value,
+                SQLiteDatabase.CONFLICT_IGNORE);
 
         boolean isSuccess = count != -1;
-        String message = null;
-        List<?> items = null;
-        RestResult result = new RestResult(isSuccess, message, items);
-
-        return result;
+        
+        return new RestResult(isSuccess, null, null);
     }
 
     public SQLiteDatabase getReadableDatabase() {
-        return sqliteHelper != null ? sqliteHelper.getReadableDatabase() : null;
+        return sqliteHelper.getReadableDatabase();
     }
 
     public SQLiteDatabase getWritableDatabase() {
-        return sqliteHelper != null ? sqliteHelper.getWritableDatabase() : null;
+        return sqliteHelper.getWritableDatabase();
     }
 }

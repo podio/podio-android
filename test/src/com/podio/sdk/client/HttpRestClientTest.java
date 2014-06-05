@@ -134,8 +134,8 @@ public class HttpRestClientTest extends InstrumentationTestCase {
     public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
         try {
             new HttpRestClient(null, null, null, 0);
-            fail();
-        } catch (IllegalArgumentException e) {
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
         }
     }
 

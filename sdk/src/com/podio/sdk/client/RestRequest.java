@@ -30,10 +30,19 @@ import com.podio.sdk.internal.request.ResultListener;
 public final class RestRequest {
     private Object content;
     private PodioFilter filter;
-    private PodioParser<?> itemParser;
+    private PodioParser<?> parser;
     private RestOperation operation;
     private ResultListener resultListener;
     private Object ticket;
+    
+    public void validate() {
+    	if (filter == null) {
+    		throw new NullPointerException("filter cannot be null");
+    	}
+    	if (operation == null) {
+    		throw new NullPointerException("operation cannot be null");
+    	}
+    }
 
     public Object getContent() {
         return content;
@@ -43,8 +52,8 @@ public final class RestRequest {
         return filter;
     }
 
-    public PodioParser<?> getItemParser() {
-        return itemParser;
+    public PodioParser<?> getParser() {
+        return parser;
     }
 
     public RestOperation getOperation() {
@@ -69,8 +78,8 @@ public final class RestRequest {
         return this;
     }
 
-    public RestRequest setItemParser(PodioParser<?> itemParser) {
-        this.itemParser = itemParser;
+    public RestRequest setParser(PodioParser<?> parser) {
+        this.parser = parser;
         return this;
     }
 

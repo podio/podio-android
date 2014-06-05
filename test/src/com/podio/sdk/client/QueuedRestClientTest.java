@@ -28,6 +28,7 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
+import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
 
@@ -98,7 +99,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
     public void testRequestQueueCapacityValid() {
         int invalidSize = -1;
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", invalidSize);
-        RestRequest request = new RestRequest();
+        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         boolean didAcceptRequest = testTarget.enqueue(request);
 
         assertEquals(true, didAcceptRequest);
@@ -146,8 +147,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        RestRequest firstRequest = new RestRequest().setFilter(firstFilter);
-        RestRequest secondRequest = new RestRequest().setFilter(secondFilter);
+        RestRequest firstRequest = new RestRequest().setFilter(firstFilter).setOperation(RestOperation.AUTHORIZE);
+        RestRequest secondRequest = new RestRequest().setFilter(secondFilter).setOperation(RestOperation.AUTHORIZE);
 
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
@@ -160,54 +161,6 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         assertEquals(true, secondResult.isRequestPushed);
         assertEquals(true, secondResult.isRequestPopped);
         assertEquals(true, secondResult.isTicketValid);
-    }
-
-    /**
-     * Verifies that a null pointer result, returned by the request processing,
-     * triggers a onFailure callback report.
-     * 
-     * <pre>
-     * 
-     *  1. Set up a local QueuedRestClient implementation.
-     *  
-     *  2. Push a request to the client.
-     *  
-     *  3. Return null from the processing method.
-     *  
-     *  4. Verify that the onFailure callback is called on the result listener.
-     * 
-     * </pre>
-     */
-    public void testRequestQueueHandleRequestNullResultGivesOnFailureCallback() {
-        ResultListener listener = new ResultListener() {
-            @Override
-            public void onFailure(Object ticket, String message) {
-            }
-
-            @Override
-            public void onSessionChange(Object ticket, Session session) {
-            	fail();
-            }
-
-            @Override
-            public void onSuccess(Object ticket, Object item) {
-            	fail();
-            }
-        };
-
-        MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
-            @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
-                return null;
-            }
-        };
-
-        RestRequest request = new RestRequest().setResultListener(listener);
-        testTarget.enqueue(request);
-        TestUtils.blockThread(100);
-
-        // The code should return in the above defined listener once the
-        // blockade is released.
     }
 
     /**
@@ -277,7 +230,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        RestRequest request = new RestRequest();
+        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         boolean isFirstRequestAccepted = testTarget.enqueue(request);
         boolean isSecondRequestAccepted = testTarget.enqueue(request);
 
@@ -315,16 +268,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-            	fail();
-            	return null;
+            	fail("Should have thrown exception");
+            	return RestResult.failure(); //Never reached
             }
         };
 
-        boolean isRequestAccepted = testTarget.enqueue(null);
-        TestUtils.blockThread();
-
-        assertEquals(false, isRequestAccepted);
-        assertEquals(0, testTarget.size());
+		try {
+			testTarget.enqueue(null);
+			fail("Should have thrown exception");
+		} catch (NullPointerException e) {
+		}
     }
 
     /**
@@ -610,7 +563,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener);
+        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
@@ -658,7 +611,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener);
+        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
