@@ -40,7 +40,6 @@ import com.podio.sdk.domain.field.MoneyField;
 import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
 import com.podio.sdk.domain.field.TextField;
-import com.podio.sdk.domain.field.TitleField;
 
 public class PodioParserTest extends AndroidTestCase {
 
@@ -583,36 +582,5 @@ public class PodioParserTest extends AndroidTestCase {
         assertNotNull(field);
         assertTrue(field instanceof TextField);
         assertEquals(Field.Type.text, field.type);
-    }
-
-    /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
-     * "type" Field JSON attribute and returns the corresponding type of field.
-     * 
-     * <pre>
-     * 
-     * 1. Describe an {@link Item} with an {@link TitleField} field as a JSON
-     *      string.
-     * 
-     * 2. Try to parse the JSON.
-     * 
-     * 3. Verify that the correct domain object field type is returned for the
-     *      parsed item.
-     * 
-     * </pre>
-     */
-    public void testParseJsonStringToTitleField() {
-        String json = "{fields:[{type:'title'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
-
-        assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
-
-        Field field = item.fields.get(0);
-        assertNotNull(field);
-        assertTrue(field instanceof TitleField);
-        assertEquals(Field.Type.title, field.type);
     }
 }

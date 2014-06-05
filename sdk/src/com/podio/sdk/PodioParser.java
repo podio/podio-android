@@ -47,7 +47,6 @@ import com.podio.sdk.domain.field.LocationField;
 import com.podio.sdk.domain.field.MoneyField;
 import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.TitleField;
 import com.podio.sdk.domain.field.TextField;
 import com.podio.sdk.internal.utils.Utils;
 
@@ -116,8 +115,6 @@ public class PodioParser<T> {
             case progress:
                 return gsonContext.deserialize(element, ProgressField.class);
             case text:
-            case title:
-                return gsonContext.deserialize(element, TitleField.class);
                 return gsonContext.deserialize(element, TextField.class);
             default:
                 JsonObject empty = new JsonObject();
