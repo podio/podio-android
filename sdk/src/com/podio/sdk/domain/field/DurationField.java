@@ -29,18 +29,21 @@ public final class DurationField extends Field {
     }
 
     @Override
-    public boolean clear(Object value) throws FieldTypeMismatchException {
-        return true;
+    public void clear(Object value) throws FieldTypeMismatchException {
+    	//FIXME: Implement
+    	throw new UnsupportedOperationException();
     }
 
     @Override
     public Object getPushData() {
-        return null;
+    	//FIXME: Implement
+    	throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean set(Object value) throws FieldTypeMismatchException {
-        return true;
+    public void set(Object value) throws FieldTypeMismatchException {
+    	//FIXME: Implement
+    	throw new UnsupportedOperationException();
     }
 
 }

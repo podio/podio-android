@@ -95,6 +95,9 @@ public final class Category extends Field {
         public final Option value;
 
         public Value(Option option) {
+        	if (option == null) {
+        		throw new NullPointerException("option cannot be null");
+        	}
             this.value = option;
         }
 
@@ -105,7 +108,7 @@ public final class Category extends Field {
 
         @Override
         public int hashCode() {
-            return value != null ? value.hashCode() : 0;
+            return value.hashCode();
         }
     }
 
@@ -121,48 +124,28 @@ public final class Category extends Field {
     }
 
     @Override
-    public boolean clear(Object value) throws FieldTypeMismatchException {
-        boolean isSuccess = false;
+    public void clear(Object value) throws FieldTypeMismatchException {
         Option option = tryCast(value);
         Value v = new Value(option);
-
-        if (values != null) {
-            values.remove(v);
-            isSuccess = true;
-        }
-
-        return isSuccess;
+        values.remove(v);
     }
 
     @Override
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        if (values != null) {
-            for (Value value : values) {
-                Option option = value.value;
-
-                if (option != null) {
-                    pushData.add(option.getPushData());
-                }
-            }
+        for (Value value : values) {
+            pushData.add(value.value.getPushData());
         }
 
         return pushData;
     }
 
     @Override
-    public boolean set(Object value) throws FieldTypeMismatchException {
-        boolean isSuccess = false;
+    public void set(Object value) throws FieldTypeMismatchException {
         Option option = tryCast(value);
-
         clear(option);
-
-        if (values != null) {
-            isSuccess = values.add(new Value(option));
-        }
-
-        return isSuccess;
+        values.add(new Value(option));
     }
 
     private Option tryCast(Object value) throws FieldTypeMismatchException {

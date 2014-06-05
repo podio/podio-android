@@ -96,41 +96,26 @@ public final class Text extends Field {
     }
 
     @Override
-    public boolean clear(Object value) throws FieldTypeMismatchException {
-        boolean isSuccess = false;
-
-        if (values != null) {
-            values.clear();
-            isSuccess = true;
-        }
-
-        return isSuccess;
+    public void clear(Object value) throws FieldTypeMismatchException {
+        values.clear();
     }
 
     @Override
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        if (values != null) {
-            for (Value value : values) {
-                pushData.add(value.getPushData());
-            }
+        for (Value value : values) {
+            pushData.add(value.getPushData());
         }
 
         return pushData;
     }
 
     @Override
-    public boolean set(Object value) throws FieldTypeMismatchException {
-        boolean isSuccess = false;
+    public void set(Object value) throws FieldTypeMismatchException {
         String text = tryCast(value);
         clear(value);
-
-        if (values != null) {
-            isSuccess = values.add(new Value(text));
-        }
-
-        return isSuccess;
+        values.add(new Value(text));
     }
 
     private String tryCast(Object value) throws FieldTypeMismatchException {

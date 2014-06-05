@@ -105,47 +105,32 @@ public final class ApplicationReference extends Field {
     }
 
     @Override
-    public boolean clear(Object value) throws FieldTypeMismatchException {
-        boolean isSuccess = false;
+    public void clear(Object value) throws FieldTypeMismatchException {
         Data data = tryCast(value);
         Value v = new Value(data);
-
-        if (values != null) {
-            values.remove(v);
-            isSuccess = true;
-        }
-
-        return isSuccess;
+        values.remove(v);
     }
 
     @Override
     public Object getPushData() {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
-        if (values != null) {
-            for (Value value : values) {
-                Data data = value.value;
+        for (Value value : values) {
+            Data data = value.value;
 
-                if (data != null) {
-                    pushData.add(data.getPushData());
-                }
+            if (data != null) {
+                pushData.add(data.getPushData());
             }
         }
-
+        
         return pushData;
     }
 
     @Override
-    public boolean set(Object value) throws FieldTypeMismatchException {
-        boolean isSuccess = false;
+    public void set(Object value) throws FieldTypeMismatchException {
         Data data = tryCast(value);
         clear(data);
-
-        if (values != null) {
-            isSuccess = values.add(new Value(data));
-        }
-
-        return isSuccess;
+        values.add(new Value(data));
     }
 
     private Data tryCast(Object value) {

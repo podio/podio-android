@@ -29,8 +29,8 @@ public final class CalculationField extends Field {
     }
 
     @Override
-    public boolean clear(Object value) throws FieldTypeMismatchException {
-        return true;
+    public void clear(Object value) throws FieldTypeMismatchException {
+    	throw new IllegalArgumentException("calculation fields cannot be updated manually");
     }
 
     @Override
@@ -39,8 +39,8 @@ public final class CalculationField extends Field {
     }
 
     @Override
-    public boolean set(Object value) throws FieldTypeMismatchException {
-        return true;
+    public void set(Object value) throws FieldTypeMismatchException {
+    	throw new IllegalArgumentException("calculation fields cannot be updated manually");
     }
 
 }

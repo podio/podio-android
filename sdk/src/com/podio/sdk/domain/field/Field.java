@@ -54,12 +54,10 @@ public abstract class Field implements Pushable {
      * 
      * @param value
      *        The value domain object to clear.
-     * @return Boolean true if the value could be cleared, boolean false
-     *         otherwise.
      * @throws FieldTypeMismatchException
      *         If the value can't be applied to this field type.
      */
-    public abstract boolean clear(Object value) throws FieldTypeMismatchException;
+    public abstract void clear(Object value) throws FieldTypeMismatchException;
 
     /**
      * Tries to locally set the given value to the current field. The changes
@@ -67,12 +65,10 @@ public abstract class Field implements Pushable {
      * 
      * @param value
      *        The value domain object to set.
-     * @return Boolean true if the new value could be set, boolean false
-     *         otherwise.
      * @throws FieldTypeMismatchException
      *         If the value can't be applied to this field type.
      */
-    public abstract boolean set(Object value) throws FieldTypeMismatchException;
+    public abstract void set(Object value) throws FieldTypeMismatchException;
 
     @Override
     public boolean equals(Object o) {
