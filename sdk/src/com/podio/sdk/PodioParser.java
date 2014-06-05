@@ -33,7 +33,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.EmptyField;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.internal.utils.Utils;
 
