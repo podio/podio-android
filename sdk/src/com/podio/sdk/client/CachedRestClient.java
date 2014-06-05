@@ -98,13 +98,6 @@ public class CachedRestClient extends HttpRestClient {
      */
     @Override
     protected RestResult handleRequest(RestRequest restRequest) {
-    	if (restRequest == null) {
-    		throw new NullPointerException("restRequest cannot be null");
-    	}
-    	restRequest.validate();
-    	
-        RestResult result;
-
         RestOperation operation = restRequest.getOperation();
         PodioFilter filter = restRequest.getFilter();
         PodioParser<?> parser = restRequest.getParser();
@@ -112,6 +105,7 @@ public class CachedRestClient extends HttpRestClient {
 
         Uri uri = filter.buildUri("content", authority);
 
+        RestResult result;
         if (operation != RestOperation.DELETE //
                 && operation != RestOperation.PUT //
                 && operation != RestOperation.AUTHORIZE //

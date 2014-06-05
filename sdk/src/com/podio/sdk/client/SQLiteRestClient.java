@@ -36,47 +36,43 @@ import com.podio.sdk.RestClientDelegate;
  */
 public final class SQLiteRestClient extends QueuedRestClient {
 
-    protected final RestClientDelegate databaseDelegate;
+	protected final RestClientDelegate databaseDelegate;
 
-    /**
-     * @param context
-     *            The context to execute the database operations in.
-     * @param authority
-     *            The authority to use in URIs by this client.
-     * @param databaseDelegate
-     *            The {@link RestClientDelegate} implementation that will
-     *            perform the SQLite queries.
-     * @param queueCapacity
-     *            The custom request queue capacity.
-     * 
-     * @see QueuedRestClient
-     * @see RestClient
-     */
-    public SQLiteRestClient(Context context, String authority, RestClientDelegate databaseDelegate,
-            int queueCapacity) {
-        super("content", authority, queueCapacity);
+	/**
+	 * @param context
+	 *            The context to execute the database operations in.
+	 * @param authority
+	 *            The authority to use in URIs by this client.
+	 * @param databaseDelegate
+	 *            The {@link RestClientDelegate} implementation that will
+	 *            perform the SQLite queries.
+	 * @param queueCapacity
+	 *            The custom request queue capacity.
+	 * 
+	 * @see QueuedRestClient
+	 * @see RestClient
+	 */
+	public SQLiteRestClient(Context context, String authority,
+			RestClientDelegate databaseDelegate, int queueCapacity) {
+		super("content", authority, queueCapacity);
 
-        if (databaseDelegate == null) {
-            throw new IllegalArgumentException("The JsonClientDelegate mustn't be null");
-        }
-        	
-        this.databaseDelegate = databaseDelegate;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected RestResult handleRequest(RestRequest restRequest) {
-		if (restRequest == null) {
-			throw new NullPointerException("restRequest cannot be null");
+		if (databaseDelegate == null) {
+			throw new IllegalArgumentException(
+					"The JsonClientDelegate mustn't be null");
 		}
-		restRequest.validate();
 
+		this.databaseDelegate = databaseDelegate;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected RestResult handleRequest(RestRequest restRequest) {
 		Uri uri = restRequest.getFilter().buildUri(scheme, authority);
-		
-		return restRequest.getOperation().invoke(databaseDelegate, uri, 
+
+		return restRequest.getOperation().invoke(databaseDelegate, uri,
 				restRequest.getContent(), restRequest.getParser());
-    }
+	}
 
 }

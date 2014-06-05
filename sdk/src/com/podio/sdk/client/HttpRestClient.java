@@ -40,7 +40,7 @@ public class HttpRestClient extends QueuedRestClient {
 
     private static final String SCHEME = "https";
 
-    protected final RestClientDelegate networkDelegate;
+    private final RestClientDelegate networkDelegate;
 
     /**
      * @param context
@@ -61,7 +61,6 @@ public class HttpRestClient extends QueuedRestClient {
      */
     public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate,
             int queueCapacity) {
-
         super(SCHEME, authority, queueCapacity);
         
         if (networkDelegate == null) {
@@ -76,12 +75,7 @@ public class HttpRestClient extends QueuedRestClient {
      */
     @Override
     protected RestResult handleRequest(RestRequest restRequest) {
-    	if (restRequest == null) {
-    		throw new NullPointerException("restRequest cannot be null");
-    	}
-    	restRequest.validate();
-
-		Uri uri = restRequest.getFilter().buildUri(scheme, authority);
+    	Uri uri = restRequest.getFilter().buildUri(scheme, authority);
 
 		return restRequest.getOperation().invoke(networkDelegate, uri, 
 				restRequest.getContent(), restRequest.getParser());
