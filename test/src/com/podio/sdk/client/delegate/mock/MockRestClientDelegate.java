@@ -25,10 +25,10 @@ package com.podio.sdk.client.delegate.mock;
 import android.net.Uri;
 
 import com.podio.sdk.PodioParser;
+import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
-import com.podio.sdk.client.delegate.JsonClientDelegate;
 
-public class MockRestClientDelegate extends JsonClientDelegate {
+public class MockRestClientDelegate implements RestClientDelegate {
 
     private RestResult authorizeResult = null;
     private RestResult deleteResult = null;

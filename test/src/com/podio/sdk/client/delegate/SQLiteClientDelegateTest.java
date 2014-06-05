@@ -293,7 +293,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         try {
             databaseHelper.get(Uri.parse("test://database.delegate"), null);
             fail();
-        } catch (InvalidParserException e) {
+        } catch (NullPointerException e) {
         }
     }
 
@@ -405,7 +405,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         try {
             databaseHelper.post(Uri.parse("test://database.delegate"), new Object(), null);
             fail();
-        } catch (InvalidParserException e) {
+        } catch (NullPointerException e) {
         }
     }
 
@@ -495,7 +495,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         try {
             databaseHelper.put(Uri.parse("test://database.delegate"), new Object(), null);
             fail();
-        } catch (InvalidParserException e) {
+        } catch (NullPointerException e) {
         }
     }
 

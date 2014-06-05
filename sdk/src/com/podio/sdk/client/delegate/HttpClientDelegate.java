@@ -39,11 +39,12 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.PodioParser;
+import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
 
-public class HttpClientDelegate extends JsonClientDelegate {
+public class HttpClientDelegate implements RestClientDelegate {
 
     private final RequestQueue requestQueue;
 
@@ -101,8 +102,11 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult get(Uri uri, PodioParser<?> itemParser) throws InvalidParserException {
-        Session resultSession = tryRefreshSession();
+    public RestResult get(Uri uri, PodioParser<?> itemParser) {
+    	if (itemParser == null) {
+    		throw new NullPointerException("itemParser cannot be null");
+    	}
+    	
         String outputJson = request(Method.GET, uri, null);
 
         if (outputJson == null && lastRequestError != null
@@ -124,9 +128,12 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) throws InvalidParserException {
-        Session resultSession = tryRefreshSession();
-        String inputJson = parseItem(item, itemParser);
+    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
+    	if (itemParser == null) {
+    		throw new NullPointerException("itemParser cannot be null");
+    	}
+    	
+        String inputJson = itemParser.parseToJson(item);
         String outputJson = request(Method.POST, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null
@@ -148,9 +155,12 @@ public class HttpClientDelegate extends JsonClientDelegate {
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) throws InvalidParserException {
-        Session resultSession = tryRefreshSession();
-        String inputJson = parseItem(item, itemParser);
+    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
+    	if (itemParser == null) {
+    		throw new NullPointerException("itemParser cannot be null");
+    	}
+    	
+        String inputJson = itemParser.parseToJson(item);
         String outputJson = request(Method.PUT, uri, inputJson);
 
         if (outputJson == null && lastRequestError != null

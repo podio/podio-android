@@ -25,11 +25,10 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.internal.request.RestOperation;
 
 /**
@@ -40,7 +39,7 @@ import com.podio.sdk.internal.request.RestOperation;
  */
 public final class SQLiteRestClient extends QueuedRestClient {
 
-    protected final JsonClientDelegate databaseDelegate;
+    protected final RestClientDelegate databaseDelegate;
 
     /**
      * @param context
@@ -56,7 +55,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
      * @see QueuedRestClient
      * @see RestClient
      */
-    public SQLiteRestClient(Context context, String authority, JsonClientDelegate databaseDelegate,
+    public SQLiteRestClient(Context context, String authority, RestClientDelegate databaseDelegate,
             int queueCapacity) {
 
         super("content", authority, queueCapacity);

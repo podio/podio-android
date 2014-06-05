@@ -25,12 +25,11 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
-import com.podio.sdk.client.delegate.JsonClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 
@@ -44,7 +43,7 @@ public class HttpRestClient extends QueuedRestClient {
 
     private static final String SCHEME = "https";
 
-    protected final JsonClientDelegate networkDelegate;
+    protected final RestClientDelegate networkDelegate;
 
     /**
      * @param context
@@ -63,7 +62,7 @@ public class HttpRestClient extends QueuedRestClient {
      * @see QueuedRestClient
      * @see RestClient
      */
-    public HttpRestClient(Context context, String authority, JsonClientDelegate networkDelegate,
+    public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate,
             int queueCapacity) {
 
         super(SCHEME, authority, queueCapacity);

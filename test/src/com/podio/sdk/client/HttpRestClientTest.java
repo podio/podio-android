@@ -28,7 +28,7 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
-import com.podio.sdk.client.delegate.JsonClientDelegate;
+import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
@@ -53,7 +53,7 @@ public class HttpRestClientTest extends InstrumentationTestCase {
         Context context = instrumentation.getContext();
 
         result = new ConcurrentResult();
-        target = new HttpRestClient(context, "authority", new JsonClientDelegate() {
+        target = new HttpRestClient(context, "authority", new RestClientDelegate() {
 
             @Override
             public RestResult authorize(Uri uri, PodioParser<?> itemParser) {

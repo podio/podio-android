@@ -353,7 +353,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         try {
             target.get(Uri.parse("http://localhost:8080"), null);
             fail();
-        } catch (InvalidParserException e) {
+        } catch (NullPointerException e) {
         }
     }
 
@@ -571,7 +571,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         try {
             target.post(Uri.parse("http://localhost:8080"), new Object(), null);
             fail();
-        } catch (InvalidParserException e) {
+        } catch (NullPointerException e) {
         }
     }
 
@@ -703,7 +703,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         try {
             target.put(Uri.parse("http://localhost:8080"), new Object(), null);
             fail();
-        } catch (InvalidParserException e) {
+        } catch (NullPointerException e) {
         }
     }
 
