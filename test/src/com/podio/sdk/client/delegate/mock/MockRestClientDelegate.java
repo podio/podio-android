@@ -34,8 +34,8 @@ import com.podio.sdk.internal.request.RestOperation;
 
 public class MockRestClientDelegate implements RestClientDelegate {
 	
-	private Map<RestOperation, Integer> calls = new HashMap<>();
-	private Map<RestOperation, Uri> uris = new HashMap<>();
+	private Map<RestOperation, Integer> calls = new HashMap<RestOperation, Integer>();
+	private Map<RestOperation, Uri> uris = new HashMap<RestOperation, Uri>();
 
 	
 	private RestResult process(RestOperation operation, Uri uri) {
