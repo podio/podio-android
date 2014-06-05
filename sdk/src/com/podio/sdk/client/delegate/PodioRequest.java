@@ -51,7 +51,7 @@ public class PodioRequest extends StringRequest {
 
     @Override
     public byte[] getBody() {
-        return body.getBytes();
+    	return body != null ? body.getBytes() : null;
     }
 
     @Override
