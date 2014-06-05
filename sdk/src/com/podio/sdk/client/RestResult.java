@@ -104,5 +104,21 @@ public class RestResult {
     public String message() {
         return message;
     }
+    
+    public static RestResult failure() {
+    	return failure(null);    	
+    }
+    
+    public static RestResult failure(String message) {
+    	return new RestResult(false, message, null);
+    }
+    
+    public static RestResult success() {
+    	return success(null);    	
+    }
+    
+    public static RestResult success(Object item) {
+    	return new RestResult(true, null, item);
+    }
 
 }

@@ -58,31 +58,31 @@ public class HttpRestClientTest extends InstrumentationTestCase {
             @Override
             public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
                 result.isAuthorizeCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult delete(Uri uri, PodioParser<?> itemParser) {
                 result.isDeleteCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult get(Uri uri, PodioParser<?> itemParser) {
                 result.isGetCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isPostCalled = true;
-                return null;
+                return RestResult.success();
             }
 
             @Override
             public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isPutCalled = true;
-                return null;
+                return RestResult.success();
             }
 
         }, 10);

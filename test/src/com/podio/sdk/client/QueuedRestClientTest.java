@@ -142,7 +142,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                     TestUtils.releaseBlockedThread();
                 }
 
-                return new RestResult(true, null, null);
+                return RestResult.success();
             }
         };
 
@@ -236,11 +236,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             protected RestResult handleRequest(RestRequest restRequest) {
                 threadNames[1] = Thread.currentThread().getName();
                 TestUtils.releaseBlockedThread();
-                return new RestResult(true, null, null);
+                return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest();
+        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         TestUtils.blockThread();
 
@@ -273,7 +273,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                return new RestResult(true, null, null);
+                return RestResult.success();
             }
         };
 
@@ -354,13 +354,13 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 result.isRequestPopped = true;
                 result.isTicketValid = (expectedTicket == restRequest.getTicket());
                 TestUtils.releaseBlockedThread();
-                return new RestResult(true, "", null);
+                return RestResult.success();
             }
         };
 
         RestRequest request = new RestRequest() //
                 .setFilter(expectedFilter) //
-                .setTicket(expectedTicket);
+                .setTicket(expectedTicket).setOperation(RestOperation.AUTHORIZE);
 
         result.isRequestPushed = testTarget.enqueue(request);
 
@@ -432,13 +432,13 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                     secondResult.isTicketValid = true;
                 }
 
-                return new RestResult(true, null, null);
+                return RestResult.success();
             }
         };
 
         RestRequest firstRequest = new RestRequest() //
                 .setFilter(firstFilter) //
-                .setResultListener(listener);
+                .setResultListener(listener).setOperation(RestOperation.AUTHORIZE);
 
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
         TestUtils.blockThread(100);
@@ -452,7 +452,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         RestRequest secondRequest = new RestRequest() //
                 .setFilter(secondFilter) //
-                .setResultListener(listener);
+                .setResultListener(listener).setOperation(RestOperation.AUTHORIZE);
 
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
         TestUtils.blockThread(100);
@@ -509,11 +509,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                return new RestResult(true, null, null);
+                return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener);
+        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
@@ -557,11 +557,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                return new RestResult(false, null, null);
+                return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener);
+        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         TestUtils.blockThread(100);
 
@@ -654,7 +654,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
-                return new RestResult(true, null, null);
+                return RestResult.success();
             }
         };
 
