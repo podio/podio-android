@@ -25,15 +25,15 @@ package com.podio.sdk.client;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.net.Uri;
-import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
+import com.podio.test.ThreadedTestCase;
 
-public class SQLiteRestClientTest extends InstrumentationTestCase {
+public class SQLiteRestClientTest extends ThreadedTestCase {
 
     private static final class ConcurrentResult {
         private boolean isAuthorizeCalled;
@@ -58,30 +58,35 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
             @Override
             public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
                 result.isAuthorizeCalled = true;
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult delete(Uri uri, PodioParser<?> itemParser) {
                 result.isDeleteCalled = true;
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult get(Uri uri, PodioParser<?> itemParser) {
                 result.isQueryCalled = true;
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isInsertCalled = true;
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
                 result.isUpdateCalled = true;
+                TestUtils.completed();
                 return RestResult.success();
             }
 
@@ -110,7 +115,8 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.AUTHORIZE);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
+        
+        TestUtils.waitUntilCompletion();
 
         assertEquals(true, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
@@ -161,7 +167,8 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.DELETE);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(40);
+        
+        TestUtils.waitUntilCompletion();
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(true, result.isDeleteCalled);
@@ -192,7 +199,8 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.GET);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(40);
+        
+        TestUtils.waitUntilCompletion();
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
@@ -223,7 +231,8 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.POST);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
+        
+        TestUtils.waitUntilCompletion();
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
@@ -254,7 +263,8 @@ public class SQLiteRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.PUT);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
+        
+        TestUtils.waitUntilCompletion();
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);

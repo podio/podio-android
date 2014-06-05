@@ -25,15 +25,15 @@ package com.podio.sdk.client;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.net.Uri;
-import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
+import com.podio.test.ThreadedTestCase;
 
-public class CachedRestClientTest extends InstrumentationTestCase {
+public class CachedRestClientTest extends ThreadedTestCase {
 
     private static final Uri REFERENCE_CONTENT_URI = Uri //
             .parse("content://test.authority/path");
@@ -74,7 +74,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
 
                 actualReportCount++;
                 if (actualReportCount >= expectedReportCount) {
-                    TestUtils.releaseBlockedThread();
+                    TestUtils.completed();
                 }
 
                 // The last step in the reporting flow (the one that is executed
@@ -109,7 +109,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.AUTHORIZE, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertNull(targetDatabaseDelegate.mock_getAuthorizeUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getAuthorizeUri());
@@ -139,7 +139,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.AUTHORIZE);
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(1, targetNetworkDelegate.mock_getAuthorizeCallCount());
         assertEquals(0, targetDatabaseDelegate.mock_getAuthorizeCallCount());
@@ -202,7 +202,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.DELETE, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(targetDatabaseDelegate.mock_getAuthorizeCallCount(), 0);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getDeleteUri());
@@ -232,7 +232,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.DELETE);
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(1, targetNetworkDelegate.mock_getDeleteCallCount());
         assertEquals(1, targetDatabaseDelegate.mock_getDeleteCallCount());
@@ -264,7 +264,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.GET, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getGetUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getGetUri());
@@ -296,7 +296,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.GET);
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(2, targetDatabaseDelegate.mock_getGetCallCount());
         assertEquals(1, targetNetworkDelegate.mock_getGetCallCount());
@@ -328,7 +328,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.POST, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getPostUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPostUri());
@@ -358,7 +358,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.POST);
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(1, targetNetworkDelegate.mock_getPostCallCount());
         assertEquals(2, targetDatabaseDelegate.mock_getPostCallCount());
@@ -389,7 +389,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.PUT, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertNull(targetDatabaseDelegate.mock_getPutUri());
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPutUri());
@@ -419,7 +419,7 @@ public class CachedRestClientTest extends InstrumentationTestCase {
         RestRequest request = buildRestRequest(RestOperation.PUT);
         targetRestClient.enqueue(request);
 
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(1, targetNetworkDelegate.mock_getPutCallCount());
         assertEquals(1, targetDatabaseDelegate.mock_getPutCallCount());

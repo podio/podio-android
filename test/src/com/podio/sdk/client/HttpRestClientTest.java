@@ -22,29 +22,24 @@
 
 package com.podio.sdk.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Instrumentation;
 import android.content.Context;
 import android.net.Uri;
-import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.test.TestUtils;
+import com.podio.test.ThreadedTestCase;
 
-public class HttpRestClientTest extends InstrumentationTestCase {
-
-    private static final class ConcurrentResult {
-        private boolean isAuthorizeCalled;
-        private boolean isDeleteCalled;
-        private boolean isGetCalled;
-        private boolean isPostCalled;
-        private boolean isPutCalled;
-    }
+public class HttpRestClientTest extends ThreadedTestCase {
 
     private HttpRestClient target;
-    private ConcurrentResult result;
+    private List<RestOperation> calls;
 
     @Override
     protected void setUp() throws Exception {
@@ -52,40 +47,52 @@ public class HttpRestClientTest extends InstrumentationTestCase {
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getContext();
 
-        result = new ConcurrentResult();
+        calls = new ArrayList<RestOperation>();
         target = new HttpRestClient(context, "authority", new RestClientDelegate() {
 
             @Override
             public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
-                result.isAuthorizeCalled = true;
+            	calls.add(RestOperation.AUTHORIZE);
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult delete(Uri uri, PodioParser<?> itemParser) {
-                result.isDeleteCalled = true;
+            	calls.add(RestOperation.DELETE);
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult get(Uri uri, PodioParser<?> itemParser) {
-                result.isGetCalled = true;
+            	calls.add(RestOperation.GET);
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
-                result.isPostCalled = true;
+            	calls.add(RestOperation.POST);
+                TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
             public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
-                result.isPutCalled = true;
+            	calls.add(RestOperation.PUT);
+                TestUtils.completed();
                 return RestResult.success();
             }
 
         }, 10);
+    }
+    
+    private void assertCalled(RestOperation... operations) {
+        assertEquals(calls.size(), operations.length);
+        for (int i = 0; i < operations.length; i++) {
+			assertEquals(operations[i], calls.get(i));
+		}
     }
 
     /**
@@ -110,13 +117,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.AUTHORIZE);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
+        
+        TestUtils.waitUntilCompletion();
 
-        assertEquals(true, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(false, result.isGetCalled);
-        assertEquals(false, result.isPostCalled);
-        assertEquals(false, result.isPutCalled);
+        assertCalled(RestOperation.AUTHORIZE);
     }
 
     /**
@@ -161,13 +165,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.DELETE);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
-
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(true, result.isDeleteCalled);
-        assertEquals(false, result.isGetCalled);
-        assertEquals(false, result.isPostCalled);
-        assertEquals(false, result.isPutCalled);
+        
+        TestUtils.waitUntilCompletion();
+        
+        assertCalled(RestOperation.DELETE);
     }
 
     /**
@@ -192,13 +193,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.GET);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
-
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(true, result.isGetCalled);
-        assertEquals(false, result.isPostCalled);
-        assertEquals(false, result.isPutCalled);
+        
+        TestUtils.waitUntilCompletion();
+        
+        assertCalled(RestOperation.GET);
     }
 
     /**
@@ -223,13 +221,10 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.POST);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
-
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(false, result.isGetCalled);
-        assertEquals(true, result.isPostCalled);
-        assertEquals(false, result.isPutCalled);
+        
+        TestUtils.waitUntilCompletion();
+        
+        assertCalled(RestOperation.POST);
     }
 
     /**
@@ -254,12 +249,9 @@ public class HttpRestClientTest extends InstrumentationTestCase {
                 .setOperation(RestOperation.PUT);
 
         target.enqueue(restRequest);
-        TestUtils.blockThread(20);
-
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(false, result.isGetCalled);
-        assertEquals(false, result.isPostCalled);
-        assertEquals(true, result.isPutCalled);
+        
+        TestUtils.waitUntilCompletion();
+        
+        assertCalled(RestOperation.PUT);
     }
 }

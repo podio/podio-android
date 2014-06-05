@@ -22,8 +22,6 @@
 
 package com.podio.sdk.client;
 
-import android.test.InstrumentationTestCase;
-
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.Session;
@@ -31,8 +29,9 @@ import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
+import com.podio.test.ThreadedTestCase;
 
-public class QueuedRestClientTest extends InstrumentationTestCase {
+public class QueuedRestClientTest extends ThreadedTestCase {
 
     private static final class ConcurrentResult {
         private boolean isRequestPushed;
@@ -140,7 +139,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 }
 
                 if (firstResult.isTicketValid && secondResult.isTicketValid) {
-                    TestUtils.releaseBlockedThread();
+                    TestUtils.completed();
                 }
 
                 return RestResult.success();
@@ -153,7 +152,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
 
-        TestUtils.blockThread(500);
+        TestUtils.waitUntilCompletion();
 
         assertEquals(true, firstResult.isRequestPushed);
         assertEquals(true, firstResult.isRequestPopped);
@@ -188,14 +187,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
                 threadNames[1] = Thread.currentThread().getName();
-                TestUtils.releaseBlockedThread();
+                TestUtils.completed();
                 return RestResult.success();
             }
         };
 
         RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertFalse(threadNames[0] + " vs. " + threadNames[1],
                 threadNames[0].equals(threadNames[1]));
@@ -223,12 +222,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueuePushFailureOnCapacityReached() {
-        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
-            @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
-                return RestResult.success();
-            }
-        };
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1);
 
         RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         boolean isFirstRequestAccepted = testTarget.enqueue(request);
@@ -265,13 +259,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testRequestQueuePushFailureOnNullRequest() {
-        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
-            @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
-            	fail("Should have thrown exception");
-            	return RestResult.failure(); //Never reached
-            }
-        };
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1);
 
 		try {
 			testTarget.enqueue(null);
@@ -306,7 +294,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
             protected RestResult handleRequest(RestRequest restRequest) {
                 result.isRequestPopped = true;
                 result.isTicketValid = (expectedTicket == restRequest.getTicket());
-                TestUtils.releaseBlockedThread();
+                TestUtils.completed();
                 return RestResult.success();
             }
         };
@@ -320,7 +308,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         // This line will block execution until the blocking semaphore is
         // released either by the above result listener or the test global
         // watch-dog.
-        TestUtils.blockThread();
+        TestUtils.waitUntilCompletion();
 
         assertEquals(true, result.isRequestPushed);
         assertEquals(true, result.isRequestPopped);
@@ -394,21 +382,21 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .setResultListener(listener).setOperation(RestOperation.AUTHORIZE);
 
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
-        TestUtils.blockThread(100);
+        TestUtils.waitUntilCompletion(100);
 
         assertEquals(true, firstResult.isRequestPushed);
         assertEquals(true, firstResult.isRequestPopped);
         assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
         assertEquals(0, testTarget.size());
 
-        TestUtils.blockThread(100);
+        TestUtils.waitUntilCompletion(100);
 
         RestRequest secondRequest = new RestRequest() //
                 .setFilter(secondFilter) //
                 .setResultListener(listener).setOperation(RestOperation.AUTHORIZE);
 
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
-        TestUtils.blockThread(100);
+        TestUtils.waitUntilCompletion(100);
 
         assertEquals(true, secondResult.isRequestPushed);
         assertEquals(true, secondResult.isRequestPopped);
@@ -462,13 +450,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
+            	TestUtils.completed();
+            	
                 return RestResult.success();
             }
         };
 
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
-        TestUtils.blockThread(100);
+        
+        TestUtils.waitUntilCompletion();
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -510,13 +501,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
+            	TestUtils.completed();
+            	
                 return RestResult.success();
             }
         };
 
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
-        TestUtils.blockThread(100);
+        
+        TestUtils.waitUntilCompletion();
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -558,14 +552,18 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
+            	TestUtils.completed();
+            	
                 Session session = new Session("a", "b", 1L);
+                
                 return new RestResult(true, session, null, null);
             }
         };
 
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
-        TestUtils.blockThread(100);
+        
+        TestUtils.waitUntilCompletion();
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -607,13 +605,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
             protected RestResult handleRequest(RestRequest restRequest) {
+            	TestUtils.completed();
+            	
                 return RestResult.success();
             }
         };
 
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
-        TestUtils.blockThread(100);
+        
+        TestUtils.waitUntilCompletion();
 
         // The code should return in the above defined listener once the
         // blockade is released.
