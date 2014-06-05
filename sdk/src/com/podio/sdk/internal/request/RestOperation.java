@@ -29,38 +29,46 @@ import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
 
 public enum RestOperation {
-    AUTHORIZE() {
+	AUTHORIZE() {
 		@Override
-		public RestResult invoke(RestClientDelegate delegate, Uri uri, Object item, PodioParser<?> parser) {
+		public RestResult invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<?> parser) {
 			return delegate.authorize(uri, parser);
-			
-		}}
-    , DELETE {
+		}
+	},
+
+	DELETE {
 		@Override
 		public RestResult invoke(RestClientDelegate delegate, Uri uri,
 				Object item, PodioParser<?> parser) {
 			return delegate.delete(uri, parser);
 		}
-	}, GET {
+	},
+
+	GET {
 		@Override
 		public RestResult invoke(RestClientDelegate delegate, Uri uri,
 				Object item, PodioParser<?> parser) {
 			return delegate.get(uri, parser);
 		}
-	}, POST {
+	},
+
+	POST {
 		@Override
 		public RestResult invoke(RestClientDelegate delegate, Uri uri,
 				Object item, PodioParser<?> parser) {
 			return delegate.post(uri, item, parser);
 		}
-	}, PUT {
+	},
+
+	PUT {
 		@Override
 		public RestResult invoke(RestClientDelegate delegate, Uri uri,
 				Object item, PodioParser<?> parser) {
 			return delegate.put(uri, item, parser);
 		}
 	};
-    
-    public abstract RestResult invoke(RestClientDelegate delegate, Uri uri, Object item,
-            PodioParser<?> parser);
+
+	public abstract RestResult invoke(RestClientDelegate delegate, Uri uri,
+			Object item, PodioParser<?> parser);
 }
