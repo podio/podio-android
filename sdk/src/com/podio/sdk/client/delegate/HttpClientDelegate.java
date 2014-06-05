@@ -80,99 +80,22 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     @Override
     public RestResult delete(Uri uri, PodioParser<?> parser) {
-    	if (Utils.isEmpty(uri)) {
-    		throw new IllegalArgumentException("uri cannot be empty");
-    	}
-    	
-        String outputJson = request(Method.DELETE, uri, null);
-
-        if (wasTokenExpiredError()) {
-            // For some reason the server has invalidated our access token.
-            // Try refresh the access token again.
-        	refreshSession();
-
-            outputJson = request(Method.DELETE, uri, null);
-        }
-
-        boolean isSuccess = Utils.notEmpty(outputJson);
-        
-        return new RestResult(isSuccess, session, null, null);
+    	return request(Method.PUT, uri, null, parser, true);
     }
 
     @Override
     public RestResult get(Uri uri, PodioParser<?> parser) {
-    	if (Utils.isEmpty(uri)) {
-    		throw new IllegalArgumentException("uri cannot be empty");
-    	}
-    	if (parser == null) {
-    		throw new NullPointerException("parser cannot be null");
-    	}
-    	
-        String outputJson = request(Method.GET, uri, null);
-
-        if (wasTokenExpiredError()) {
-            // For some reason the server has invalidated our access token.
-            // Try refresh the access token again.
-        	refreshSession();
-        	
-            outputJson = request(Method.GET, uri, null);
-        }
-
-        boolean isSuccess = Utils.notEmpty(outputJson);
-        Object item = parser.parseToItem(outputJson);
-        
-        return new RestResult(isSuccess, session, null, item);
+    	return request(Method.GET, uri, null, parser, true);
     }
 
     @Override
     public RestResult post(Uri uri, Object item, PodioParser<?> parser) {
-    	if (Utils.isEmpty(uri)) {
-    		throw new IllegalArgumentException("uri cannot be empty");
-    	}
-    	if (parser == null) {
-    		throw new NullPointerException("parser cannot be null");
-    	}
-        String inputJson = parser.parseToJson(item);
-        String outputJson = request(Method.POST, uri, inputJson);
-
-        if (wasTokenExpiredError()) {
-            // For some reason the server has invalidated our access token.
-            // Try refresh the access token again.
-        	refreshSession();
-
-            outputJson = request(Method.POST, uri, inputJson);
-        }
-
-        boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = parser.parseToItem(outputJson);
-        
-        return new RestResult(isSuccess, session, null, content);
+    	return request(Method.POST, uri, item, parser, true);
     }
 
     @Override
     public RestResult put(Uri uri, Object item, PodioParser<?> parser) {
-    	if (Utils.isEmpty(uri)) {
-    		throw new IllegalArgumentException("uri cannot be empty");
-    	}
-    	if (parser == null) {
-    		throw new NullPointerException("parser cannot be null");
-    	}
-    	
-        String inputJson = parser.parseToJson(item);
-        String outputJson = request(Method.PUT, uri, inputJson);
-
-        if (wasTokenExpiredError()) {
-            // For some reason the server has invalidated our access token.
-            // Try refresh the access token again.
-        	refreshSession();
-
-            outputJson = request(Method.PUT, uri, inputJson);
-        }
-
-        boolean isSuccess = Utils.notEmpty(outputJson);
-        Object content = parser.parseToItem(outputJson);
-        
-        return new RestResult(isSuccess, session, null, content);
+    	return request(Method.PUT, uri, item, parser, true);
     }
 
     /**
@@ -229,18 +152,43 @@ public class HttpClientDelegate implements RestClientDelegate {
         return params;
     }
 
-    private String request(int method, Uri uri, String body) {
-    	checkSession();
+    private RestResult request(int method, Uri uri, Object item, PodioParser<?> parser, boolean tryRefresh) {
+    	if (Utils.isEmpty(uri)) {
+    		throw new IllegalArgumentException("uri cannot be empty");
+    	}
+    	
+    	boolean refreshedSession = checkSession();
 
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + session.accessToken);
+        
+        String body = null;
+        if (item != null) {
+        	if (parser == null) {
+        		throw new NullPointerException("parser cannot be null");
+        	}
+        	body = parser.parseToJson(item);
+        } 
 
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new PodioRequest(method, uri.toString(), body, headers, future);
-
         requestQueue.add(request);
         
-        return getBlockingResponse(future);
+        String output = getBlockingResponse(future);
+
+        if (wasTokenExpiredError()) {
+            // For some reason the server has invalidated our access token.
+            // Try refresh the access token again.
+        	refreshSession();
+        	refreshedSession = true;
+
+        	return request(method, uri, item, parser, false);
+        }
+
+        boolean isSuccess = Utils.notEmpty(output);
+        Object content = parser.parseToItem(output);
+        
+        return new RestResult(isSuccess, refreshedSession ? session : null, null, content);
     }
     
     private boolean wasTokenExpiredError() {
@@ -267,7 +215,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         session = new Session(resultJson);
     }
 
-    private void checkSession() {
+    private boolean checkSession() {
     	if (session == null) {
     		throw new IllegalStateException("No session is active");
     	}
@@ -277,6 +225,9 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         if (session.shouldRefreshTokens()) {
             refreshSession();
+            return true;
         }
+        
+        return false;
     }
 }
