@@ -56,12 +56,13 @@ public class OrganizationProviderTest extends AndroidTestCase {
         OrganizationProvider target = new OrganizationProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.getAll();
+        Object ticket = target.getAll();
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertSame(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);

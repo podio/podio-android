@@ -58,12 +58,13 @@ public class SessionProviderTest extends AndroidTestCase {
         SessionProvider target = new SessionProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD");
+        Object ticket = target.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD");
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
@@ -96,12 +97,13 @@ public class SessionProviderTest extends AndroidTestCase {
         SessionProvider target = new SessionProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN");
+        Object ticket = target.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN");
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);

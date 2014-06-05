@@ -62,11 +62,11 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the delete request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.deleteRequest(filter, null);
+        Object ticket = target.deleteRequest(filter, null);
 
         // Verify that the correct DELETE RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.DELETE, null, filter, filter, request);
+        validateRequest(RestOperation.DELETE, null, ticket, filter, request);
     }
 
     /**
@@ -92,11 +92,11 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the fetch request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.fetchRequest(filter, null);
+        Object ticket = target.fetchRequest(filter, null);
 
         // Verify that the correct GET RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.GET, null, filter, filter, request);
+        validateRequest(RestOperation.GET, null, ticket, filter, request);
     }
 
     /**
@@ -123,11 +123,11 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the push request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.pushRequest(filter, item, null);
+        Object ticket = target.pushRequest(filter, item, null);
 
         // Verify that the correct POST RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.POST, item, filter, filter, request);
+        validateRequest(RestOperation.POST, item, ticket, filter, request);
     }
 
     /**
@@ -154,11 +154,11 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the change request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.changeRequest(filter, item, null);
+        Object ticket = target.changeRequest(filter, item, null);
 
         // Verify that the correct PUT RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
-        validateRequest(RestOperation.PUT, item, filter, filter, request);
+        validateRequest(RestOperation.PUT, item, ticket, filter, request);
     }
 
     /**
@@ -193,7 +193,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setProviderListener(mockListener);
-        target.changeRequest(itemFilter, itemObject, null);
+        Object ticket = target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -202,7 +202,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(false, mockListener.mock_isSuccessCalled);
         assertEquals(true, mockListener.mock_isFailureCalled);
-        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(ticket, mockListener.mock_ticket);
         assertEquals(errorMessage, mockListener.mock_message);
     }
 
@@ -240,7 +240,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setProviderListener(mockListener);
-        target.changeRequest(itemFilter, itemObject, null);
+        Object ticket = target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -249,7 +249,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         assertEquals(true, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
-        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(ticket, mockListener.mock_ticket);
         assertEquals(itemObject, mockListener.mock_item);
         assertEquals(session, mockListener.mock_session);
     }
@@ -287,7 +287,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setProviderListener(mockListener);
-        target.changeRequest(itemFilter, null, null);
+        Object ticket = target.changeRequest(itemFilter, null, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -296,7 +296,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         assertEquals(true, mockListener.mock_isSessionChangeCalled);
         assertEquals(false, mockListener.mock_isSuccessCalled);
         assertEquals(true, mockListener.mock_isFailureCalled);
-        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(ticket, mockListener.mock_ticket);
         assertEquals(session, mockListener.mock_session);
         assertEquals(errorMessage, mockListener.mock_message);
     }
@@ -332,7 +332,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setProviderListener(mockListener);
-        target.changeRequest(itemFilter, itemObject, null);
+        Object ticket = target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -341,7 +341,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
-        assertEquals(itemFilter, mockListener.mock_ticket);
+        assertEquals(ticket, mockListener.mock_ticket);
         assertEquals(itemObject, mockListener.mock_item);
     }
 

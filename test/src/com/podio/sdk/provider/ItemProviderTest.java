@@ -55,12 +55,13 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider target = new ItemProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.addItem(2L, new Object());
+        Object ticket = target.addItem(2L, new Object());
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
@@ -91,12 +92,13 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider target = new ItemProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.fetchItem(3L);
+        Object ticket = target.fetchItem(3L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
@@ -127,12 +129,13 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider target = new ItemProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.fetchItemsForApplication(4L);
+        Object ticket = target.fetchItemsForApplication(4L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
@@ -163,15 +166,15 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider target = new ItemProvider(mockClient);
         target.setProviderListener(mockListener);
 
-        target.updateItem(5, new Object());
+        Object ticket = target.updateItem(5, new Object());
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
         assertEquals(true, mockListener.mock_isSuccessCalled);
         assertEquals(false, mockListener.mock_isFailureCalled);
+        assertEquals(ticket, mockListener.mock_ticket);
 
         Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
-
 }
