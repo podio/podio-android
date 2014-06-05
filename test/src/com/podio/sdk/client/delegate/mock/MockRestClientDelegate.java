@@ -22,124 +22,70 @@
 
 package com.podio.sdk.client.delegate.mock;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.net.Uri;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
+import com.podio.sdk.internal.request.RestOperation;
 
 public class MockRestClientDelegate implements RestClientDelegate {
+	
+	private Map<RestOperation, Integer> calls = new HashMap<>();
+	private Map<RestOperation, Uri> uris = new HashMap<>();
 
-    private RestResult authorizeResult = RestResult.success();
-    private RestResult deleteResult = RestResult.success();
-    private RestResult getResult = RestResult.success();
-    private RestResult postResult = RestResult.success();
-    private RestResult putResult = RestResult.success();
-
-    private Uri authorizeUri = null;
-    private Uri deleteUri = null;
-    private Uri getUri = null;
-    private Uri postUri = null;
-    private Uri putUri = null;
-
-    private int authorizeCount = 0;
-    private int deleteCount = 0;
-    private int getCount = 0;
-    private int postCount = 0;
-    private int putCount = 0;
+	
+	private RestResult process(RestOperation operation, Uri uri) {
+		Integer callCount = calls.get(operation);
+		if (callCount == null) {
+			callCount = 0;
+		}
+		callCount++;
+		calls.put(operation, callCount);
+		
+		uris.put(operation, uri);
+		
+		return RestResult.success();
+	}
+	
+	public int getCalls(RestOperation operation) {
+		Integer callCount = calls.get(operation);
+		if (callCount != null) {
+			return callCount;
+		} else {
+			return 0;
+		}
+	}
+	
+	public Uri getUri(RestOperation operation) {
+		return uris.get(operation);
+	}
 
     @Override
     public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
-        authorizeCount++;
-        authorizeUri = uri;
-        return authorizeResult;
+    	return process(RestOperation.AUTHORIZE, uri);
     }
 
     @Override
     public RestResult delete(Uri uri, PodioParser<?> itemParser) {
-        deleteCount++;
-        deleteUri = uri;
-        return deleteResult;
+    	return process(RestOperation.DELETE, uri);
     }
 
     @Override
     public RestResult get(Uri uri, PodioParser<?> itemParser) {
-        getCount++;
-        getUri = uri;
-        return getResult;
+    	return process(RestOperation.GET, uri);
     }
 
     @Override
     public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
-        postCount++;
-        postUri = uri;
-        return postResult;
+    	return process(RestOperation.POST, uri);
     }
 
     @Override
     public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
-        putCount++;
-        putUri = uri;
-        return putResult;
-    }
-
-    public Uri mock_getAuthorizeUri() {
-        return authorizeUri;
-    }
-
-    public Uri mock_getDeleteUri() {
-        return deleteUri;
-    }
-
-    public Uri mock_getGetUri() {
-        return getUri;
-    }
-
-    public Uri mock_getPostUri() {
-        return postUri;
-    }
-
-    public Uri mock_getPutUri() {
-        return putUri;
-    }
-
-    public int mock_getAuthorizeCallCount() {
-        return authorizeCount;
-    }
-
-    public int mock_getDeleteCallCount() {
-        return deleteCount;
-    }
-
-    public int mock_getGetCallCount() {
-        return getCount;
-    }
-
-    public int mock_getPostCallCount() {
-        return postCount;
-    }
-
-    public int mock_getPutCallCount() {
-        return putCount;
-    }
-
-    public void mock_setMockAuthorizeResult(RestResult authorizeResult) {
-        this.authorizeResult = authorizeResult;
-    }
-
-    public void mock_setMockDeleteResult(RestResult deleteResult) {
-        this.deleteResult = deleteResult;
-    }
-
-    public void mock_setMockGetResult(RestResult getResult) {
-        this.getResult = getResult;
-    }
-
-    public void mock_setMockPostResult(RestResult postResult) {
-        this.postResult = postResult;
-    }
-
-    public void mock_setMockPutResult(RestResult putResult) {
-        this.putResult = putResult;
+    	return process(RestOperation.PUT, uri);
     }
 }

@@ -116,7 +116,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(true, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
@@ -168,7 +168,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(true, result.isDeleteCalled);
@@ -200,7 +200,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
@@ -232,7 +232,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);
@@ -264,7 +264,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(false, result.isAuthorizeCalled);
         assertEquals(false, result.isDeleteCalled);

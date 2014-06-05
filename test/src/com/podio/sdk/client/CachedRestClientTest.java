@@ -109,10 +109,10 @@ public class CachedRestClientTest extends ThreadedTestCase {
         RestRequest request = buildRestRequest(RestOperation.AUTHORIZE, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertNull(targetDatabaseDelegate.mock_getAuthorizeUri());
-        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getAuthorizeUri());
+        assertNull(targetDatabaseDelegate.getUri(RestOperation.AUTHORIZE));
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.AUTHORIZE));
     }
 
     /**
@@ -139,10 +139,10 @@ public class CachedRestClientTest extends ThreadedTestCase {
         RestRequest request = buildRestRequest(RestOperation.AUTHORIZE);
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(1, targetNetworkDelegate.mock_getAuthorizeCallCount());
-        assertEquals(0, targetDatabaseDelegate.mock_getAuthorizeCallCount());
+        assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.AUTHORIZE));
+        assertEquals(0, targetDatabaseDelegate.getCalls(RestOperation.AUTHORIZE));
     }
 
     /**
@@ -202,10 +202,10 @@ public class CachedRestClientTest extends ThreadedTestCase {
         RestRequest request = buildRestRequest(RestOperation.DELETE, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(targetDatabaseDelegate.mock_getAuthorizeCallCount(), 0);
-        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getDeleteUri());
+        assertEquals(targetDatabaseDelegate.getCalls(RestOperation.AUTHORIZE), 0); //TODO: Is this really correct?
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.DELETE));
     }
 
     /**
@@ -232,11 +232,11 @@ public class CachedRestClientTest extends ThreadedTestCase {
         RestRequest request = buildRestRequest(RestOperation.DELETE);
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(1, targetNetworkDelegate.mock_getDeleteCallCount());
-        assertEquals(1, targetDatabaseDelegate.mock_getDeleteCallCount());
-        assertEquals(1, targetDatabaseDelegate.mock_getGetCallCount());
+        assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.DELETE));
+        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.DELETE));
+        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.GET));
     }
 
     /**
@@ -260,14 +260,16 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * 
      * </pre>
      */
-    public void testGetRequestDelegatesCorrectUri() {
+    public void testGetRequestDelegatesCorrectUri() {        
+        expectedReportCount = 2;
+        
         RestRequest request = buildRestRequest(RestOperation.GET, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getGetUri());
-        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getGetUri());
+        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.getUri(RestOperation.GET));
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.GET));
     }
 
     /**
@@ -296,11 +298,11 @@ public class CachedRestClientTest extends ThreadedTestCase {
         RestRequest request = buildRestRequest(RestOperation.GET);
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(2, targetDatabaseDelegate.mock_getGetCallCount());
-        assertEquals(1, targetNetworkDelegate.mock_getGetCallCount());
-        assertEquals(1, targetDatabaseDelegate.mock_getPostCallCount());
+        assertEquals(2, targetDatabaseDelegate.getCalls(RestOperation.GET));
+        assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.GET));
+        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
     /**
@@ -325,13 +327,15 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostRequestDelegatesCorrectUri() {
+        expectedReportCount = 2;
+        
         RestRequest request = buildRestRequest(RestOperation.POST, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.mock_getPostUri());
-        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPostUri());
+        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.getUri(RestOperation.POST));
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.POST));
     }
 
     /**
@@ -355,13 +359,15 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostRequestTriggersBothClientDelegates() {
+        expectedReportCount = 3;
+        
         RestRequest request = buildRestRequest(RestOperation.POST);
         targetRestClient.enqueue(request);
+        
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        TestUtils.waitUntilCompletion();
-
-        assertEquals(1, targetNetworkDelegate.mock_getPostCallCount());
-        assertEquals(2, targetDatabaseDelegate.mock_getPostCallCount());
+        assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.POST));
+        assertEquals(2, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
     /**
@@ -386,13 +392,15 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPutRequestDelegatesCorrectUri() {
+    	expectedReportCount = 2;
+    	
         RestRequest request = buildRestRequest(RestOperation.PUT, "path");
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertNull(targetDatabaseDelegate.mock_getPutUri());
-        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.mock_getPutUri());
+        assertNull(targetDatabaseDelegate.getUri(RestOperation.PUT));
+        assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.PUT));
     }
 
     /**
@@ -419,10 +427,10 @@ public class CachedRestClientTest extends ThreadedTestCase {
         RestRequest request = buildRestRequest(RestOperation.PUT);
         targetRestClient.enqueue(request);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(1, targetNetworkDelegate.mock_getPutCallCount());
-        assertEquals(1, targetDatabaseDelegate.mock_getPutCallCount());
+        assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.PUT));
+        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.PUT));
     }
 
     private RestRequest buildRestRequest(RestOperation operation) {
@@ -431,14 +439,13 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
     private RestRequest buildRestRequest(RestOperation operation, String path) {
         BasicPodioFilter filter = new BasicPodioFilter(path);
-		RestRequest request = new RestRequest() //
+		
+        return new RestRequest() //
                 .setContent(new Object()) //
                 .setOperation(operation) //
                 .setResultListener(null) //
                 .setFilter(filter) //
                 .setTicket(filter);
-
-        return request;
     }
 
 }

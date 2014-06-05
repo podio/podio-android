@@ -27,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 public class TestUtils {
 
-    private static final long DELAY_DEFAULT = 2000;
-
     private static Semaphore semaphore;
     
     private TestUtils() {
@@ -38,21 +36,12 @@ public class TestUtils {
     	semaphore = new Semaphore(0);
     }
 
-    /**
-     * Alerts the watch dog and blocks the current thread by acquiring the only
-     * semaphore immediately. The watch dog will force-release the blockade
-     * after two seconds.
-     */
-    public static boolean waitUntilCompletion(long delayMillis) {
+    public static boolean waitUntilCompletion() {
         try {
-			return semaphore.tryAcquire(delayMillis, TimeUnit.MILLISECONDS);
+			return semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			return false;
 		}
-    }
-
-    public static boolean waitUntilCompletion() {
-        return waitUntilCompletion(DELAY_DEFAULT);
     }
 
     /**

@@ -152,7 +152,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
 
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(true, firstResult.isRequestPushed);
         assertEquals(true, firstResult.isRequestPopped);
@@ -194,7 +194,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertFalse(threadNames[0] + " vs. " + threadNames[1],
                 threadNames[0].equals(threadNames[1]));
@@ -308,7 +308,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         // This line will block execution until the blocking semaphore is
         // released either by the above result listener or the test global
         // watch-dog.
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(true, result.isRequestPushed);
         assertEquals(true, result.isRequestPopped);
@@ -368,12 +368,16 @@ public class QueuedRestClientTest extends ThreadedTestCase {
                 if (firstFilter == filter) {
                     firstResult.isRequestPopped = true;
                     firstResult.isTicketValid = true;
+                    
+                    TestUtils.completed();
                 } else if (secondFilter == filter) {
                     secondResult.isRequestPopped = true;
                     secondResult.isTicketValid = true;
+                    
+                    TestUtils.completed();
                 }
-
-                return RestResult.success();
+                
+                return super.handleRequest(restRequest);
             }
         };
 
@@ -382,21 +386,23 @@ public class QueuedRestClientTest extends ThreadedTestCase {
                 .setResultListener(listener).setOperation(RestOperation.AUTHORIZE);
 
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
-        TestUtils.waitUntilCompletion(100);
+        
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(true, firstResult.isRequestPushed);
         assertEquals(true, firstResult.isRequestPopped);
         assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
         assertEquals(0, testTarget.size());
-
-        TestUtils.waitUntilCompletion(100);
+        
+        TestUtils.reset();
 
         RestRequest secondRequest = new RestRequest() //
                 .setFilter(secondFilter) //
                 .setResultListener(listener).setOperation(RestOperation.AUTHORIZE);
 
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
-        TestUtils.waitUntilCompletion(100);
+        
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(true, secondResult.isRequestPushed);
         assertEquals(true, secondResult.isRequestPopped);
@@ -459,7 +465,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -510,7 +516,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -563,7 +569,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         // The code should return in the above defined listener once the
         // blockade is released.
@@ -614,7 +620,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         // The code should return in the above defined listener once the
         // blockade is released.

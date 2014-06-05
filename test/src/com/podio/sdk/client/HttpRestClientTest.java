@@ -118,7 +118,7 @@ public class HttpRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
 
         assertCalled(RestOperation.AUTHORIZE);
     }
@@ -166,7 +166,7 @@ public class HttpRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
         
         assertCalled(RestOperation.DELETE);
     }
@@ -194,7 +194,7 @@ public class HttpRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
         
         assertCalled(RestOperation.GET);
     }
@@ -222,7 +222,7 @@ public class HttpRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
         
         assertCalled(RestOperation.POST);
     }
@@ -250,7 +250,7 @@ public class HttpRestClientTest extends ThreadedTestCase {
 
         target.enqueue(restRequest);
         
-        TestUtils.waitUntilCompletion();
+        assertTrue(TestUtils.waitUntilCompletion());
         
         assertCalled(RestOperation.PUT);
     }
