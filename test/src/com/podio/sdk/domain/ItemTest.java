@@ -36,7 +36,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.Category;
+import com.podio.sdk.domain.field.CategoryField;
 import com.podio.sdk.domain.field.Field;
 
 public class ItemTest extends AndroidTestCase {
@@ -169,7 +169,7 @@ public class ItemTest extends AndroidTestCase {
         Gson gson = new GsonBuilder().registerTypeAdapter(Field.class, new JsonDeserializer<Field>() {
             @Override
             public Field deserialize(JsonElement element, Type type, JsonDeserializationContext gsonContext) throws JsonParseException {
-                return gsonContext.deserialize(element, Category.class);
+                return gsonContext.deserialize(element, CategoryField.class);
             }
         }).create();
         Item item = gson.fromJson(json, Item.class);

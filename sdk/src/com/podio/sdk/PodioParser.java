@@ -33,9 +33,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.ApplicationReference;
+import com.podio.sdk.domain.field.ApplicationReferenceField;
 import com.podio.sdk.domain.field.CalculationField;
-import com.podio.sdk.domain.field.Category;
+import com.podio.sdk.domain.field.CategoryField;
 import com.podio.sdk.domain.field.ContactField;
 import com.podio.sdk.domain.field.DateField;
 import com.podio.sdk.domain.field.DurationField;
@@ -47,8 +47,8 @@ import com.podio.sdk.domain.field.LocationField;
 import com.podio.sdk.domain.field.MoneyField;
 import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.Text;
 import com.podio.sdk.domain.field.TitleField;
+import com.podio.sdk.domain.field.TextField;
 import com.podio.sdk.internal.utils.Utils;
 
 /**
@@ -92,11 +92,11 @@ public class PodioParser<T> {
 
             switch (typeEnum) {
             case app:
-                return gsonContext.deserialize(element, ApplicationReference.class);
+                return gsonContext.deserialize(element, ApplicationReferenceField.class);
             case calculation:
                 return gsonContext.deserialize(element, CalculationField.class);
             case category:
-                return gsonContext.deserialize(element, Category.class);
+                return gsonContext.deserialize(element, CategoryField.class);
             case contact:
                 return gsonContext.deserialize(element, ContactField.class);
             case date:
@@ -116,9 +116,9 @@ public class PodioParser<T> {
             case progress:
                 return gsonContext.deserialize(element, ProgressField.class);
             case text:
-                return gsonContext.deserialize(element, Text.class);
             case title:
                 return gsonContext.deserialize(element, TitleField.class);
+                return gsonContext.deserialize(element, TextField.class);
             default:
                 JsonObject empty = new JsonObject();
                 empty.addProperty("type", Field.Type.undefined.name());

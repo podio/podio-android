@@ -30,7 +30,7 @@ import com.podio.sdk.domain.Application;
 import com.podio.sdk.domain.Space;
 import com.podio.sdk.domain.helper.UserInfo;
 
-public final class ApplicationReference extends Field {
+public final class ApplicationReferenceField extends Field {
 
     /**
      * The value content of this field.
@@ -99,7 +99,7 @@ public final class ApplicationReference extends Field {
 
     public final List<Value> values;
 
-    public ApplicationReference(String externalId) {
+    public ApplicationReferenceField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }

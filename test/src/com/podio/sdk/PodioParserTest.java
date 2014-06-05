@@ -25,9 +25,9 @@ package com.podio.sdk;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.domain.Item;
-import com.podio.sdk.domain.field.ApplicationReference;
+import com.podio.sdk.domain.field.ApplicationReferenceField;
 import com.podio.sdk.domain.field.CalculationField;
-import com.podio.sdk.domain.field.Category;
+import com.podio.sdk.domain.field.CategoryField;
 import com.podio.sdk.domain.field.ContactField;
 import com.podio.sdk.domain.field.DateField;
 import com.podio.sdk.domain.field.DurationField;
@@ -39,7 +39,7 @@ import com.podio.sdk.domain.field.LocationField;
 import com.podio.sdk.domain.field.MoneyField;
 import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.Text;
+import com.podio.sdk.domain.field.TextField;
 import com.podio.sdk.domain.field.TitleField;
 
 public class PodioParserTest extends AndroidTestCase {
@@ -95,7 +95,7 @@ public class PodioParserTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Describe an {@link Item} with an {@link ApplicationReference} field
+     * 1. Describe an {@link Item} with an {@link ApplicationReferenceField} field
      *      as a JSON string.
      * 
      * 2. Try to parse the JSON.
@@ -116,7 +116,7 @@ public class PodioParserTest extends AndroidTestCase {
 
         Field field = item.fields.get(0);
         assertNotNull(field);
-        assertTrue(field instanceof ApplicationReference);
+        assertTrue(field instanceof ApplicationReferenceField);
         assertEquals(Field.Type.app, field.type);
     }
 
@@ -157,7 +157,7 @@ public class PodioParserTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Describe an {@link Item} with an {@link Category} field as a JSON
+     * 1. Describe an {@link Item} with an {@link CategoryField} field as a JSON
      *      string.
      * 
      * 2. Try to parse the JSON.
@@ -178,7 +178,7 @@ public class PodioParserTest extends AndroidTestCase {
 
         Field field = item.fields.get(0);
         assertNotNull(field);
-        assertTrue(field instanceof Category);
+        assertTrue(field instanceof CategoryField);
         assertEquals(Field.Type.category, field.type);
     }
 
@@ -308,7 +308,7 @@ public class PodioParserTest extends AndroidTestCase {
 
     /**
      * Verifies that the {@link PodioParser} performs a pre-validation of the
-     * "type" Field JSON attribute and returns a {@link Text} when no type is
+     * "type" Field JSON attribute and returns a {@link TextField} when no type is
      * defined.
      * 
      * <pre>
@@ -339,7 +339,7 @@ public class PodioParserTest extends AndroidTestCase {
 
     /**
      * Verifies that the {@link PodioParser} performs a pre-validation of the
-     * "type" Field JSON attribute and returns a {@link Text} when no type is
+     * "type" Field JSON attribute and returns a {@link TextField} when no type is
      * defined.
      * 
      * <pre>
@@ -560,7 +560,7 @@ public class PodioParserTest extends AndroidTestCase {
      * 
      * <pre>
      * 
-     * 1. Describe an {@link Item} with an {@link Text} field as a JSON
+     * 1. Describe an {@link Item} with an {@link TextField} field as a JSON
      *      string.
      * 
      * 2. Try to parse the JSON.
@@ -581,7 +581,7 @@ public class PodioParserTest extends AndroidTestCase {
 
         Field field = item.fields.get(0);
         assertNotNull(field);
-        assertTrue(field instanceof Text);
+        assertTrue(field instanceof TextField);
         assertEquals(Field.Type.text, field.type);
     }
 

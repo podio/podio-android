@@ -1,5 +1,3 @@
-//@formatter:off
-
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
@@ -22,112 +20,84 @@
  *  SOFTWARE.
  */
 
-//@formatter:on
-
 package com.podio.sdk.domain.field;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class Category extends Field {
+/**
+ * The Podio Text field domain object.
+ * 
+ * @author László Urszuly
+ */
+public final class TextField extends Field {
 
     /**
-     * A category option.
+     * The values for the named sizes a text field can have.
      * 
      * @author László Urszuly
      */
-    public static final class Option implements Pushable {
-        public final String status = null;
-        public final String text = null;
-        public final String color = null;
-
-        public final Integer id;
-
-        public Option(int id) {
-            this.id = id;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return o != null && o instanceof Option && id == ((Option) o).id;
-        }
-
-        @Override
-        public Object getPushData() {
-            HashMap<String, Integer> pushData = new HashMap<String, Integer>();
-            pushData.put("value", id);
-            return pushData;
-        }
-
-        @Override
-        public int hashCode() {
-            return id;
-        }
+    public static enum Size {
+        large, small, undefined
     }
 
     /**
-     * The category field settings.
+     * Settings for the text field.
      * 
      * @author László Urszuly
      */
     public static final class Settings {
-        public final String display = null;
-        public final Boolean multiple = null;
-        public final List<Option> options = null;
+        public final Size size = null;
     }
 
     /**
-     * The category field configuration. This object holds the field settings.
+     * Configuration of the text field.
      * 
      * @author László Urszuly
      */
     public static final class Config {
+        public final Value default_value = null;
+        public final Integer delta = null;
+        public final String description = null;
+        public final Boolean hidden = null;
+        public final String label = null;
+        public final Boolean required = null;
         public final Settings settings = null;
+        public final Boolean visible = null;
     }
 
     /**
-     * A picked category option.
+     * The field value container.
      * 
      * @author László Urszuly
      */
-    public static final class Value {
-        public final Option value;
+    public static final class Value implements Pushable {
+        public String value;
 
-        public Value(Option option) {
-        	if (option == null) {
-        		throw new NullPointerException("option cannot be null");
-        	}
-            this.value = option;
+        public Value(String value) {
+            this.value = value;
         }
 
         @Override
-        public boolean equals(Object o) {
-            return o != null && o instanceof Value && ((Value) o).value.equals(value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value.hashCode();
+        public Object getPushData() {
+            HashMap<String, String> pushData = new HashMap<String, String>();
+            pushData.put("value", value.toString());
+            return pushData;
         }
     }
 
     public final Config config = null;
-
-    // TODO: This isn't good. We shouldn't make a member field publicly
-    // modifiable like this. Have a second look at it.
     public final List<Value> values;
 
-    public Category(String externalId) {
+    public TextField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }
 
     @Override
     public void clear(Object value) throws FieldTypeMismatchException {
-        Option option = tryCast(value);
-        Value v = new Value(option);
-        values.remove(v);
+        values.clear();
     }
 
     @Override
@@ -135,7 +105,7 @@ public final class Category extends Field {
         ArrayList<Object> pushData = new ArrayList<Object>();
 
         for (Value value : values) {
-            pushData.add(value.value.getPushData());
+            pushData.add(value.getPushData());
         }
 
         return pushData;
@@ -143,14 +113,14 @@ public final class Category extends Field {
 
     @Override
     public void set(Object value) throws FieldTypeMismatchException {
-        Option option = tryCast(value);
-        clear(option);
-        values.add(new Value(option));
+        String text = tryCast(value);
+        clear(value);
+        values.add(new Value(text));
     }
 
-    private Option tryCast(Object value) throws FieldTypeMismatchException {
-        if (value instanceof Option) {
-            return (Option) value;
+    private String tryCast(Object value) throws FieldTypeMismatchException {
+        if (value instanceof String) {
+            return (String) value;
         } else {
             throw new FieldTypeMismatchException();
         }
