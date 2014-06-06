@@ -27,8 +27,11 @@ import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.domain.Application;
+import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.MockResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
+
+import static org.mockito.Mockito.*;
 
 public class ApplicationProviderTest extends AndroidTestCase {
 
@@ -48,21 +51,20 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationRequestsFullItemSetByDefault() {
-        final Uri reference = Uri.parse("content://test.uri/app/2?type=full");
+    	@SuppressWarnings("unchecked")
+		ResultListener<Application> mockListener = mock(ResultListener.class);
+    	
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener<Application> mockListener = new MockResultListener<Application>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 
-        target.fetchApplication(2L, mockListener);
+        Object ticket = target.fetchApplication(2L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
+        
+        verify(mockListener).onSuccess(ticket, null);
 
-        assertEquals(false, mockListener.mock_isSessionChangeCalled);
-        assertEquals(true, mockListener.mock_isSuccessCalled);
-        assertEquals(false, mockListener.mock_isFailureCalled);
-
-        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
-        assertEquals(reference, uri);
+        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        assertEquals(Uri.parse("content://test.uri/app/2?type=full"), uri);
     }
 
     /**
