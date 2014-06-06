@@ -397,7 +397,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertNull(targetDatabaseDelegate.getUri(RestOperation.PUT));
+        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.getUri(RestOperation.POST));
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.PUT));
     }
 
@@ -428,7 +428,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
         assertTrue(TestUtils.waitUntilCompletion());
 
         assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.PUT));
-        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.PUT));
+        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
     private RestRequest buildRestRequest(RestOperation operation) {

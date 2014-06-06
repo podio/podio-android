@@ -125,7 +125,7 @@ public class CachedRestClient extends HttpRestClient {
             assert result != null;
 
             if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
-                if (operation == RestOperation.GET) {
+                if (operation == RestOperation.GET || operation == RestOperation.PUT) {
                     result = RestOperation.POST.invoke(databaseDelegate, uri, result.item(), parser);
                 } else {
                     result = operation.invoke(databaseDelegate,  uri, result.item(), parser);
