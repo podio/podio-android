@@ -22,10 +22,10 @@
 
 package com.podio.sdk.provider.mock;
 
-import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.internal.request.ResultListener;
 
-public class MockProviderListener implements PodioProviderListener {
+public class MockResultListener implements ResultListener {
 
     public boolean mock_isSessionChangeCalled = false;
     public boolean mock_isSuccessCalled = false;
@@ -36,14 +36,14 @@ public class MockProviderListener implements PodioProviderListener {
     public Object mock_item = null;
 
     @Override
-    public void onRequestComplete(Object ticket, Object content) {
+    public void onSuccess(Object ticket, Object content) {
         mock_isSuccessCalled = true;
         mock_ticket = ticket;
         mock_item = content;
     }
 
     @Override
-    public void onRequestFailure(Object ticket, String message) {
+    public void onFailure(Object ticket, String message) {
         mock_isFailureCalled = true;
         mock_ticket = ticket;
         mock_message = message;

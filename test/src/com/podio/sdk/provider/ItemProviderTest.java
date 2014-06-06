@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.provider.mock.MockProviderListener;
+import com.podio.sdk.provider.mock.MockResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
 public class ItemProviderTest extends AndroidTestCase {
@@ -50,10 +50,10 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/app/2");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         Object ticket = target.addItem(2L, new Object());
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -87,10 +87,10 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/3");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         Object ticket = target.fetchItem(3L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -124,10 +124,10 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/app/4/filter");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         Object ticket = target.fetchItemsForApplication(4L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -161,10 +161,10 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/5");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         Object ticket = target.updateItem(5, new Object());
         mockClient.mock_processLastPushedRestRequest(true, null, null);

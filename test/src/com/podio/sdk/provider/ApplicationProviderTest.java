@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.provider.mock.MockProviderListener;
+import com.podio.sdk.provider.mock.MockResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
 public class ApplicationProviderTest extends AndroidTestCase {
@@ -49,10 +49,10 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationRequestsFullItemSetByDefault() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=full");
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         target.fetchApplication(2L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -83,10 +83,10 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationMicroRequestsMicroItemSet() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=micro");
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         target.fetchApplicationMicro(2L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -117,10 +117,10 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationMiniRequestsMiniItemSet() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=mini");
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         target.fetchApplicationMini(2L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -151,10 +151,10 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationsForSpaceDoesntRequestInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/1?include_inactive=false");
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         target.fetchApplicationsForSpace(1);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -185,10 +185,10 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationsForSpaceWithInactivesIncludedRequestsInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/2?include_inactive=true");
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         target.fetchApplicationsForSpaceWithInactivesIncluded(2);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
@@ -219,10 +219,10 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationShortRequestsShortItemSet() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=short");
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         target.fetchApplicationShort(2L);
         mockClient.mock_processLastPushedRestRequest(true, null, null);

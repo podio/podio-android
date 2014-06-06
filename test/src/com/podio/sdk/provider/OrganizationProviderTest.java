@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.provider.mock.MockProviderListener;
+import com.podio.sdk.provider.mock.MockResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
 public class OrganizationProviderTest extends AndroidTestCase {
@@ -51,10 +51,10 @@ public class OrganizationProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/org");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         OrganizationProvider target = new OrganizationProvider(mockClient);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
 
         Object ticket = target.getAll();
         mockClient.mock_processLastPushedRestRequest(true, null, null);

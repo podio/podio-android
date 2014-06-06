@@ -28,14 +28,13 @@ import java.util.List;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.provider.mock.MockProviderListener;
 import com.podio.sdk.provider.mock.MockRestClient;
+import com.podio.sdk.provider.mock.MockResultListener;
 
 public class BasicPodioProviderTest extends AndroidTestCase {
 
@@ -162,7 +161,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the failure method on the {@link PodioProviderListener}
+     * Verifies that the failure method on the {@link PodioresultListener}
      * callback is called if the (mocked) {@link RestClient} fails to finish
      * properly.
      * 
@@ -170,7 +169,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
      * 
      * 1. Create a new instance of the ItemProvider class and assign a mock
      *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link PodioProviderListener} to the
+     *      data around. Also assign a custom {@link PodioresultListener} to the
      *      ItemProvider.
      * 
      * 2. Perform a request (any rest request) and simulate the mock RestClient
@@ -189,10 +188,10 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
         Object ticket = target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
@@ -208,14 +207,14 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
     /**
      * Verifies that the session change method on the
-     * {@link PodioProviderListener} callback is called if the (mocked)
+     * {@link PodioresultListener} callback is called if the (mocked)
      * {@link RestClient} decides to change the session object.
      * 
      * <pre>
      * 
      * 1. Create a new instance of the ItemProvider class and assign a mock
      *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link PodioProviderListener} to the
+     *      data around. Also assign a custom {@link PodioresultListener} to the
      *      ItemProvider.
      * 
      * 2. Perform a request (any rest request) and simulate the mock RestClient
@@ -233,13 +232,13 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         // Setup the mock session.
         client.mock_setMockSession(session);
 
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
         Object ticket = target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
@@ -256,14 +255,14 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
     /**
      * Verifies that the session change method on the
-     * {@link PodioProviderListener} callback is called if the (mocked)
+     * {@link PodioresultListener} callback is called if the (mocked)
      * {@link RestClient} decides to change the session object.
      * 
      * <pre>
      * 
      * 1. Create a new instance of the ItemProvider class and assign a mock
      *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link PodioProviderListener} to the
+     *      data around. Also assign a custom {@link PodioresultListener} to the
      *      ItemProvider.
      * 
      * 2. Perform a request (any rest request) and simulate the mock RestClient
@@ -280,13 +279,13 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         // Setup the mock session.
         client.mock_setMockSession(session);
 
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
         Object ticket = target.changeRequest(itemFilter, null, null);
 
         // Allow the mock client to "process" the request (basically allow the
@@ -302,7 +301,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the success method on the {@link PodioProviderListener}
+     * Verifies that the success method on the {@link PodioresultListener}
      * callback is called if the (mocked) {@link RestClient} finishes
      * successfully.
      * 
@@ -310,7 +309,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
      * 
      * 1. Create a new instance of the ItemProvider class and assign a mock
      *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link PodioProviderListener} to the
+     *      data around. Also assign a custom {@link PodioresultListener} to the
      *      ItemProvider.
      * 
      * 2. Perform a request (any rest request) and simulate the mock RestClient
@@ -327,11 +326,11 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockProviderListener mockListener = new MockProviderListener();
+        final MockResultListener mockListener = new MockResultListener();
 
         // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        target.setProviderListener(mockListener);
+        target.setResultListener(mockListener);
         Object ticket = target.changeRequest(itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the

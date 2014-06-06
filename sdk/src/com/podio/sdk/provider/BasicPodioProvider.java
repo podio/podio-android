@@ -25,7 +25,6 @@ package com.podio.sdk.provider;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioProvider;
-import com.podio.sdk.PodioProviderListener;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.Session;
@@ -34,30 +33,7 @@ import com.podio.sdk.internal.request.ResultListener;
 
 public class BasicPodioProvider implements PodioProvider {
 
-    private final ResultListener resultListener = new ResultListener() {
-        @Override
-        public void onFailure(Object ticket, String message) {
-            if (providerListener != null) {
-                providerListener.onRequestFailure(ticket, message);
-            }
-        }
-
-        @Override
-        public void onSessionChange(Object ticket, Session session) {
-            if (providerListener != null) {
-                providerListener.onSessionChange(ticket, session);
-            }
-        }
-
-        @Override
-        public void onSuccess(Object ticket, Object content) {
-            if (providerListener != null) {
-                providerListener.onRequestComplete(ticket, content);
-            }
-        }
-    };
-
-    private PodioProviderListener providerListener;
+    private ResultListener resultListener;
     protected final RestClient client;
 
     public BasicPodioProvider(RestClient client) {
@@ -117,12 +93,12 @@ public class BasicPodioProvider implements PodioProvider {
      * callback is not given, then the rest operations can still be executed
      * silently.
      * 
-     * @param providerListener
+     * @param resultListener
      *            The callback implementation. Null is valid.
      * @return This instance of the <code>BasicPodioProvider</code>.
      */
-    public void setProviderListener(PodioProviderListener providerListener) {
-        this.providerListener = providerListener;
+    public void setResultListener(ResultListener resultListener) {
+        this.resultListener = resultListener;
     }
 
     protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter,

@@ -24,15 +24,13 @@ package com.podio.sdk.client;
 
 import java.util.concurrent.Semaphore;
 
-import android.util.Log;
-
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.request.ResultListenerAdapter;
 import com.podio.sdk.internal.request.ResultListener;
+import com.podio.sdk.internal.request.ResultListenerAdapter;
 import com.podio.test.TestUtils;
 import com.podio.test.ThreadedTestCase;
 

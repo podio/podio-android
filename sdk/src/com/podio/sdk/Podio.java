@@ -32,6 +32,7 @@ import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
+import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ItemProvider;
@@ -64,15 +65,15 @@ public final class Podio {
          * 
          * @param applicationId
          *        The id of the application to fetch.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object get(long applicationId, PodioProviderListener providerListener) {
+        public static final Object get(long applicationId, ResultListener resultListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchApplication(applicationId);
         }
@@ -82,15 +83,15 @@ public final class Podio {
          * 
          * @param spaceId
          *        The id of the parent workspace.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object getForSpace(long spaceId, PodioProviderListener providerListener) {
+        public static final Object getForSpace(long spaceId, ResultListener resultListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchApplicationsForSpace(spaceId);
         }
@@ -101,17 +102,17 @@ public final class Podio {
          * 
          * @param spaceId
          *        The id of the parent workspace.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object getForSpaceIncludingInactive(long spaceId,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId);
         }
@@ -122,17 +123,17 @@ public final class Podio {
          * 
          * @param applicationId
          *        The id of the application to fetch.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object getMicro(long applicationId,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchApplicationMicro(applicationId);
         }
@@ -143,17 +144,17 @@ public final class Podio {
          * 
          * @param applicationId
          *        The id of the application to fetch.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object getMini(long applicationId,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchApplicationMini(applicationId);
         }
@@ -164,17 +165,17 @@ public final class Podio {
          * 
          * @param applicationId
          *        The id of the application to fetch.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object getShort(long applicationId,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchApplicationShort(applicationId);
         }
@@ -196,23 +197,23 @@ public final class Podio {
         /**
          * Authenticates the caller with the given user credentials. On success
          * a new session object with the access and refresh tokens will be
-         * delivered through the given {@link PodioProviderListener}.
+         * delivered through the given {@link ResultListener}.
          * 
          * @param username
          *        The user name of the Podio account to authenticate with.
          * @param password
          *        The corresponding password of the Podio account.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object authenticateAsUser(String username, String password,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
 
             SessionProvider provider = new SessionProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.authenticateWithUserCredentials(clientId, clientSecret, username,
                     password);
@@ -221,23 +222,23 @@ public final class Podio {
         /**
          * Authenticates the caller with the given app credentials. On success a
          * new session object with the access and refresh tokens will be
-         * delivered through the given {@link PodioProviderListener}.
+         * delivered through the given {@link ResultListener}.
          * 
          * @param appId
          *        The id of the app to authenticate with.
          * @param appToken
          *        The token that has been generated for a particular app.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object authenticateAsApp(String appId, String appToken,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
 
             SessionProvider provider = new SessionProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
         }
@@ -280,17 +281,17 @@ public final class Podio {
          *        The id of the application to which this item is to be added.
          * @param data
          *        The definition of the item content to push.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object add(long applicationId, Object data,
-                PodioProviderListener providerListener) {
+        		ResultListener resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.addItem(applicationId, data);
         }
@@ -300,15 +301,15 @@ public final class Podio {
          * 
          * @param itemId
          *        The id of the item to fetch.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object get(long itemId, PodioProviderListener providerListener) {
+        public static final Object get(long itemId, ResultListener resultListener) {
             ItemProvider provider = new ItemProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchItem(itemId);
         }
@@ -319,17 +320,17 @@ public final class Podio {
          * 
          * @param applicationId
          *        The id of the parent application.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object getForApplication(long applicationId,
-                PodioProviderListener providerListener) {
+        		ResultListener resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchItemsForApplication(applicationId);
         }
@@ -341,17 +342,17 @@ public final class Podio {
          *        The id of the item to update.
          * @param data
          *        The changed data bundle.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
         public static final Object update(long itemId, Object data,
-                PodioProviderListener providerListener) {
+        		ResultListener resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.updateItem(itemId, data);
 
@@ -374,15 +375,15 @@ public final class Podio {
          * Fetches all Organizations (including a minimal set of information on
          * the contained workspaces) that are available to the user.
          * 
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the items are fetched.
          *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object getAll(PodioProviderListener providerListener) {
+        public static final Object getAll(ResultListener resultListener) {
             OrganizationProvider provider = new OrganizationProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.getAll();
         }
@@ -409,15 +410,15 @@ public final class Podio {
          *        The Date from which the result should end at.
          * @param priority
          *        The priority level of the results.
-         * @param providerListener
+         * @param resultListener
          *        The callback implementation called when the calendar events
          *        are fetched. Null is valid, but doesn't make any sense.
          * @return
          */
         public static final Object getGlobalCalendar(Date from, Date to, int priority,
-                PodioProviderListener providerListener) {
+                ResultListener resultListener) {
             CalendarProvider provider = new CalendarProvider(client);
-            provider.setProviderListener(providerListener);
+            provider.setResultListener(resultListener);
 
             return provider.fetchGlobalCalendar(from, to, priority);
         }
