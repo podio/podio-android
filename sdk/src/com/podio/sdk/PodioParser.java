@@ -81,10 +81,15 @@ public class PodioParser<T> {
 			return gsonContext.deserialize(jsonObject, typeEnum.getFieldClass());
         }
     }
+    
+	private static final Gson GSON_PARSER = new GsonBuilder()
+			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+			.registerTypeAdapter(Field.class, new FieldDeserializer())
+			.disableHtmlEscaping().create();
 
     private final Class<T> classOfItem;
 
-    public PodioParser(Class<T> classOfItem) {
+    public PodioParser(Class<T> classOfItem) {    	
         this.classOfItem = classOfItem;
     }
 
@@ -100,12 +105,8 @@ public class PodioParser<T> {
         if (source == null || Utils.isEmpty(source.trim())) {
         	return null;
         }
-
-        return new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(Field.class, new FieldDeserializer())
-                .create()
-                .fromJson(source, classOfItem);
+        
+        return GSON_PARSER.fromJson(source, classOfItem);
     }
 
     /**
@@ -119,13 +120,8 @@ public class PodioParser<T> {
     	if (item == null) {
     		return null;
     	}
-
-        GsonBuilder builder = new GsonBuilder();
-        builder.disableHtmlEscaping();
-        // builder.setPrettyPrinting();
-        Gson gson = builder.create();
-            
-        return gson.toJson(item);
+    	
+    	return GSON_PARSER.toJson(item);
     }
     
     public static <T> PodioParser<T> fromClass(Class<T> classOfItem) {
