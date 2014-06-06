@@ -84,6 +84,10 @@ public final class Item implements Pushable {
     public final String external_id;
     public final List<Field> fields;
 
+    public Item() {
+    	this(null);
+    }
+
     public Item(String externalId) {
         this.external_id = externalId;
         this.fields = new ArrayList<Field>();
@@ -108,7 +112,7 @@ public final class Item implements Pushable {
     }
 
     @Override
-    public Object getPushData() {
+    public PushData getPushData() {
         PushData pushData = new PushData(external_id);
 
         for (Field field : fields) {

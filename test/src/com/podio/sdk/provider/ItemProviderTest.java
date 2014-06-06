@@ -56,7 +56,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         ItemProvider target = new ItemProvider(mockClient);
 
-        Object ticket = target.addItem(2L, new Object(), mockListener);
+        Object ticket = target.addItem(2L, new Item().getPushData(), mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -164,7 +164,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         ItemProvider target = new ItemProvider(mockClient);
 
-        Object ticket = target.updateItem(5, new Object(), mockListener);
+        Object ticket = target.updateItem(5, new Item().getPushData(), mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
