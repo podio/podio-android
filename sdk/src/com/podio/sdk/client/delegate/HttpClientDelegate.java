@@ -182,6 +182,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         	return request(method, uri, item, parser, false);
         }
 
+        //FIXME: This is not a proper way to check for success, we should use status codes instead
         boolean isSuccess = Utils.notEmpty(output);
         T content = parser.parseToItem(output);
         
