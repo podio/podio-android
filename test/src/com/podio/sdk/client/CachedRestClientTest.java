@@ -293,7 +293,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testGetRequestTriggersBothClientDelegates() {
-        expectedReportCount = 4;
+        expectedReportCount = 2;
 
         RestRequest request = buildRestRequest(RestOperation.GET);
         targetRestClient.enqueue(request);
@@ -359,7 +359,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostRequestTriggersBothClientDelegates() {
-        expectedReportCount = 3;
+        expectedReportCount = 2;
         
         RestRequest request = buildRestRequest(RestOperation.POST);
         targetRestClient.enqueue(request);
@@ -392,8 +392,6 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPutRequestDelegatesCorrectUri() {
-    	expectedReportCount = 2;
-    	
         RestRequest request = buildRestRequest(RestOperation.PUT, "path");
         targetRestClient.enqueue(request);
 
