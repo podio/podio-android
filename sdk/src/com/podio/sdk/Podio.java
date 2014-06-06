@@ -30,6 +30,11 @@ import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.HttpRestClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.client.delegate.SQLiteClientDelegate;
+import com.podio.sdk.domain.Application;
+import com.podio.sdk.domain.CalendarEvent;
+import com.podio.sdk.domain.Item;
+import com.podio.sdk.domain.ItemRequest;
+import com.podio.sdk.domain.Organization;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.internal.request.ResultListener;
@@ -71,7 +76,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object get(long applicationId, ResultListener resultListener) {
+        public static final Object get(long applicationId, ResultListener<? super Application> resultListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
 
             return provider.fetchApplication(applicationId, resultListener);
@@ -88,7 +93,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object getForSpace(long spaceId, ResultListener resultListener) {
+        public static final Object getForSpace(long spaceId, ResultListener<? super Application[]> resultListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
 
             return provider.fetchApplicationsForSpace(spaceId, resultListener);
@@ -107,7 +112,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getForSpaceIncludingInactive(long spaceId,
-                ResultListener resultListener) {
+                ResultListener<? super Application[]> resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
 
@@ -127,7 +132,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getMicro(long applicationId,
-                ResultListener resultListener) {
+                ResultListener<? super Application> resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
 
@@ -147,7 +152,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getMini(long applicationId,
-                ResultListener resultListener) {
+                ResultListener<? super Application> resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
 
@@ -167,7 +172,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getShort(long applicationId,
-                ResultListener resultListener) {
+                ResultListener<? super Application> resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
 
@@ -204,7 +209,7 @@ public final class Podio {
          *         with.
          */
         public static final Object authenticateAsUser(String username, String password,
-                ResultListener resultListener) {
+                ResultListener<? super Session> resultListener) {
 
             SessionProvider provider = new SessionProvider(client);
 
@@ -228,7 +233,7 @@ public final class Podio {
          *         with.
          */
         public static final Object authenticateAsApp(String appId, String appToken,
-                ResultListener resultListener) {
+                ResultListener<? super Session> resultListener) {
 
             SessionProvider provider = new SessionProvider(client);
 
@@ -279,8 +284,8 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object add(long applicationId, Object data,
-        		ResultListener resultListener) {
+        public static final Object add(long applicationId, Item.PushData data,
+        		ResultListener<? super Item.PushResult> resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
 
@@ -298,7 +303,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object get(long itemId, ResultListener resultListener) {
+        public static final Object get(long itemId, ResultListener<? super Item> resultListener) {
             ItemProvider provider = new ItemProvider(client);
 
             return provider.fetchItem(itemId, resultListener);
@@ -317,7 +322,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getForApplication(long applicationId,
-        		ResultListener resultListener) {
+        		ResultListener<? super ItemRequest.Result> resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
 
@@ -337,8 +342,8 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object update(long itemId, Object data,
-        		ResultListener resultListener) {
+        public static final Object update(long itemId, Item.PushData data,
+        		ResultListener<? super Item.PushResult> resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
 
@@ -369,7 +374,7 @@ public final class Podio {
          * @return A ticket which the caller can use to identify this request
          *         with.
          */
-        public static final Object getAll(ResultListener resultListener) {
+        public static final Object getAll(ResultListener<? super Organization[]> resultListener) {
             OrganizationProvider provider = new OrganizationProvider(client);
 
             return provider.getAll(resultListener);
@@ -403,7 +408,7 @@ public final class Podio {
          * @return
          */
         public static final Object getGlobalCalendar(Date from, Date to, int priority,
-                ResultListener resultListener) {
+                ResultListener<? super CalendarEvent[]> resultListener) {
             CalendarProvider provider = new CalendarProvider(client);
 
             return provider.fetchGlobalCalendar(from, to, priority, resultListener);

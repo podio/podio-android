@@ -49,7 +49,7 @@ public class RestResultTest extends AndroidTestCase {
         String message = "success";
         Object item = new Object();
 
-        RestResult target = new RestResult(isSuccess, message, item);
+        RestResult<Object> target = new RestResult<Object>(isSuccess, message, item);
         assertNotNull(target);
         assertNull(target.session());
         assertEquals(isSuccess, target.isSuccess());
@@ -78,7 +78,7 @@ public class RestResultTest extends AndroidTestCase {
         String message = "success";
         Object item = new Object();
 
-        RestResult target = new RestResult(isSuccess, session, message, item);
+        RestResult<Object> target = new RestResult<Object>(isSuccess, session, message, item);
         assertNotNull(target);
         assertNotNull(target.session());
         assertEquals(isSuccess, target.isSuccess());
@@ -105,7 +105,7 @@ public class RestResultTest extends AndroidTestCase {
         String message = null;
         ArrayList<Object> items = null;
 
-        RestResult target = new RestResult(isSuccess, message, items);
+        RestResult<Object> target = new RestResult<Object>(isSuccess, message, items);
         assertNotNull(target);
         assertNull(target.session());
         assertEquals(isSuccess, target.isSuccess());

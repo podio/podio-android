@@ -64,7 +64,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         Object ticket = target.request(RestOperation.DELETE, filter, null, null, null);
 
         // Verify that the correct DELETE RestRequest is built.
-        RestRequest request = client.mock_getLastPushedRestRequest();
+        RestRequest<Object> request = client.mock_getLastPushedRestRequest();
         validateRequest(RestOperation.DELETE, null, ticket, filter, request);
     }
 
@@ -94,7 +94,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         Object ticket = target.request(RestOperation.GET, filter, null, null, null);
 
         // Verify that the correct GET RestRequest is built.
-        RestRequest request = client.mock_getLastPushedRestRequest();
+        RestRequest<Object> request = client.mock_getLastPushedRestRequest();
         validateRequest(RestOperation.GET, null, ticket, filter, request);
     }
 
@@ -125,7 +125,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         Object ticket = target.request(RestOperation.POST, filter, item, null, null);
 
         // Verify that the correct POST RestRequest is built.
-        RestRequest request = client.mock_getLastPushedRestRequest();
+        RestRequest<Object> request = client.mock_getLastPushedRestRequest();
         validateRequest(RestOperation.POST, item, ticket, filter, request);
     }
 
@@ -156,7 +156,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         Object ticket = target.request(RestOperation.PUT, filter, item, null, null);
 
         // Verify that the correct PUT RestRequest is built.
-        RestRequest request = client.mock_getLastPushedRestRequest();
+        RestRequest<Object> request = client.mock_getLastPushedRestRequest();
         validateRequest(RestOperation.PUT, item, ticket, filter, request);
     }
 
@@ -188,7 +188,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         Object ticket = target.request(RestOperation.PUT, itemFilter, itemObject, null, mockListener);
@@ -231,7 +231,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
 
         // Setup the mock session.
         client.mock_setMockSession(session);
@@ -277,7 +277,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
 
         // Setup the mock session.
         client.mock_setMockSession(session);
@@ -323,7 +323,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
 
         // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
@@ -356,8 +356,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
      *            The {@link RestRequest} that needs to live up to the
      *            expectations.
      */
-    private void validateRequest(RestOperation expectedOperation, Object expectedContent,
-            Object expectedTicket, PodioFilter expectedFilter, RestRequest target) {
+    private <T> void validateRequest(RestOperation expectedOperation, T expectedContent,
+            Object expectedTicket, PodioFilter expectedFilter, RestRequest<T> target) {
 
         assertNotNull(target);
         assertEquals(expectedContent, target.getContent());

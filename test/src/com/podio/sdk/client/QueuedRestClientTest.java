@@ -101,7 +101,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
     public void testRequestQueueCapacityValid() {
         int invalidSize = -1;
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", invalidSize);
-        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = new RestRequest<Object>().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         boolean didAcceptRequest = testTarget.enqueue(request);
 
         assertEquals(true, didAcceptRequest);
@@ -130,7 +130,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", 2) {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
                 PodioFilter filter = restRequest.getFilter();
 
                 if (filter == firstFilter) {
@@ -149,8 +149,8 @@ public class QueuedRestClientTest extends ThreadedTestCase {
             }
         };
 
-        RestRequest firstRequest = new RestRequest().setFilter(firstFilter).setOperation(RestOperation.AUTHORIZE);
-        RestRequest secondRequest = new RestRequest().setFilter(secondFilter).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> firstRequest = new RestRequest<Object>().setFilter(firstFilter).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> secondRequest = new RestRequest<Object>().setFilter(secondFilter).setOperation(RestOperation.AUTHORIZE);
 
         firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
         secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
@@ -188,14 +188,14 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
                 threadNames[1] = Thread.currentThread().getName();
                 TestUtils.completed();
                 return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = new RestRequest<Object>().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         assertTrue(TestUtils.waitUntilCompletion());
 
@@ -229,7 +229,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
     	
         MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
 			@Override
-			protected RestResult handleRequest(RestRequest restRequest) {
+			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
 				try {
 					waiter.acquire();
 				} catch (InterruptedException e) {
@@ -239,14 +239,17 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 			}        	
         };
         
-        ResultListener resultListener = new ResultListenerAdapter() {
+        ResultListener<Object> resultListener = new ResultListenerAdapter<Object>() {
 			@Override
 			public void onSuccess(Object ticket, Object content) {
 				TestUtils.completed();
 			}
 		};
 
-        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE).setResultListener(resultListener);
+        RestRequest<Object> request = new RestRequest<Object>()
+        		.setFilter(new BasicPodioFilter())
+        		.setOperation(RestOperation.AUTHORIZE)
+        		.setResultListener(resultListener);
         
         assertEquals(testTarget.enqueue(request), true);
         //One is being processed, so room for one more in the queue
@@ -310,7 +313,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
                 result.isRequestPopped = true;
                 result.isTicketValid = (expectedTicket == restRequest.getTicket());
                 TestUtils.completed();
@@ -318,7 +321,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
             }
         };
 
-        RestRequest request = new RestRequest() //
+        RestRequest<Object> request = new RestRequest<Object>() //
                 .setFilter(expectedFilter) //
                 .setTicket(expectedTicket).setOperation(RestOperation.AUTHORIZE);
 
@@ -360,7 +363,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         final PodioFilter firstFilter = new BasicPodioFilter("first");
         final PodioFilter secondFilter = new BasicPodioFilter("second");
 
-        ResultListener listener = new ResultListener() {
+        ResultListener<Object> listener = new ResultListener<Object>() {
             @Override
             public void onFailure(Object ticket, String message) {
             	fail();
@@ -381,7 +384,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
                 PodioFilter filter = restRequest.getFilter();
 
                 if (firstFilter == filter) {
@@ -400,7 +403,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
             }
         };
 
-        RestRequest firstRequest = new RestRequest() //
+        RestRequest<Object> firstRequest = new RestRequest<Object>() //
                 .setFilter(firstFilter) //
                 .setResultListener(listener)
                 .setOperation(RestOperation.AUTHORIZE);
@@ -422,7 +425,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         
         TestUtils.reset();
 
-        RestRequest secondRequest = new RestRequest() //
+        RestRequest<Object> secondRequest = new RestRequest<Object>() //
                 .setFilter(secondFilter) //
                 .setResultListener(listener)
                 .setOperation(RestOperation.AUTHORIZE);
@@ -466,7 +469,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
     public void testRequestResultReportedOnCallingThread() {
         final String[] threadNames = new String[] { Thread.currentThread().getName(), "" };
 
-        ResultListener listener = new ResultListener() {
+        ResultListener<Object> listener = new ResultListener<Object>() {
             @Override
             public void onFailure(Object ticket, String message) {
             	fail();
@@ -485,14 +488,14 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
             	TestUtils.completed();
             	
                 return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = new RestRequest<Object>().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
         assertTrue(TestUtils.waitUntilCompletion());
@@ -518,7 +521,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testResultListenerReportsFailureProperly() {
-        ResultListener listener = new ResultListener() {
+        ResultListener<Object> listener = new ResultListener<Object>() {
             @Override
             public void onFailure(Object ticket, String message) {
             }
@@ -536,14 +539,14 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
             	TestUtils.completed();
             	
                 return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = new RestRequest<Object>().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
         assertTrue(TestUtils.waitUntilCompletion());
@@ -570,7 +573,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testResultListenerReportsSessionChangeProperly() {
-        ResultListener listener = new ResultListener() {
+        ResultListener<Object> listener = new ResultListener<Object>() {
             @Override
             public void onFailure(Object ticket, String message) {
             	fail();
@@ -587,16 +590,16 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
             	TestUtils.completed();
             	
                 Session session = new Session("a", "b", 1L);
                 
-                return new RestResult(true, session, null, null);
+                return new RestResult<T>(true, session, null, null);
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = new RestRequest<Object>().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
         assertTrue(TestUtils.waitUntilCompletion());
@@ -622,7 +625,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testResultListenerReportsSuccessProperly() {
-        ResultListener listener = new ResultListener() {
+        ResultListener<Object> listener = new ResultListener<Object>() {
             @Override
             public void onFailure(Object ticket, String message) {
             	fail();
@@ -640,14 +643,14 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         MockRestClient testTarget = new MockRestClient("test://", "podio.test") {
             @Override
-            protected RestResult handleRequest(RestRequest restRequest) {
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
             	TestUtils.completed();
             	
                 return RestResult.success();
             }
         };
 
-        RestRequest request = new RestRequest().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = new RestRequest<Object>().setResultListener(listener).setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         testTarget.enqueue(request);
         
         assertTrue(TestUtils.waitUntilCompletion());

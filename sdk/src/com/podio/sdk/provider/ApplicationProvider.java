@@ -33,7 +33,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		super(client);
 	}
 
-	public Object fetchApplication(long applicationId, ResultListener resultListener) {
+	public Object fetchApplication(long applicationId, ResultListener<? super Application> resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("full");
@@ -41,7 +41,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationShort(long applicationId, ResultListener resultListener) {
+	public Object fetchApplicationShort(long applicationId, ResultListener<? super Application> resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("short");
@@ -49,7 +49,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationMini(long applicationId, ResultListener resultListener) {
+	public Object fetchApplicationMini(long applicationId, ResultListener<? super Application> resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("mini");
@@ -57,7 +57,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationMicro(long applicationId, ResultListener resultListener) {
+	public Object fetchApplicationMicro(long applicationId, ResultListener<? super Application> resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("micro");
@@ -65,7 +65,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationsForSpace(long spaceId, ResultListener resultListener) {
+	public Object fetchApplicationsForSpace(long spaceId, ResultListener<? super Application[]> resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withSpaceId(spaceId) //
 				.withInactivesIncluded(false);
@@ -73,7 +73,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		return get(filter, Application[].class, resultListener);
 	}
 
-	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener resultListener) {
+	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener<? super Application[]> resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withSpaceId(spaceId) //
 				.withInactivesIncluded(true);

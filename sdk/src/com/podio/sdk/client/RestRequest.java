@@ -27,12 +27,13 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
-public final class RestRequest {
+public final class RestRequest<T> {
+	
     private Object content;
     private PodioFilter filter;
-    private PodioParser<?> parser;
+    private PodioParser<? extends T> parser;
     private RestOperation operation;
-    private ResultListener resultListener;
+    private ResultListener<? super T> resultListener;
     private Object ticket;
     
     public void validate() {
@@ -52,7 +53,7 @@ public final class RestRequest {
         return filter;
     }
 
-    public PodioParser<?> getParser() {
+    public PodioParser<? extends T> getParser() {
         return parser;
     }
 
@@ -60,7 +61,7 @@ public final class RestRequest {
         return operation;
     }
 
-    public ResultListener getResultListener() {
+    public ResultListener<? super T> getResultListener() {
         return resultListener;
     }
 
@@ -68,32 +69,32 @@ public final class RestRequest {
         return ticket;
     }
 
-    public RestRequest setContent(Object item) {
+    public RestRequest<T> setContent(Object item) {
         this.content = item;
         return this;
     }
 
-    public RestRequest setFilter(PodioFilter filter) {
+    public RestRequest<T> setFilter(PodioFilter filter) {
         this.filter = filter;
         return this;
     }
 
-    public RestRequest setParser(PodioParser<?> parser) {
+    public RestRequest<T> setParser(PodioParser<? extends T> parser) {
         this.parser = parser;
         return this;
     }
 
-    public RestRequest setOperation(RestOperation operation) {
+    public RestRequest<T> setOperation(RestOperation operation) {
         this.operation = operation;
         return this;
     }
 
-    public RestRequest setResultListener(ResultListener resultListener) {
+    public RestRequest<T> setResultListener(ResultListener<? super T> resultListener) {
         this.resultListener = resultListener;
         return this;
     }
 
-    public RestRequest setTicket(Object ticket) {
+    public RestRequest<T> setTicket(Object ticket) {
         this.ticket = ticket;
         return this;
     }

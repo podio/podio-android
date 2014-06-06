@@ -45,7 +45,7 @@ public class RestRequestTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestRequestSettersReturnRestRequest() {
-        RestRequest target = new RestRequest();
+        RestRequest<Object> target = new RestRequest<Object>();
 
         assertEquals(target, target.setContent(null));
         assertEquals(target, target.setFilter(null));
@@ -70,7 +70,7 @@ public class RestRequestTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestRequestGettersReturnCorrectValues() {
-        RestRequest target = new RestRequest();
+        RestRequest<Object> target = new RestRequest<Object>();
         RestOperation operation = RestOperation.GET;
         Object item = new Object();
         Object ticket = new Object();
@@ -79,7 +79,7 @@ public class RestRequestTest extends AndroidTestCase {
                 .addQueryParameter("id", "1") //
                 .addQueryParameter("id", "2");
 
-        ResultListener resultListener = new ResultListener() {
+        ResultListener<Object> resultListener = new ResultListener<Object>() {
             @Override
             public void onFailure(Object ticket, String message) {
             }

@@ -43,13 +43,13 @@ public class SQLiteClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public RestResult authorize(Uri uri, PodioParser<?> parser) {
+    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> parser) {
         throw new UnsupportedOperationException(
                 "SQLiteDatabaseDelegate doesn't support authorization requests");
     }
 
     @Override
-    public RestResult delete(Uri uri, PodioParser<?> parser) throws SQLiteException {
+    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser) throws SQLiteException {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
@@ -61,11 +61,11 @@ public class SQLiteClientDelegate implements RestClientDelegate {
 
         boolean isSuccess = count != -1;
         
-        return new RestResult(isSuccess, null, null);
+        return new RestResult<T>(isSuccess, null, null);
     }
 
     @Override
-    public RestResult get(Uri uri, PodioParser<?> parser) throws SQLiteException {
+    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser) throws SQLiteException {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
@@ -81,18 +81,18 @@ public class SQLiteClientDelegate implements RestClientDelegate {
         Cursor cursor = database.query("content", projection, key, value, null, null, null);
 
         if (cursor == null || !cursor.moveToFirst()) {
-        	return new RestResult(false, null, null);
+        	return new RestResult<T>(false, null, null);
         }
         
         String json = cursor.getString(0);
 
-        Object item = parser.parseToItem(json);
+        T item = parser.parseToItem(json);
         
-        return new RestResult(true, null, item);
+        return new RestResult<T>(true, null, item);
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, PodioParser<?> parser) throws SQLiteException {
+    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser) throws SQLiteException {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
@@ -112,11 +112,11 @@ public class SQLiteClientDelegate implements RestClientDelegate {
         
         boolean isSuccess = id != -1;
         
-        return new RestResult(isSuccess, null, null);
+        return new RestResult<T>(isSuccess, null, null);
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, PodioParser<?> parser) throws SQLiteException {
+    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser) throws SQLiteException {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
@@ -137,7 +137,7 @@ public class SQLiteClientDelegate implements RestClientDelegate {
 
         boolean isSuccess = count != -1;
         
-        return new RestResult(isSuccess, null, null);
+        return new RestResult<T>(isSuccess, null, null);
     }
 
     public SQLiteDatabase getReadableDatabase() {

@@ -29,7 +29,7 @@ import com.podio.sdk.internal.request.ResultListener;
 
 public final class MockRestClient implements RestClient {
 
-    private RestRequest request;
+    private RestRequest<?> request;
     private Session session;
 
     @Override
@@ -43,20 +43,22 @@ public final class MockRestClient implements RestClient {
     }
 
     @Override
-    public boolean enqueue(RestRequest request) {
+    public <T> boolean enqueue(RestRequest<T> request) {
         this.request = request;
         return true;
     }
 
-    public RestRequest mock_getLastPushedRestRequest() {
-        return request;
+    @SuppressWarnings("unchecked")
+	public <T> RestRequest<T> mock_getLastPushedRestRequest() {
+        return (RestRequest<T>) request;
     }
 
-    public void mock_processLastPushedRestRequest(boolean shouldBeSuccess, String withMockMessage,
-            Object withMockItem) {
+    public <T> void mock_processLastPushedRestRequest(boolean shouldBeSuccess, String withMockMessage,
+            T withMockItem) {
 
         if (request != null) {
-            ResultListener listener = request.getResultListener();
+            @SuppressWarnings("unchecked")
+			ResultListener<? super T> listener = (ResultListener<? super T>) request.getResultListener();
 
             if (listener != null) {
                 Object ticket = request.getTicket();

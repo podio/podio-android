@@ -40,21 +40,21 @@ public class BasicPodioProvider {
         this.client = client;
     }
     
-	protected <T> Object get(PodioFilter filter, Class<T> classOfItem, ResultListener resultListener) {
+	protected <T> Object get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener) {
 		return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener);
 	}
     
-	protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener resultListener) {
+	protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
 		return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener);
 	}
     
-	protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener resultListener) {
+	protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
 		return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener);
 	}
     
-	protected Object request(RestOperation operation, PodioFilter filter,
-			Object content, PodioParser<?> parser, ResultListener resultListener) {
-		RestRequest restRequest = new RestRequest() //
+	protected <T> Object request(RestOperation operation, PodioFilter filter,
+			Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener) {
+		RestRequest<T> restRequest = new RestRequest<T>() //
 				.setContent(content) //
 				.setFilter(filter) //
 				.setParser(parser) //

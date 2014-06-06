@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.provider.mock.MockResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
@@ -53,7 +54,7 @@ public class SessionProviderTest extends AndroidTestCase {
                 + "&grant_type=password&username=USERNAME&password=PASSWORD");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Session> mockListener = new MockResultListener<Session>();
 
         SessionProvider target = new SessionProvider(mockClient);
 
@@ -91,7 +92,7 @@ public class SessionProviderTest extends AndroidTestCase {
                 + "&grant_type=app&app_id=APPID&app_token=APPTOKEN");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Session> mockListener = new MockResultListener<Session>();
 
         SessionProvider target = new SessionProvider(mockClient);
 

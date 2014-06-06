@@ -239,7 +239,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         sqliteDatabase.insert("content", null, values);
 
-        RestResult result = databaseHelper.delete(validUri, itemParser);
+        RestResult<MockContentItem> result = databaseHelper.delete(validUri, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -270,7 +270,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         SQLiteDatabase sqliteDatabase = databaseHelper.getWritableDatabase();
         sqliteDatabase.insert("content", null, values);
 
-        RestResult result = databaseHelper.delete(validUri, itemParser);
+        RestResult<MockContentItem> result = databaseHelper.delete(validUri, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -382,7 +382,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         sqliteDatabase.insert("content", null, values[1]);
 
         Uri uri = Uri.parse(content[0].uri);
-        RestResult result = databaseHelper.get(uri, itemParser);
+        RestResult<MockContentItem> result = databaseHelper.get(uri, itemParser);
 
         assertNotNull(result);
         assertNotNull(result.item());
@@ -484,7 +484,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse(item.uri);
 
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
-        RestResult result = databaseHelper.post(uri, item, itemParser);
+        RestResult<MockContentItem> result = databaseHelper.post(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }
@@ -592,7 +592,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         item.json = "{text: 'test-updated'}";
 
-        RestResult result = databaseHelper.put(uri, item, itemParser);
+        RestResult<MockContentItem> result = databaseHelper.put(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
     }

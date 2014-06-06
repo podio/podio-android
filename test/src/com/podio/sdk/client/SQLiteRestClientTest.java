@@ -56,35 +56,35 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
         target = new SQLiteRestClient(context, "authority", new RestClientDelegate() {
 
             @Override
-            public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
+            public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> itemParser) {
                 result.isAuthorizeCalled = true;
                 TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
-            public RestResult delete(Uri uri, PodioParser<?> itemParser) {
+            public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> itemParser) {
                 result.isDeleteCalled = true;
                 TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
-            public RestResult get(Uri uri, PodioParser<?> itemParser) {
+            public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> itemParser) {
                 result.isQueryCalled = true;
                 TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
-            public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
+            public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> itemParser) {
                 result.isInsertCalled = true;
                 TestUtils.completed();
                 return RestResult.success();
             }
 
             @Override
-            public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
+            public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> itemParser) {
                 result.isUpdateCalled = true;
                 TestUtils.completed();
                 return RestResult.success();
@@ -110,7 +110,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testAuthorizeOperationIsDelegatedCorrectly() {
-        RestRequest restRequest = new RestRequest() //
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.AUTHORIZE);
 
@@ -162,7 +162,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testDeleteOperationIsDelegatedCorrectly() {
-        RestRequest restRequest = new RestRequest() //
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.DELETE);
 
@@ -194,7 +194,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testGetOperationIsDelegatedCorrectly() {
-        RestRequest restRequest = new RestRequest() //
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.GET);
 
@@ -226,7 +226,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostOperationIsDelegatedCorrectly() {
-        RestRequest restRequest = new RestRequest() //
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.POST);
 
@@ -258,7 +258,7 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPutOperationIsDelegatedCorrectly() {
-        RestRequest restRequest = new RestRequest() //
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.PUT);
 

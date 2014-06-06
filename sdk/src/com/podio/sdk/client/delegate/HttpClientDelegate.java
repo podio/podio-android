@@ -57,7 +57,7 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public RestResult authorize(Uri uri, PodioParser<?> parser) {
+    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> parser) {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
@@ -75,26 +75,26 @@ public class HttpClientDelegate implements RestClientDelegate {
         boolean isSuccess = Utils.notEmpty(jsonString);
         refreshUrl = isSuccess ? url : null;
         
-        return new RestResult(isSuccess, session, null, null);
+        return new RestResult<T>(isSuccess, session, null, null);
     }
 
     @Override
-    public RestResult delete(Uri uri, PodioParser<?> parser) {
+    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser) {
     	return request(Method.DELETE, uri, null, parser, true);
     }
 
     @Override
-    public RestResult get(Uri uri, PodioParser<?> parser) {
+    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser) {
     	return request(Method.GET, uri, null, parser, true);
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, PodioParser<?> parser) {
+    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser) {
     	return request(Method.POST, uri, item, parser, true);
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, PodioParser<?> parser) {
+    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser) {
     	return request(Method.PUT, uri, item, parser, true);
     }
 
@@ -152,7 +152,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         return params;
     }
 
-    private RestResult request(int method, Uri uri, Object item, PodioParser<?> parser, boolean tryRefresh) {
+    private <T> RestResult<T> request(int method, Uri uri, Object item, PodioParser<? extends T> parser, boolean tryRefresh) {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
@@ -183,9 +183,9 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
 
         boolean isSuccess = Utils.notEmpty(output);
-        Object content = parser.parseToItem(output);
+        T content = parser.parseToItem(output);
         
-        return new RestResult(isSuccess, refreshedSession ? session : null, null, content);
+        return new RestResult<T>(isSuccess, refreshedSession ? session : null, null, content);
     }
     
     private boolean wasTokenExpiredError() {

@@ -34,26 +34,26 @@ public class ItemProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object addItem(long applicationId, Object data, ResultListener resultListener) {
+    public Object addItem(long applicationId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
 
         return post(filter, data, Item.PushResult.class, resultListener);
     }
 
-    public Object fetchItem(long itemId, ResultListener resultListener) {
+    public Object fetchItem(long itemId, ResultListener<? super Item> resultListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
         return get(filter, Item.class, resultListener);
     }
 
-    public Object fetchItemsForApplication(long applicationId, ResultListener resultListener) {
+    public Object fetchItemsForApplication(long applicationId, ResultListener<? super ItemRequest.Result> resultListener) {
         ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
         return post(filter, filterRequest, ItemRequest.Result.class, resultListener);
     }
 
-    public Object updateItem(long itemId, Object data, ResultListener resultListener) {
+    public Object updateItem(long itemId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
         return put(filter, data, Item.PushResult.class, resultListener);

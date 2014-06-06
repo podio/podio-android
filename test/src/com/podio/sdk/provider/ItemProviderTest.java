@@ -26,8 +26,10 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.provider.mock.MockResultListener;
+import com.podio.sdk.domain.Item;
+import com.podio.sdk.domain.ItemRequest;
 import com.podio.sdk.provider.mock.MockRestClient;
+import com.podio.sdk.provider.mock.MockResultListener;
 
 public class ItemProviderTest extends AndroidTestCase {
 
@@ -50,7 +52,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/app/2");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Item.PushResult> mockListener = new MockResultListener<Item.PushResult>();
 
         ItemProvider target = new ItemProvider(mockClient);
 
@@ -86,7 +88,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/3");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Item> mockListener = new MockResultListener<Item>();
 
         ItemProvider target = new ItemProvider(mockClient);
 
@@ -122,7 +124,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/app/4/filter");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<ItemRequest.Result> mockListener = new MockResultListener<ItemRequest.Result>();
 
         ItemProvider target = new ItemProvider(mockClient);
 
@@ -158,7 +160,7 @@ public class ItemProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/item/5");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Item.PushResult> mockListener = new MockResultListener<Item.PushResult>();
 
         ItemProvider target = new ItemProvider(mockClient);
 

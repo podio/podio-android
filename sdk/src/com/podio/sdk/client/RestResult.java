@@ -29,11 +29,11 @@ import com.podio.sdk.domain.Session;
  * 
  * @author László Urszuly
  */
-public class RestResult {
+public class RestResult<T> {
     private final boolean isSuccess;
     private final Session session;
     private final String message;
-    private final Object item;
+    private final T item;
 
     /**
      * Constructor. The one and only way to set the state of this object.
@@ -47,7 +47,7 @@ public class RestResult {
      * @param item
      *            Optional content of this object.
      */
-    public RestResult(boolean isSuccess, String message, Object item) {
+    public RestResult(boolean isSuccess, String message, T item) {
         this(isSuccess, null, message, item);
     }
 
@@ -65,7 +65,7 @@ public class RestResult {
      * @param item
      *            Optional content of this object.
      */
-    public RestResult(boolean isSuccess, Session session, String message, Object item) {
+    public RestResult(boolean isSuccess, Session session, String message, T item) {
         this.isSuccess = isSuccess;
         this.session = session;
         this.message = message;
@@ -91,7 +91,7 @@ public class RestResult {
      * 
      * @return A list of items or null.
      */
-    public Object item() {
+    public T item() {
         return item;
     }
 
@@ -105,20 +105,20 @@ public class RestResult {
         return message;
     }
     
-    public static RestResult failure() {
+    public static <T> RestResult<T> failure() {
     	return failure(null);    	
     }
     
-    public static RestResult failure(String message) {
-    	return new RestResult(false, message, null);
+    public static <T> RestResult<T> failure(String message) {
+    	return new RestResult<T>(false, message, null);
     }
     
-    public static RestResult success() {
+    public static <T> RestResult<T> success() {
     	return success(null);    	
     }
     
-    public static RestResult success(Object item) {
-    	return new RestResult(true, null, item);
+    public static <T> RestResult<T> success(T item) {
+    	return new RestResult<T>(true, null, item);
     }
 
 }

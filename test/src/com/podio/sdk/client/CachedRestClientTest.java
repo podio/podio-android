@@ -63,8 +63,8 @@ public class CachedRestClientTest extends ThreadedTestCase {
         targetRestClient = new CachedRestClient(context, "test.authority", targetNetworkDelegate,
                 targetDatabaseDelegate, 10) {
             @Override
-            protected void reportResult(Object ticket, ResultListener resultListener,
-                    RestResult result) {
+            protected <T> void reportResult(Object ticket, ResultListener<? super T> resultListener,
+                    RestResult<T> result) {
 
                 // This call is still running on the worker thread. The super
                 // implementation (QueuedRestClient) will make sure that the
@@ -106,7 +106,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testAuthorizeRequestDelegatesCorrectUri() {
-        RestRequest request = buildRestRequest(RestOperation.AUTHORIZE, "path");
+        RestRequest<Object> request = buildRestRequest(RestOperation.AUTHORIZE, "path");
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -136,7 +136,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testAuthorizeRequestTriggersOnlyNetworkDelegate() {
-        RestRequest request = buildRestRequest(RestOperation.AUTHORIZE);
+        RestRequest<Object> request = buildRestRequest(RestOperation.AUTHORIZE);
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -199,7 +199,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testDeleteRequestDelegatesCorrectUri() {
-        RestRequest request = buildRestRequest(RestOperation.DELETE, "path");
+        RestRequest<Object> request = buildRestRequest(RestOperation.DELETE, "path");
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -229,7 +229,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testDeleteRequestTriggersOnlyNetworkDelegate() {
-        RestRequest request = buildRestRequest(RestOperation.DELETE);
+        RestRequest<Object> request = buildRestRequest(RestOperation.DELETE);
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -263,7 +263,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
     public void testGetRequestDelegatesCorrectUri() {        
         expectedReportCount = 2;
         
-        RestRequest request = buildRestRequest(RestOperation.GET, "path");
+        RestRequest<Object> request = buildRestRequest(RestOperation.GET, "path");
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -295,7 +295,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
     public void testGetRequestTriggersBothClientDelegates() {
         expectedReportCount = 2;
 
-        RestRequest request = buildRestRequest(RestOperation.GET);
+        RestRequest<Object> request = buildRestRequest(RestOperation.GET);
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -329,7 +329,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
     public void testPostRequestDelegatesCorrectUri() {
         expectedReportCount = 2;
         
-        RestRequest request = buildRestRequest(RestOperation.POST, "path");
+        RestRequest<Object> request = buildRestRequest(RestOperation.POST, "path");
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -361,7 +361,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
     public void testPostRequestTriggersBothClientDelegates() {
         expectedReportCount = 2;
         
-        RestRequest request = buildRestRequest(RestOperation.POST);
+        RestRequest<Object> request = buildRestRequest(RestOperation.POST);
         targetRestClient.enqueue(request);
         
         assertTrue(TestUtils.waitUntilCompletion());
@@ -392,7 +392,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPutRequestDelegatesCorrectUri() {
-        RestRequest request = buildRestRequest(RestOperation.PUT, "path");
+        RestRequest<Object> request = buildRestRequest(RestOperation.PUT, "path");
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -422,7 +422,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPutRequestTriggersOnlyNetworkDelegate() {
-        RestRequest request = buildRestRequest(RestOperation.PUT);
+        RestRequest<Object> request = buildRestRequest(RestOperation.PUT);
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
@@ -431,14 +431,14 @@ public class CachedRestClientTest extends ThreadedTestCase {
         assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
-    private RestRequest buildRestRequest(RestOperation operation) {
+    private RestRequest<Object> buildRestRequest(RestOperation operation) {
         return buildRestRequest(operation, "test");
     }
 
-    private RestRequest buildRestRequest(RestOperation operation, String path) {
+    private RestRequest<Object> buildRestRequest(RestOperation operation, String path) {
         BasicPodioFilter filter = new BasicPodioFilter(path);
 		
-        return new RestRequest() //
+        return new RestRequest<Object>() //
                 .setContent(new Object()) //
                 .setOperation(operation) //
                 .setResultListener(null) //

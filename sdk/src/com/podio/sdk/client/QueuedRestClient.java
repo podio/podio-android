@@ -129,14 +129,14 @@ public abstract class QueuedRestClient implements RestClient {
 	 * {@inheritDoc RestClient#perform(RestRequest)}
 	 */
 	@Override
-	public boolean enqueue(RestRequest request) {
+	public <T> boolean enqueue(RestRequest<T> request) {
 		if (request == null) {
 			throw new NullPointerException("request cannot be null");
 		}
 		request.validate();
 
 		try {
-			this.executor.execute(new RequestRunner(request));
+			this.executor.execute(new RequestRunner<T>(request));
 
 			return true;
 		} catch (RejectedExecutionException e) {
@@ -154,7 +154,7 @@ public abstract class QueuedRestClient implements RestClient {
 	 * @return A simplified result object which reflects the final processing
 	 *         state of the request.
 	 */
-	protected abstract RestResult handleRequest(RestRequest restRequest);
+	protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest);
 
 	/**
 	 * Reports a result back to any callback implementation.
@@ -166,8 +166,8 @@ public abstract class QueuedRestClient implements RestClient {
 	 * @param result
 	 *            The result of the request.
 	 */
-	protected void reportResult(final Object ticket,
-			final ResultListener resultListener, final RestResult result) {
+	protected <T> void reportResult(final Object ticket,
+			final ResultListener<? super T> resultListener, final RestResult<T> result) {
 		if (resultListener == null) {
 			return;
 		}
@@ -208,11 +208,11 @@ public abstract class QueuedRestClient implements RestClient {
 		return state;
 	}
 
-	private class RequestRunner implements Runnable {
+	private class RequestRunner<T> implements Runnable {
 
-		private final RestRequest request;
+		private final RestRequest<T> request;
 
-		private RequestRunner(RestRequest request) {
+		private RequestRunner(RestRequest<T> request) {
 			this.request = request;
 		}
 
@@ -221,8 +221,8 @@ public abstract class QueuedRestClient implements RestClient {
 			state = State.PROCESSING;
 			try {			
 				Object ticket = request.getTicket();
-				ResultListener resultListener = request.getResultListener();
-				RestResult result = handleRequest(request);
+				ResultListener<? super T> resultListener = request.getResultListener();
+				RestResult<T> result = handleRequest(request);
 	
 				// The user is no longer authorized. Remove any pending
 				// requests before proceeding.

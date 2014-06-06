@@ -68,7 +68,7 @@ public final class SQLiteRestClient extends QueuedRestClient {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected RestResult handleRequest(RestRequest restRequest) {
+	protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
 		Uri uri = restRequest.getFilter().buildUri(scheme, authority);
 
 		return restRequest.getOperation().invoke(databaseDelegate, uri,

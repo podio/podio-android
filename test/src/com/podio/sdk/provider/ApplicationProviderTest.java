@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.domain.Application;
 import com.podio.sdk.provider.mock.MockResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
@@ -49,7 +50,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationRequestsFullItemSetByDefault() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=full");
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Application> mockListener = new MockResultListener<Application>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 
@@ -82,7 +83,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationMicroRequestsMicroItemSet() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=micro");
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Application> mockListener = new MockResultListener<Application>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 
@@ -115,7 +116,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationMiniRequestsMiniItemSet() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=mini");
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Application> mockListener = new MockResultListener<Application>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 
@@ -148,7 +149,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationsForSpaceDoesntRequestInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/1?include_inactive=false");
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Application[]> mockListener = new MockResultListener<Application[]>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 
@@ -181,7 +182,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationsForSpaceWithInactivesIncludedRequestsInactiveItems() {
         final Uri reference = Uri.parse("content://test.uri/app/space/2?include_inactive=true");
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Application[]> mockListener = new MockResultListener<Application[]>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 
@@ -214,7 +215,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
     public void testFetchApplicationShortRequestsShortItemSet() {
         final Uri reference = Uri.parse("content://test.uri/app/2?type=short");
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener mockListener = new MockResultListener();
+        final MockResultListener<Application> mockListener = new MockResultListener<Application>();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
 

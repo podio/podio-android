@@ -34,7 +34,7 @@ public class OrganizationProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object getAll(ResultListener resultListener) {
+    public Object getAll(ResultListener<? super Organization[]> resultListener) {
         PodioFilter filter = new OrganizationFilter();
 
         return get(filter, Organization[].class, resultListener);

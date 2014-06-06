@@ -31,44 +31,44 @@ import com.podio.sdk.client.RestResult;
 public enum RestOperation {
 	AUTHORIZE() {
 		@Override
-		public RestResult invoke(RestClientDelegate delegate, Uri uri,
-				Object item, PodioParser<?> parser) {
+		public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<? extends T> parser) {
 			return delegate.authorize(uri, parser);
 		}
 	},
 
 	DELETE {
 		@Override
-		public RestResult invoke(RestClientDelegate delegate, Uri uri,
-				Object item, PodioParser<?> parser) {
+		public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<? extends T> parser) {
 			return delegate.delete(uri, parser);
 		}
 	},
 
 	GET {
 		@Override
-		public RestResult invoke(RestClientDelegate delegate, Uri uri,
-				Object item, PodioParser<?> parser) {
+		public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<? extends T> parser) {
 			return delegate.get(uri, parser);
 		}
 	},
 
 	POST {
 		@Override
-		public RestResult invoke(RestClientDelegate delegate, Uri uri,
-				Object item, PodioParser<?> parser) {
+		public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<? extends T> parser) {
 			return delegate.post(uri, item, parser);
 		}
 	},
 
 	PUT {
 		@Override
-		public RestResult invoke(RestClientDelegate delegate, Uri uri,
-				Object item, PodioParser<?> parser) {
+		public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
+				Object item, PodioParser<? extends T> parser) {
 			return delegate.put(uri, item, parser);
 		}
 	};
 
-	public abstract RestResult invoke(RestClientDelegate delegate, Uri uri,
-			Object item, PodioParser<?> parser);
+	public abstract <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
+			Object item, PodioParser<? extends T> parser);
 }

@@ -25,7 +25,7 @@ package com.podio.sdk.provider.mock;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
 
-public class MockResultListener implements ResultListener {
+public class MockResultListener<T> implements ResultListener<T> {
 
     public boolean mock_isSessionChangeCalled = false;
     public boolean mock_isSuccessCalled = false;
@@ -33,10 +33,10 @@ public class MockResultListener implements ResultListener {
     public Session mock_session = null;
     public String mock_message = null;
     public Object mock_ticket = null;
-    public Object mock_item = null;
+    public T mock_item = null;
 
     @Override
-    public void onSuccess(Object ticket, Object content) {
+    public void onSuccess(Object ticket, T content) {
         mock_isSuccessCalled = true;
         mock_ticket = ticket;
         mock_item = content;

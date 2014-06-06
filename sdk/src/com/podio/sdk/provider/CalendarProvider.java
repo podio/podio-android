@@ -35,7 +35,7 @@ public class CalendarProvider extends BasicPodioProvider {
 		super(client);
 	}
 
-	public Object fetchGlobalCalendar(Date from, Date to, int priority, ResultListener resultListener) {
+	public Object fetchGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener) {
 		CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
 				.withPriority(priority);
 		return get(filter, CalendarEvent[].class, resultListener);

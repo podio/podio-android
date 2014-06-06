@@ -37,7 +37,7 @@ public class SessionProvider extends BasicPodioProvider {
     }
 
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
-            String username, String password, ResultListener resultListener) {
+            String username, String password, ResultListener<? super Session> resultListener) {
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
@@ -47,7 +47,7 @@ public class SessionProvider extends BasicPodioProvider {
     }
 
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
-            String appId, String appToken, ResultListener resultListener) {
+            String appId, String appToken, ResultListener<? super Session> resultListener) {
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
@@ -56,7 +56,7 @@ public class SessionProvider extends BasicPodioProvider {
         return authorize(filter, resultListener);
     }
 
-    private Object authorize(PodioFilter filter, ResultListener resultListener) {
+    private Object authorize(PodioFilter filter, ResultListener<? super Session> resultListener) {
     	return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener);
     }
 }

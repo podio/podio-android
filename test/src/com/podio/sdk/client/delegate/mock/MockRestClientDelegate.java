@@ -38,7 +38,7 @@ public class MockRestClientDelegate implements RestClientDelegate {
 	private Map<RestOperation, Uri> uris = new HashMap<RestOperation, Uri>();
 
 	
-	private RestResult process(RestOperation operation, Uri uri) {
+	private <T> RestResult<T> process(RestOperation operation, Uri uri) {
 		Integer callCount = calls.get(operation);
 		if (callCount == null) {
 			callCount = 0;
@@ -65,27 +65,27 @@ public class MockRestClientDelegate implements RestClientDelegate {
 	}
 
     @Override
-    public RestResult authorize(Uri uri, PodioParser<?> itemParser) {
+    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> itemParser) {
     	return process(RestOperation.AUTHORIZE, uri);
     }
 
     @Override
-    public RestResult delete(Uri uri, PodioParser<?> itemParser) {
+    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> itemParser) {
     	return process(RestOperation.DELETE, uri);
     }
 
     @Override
-    public RestResult get(Uri uri, PodioParser<?> itemParser) {
+    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> itemParser) {
     	return process(RestOperation.GET, uri);
     }
 
     @Override
-    public RestResult post(Uri uri, Object item, PodioParser<?> itemParser) {
+    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> itemParser) {
     	return process(RestOperation.POST, uri);
     }
 
     @Override
-    public RestResult put(Uri uri, Object item, PodioParser<?> itemParser) {
+    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> itemParser) {
     	return process(RestOperation.PUT, uri);
     }
 }

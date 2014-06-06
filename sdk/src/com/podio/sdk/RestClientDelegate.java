@@ -28,14 +28,14 @@ import com.podio.sdk.client.RestResult;
 
 public interface RestClientDelegate {
 
-    public RestResult authorize(Uri uri, PodioParser<?> parser);
+    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> parser);
 
-    public RestResult delete(Uri uri, PodioParser<?> parser);
+    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser);
 
-    public RestResult get(Uri uri, PodioParser<?> parser);
+    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser);
 
-    public RestResult post(Uri uri, Object item, PodioParser<?> parser);
+    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser);
 
-    public RestResult put(Uri uri, Object item, PodioParser<?> parser);
+    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser);
 
 }

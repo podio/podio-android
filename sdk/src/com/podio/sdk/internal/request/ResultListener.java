@@ -24,12 +24,12 @@ package com.podio.sdk.internal.request;
 
 import com.podio.sdk.domain.Session;
 
-public interface ResultListener {
+public interface ResultListener<T> {
 
     public void onFailure(Object ticket, String message);
 
     public void onSessionChange(Object ticket, Session session);
 
-    public void onSuccess(Object ticket, Object content);
+    public void onSuccess(Object ticket, T content);
 
 }

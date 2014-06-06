@@ -200,7 +200,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("value", "test");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.authorize(Uri.parse("http://localhost:8080"), itemParser);
+        RestResult<MockContentItem> result = target.authorize(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
@@ -306,7 +306,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.delete(uri, itemParser);
+        RestResult<MockContentItem> result = target.delete(uri, itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -337,7 +337,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("value", "test");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.delete(Uri.parse("http://localhost:8080"), itemParser);
+        RestResult<MockContentItem> result = target.delete(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
@@ -443,7 +443,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.get(uri, itemParser);
+        RestResult<MockContentItem> result = target.get(uri, itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -482,7 +482,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("json", "{text: 'test'}");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult result = target.get(uri, itemParser);
+        RestResult<MockContentItem> result = target.get(uri, itemParser);
         assertNotNull(result);
         assertNotNull(result.item());
         assertEquals(true, result.isSuccess());
@@ -561,7 +561,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         String fakeJsonString = "{}";
         Object fakeDomainObject = new Object();
 
-        RestResult result = target.get(uri, new MockItemParser(fakeJsonString, fakeDomainObject));
+        RestResult<Object> result = target.get(uri, new MockItemParser(fakeJsonString, fakeDomainObject));
 
         assertNotNull(result);
         assertEquals(fakeDomainObject, result.item());
@@ -665,7 +665,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.post(uri, new Object(), itemParser);
+        RestResult<MockContentItem> result = target.post(uri, new Object(), itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -695,7 +695,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
 
         MockContentItem item = new MockContentItem(uri.toString(), "{text: 'test'}");
-        RestResult result = target.post(uri, item, itemParser);
+        RestResult<MockContentItem> result = target.post(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 
@@ -801,7 +801,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         target.restoreSession("http://localhost:8080/auth/token", mockExpiredSession);
 
         Uri uri = Uri.parse("http://localhost:8080");
-        RestResult result = target.put(uri, new Object(), itemParser);
+        RestResult<MockContentItem> result = target.put(uri, new Object(), itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
         assertEquals(true, isNewSessionValid);
@@ -830,7 +830,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         MockContentItem item = new MockContentItem("http://localhost:8080", "{text: 'test'}");
         Uri uri = Uri.parse(item.uri);
-        RestResult result = target.put(uri, item, itemParser);
+        RestResult<MockContentItem> result = target.put(uri, item, itemParser);
         assertNotNull(result);
         assertEquals(true, result.isSuccess());
 

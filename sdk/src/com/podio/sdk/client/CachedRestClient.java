@@ -45,7 +45,7 @@ import com.podio.sdk.internal.request.RestOperation;
  */
 public class CachedRestClient extends HttpRestClient {
     private final RestClientDelegate databaseDelegate;
-    private final List<RestRequest> delegatedRequests;
+    private final List<RestRequest<?>> delegatedRequests;
 
     /**
      * Creates a new <code>CachedRestClient</code>. This implementation will
@@ -79,7 +79,7 @@ public class CachedRestClient extends HttpRestClient {
             throw new NullPointerException("The cacheDelegate must not be null");
         }
             
-        this.delegatedRequests = new ArrayList<RestRequest>();
+        this.delegatedRequests = new ArrayList<RestRequest<?>>();
         this.databaseDelegate = cacheDelegate;
     }
 
@@ -98,15 +98,15 @@ public class CachedRestClient extends HttpRestClient {
      * @see com.podio.sdk.client.HttpRestClient#handleRequest(com.podio.sdk.client.RestRequest)
      */
     @Override
-    protected RestResult handleRequest(RestRequest restRequest) {
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
         RestOperation operation = restRequest.getOperation();
         PodioFilter filter = restRequest.getFilter();
-        PodioParser<?> parser = restRequest.getParser();
+        PodioParser<? extends T> parser = restRequest.getParser();
         Object item = restRequest.getContent();
 
         Uri uri = filter.buildUri("content", authority);
 
-        RestResult result;
+        RestResult<T> result;
         if (operation != RestOperation.DELETE //
                 && operation != RestOperation.PUT //
                 && operation != RestOperation.AUTHORIZE //

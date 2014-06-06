@@ -37,7 +37,7 @@ public class MockRestClient extends QueuedRestClient {
     }
 
     @Override
-    protected RestResult handleRequest(RestRequest restRequest) {
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
         return RestResult.success();
     }
 

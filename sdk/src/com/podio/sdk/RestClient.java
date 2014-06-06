@@ -68,6 +68,6 @@ public interface RestClient {
      * @return Boolean true if the client accepted the request, boolean false
      *         otherwise.
      */
-    public boolean enqueue(RestRequest request);
+    public <T> boolean enqueue(RestRequest<T> request);
 
 }
