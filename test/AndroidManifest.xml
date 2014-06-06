@@ -16,6 +16,10 @@
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.podio.sdk" />
 
+    <instrumentation
+        android:name="pl.polidea.instrumentation.PolideaInstrumentationTestRunner"
+        android:targetPackage="com.podio.sdk" />
+
     <application
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"

@@ -1,3 +1,3 @@
-[submodule "vendor/custom-test-runner"]
-	path = vendor/custom-test-runner
-	url = git@github.com:vgrigoruk/mixed-android-instrumentation-test-runner.git
+[submodule "test-runner"]
+	path = test-runner
+	url = git@github.com:podio/mixed-android-instrumentation-test-runner.git

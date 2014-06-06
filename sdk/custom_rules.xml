@@ -2,7 +2,7 @@
 <project name="podio-sdk-rules" default="help">
 
   <!-- A rule to generate the JAR for inclusion in an Android
-       application. Output file will be bin/volley.jar -->
+       application. Output file will be bin/podio-sdk.jar -->
   <target name="jar" depends="-compile">
     <jar destfile="bin/podio-sdk.jar"
          basedir="bin/classes" />
