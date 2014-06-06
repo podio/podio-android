@@ -22,70 +22,24 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.PodioProvider;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
-public class BasicPodioProvider implements PodioProvider {
+public class BasicPodioProvider {
+    
+	private final RestClient client;
 
     private ResultListener resultListener;
-    protected final RestClient client;
 
     public BasicPodioProvider(RestClient client) {
     	if (client == null) {
     		throw new NullPointerException("client cannot be null");
     	}
         this.client = client;
-    }
-
-    @Override
-    public Object changeRequest(PodioFilter filter, Object item, PodioParser<?> parser) {
-        RestRequest restRequest = buildRestRequest(RestOperation.PUT, filter, item, parser);
-
-        if (client.enqueue(restRequest)) {
-            return restRequest.getTicket();
-        } else {
-        	return null;
-        }
-    }
-
-    @Override
-    public Object deleteRequest(PodioFilter filter, PodioParser<?> parser) {
-        RestRequest restRequest = buildRestRequest(RestOperation.DELETE, filter, null,
-                parser);
-
-        if (client.enqueue(restRequest)) {
-            return restRequest.getTicket();
-        } else {
-        	return null;
-        }
-    }
-
-    @Override
-    public Object fetchRequest(PodioFilter filter, PodioParser<?> parser) {
-        RestRequest restRequest = buildRestRequest(RestOperation.GET, filter, null, parser);
-
-        if (client.enqueue(restRequest)) {
-            return restRequest.getTicket();
-        } else {
-        	return null;
-        }
-    }
-
-    @Override
-    public Object pushRequest(PodioFilter filter, Object item, PodioParser<?> parser) {
-        RestRequest restRequest = buildRestRequest(RestOperation.POST, filter, item, parser);
-
-        if (client.enqueue(restRequest)) {
-            return restRequest.getTicket();
-        } else {
-        	return null;
-        }
     }
 
     /**
@@ -100,16 +54,21 @@ public class BasicPodioProvider implements PodioProvider {
     public void setResultListener(ResultListener resultListener) {
         this.resultListener = resultListener;
     }
+    
+	protected Object request(RestOperation operation, PodioFilter filter,
+			Object content, PodioParser<?> parser) {
+		RestRequest restRequest = new RestRequest() //
+				.setContent(content) //
+				.setFilter(filter) //
+				.setParser(parser) //
+				.setOperation(operation) //
+				.setResultListener(resultListener) //
+				.setTicket(filter);
 
-    protected RestRequest buildRestRequest(RestOperation operation, PodioFilter filter,
-            Object content, PodioParser<?> parser) {
-
-        return new RestRequest() //
-                .setContent(content) //
-                .setFilter(filter) //
-                .setParser(parser) //
-                .setOperation(operation) //
-                .setResultListener(resultListener) //
-                .setTicket(filter);
-    }
+		if (client.enqueue(restRequest)) {
+			return restRequest.getTicket();
+		} else {
+			return null;
+		}
+	}
 }

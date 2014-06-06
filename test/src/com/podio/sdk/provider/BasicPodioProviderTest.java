@@ -61,7 +61,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the delete request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        Object ticket = target.deleteRequest(filter, null);
+        Object ticket = target.request(RestOperation.DELETE, filter, null, null);
 
         // Verify that the correct DELETE RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -91,7 +91,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the fetch request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        Object ticket = target.fetchRequest(filter, null);
+        Object ticket = target.request(RestOperation.GET, filter, null, null);
 
         // Verify that the correct GET RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -122,7 +122,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the push request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        Object ticket = target.pushRequest(filter, item, null);
+        Object ticket = target.request(RestOperation.POST, filter, item, null);
 
         // Verify that the correct POST RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -153,7 +153,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         // Perform the change request.
         BasicPodioProvider target = new BasicPodioProvider(client);
-        Object ticket = target.changeRequest(filter, item, null);
+        Object ticket = target.request(RestOperation.PUT, filter, item, null);
 
         // Verify that the correct PUT RestRequest is built.
         RestRequest request = client.mock_getLastPushedRestRequest();
@@ -192,7 +192,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setResultListener(mockListener);
-        Object ticket = target.changeRequest(itemFilter, itemObject, null);
+        Object ticket = target.request(RestOperation.PUT, itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -239,7 +239,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setResultListener(mockListener);
-        Object ticket = target.changeRequest(itemFilter, itemObject, null);
+        Object ticket = target.request(RestOperation.PUT, itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -286,7 +286,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setResultListener(mockListener);
-        Object ticket = target.changeRequest(itemFilter, null, null);
+        Object ticket = target.request(RestOperation.PUT, itemFilter, null, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).
@@ -331,7 +331,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
         target.setResultListener(mockListener);
-        Object ticket = target.changeRequest(itemFilter, itemObject, null);
+        Object ticket = target.request(RestOperation.PUT, itemFilter, itemObject, null);
 
         // Allow the mock client to "process" the request (basically allow the
         // callbacks to execute).

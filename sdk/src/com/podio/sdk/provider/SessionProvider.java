@@ -22,10 +22,9 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.internal.request.RestOperation;
@@ -57,13 +56,6 @@ public class SessionProvider extends BasicPodioProvider {
     }
 
     private Object authorize(PodioFilter filter, PodioParser<Session> parser) {
-        RestRequest restRequest = buildRestRequest(RestOperation.AUTHORIZE, filter, null,
-                parser);
-
-        if (client.enqueue(restRequest)) {
-            return restRequest.getTicket();
-        } else {
-        	return null;
-        }
+    	return request(RestOperation.AUTHORIZE, filter, null, parser);
     }
 }

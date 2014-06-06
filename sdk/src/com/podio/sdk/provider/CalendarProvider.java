@@ -28,6 +28,7 @@ import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.filter.CalendarFilter;
+import com.podio.sdk.internal.request.RestOperation;
 
 public class CalendarProvider extends BasicPodioProvider {
 
@@ -38,6 +39,6 @@ public class CalendarProvider extends BasicPodioProvider {
 	public Object fetchGlobalCalendar(Date from, Date to, int priority) {
 		CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
 				.withPriority(priority);
-		return fetchRequest(filter, PodioParser.fromClass(CalendarEvent[].class));
+		return request(RestOperation.GET, filter, null, PodioParser.fromClass(CalendarEvent[].class));
 	}
 }
