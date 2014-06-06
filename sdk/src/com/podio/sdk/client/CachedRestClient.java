@@ -132,6 +132,7 @@ public class CachedRestClient extends HttpRestClient {
                     result = operation.invoke(databaseDelegate,  uri, result.item(), parser);
                 }
 
+                //FIXME: Why are we regetting the value from the database? Why not just return the original result?
                 if (result.isSuccess()) {
                     result = RestOperation.GET.invoke(databaseDelegate, uri, null, parser);
                 }
