@@ -219,21 +219,22 @@ public abstract class QueuedRestClient implements RestClient {
 		@Override
 		public void run() {
 			state = State.PROCESSING;
-			
-			Object ticket = request.getTicket();
-			ResultListener resultListener = request.getResultListener();
-			RestResult result = handleRequest(request);
-
-			// The user is no longer authorized. Remove any pending
-			// requests before proceeding.
-			Session session = result.session();
-			if (session != null && !session.isAuthorized()) {
-				queue.clear();
+			try {			
+				Object ticket = request.getTicket();
+				ResultListener resultListener = request.getResultListener();
+				RestResult result = handleRequest(request);
+	
+				// The user is no longer authorized. Remove any pending
+				// requests before proceeding.
+				Session session = result.session();
+				if (session != null && !session.isAuthorized()) {
+					queue.clear();
+				}
+	
+				reportResult(ticket, resultListener, result);
+			} finally {			
+				state = State.IDLE;
 			}
-
-			reportResult(ticket, resultListener, result);
-			
-			state = State.IDLE;
 		}
 	}
 }

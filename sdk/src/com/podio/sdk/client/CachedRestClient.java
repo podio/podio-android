@@ -23,6 +23,7 @@
 package com.podio.sdk.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.net.Uri;
@@ -44,7 +45,7 @@ import com.podio.sdk.internal.request.RestOperation;
  */
 public class CachedRestClient extends HttpRestClient {
     private final RestClientDelegate databaseDelegate;
-    private final ArrayList<RestRequest> delegatedRequests;
+    private final List<RestRequest> delegatedRequests;
 
     /**
      * Creates a new <code>CachedRestClient</code>. This implementation will
