@@ -22,11 +22,16 @@
 
 package com.podio.sdk.client;
 
+import java.util.concurrent.Semaphore;
+
+import android.util.Log;
+
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.mock.MockRestClient;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
+import com.podio.sdk.internal.request.ResultListenerAdapter;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
 import com.podio.test.ThreadedTestCase;
@@ -221,27 +226,43 @@ public class QueuedRestClientTest extends ThreadedTestCase {
      * 
      * </pre>
      */
-    public void testRequestQueuePushFailureOnCapacityReached() {
-        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1);
+    public void testRequestQueuePushFailureOnCapacityReached() throws InterruptedException {
+    	final Semaphore waiter = new Semaphore(0);
+    	
+        MockRestClient testTarget = new MockRestClient("test://", "podio.test", 1) {
+			@Override
+			protected RestResult handleRequest(RestRequest restRequest) {
+				try {
+					waiter.acquire();
+				} catch (InterruptedException e) {
+				}
+				
+				return super.handleRequest(restRequest);
+			}        	
+        };
+        
+        ResultListener resultListener = new ResultListenerAdapter() {
+			@Override
+			public void onSuccess(Object ticket, Object content) {
+				TestUtils.completed();
+			}
+		};
 
-        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
-        boolean isFirstRequestAccepted = testTarget.enqueue(request);
-        boolean isSecondRequestAccepted = testTarget.enqueue(request);
+        RestRequest request = new RestRequest().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE).setResultListener(resultListener);
+        
+        assertEquals(testTarget.enqueue(request), true);
+        //One is being processed, so room for one more in the queue
+        assertEquals(testTarget.enqueue(request), true);
 
-        // Sometimes the Java thread scheduler allows the worker thread of the
-        // QueuedRestClient to start working right after the first request is
-        // made, resulting in the queue being empty when the second request is
-        // posted, hence it being accepted as well. Since the 'handleRequest'
-        // method is forced to sleep in two seconds according to the above
-        // mock implementation, the worker thread is therefore guaranteed not to
-        // pop the second request as well from the queue before the third
-        // request is requested. The grand total is that either request 2 or 3
-        // (or both) should be guaranteed to be rejected for this test to pass.
-        boolean isThirdRequestAccepted = testTarget.enqueue(request);
+        assertEquals(testTarget.enqueue(request), false);
+        
+        //Complete the request, so we can add another
+        waiter.release();
+        
+        TestUtils.waitUntilCompletion();
 
-        assertEquals(true, isFirstRequestAccepted);
-        assertEquals(false, isSecondRequestAccepted);
-        assertEquals(false, isThirdRequestAccepted);
+        //Now it can be processed
+        assertEquals(testTarget.enqueue(request), true);
     }
 
     /**
