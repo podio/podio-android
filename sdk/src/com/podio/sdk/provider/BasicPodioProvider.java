@@ -33,42 +33,27 @@ public class BasicPodioProvider {
     
 	private final RestClient client;
 
-    private ResultListener resultListener;
-
     public BasicPodioProvider(RestClient client) {
     	if (client == null) {
     		throw new NullPointerException("client cannot be null");
     	}
         this.client = client;
     }
-
-    /**
-     * Sets the callback interface used to report the result through. If this
-     * callback is not given, then the rest operations can still be executed
-     * silently.
-     * 
-     * @param resultListener
-     *            The callback implementation. Null is valid.
-     * @return This instance of the <code>BasicPodioProvider</code>.
-     */
-    public void setResultListener(ResultListener resultListener) {
-        this.resultListener = resultListener;
-    }
     
-	protected <T> Object get(PodioFilter filter, Class<T> classOfItem) {
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem));
+	protected <T> Object get(PodioFilter filter, Class<T> classOfItem, ResultListener resultListener) {
+		return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener);
 	}
     
-	protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem) {
-		return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem));
+	protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener resultListener) {
+		return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener);
 	}
     
-	protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem) {
-		return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem));
+	protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener resultListener) {
+		return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener);
 	}
     
 	protected Object request(RestOperation operation, PodioFilter filter,
-			Object content, PodioParser<?> parser) {
+			Object content, PodioParser<?> parser, ResultListener resultListener) {
 		RestRequest restRequest = new RestRequest() //
 				.setContent(content) //
 				.setFilter(filter) //

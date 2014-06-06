@@ -56,9 +56,8 @@ public class SessionProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         SessionProvider target = new SessionProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD");
+        Object ticket = target.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD", mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -95,9 +94,8 @@ public class SessionProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         SessionProvider target = new SessionProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN");
+        Object ticket = target.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN", mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);

@@ -26,6 +26,7 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Organization;
 import com.podio.sdk.filter.OrganizationFilter;
+import com.podio.sdk.internal.request.ResultListener;
 
 public class OrganizationProvider extends BasicPodioProvider {
 
@@ -33,10 +34,10 @@ public class OrganizationProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object getAll() {
+    public Object getAll(ResultListener resultListener) {
         PodioFilter filter = new OrganizationFilter();
 
-        return get(filter, Organization[].class);
+        return get(filter, Organization[].class, resultListener);
     }
 
 }

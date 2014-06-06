@@ -54,9 +54,8 @@ public class OrganizationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         OrganizationProvider target = new OrganizationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.getAll();
+        Object ticket = target.getAll(mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);

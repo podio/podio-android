@@ -26,6 +26,7 @@ import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.domain.ItemRequest;
 import com.podio.sdk.filter.ItemFilter;
+import com.podio.sdk.internal.request.ResultListener;
 
 public class ItemProvider extends BasicPodioProvider {
 
@@ -33,29 +34,29 @@ public class ItemProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object addItem(long applicationId, Object data) {
+    public Object addItem(long applicationId, Object data, ResultListener resultListener) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
 
-        return post(filter, data, Item.PushResult.class);
+        return post(filter, data, Item.PushResult.class, resultListener);
     }
 
-    public Object fetchItem(long itemId) {
+    public Object fetchItem(long itemId, ResultListener resultListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
-        return get(filter, Item.class);
+        return get(filter, Item.class, resultListener);
     }
 
-    public Object fetchItemsForApplication(long applicationId) {
+    public Object fetchItemsForApplication(long applicationId, ResultListener resultListener) {
         ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
-        return post(filter, filterRequest, ItemRequest.Result.class);
+        return post(filter, filterRequest, ItemRequest.Result.class, resultListener);
     }
 
-    public Object updateItem(long itemId, Object data) {
+    public Object updateItem(long itemId, Object data, ResultListener resultListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
-        return put(filter, data, Item.PushResult.class);
+        return put(filter, data, Item.PushResult.class, resultListener);
     }
 
 }

@@ -73,9 +73,8 @@ public final class Podio {
          */
         public static final Object get(long applicationId, ResultListener resultListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchApplication(applicationId);
+            return provider.fetchApplication(applicationId, resultListener);
         }
 
         /**
@@ -91,9 +90,8 @@ public final class Podio {
          */
         public static final Object getForSpace(long spaceId, ResultListener resultListener) {
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchApplicationsForSpace(spaceId);
+            return provider.fetchApplicationsForSpace(spaceId, resultListener);
         }
 
         /**
@@ -112,9 +110,8 @@ public final class Podio {
                 ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId);
+            return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId, resultListener);
         }
 
         /**
@@ -133,9 +130,8 @@ public final class Podio {
                 ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchApplicationMicro(applicationId);
+            return provider.fetchApplicationMicro(applicationId, resultListener);
         }
 
         /**
@@ -154,9 +150,8 @@ public final class Podio {
                 ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchApplicationMini(applicationId);
+            return provider.fetchApplicationMini(applicationId, resultListener);
         }
 
         /**
@@ -175,9 +170,8 @@ public final class Podio {
                 ResultListener resultListener) {
 
             ApplicationProvider provider = new ApplicationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchApplicationShort(applicationId);
+            return provider.fetchApplicationShort(applicationId, resultListener);
         }
     }
 
@@ -213,10 +207,9 @@ public final class Podio {
                 ResultListener resultListener) {
 
             SessionProvider provider = new SessionProvider(client);
-            provider.setResultListener(resultListener);
 
             return provider.authenticateWithUserCredentials(clientId, clientSecret, username,
-                    password);
+                    password, resultListener);
         }
 
         /**
@@ -238,9 +231,8 @@ public final class Podio {
                 ResultListener resultListener) {
 
             SessionProvider provider = new SessionProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken);
+            return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken, resultListener);
         }
 
         /**
@@ -291,9 +283,8 @@ public final class Podio {
         		ResultListener resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.addItem(applicationId, data);
+            return provider.addItem(applicationId, data, resultListener);
         }
 
         /**
@@ -309,9 +300,8 @@ public final class Podio {
          */
         public static final Object get(long itemId, ResultListener resultListener) {
             ItemProvider provider = new ItemProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchItem(itemId);
+            return provider.fetchItem(itemId, resultListener);
         }
 
         /**
@@ -330,9 +320,8 @@ public final class Podio {
         		ResultListener resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchItemsForApplication(applicationId);
+            return provider.fetchItemsForApplication(applicationId, resultListener);
         }
 
         /**
@@ -352,9 +341,8 @@ public final class Podio {
         		ResultListener resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.updateItem(itemId, data);
+            return provider.updateItem(itemId, data, resultListener);
 
         }
     }
@@ -383,9 +371,8 @@ public final class Podio {
          */
         public static final Object getAll(ResultListener resultListener) {
             OrganizationProvider provider = new OrganizationProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.getAll();
+            return provider.getAll(resultListener);
         }
     }
 
@@ -418,9 +405,8 @@ public final class Podio {
         public static final Object getGlobalCalendar(Date from, Date to, int priority,
                 ResultListener resultListener) {
             CalendarProvider provider = new CalendarProvider(client);
-            provider.setResultListener(resultListener);
 
-            return provider.fetchGlobalCalendar(from, to, priority);
+            return provider.fetchGlobalCalendar(from, to, priority, resultListener);
         }
     }
 

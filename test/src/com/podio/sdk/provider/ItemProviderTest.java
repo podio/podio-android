@@ -53,9 +53,8 @@ public class ItemProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.addItem(2L, new Object());
+        Object ticket = target.addItem(2L, new Object(), mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -90,9 +89,8 @@ public class ItemProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.fetchItem(3L);
+        Object ticket = target.fetchItem(3L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -127,9 +125,8 @@ public class ItemProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.fetchItemsForApplication(4L);
+        Object ticket = target.fetchItemsForApplication(4L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -164,9 +161,8 @@ public class ItemProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ItemProvider target = new ItemProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        Object ticket = target.updateItem(5, new Object());
+        Object ticket = target.updateItem(5, new Object(), mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);

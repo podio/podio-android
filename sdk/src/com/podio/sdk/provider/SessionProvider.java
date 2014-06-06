@@ -28,6 +28,7 @@ import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.internal.request.RestOperation;
+import com.podio.sdk.internal.request.ResultListener;
 
 public class SessionProvider extends BasicPodioProvider {
 
@@ -36,26 +37,26 @@ public class SessionProvider extends BasicPodioProvider {
     }
 
     public Object authenticateWithUserCredentials(String clientId, String clientSecret,
-            String username, String password) {
+            String username, String password, ResultListener resultListener) {
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withUserCredentials(username, password);
 
-        return authorize(filter);
+        return authorize(filter, resultListener);
     }
 
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
-            String appId, String appToken) {
+            String appId, String appToken, ResultListener resultListener) {
 
         PodioFilter filter = new SessionFilter() //
                 .withClientCredentials(clientId, clientSecret) //
                 .withAppCredentials(appId, appToken);
 
-        return authorize(filter);
+        return authorize(filter, resultListener);
     }
 
-    private Object authorize(PodioFilter filter) {
-    	return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class));
+    private Object authorize(PodioFilter filter, ResultListener resultListener) {
+    	return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener);
     }
 }

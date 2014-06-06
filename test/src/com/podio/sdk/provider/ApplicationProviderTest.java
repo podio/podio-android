@@ -52,9 +52,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        target.fetchApplication(2L);
+        target.fetchApplication(2L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -86,9 +85,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        target.fetchApplicationMicro(2L);
+        target.fetchApplicationMicro(2L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -120,9 +118,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        target.fetchApplicationMini(2L);
+        target.fetchApplicationMini(2L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -154,9 +151,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        target.fetchApplicationsForSpace(1);
+        target.fetchApplicationsForSpace(1, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -188,9 +184,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        target.fetchApplicationsForSpaceWithInactivesIncluded(2);
+        target.fetchApplicationsForSpaceWithInactivesIncluded(2, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);
@@ -222,9 +217,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
         final MockResultListener mockListener = new MockResultListener();
 
         ApplicationProvider target = new ApplicationProvider(mockClient);
-        target.setResultListener(mockListener);
 
-        target.fetchApplicationShort(2L);
+        target.fetchApplicationShort(2L, mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
         assertEquals(false, mockListener.mock_isSessionChangeCalled);

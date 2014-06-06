@@ -25,6 +25,7 @@ package com.podio.sdk.provider;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.filter.ApplicationFilter;
+import com.podio.sdk.internal.request.ResultListener;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
@@ -32,52 +33,52 @@ public final class ApplicationProvider extends BasicPodioProvider {
 		super(client);
 	}
 
-	public Object fetchApplication(long applicationId) {
+	public Object fetchApplication(long applicationId, ResultListener resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("full");
 
-		return get(filter, Application.class);
+		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationShort(long applicationId) {
+	public Object fetchApplicationShort(long applicationId, ResultListener resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("short");
 
-		return get(filter, Application.class);
+		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationMini(long applicationId) {
+	public Object fetchApplicationMini(long applicationId, ResultListener resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("mini");
 
-		return get(filter, Application.class);
+		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationMicro(long applicationId) {
+	public Object fetchApplicationMicro(long applicationId, ResultListener resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withApplicationId(applicationId) //
 				.withType("micro");
 
-		return get(filter, Application.class);
+		return get(filter, Application.class, resultListener);
 	}
 
-	public Object fetchApplicationsForSpace(long spaceId) {
+	public Object fetchApplicationsForSpace(long spaceId, ResultListener resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withSpaceId(spaceId) //
 				.withInactivesIncluded(false);
 
-		return get(filter, Application[].class);
+		return get(filter, Application[].class, resultListener);
 	}
 
-	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
+	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener resultListener) {
 		ApplicationFilter filter = new ApplicationFilter() //
 				.withSpaceId(spaceId) //
 				.withInactivesIncluded(true);
 
-		return get(filter, Application[].class);
+		return get(filter, Application[].class, resultListener);
 	}
 
 }
