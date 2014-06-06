@@ -51,9 +51,9 @@ public final class Podio {
      * 
      * @author László Urszuly
      */
-    public static final class Application {
+    public static final class ApplicationAPI {
 
-        private Application() {
+        private ApplicationAPI() {
             // Hiding the constructor of this class as it's not meant to be
             // instantiated.
         }
@@ -186,9 +186,9 @@ public final class Podio {
      * 
      * @author László Urszuly
      */
-    public static final class Client {
+    public static final class ClientAPI {
 
-        private Client() {
+        private ClientAPI() {
             // Hiding the constructor of this class as it's not meant to be
             // instantiated.
         }
@@ -266,9 +266,9 @@ public final class Podio {
      * 
      * @author László Urszuly
      */
-    public static final class Item {
+    public static final class ItemAPI {
 
-        private Item() {
+        private ItemAPI() {
             // Hiding the constructor of this class as it's not meant to be
             // instantiated.
         }
@@ -363,9 +363,9 @@ public final class Podio {
      * 
      * @author László Urszuly
      */
-    public static final class Organization {
+    public static final class OrganizationAPI {
 
-        private Organization() {
+        private OrganizationAPI() {
             // Hiding the constructor of this class as it's not meant to be
             // instantiated.
         }
@@ -393,9 +393,9 @@ public final class Podio {
      * 
      * @author Tobias Lindberg
      */
-    public static final class Calendar {
+    public static final class CalendarAPI {
 
-        private Calendar() {
+        private CalendarAPI() {
             // Hiding the constructor of this class as it's not meant to be
             // instantiated.
         }
@@ -458,7 +458,7 @@ public final class Podio {
      * MUST be called before any other request is made. The caller can then
      * either choose to revoke a previously stored session (the SDK doesn't
      * store or cache the session), or authenticate with user or app
-     * credentials. These operations are done in the {@link Client} area.
+     * credentials. These operations are done in the {@link ClientAPI} area.
      * 
      * @param context
      *        The context to initialize the cache database and network clients
@@ -477,7 +477,7 @@ public final class Podio {
      * MUST be called before any other request is made. The caller can then
      * either choose to revoke a previously stored session (the SDK doesn't
      * store or cache the session), or authenticate with user or app
-     * credentials. These operations are done in the {@link Client} area.
+     * credentials. These operations are done in the {@link ClientAPI} area.
      * 
      * @param context
      *        The context to initialize the cache database and network clients
