@@ -22,11 +22,9 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.filter.ApplicationFilter;
-import com.podio.sdk.internal.request.RestOperation;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
@@ -39,7 +37,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 				.withApplicationId(applicationId) //
 				.withType("full");
 
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(Application.class));
+		return get(filter, Application.class);
 	}
 
 	public Object fetchApplicationShort(long applicationId) {
@@ -47,7 +45,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 				.withApplicationId(applicationId) //
 				.withType("short");
 
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(Application.class));
+		return get(filter, Application.class);
 	}
 
 	public Object fetchApplicationMini(long applicationId) {
@@ -55,7 +53,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 				.withApplicationId(applicationId) //
 				.withType("mini");
 
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(Application.class));
+		return get(filter, Application.class);
 	}
 
 	public Object fetchApplicationMicro(long applicationId) {
@@ -63,7 +61,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 				.withApplicationId(applicationId) //
 				.withType("micro");
 
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(Application.class));
+		return get(filter, Application.class);
 	}
 
 	public Object fetchApplicationsForSpace(long spaceId) {
@@ -71,7 +69,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 				.withSpaceId(spaceId) //
 				.withInactivesIncluded(false);
 
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(Application[].class));
+		return get(filter, Application[].class);
 	}
 
 	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId) {
@@ -79,7 +77,7 @@ public final class ApplicationProvider extends BasicPodioProvider {
 				.withSpaceId(spaceId) //
 				.withInactivesIncluded(true);
 
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(Application[].class));
+		return get(filter, Application[].class);
 	}
 
 }

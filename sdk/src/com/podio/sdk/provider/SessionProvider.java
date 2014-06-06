@@ -42,7 +42,7 @@ public class SessionProvider extends BasicPodioProvider {
                 .withClientCredentials(clientId, clientSecret) //
                 .withUserCredentials(username, password);
 
-        return authorize(filter, PodioParser.fromClass(Session.class));
+        return authorize(filter);
     }
 
     public Object authenticateWithAppCredentials(String clientId, String clientSecret,
@@ -52,10 +52,10 @@ public class SessionProvider extends BasicPodioProvider {
                 .withClientCredentials(clientId, clientSecret) //
                 .withAppCredentials(appId, appToken);
 
-        return authorize(filter, PodioParser.fromClass(Session.class));
+        return authorize(filter);
     }
 
-    private Object authorize(PodioFilter filter, PodioParser<Session> parser) {
-    	return request(RestOperation.AUTHORIZE, filter, null, parser);
+    private Object authorize(PodioFilter filter) {
+    	return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class));
     }
 }

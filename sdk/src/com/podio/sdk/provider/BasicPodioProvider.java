@@ -55,6 +55,18 @@ public class BasicPodioProvider {
         this.resultListener = resultListener;
     }
     
+	protected <T> Object get(PodioFilter filter, Class<T> classOfItem) {
+		return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem));
+	}
+    
+	protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem) {
+		return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem));
+	}
+    
+	protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem) {
+		return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem));
+	}
+    
 	protected Object request(RestOperation operation, PodioFilter filter,
 			Object content, PodioParser<?> parser) {
 		RestRequest restRequest = new RestRequest() //
