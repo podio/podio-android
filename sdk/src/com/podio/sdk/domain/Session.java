@@ -72,10 +72,6 @@ public final class Session {
         return Utils.notAnyEmpty(accessToken, refreshToken) && expiresMillis > 0L;
     }
 
-    public boolean notAuthorized() {
-        return !isAuthorized();
-    }
-
     public boolean shouldRefreshTokens() {
         long currentTimeMillis = System.currentTimeMillis();
         long timeLeft = expiresMillis - currentTimeMillis;
