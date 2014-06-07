@@ -21,13 +21,15 @@
  */
 
 package com.podio.sdk.provider;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.provider.mock.MockResultListener;
+import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
 public class SessionProviderTest extends AndroidTestCase {
@@ -54,19 +56,18 @@ public class SessionProviderTest extends AndroidTestCase {
                 + "&grant_type=password&username=USERNAME&password=PASSWORD");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener<Session> mockListener = new MockResultListener<Session>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Session> mockListener = mock(ResultListener.class);
 
         SessionProvider target = new SessionProvider(mockClient);
 
         Object ticket = target.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD", mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
+        
+        verify(mockListener).onSuccess(ticket, null);
+        verifyNoMoreInteractions(mockListener);
 
-        assertEquals(false, mockListener.mock_isSessionChangeCalled);
-        assertEquals(true, mockListener.mock_isSuccessCalled);
-        assertEquals(false, mockListener.mock_isFailureCalled);
-        assertEquals(ticket, mockListener.mock_ticket);
-
-        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
 
@@ -92,19 +93,18 @@ public class SessionProviderTest extends AndroidTestCase {
                 + "&grant_type=app&app_id=APPID&app_token=APPTOKEN");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener<Session> mockListener = new MockResultListener<Session>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Session> mockListener = mock(ResultListener.class);
 
         SessionProvider target = new SessionProvider(mockClient);
 
         Object ticket = target.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN", mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
-        assertEquals(false, mockListener.mock_isSessionChangeCalled);
-        assertEquals(true, mockListener.mock_isSuccessCalled);
-        assertEquals(false, mockListener.mock_isFailureCalled);
-        assertEquals(ticket, mockListener.mock_ticket);
+        verify(mockListener).onSuccess(ticket, null);
+        verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
 

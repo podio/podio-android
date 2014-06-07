@@ -22,12 +22,15 @@
 
 package com.podio.sdk.provider;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.domain.Organization;
-import com.podio.sdk.provider.mock.MockResultListener;
+import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
 
 public class OrganizationProviderTest extends AndroidTestCase {
@@ -52,19 +55,18 @@ public class OrganizationProviderTest extends AndroidTestCase {
         final Uri reference = Uri.parse("content://test.uri/org");
 
         final MockRestClient mockClient = new MockRestClient();
-        final MockResultListener<Organization[]> mockListener = new MockResultListener<Organization[]>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Organization[]> mockListener = mock(ResultListener.class);
 
         OrganizationProvider target = new OrganizationProvider(mockClient);
 
         Object ticket = target.getAll(mockListener);
         mockClient.mock_processLastPushedRestRequest(true, null, null);
 
-        assertEquals(false, mockListener.mock_isSessionChangeCalled);
-        assertEquals(true, mockListener.mock_isSuccessCalled);
-        assertEquals(false, mockListener.mock_isFailureCalled);
-        assertSame(ticket, mockListener.mock_ticket);
+        verify(mockListener).onSuccess(ticket, null);
+        verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) mockListener.mock_ticket).buildUri("content", "test.uri");
+        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(reference, uri);
     }
 

@@ -22,6 +22,10 @@
 
 package com.podio.sdk.provider;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +37,8 @@ import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
+import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.MockRestClient;
-import com.podio.sdk.provider.mock.MockResultListener;
 
 public class BasicPodioProviderTest extends AndroidTestCase {
 
@@ -188,7 +192,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         resultList.add(itemObject);
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Object> mockListener = mock(ResultListener.class);
 
         BasicPodioProvider target = new BasicPodioProvider(client);
         Object ticket = target.request(RestOperation.PUT, itemFilter, itemObject, null, mockListener);
@@ -197,11 +202,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(false, errorMessage, resultList);
 
-        assertEquals(false, mockListener.mock_isSessionChangeCalled);
-        assertEquals(false, mockListener.mock_isSuccessCalled);
-        assertEquals(true, mockListener.mock_isFailureCalled);
-        assertEquals(ticket, mockListener.mock_ticket);
-        assertEquals(errorMessage, mockListener.mock_message);
+        verify(mockListener).onFailure(ticket, errorMessage);
+        verifyNoMoreInteractions(mockListener);
     }
 
     /**
@@ -231,7 +233,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Object> mockListener = mock(ResultListener.class);
 
         // Setup the mock session.
         client.mock_setMockSession(session);
@@ -243,12 +246,9 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(true, errorMessage, itemObject);
 
-        assertEquals(true, mockListener.mock_isSessionChangeCalled);
-        assertEquals(true, mockListener.mock_isSuccessCalled);
-        assertEquals(false, mockListener.mock_isFailureCalled);
-        assertEquals(ticket, mockListener.mock_ticket);
-        assertEquals(itemObject, mockListener.mock_item);
-        assertEquals(session, mockListener.mock_session);
+        verify(mockListener).onSuccess(ticket, itemObject);
+        verify(mockListener).onSessionChange(ticket, session);
+        verifyNoMoreInteractions(mockListener);
     }
 
     /**
@@ -277,7 +277,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Object> mockListener = mock(ResultListener.class);
 
         // Setup the mock session.
         client.mock_setMockSession(session);
@@ -289,12 +290,9 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(false, errorMessage, null);
 
-        assertEquals(true, mockListener.mock_isSessionChangeCalled);
-        assertEquals(false, mockListener.mock_isSuccessCalled);
-        assertEquals(true, mockListener.mock_isFailureCalled);
-        assertEquals(ticket, mockListener.mock_ticket);
-        assertEquals(session, mockListener.mock_session);
-        assertEquals(errorMessage, mockListener.mock_message);
+        verify(mockListener).onFailure(ticket, errorMessage);
+        verify(mockListener).onSessionChange(ticket, session);
+        verifyNoMoreInteractions(mockListener);
     }
 
     /**
@@ -323,7 +321,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         final String errorMessage = "ohno";
 
         final MockRestClient client = new MockRestClient();
-        final MockResultListener<Object> mockListener = new MockResultListener<Object>();
+        @SuppressWarnings("unchecked")
+		final ResultListener<Object> mockListener = mock(ResultListener.class);
 
         // Simulate an update request.
         BasicPodioProvider target = new BasicPodioProvider(client);
@@ -333,11 +332,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         // callbacks to execute).
         client.mock_processLastPushedRestRequest(true, errorMessage, itemObject);
 
-        assertEquals(false, mockListener.mock_isSessionChangeCalled);
-        assertEquals(true, mockListener.mock_isSuccessCalled);
-        assertEquals(false, mockListener.mock_isFailureCalled);
-        assertEquals(ticket, mockListener.mock_ticket);
-        assertEquals(itemObject, mockListener.mock_item);
+        verify(mockListener).onSuccess(ticket, itemObject);
+        verifyNoMoreInteractions(mockListener);
     }
 
     /**
