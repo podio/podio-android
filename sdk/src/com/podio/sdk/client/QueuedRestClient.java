@@ -59,8 +59,8 @@ public abstract class QueuedRestClient implements RestClient {
 		IDLE, PROCESSING
 	}
 	
-	protected final String scheme;
-	protected final String authority;
+	private final String scheme;
+	private final String authority;
 
 	private final BlockingQueue<Runnable> queue;
 

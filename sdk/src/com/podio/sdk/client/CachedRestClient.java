@@ -104,7 +104,7 @@ public class CachedRestClient extends HttpRestClient {
         PodioParser<? extends T> parser = restRequest.getParser();
         Object item = restRequest.getContent();
 
-        Uri uri = filter.buildUri("content", authority);
+        Uri uri = filter.buildUri("content", getAuthority());
 
         RestResult<T> result;
         if (operation != RestOperation.DELETE //

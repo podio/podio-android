@@ -75,7 +75,7 @@ public class HttpRestClient extends QueuedRestClient {
      */
     @Override
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-    	Uri uri = restRequest.getFilter().buildUri(scheme, authority);
+    	Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
 
 		return restRequest.getOperation().invoke(networkDelegate, uri, 
 				restRequest.getContent(), restRequest.getParser());
@@ -85,7 +85,7 @@ public class HttpRestClient extends QueuedRestClient {
         if (networkDelegate instanceof HttpClientDelegate) {
             Uri sessionRefreshUri = new Uri.Builder() //
                     .scheme(SCHEME) //
-                    .authority(authority) //
+                    .authority(getAuthority()) //
                     .appendEncodedPath(refreshPath) //
                     .build();
             String url = sessionRefreshUri.toString();
