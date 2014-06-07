@@ -104,7 +104,7 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         RestRequest<Object> request = new RestRequest<Object>().setFilter(new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
         boolean didAcceptRequest = testTarget.enqueue(request);
 
-        assertEquals(true, didAcceptRequest);
+        assertTrue(didAcceptRequest);
     }
 
     /**
@@ -157,12 +157,12 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(true, firstResult.isRequestPushed);
-        assertEquals(true, firstResult.isRequestPopped);
-        assertEquals(true, firstResult.isTicketValid);
-        assertEquals(true, secondResult.isRequestPushed);
-        assertEquals(true, secondResult.isRequestPopped);
-        assertEquals(true, secondResult.isTicketValid);
+        assertTrue(firstResult.isRequestPushed);
+        assertTrue(firstResult.isRequestPopped);
+        assertTrue(firstResult.isTicketValid);
+        assertTrue(secondResult.isRequestPushed);
+        assertTrue(secondResult.isRequestPopped);
+        assertTrue(secondResult.isTicketValid);
     }
 
     /**
@@ -332,9 +332,9 @@ public class QueuedRestClientTest extends ThreadedTestCase {
         // watch-dog.
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(true, result.isRequestPushed);
-        assertEquals(true, result.isRequestPopped);
-        assertEquals(true, result.isTicketValid);
+        assertTrue(result.isRequestPushed);
+        assertTrue(result.isRequestPopped);
+        assertTrue(result.isTicketValid);
     }
 
     /**
@@ -418,8 +418,8 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 		} catch (InterruptedException e) {
 		}
 
-        assertEquals(true, firstResult.isRequestPushed);
-        assertEquals(true, firstResult.isRequestPopped);
+        assertTrue(firstResult.isRequestPushed);
+        assertTrue(firstResult.isRequestPopped);
         assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
         assertEquals(0, testTarget.size());
         
@@ -440,8 +440,8 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 		} catch (InterruptedException e) {
 		}
 
-        assertEquals(true, secondResult.isRequestPushed);
-        assertEquals(true, secondResult.isRequestPopped);
+        assertTrue(secondResult.isRequestPushed);
+        assertTrue(secondResult.isRequestPopped);
         assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
         assertEquals(0, testTarget.size());
 

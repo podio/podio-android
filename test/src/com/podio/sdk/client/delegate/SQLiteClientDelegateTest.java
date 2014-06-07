@@ -241,7 +241,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = databaseHelper.delete(validUri, itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     /**
@@ -272,7 +272,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = databaseHelper.delete(validUri, itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     /**
@@ -386,7 +386,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         assertNotNull(result);
         assertNotNull(result.item());
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
 
         MockContentItem item = (MockContentItem) result.item();
         assertEquals(content[0].uri, item.uri);
@@ -486,7 +486,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
         SQLiteClientDelegate databaseHelper = getDatabaseHelper(DATABASE_VERSION);
         RestResult<MockContentItem> result = databaseHelper.post(uri, item, itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     /**
@@ -594,7 +594,7 @@ public class SQLiteClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = databaseHelper.put(uri, item, itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
     }
 
     /**

@@ -170,11 +170,11 @@ public class SessionTest extends AndroidTestCase {
      */
     public void testIsAuthorizedWithNonEmptyTokensAndTimeStamp() {
         Session session1 = new Session("ACCESSTOKEN", "REFRESHTOKEN", 3600L);
-        assertEquals(true, session1.isAuthorized());
+        assertTrue(session1.isAuthorized());
 
         Session session2 = new Session(
                 "{access_token: 'ACCESSTOKEN', refresh_token:'REFRESHTOKEN', expires:3600}");
-        assertEquals(true, session2.isAuthorized());
+        assertTrue(session2.isAuthorized());
     }
 
     /**
@@ -193,17 +193,17 @@ public class SessionTest extends AndroidTestCase {
      */
     public void testIsNotAuthorizedWithEmptyAccessToken() {
         Session session1 = new Session("", "REFRESHTOKEN", 3600L);
-        assertEquals(false, session1.isAuthorized());
+        assertFalse(session1.isAuthorized());
 
         Session session2 = new Session(null, "REFRESHTOKEN", 3600L);
-        assertEquals(false, session2.isAuthorized());
+        assertFalse(session2.isAuthorized());
 
         Session session3 = new Session(
                 "{access_token: '', refresh_token:'REFRESHTOKEN', expires:3600}");
-        assertEquals(false, session3.isAuthorized());
+        assertFalse(session3.isAuthorized());
 
         Session session4 = new Session("{refresh_token:'REFRESHTOKEN', expires:3600}");
-        assertEquals(false, session4.isAuthorized());
+        assertFalse(session4.isAuthorized());
     }
 
     /**
@@ -223,15 +223,15 @@ public class SessionTest extends AndroidTestCase {
     public void testIsNotAuthorizedWithEmptyExpiresTimeStamp() {
         long currentTimeStamp = System.currentTimeMillis() + 2;
         Session session1 = new Session("ACCESSTOKEN", "REFRESHTOKEN", -currentTimeStamp);
-        assertEquals(false, session1.isAuthorized());
+        assertFalse(session1.isAuthorized());
 
         Session session2 = new Session(
                 "{access_token: 'ACCESSTOKEN', refresh_token:'REFRESHTOKEN', expires:0}");
-        assertEquals(false, session2.isAuthorized());
+        assertFalse(session2.isAuthorized());
 
         Session session3 = new Session(
                 "{access_token: 'ACCESSTOKEN', refresh_token:'REFRESHTOKEN'}");
-        assertEquals(false, session3.isAuthorized());
+        assertFalse(session3.isAuthorized());
     }
 
     /**
@@ -250,17 +250,17 @@ public class SessionTest extends AndroidTestCase {
      */
     public void testIsNotAuthorizedWithEmptyRefreshToken() {
         Session session1 = new Session("ACCESSTOKEN", "", 3600L);
-        assertEquals(false, session1.isAuthorized());
+        assertFalse(session1.isAuthorized());
 
         Session session2 = new Session("ACCESSTOKEN", null, 3600L);
-        assertEquals(false, session2.isAuthorized());
+        assertFalse(session2.isAuthorized());
 
         Session session3 = new Session(
                 "{access_token: 'ACCESSTOKEN', refresh_token:'', expires:3600}");
-        assertEquals(false, session3.isAuthorized());
+        assertFalse(session3.isAuthorized());
 
         Session session4 = new Session("{access_token:'ACCESSTOKEN', expires:3600}");
-        assertEquals(false, session4.isAuthorized());
+        assertFalse(session4.isAuthorized());
     }
 
     /**

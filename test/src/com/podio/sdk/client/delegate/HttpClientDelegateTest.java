@@ -157,8 +157,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizePostsQueryParametersAsBody() {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         JSONObject mockResponse = new JSONObject();
         mockWebServer.mock_setResponse(mockResponse);
@@ -173,9 +173,9 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         String[] particlesArray = requestBody.split("&");
         List<String> particlesList = Arrays.asList(particlesArray);
 
-        assertEquals(true, particlesList.contains("key1=value1"));
-        assertEquals(true, particlesList.contains("key2=value2"));
-        assertEquals(true, particlesList.contains("key3=value3"));
+        assertTrue(particlesList.contains("key1=value1"));
+        assertTrue(particlesList.contains("key2=value2"));
+        assertTrue(particlesList.contains("key3=value3"));
     }
 
     /**
@@ -196,8 +196,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * @throws JSONException
      */
     public void testAuthorizeVolleyIntegrationReturnsCorrectJsonResponse() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         JSONObject mockResponse = new JSONObject();
         mockResponse.put("value", "test");
@@ -205,7 +205,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = target.authorize(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.POST, servedMethod);
@@ -297,8 +297,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteRefreshesExpiredToken() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         String mockNewSessionJsonString = "{ access_token:\"newaccesstoken\", refresh_token:\"newrefreshtoken\", expires_in:3600 }";
         JSONObject mockNewSessionJsonObject = new JSONObject(mockNewSessionJsonString);
@@ -312,7 +312,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         RestResult<MockContentItem> result = target.delete(uri, itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
-        assertEquals(true, isNewSessionValid);
+        assertTrue(isNewSessionValid);
     }
 
     /**
@@ -333,8 +333,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * @throws JSONException
      */
     public void testDeleteVolleyIntegrationReturnsCorrectJsonResponse() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         JSONObject mockResponse = new JSONObject();
         mockResponse.put("value", "test");
@@ -342,7 +342,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = target.delete(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.DELETE, servedMethod);
@@ -434,8 +434,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetRefreshesExpiredToken() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         String mockNewSessionJsonString = "{ access_token:\"newaccesstoken\", refresh_token:\"newrefreshtoken\", expires_in:3600 }";
         JSONObject mockNewSessionJsonObject = new JSONObject(mockNewSessionJsonString);
@@ -449,7 +449,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         RestResult<MockContentItem> result = target.get(uri, itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
-        assertEquals(true, isNewSessionValid);
+        assertTrue(isNewSessionValid);
     }
 
     /**
@@ -475,8 +475,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     public void testGetVolleyIntegrationReturnsCorrectJsonResponse() throws JSONException,
             UnsupportedEncodingException {
 
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         Uri uri = Uri.parse("http://localhost:8080");
 
@@ -488,7 +488,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         RestResult<MockContentItem> result = target.get(uri, itemParser);
         assertNotNull(result);
         assertNotNull(result.item());
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
 
         MockContentItem item = (MockContentItem) result.item();
         PodioParser<MockContentItem> parser = PodioParser.fromClass(MockContentItem.class);
@@ -519,8 +519,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testNewItemParserIsUsedForParsingToJsonWhenExplicitlySet() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         JSONObject mockResponse = new JSONObject();
         mockWebServer.mock_setResponse(mockResponse);
@@ -557,8 +557,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testNewItemParserIsUsedForParsintToItemWhenExplicitlySet() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         JSONObject mockResponse = new JSONObject();
         mockWebServer.mock_setResponse(mockResponse);
@@ -663,8 +663,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostRefreshesExpiredToken() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         String mockNewSessionJsonString = "{ access_token:\"newaccesstoken\", refresh_token:\"newrefreshtoken\", expires_in:3600 }";
         JSONObject mockNewSessionJsonObject = new JSONObject(mockNewSessionJsonString);
@@ -678,7 +678,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         RestResult<MockContentItem> result = target.post(uri, new Object(), itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
-        assertEquals(true, isNewSessionValid);
+        assertTrue(isNewSessionValid);
     }
 
     /**
@@ -699,15 +699,15 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * @throws JSONException
      */
     public void testPostVolleyIntegrationReturnsCorrectStatus() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         Uri uri = Uri.parse("http://localhost:8080");
 
         MockContentItem item = new MockContentItem(uri.toString(), "{text: 'test'}");
         RestResult<MockContentItem> result = target.post(uri, item, itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.POST, servedMethod);
@@ -799,8 +799,8 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutRefreshesExpiredToken() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         String mockNewSessionJsonString = "{ access_token:\"newaccesstoken\", refresh_token:\"newrefreshtoken\", expires_in:3600 }";
         JSONObject mockNewSessionJsonObject = new JSONObject(mockNewSessionJsonString);
@@ -814,7 +814,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         RestResult<MockContentItem> result = target.put(uri, new Object(), itemParser);
 
         boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
-        assertEquals(true, isNewSessionValid);
+        assertTrue(isNewSessionValid);
     }
 
     /**
@@ -835,14 +835,14 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * @throws JSONException
      */
     public void testPutVolleyIntegrationReturnsCorrectJsonResponse() throws JSONException {
-        assertEquals(true, mockWebServer.wasStarted());
-        assertEquals(true, mockWebServer.isAlive());
+        assertTrue(mockWebServer.wasStarted());
+        assertTrue(mockWebServer.isAlive());
 
         MockContentItem item = new MockContentItem("http://localhost:8080", "{text: 'test'}");
         Uri uri = Uri.parse(item.uri);
         RestResult<MockContentItem> result = target.put(uri, item, itemParser);
         assertNotNull(result);
-        assertEquals(true, result.isSuccess());
+        assertTrue(result.isSuccess());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.PUT, servedMethod);

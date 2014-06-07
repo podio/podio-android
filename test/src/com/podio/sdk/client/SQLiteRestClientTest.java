@@ -118,11 +118,11 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
         
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(true, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(false, result.isInsertCalled);
-        assertEquals(false, result.isQueryCalled);
-        assertEquals(false, result.isUpdateCalled);
+        assertTrue(result.isAuthorizeCalled);
+        assertFalse(result.isDeleteCalled);
+        assertFalse(result.isInsertCalled);
+        assertFalse(result.isQueryCalled);
+        assertFalse(result.isUpdateCalled);
     }
 
     /**
@@ -170,11 +170,11 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
         
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(true, result.isDeleteCalled);
-        assertEquals(false, result.isInsertCalled);
-        assertEquals(false, result.isQueryCalled);
-        assertEquals(false, result.isUpdateCalled);
+        assertFalse(result.isAuthorizeCalled);
+        assertTrue(result.isDeleteCalled);
+        assertFalse(result.isInsertCalled);
+        assertFalse(result.isQueryCalled);
+        assertFalse(result.isUpdateCalled);
     }
 
     /**
@@ -202,11 +202,11 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
         
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(false, result.isInsertCalled);
-        assertEquals(true, result.isQueryCalled);
-        assertEquals(false, result.isUpdateCalled);
+        assertFalse(result.isAuthorizeCalled);
+        assertFalse(result.isDeleteCalled);
+        assertFalse(result.isInsertCalled);
+        assertTrue(result.isQueryCalled);
+        assertFalse(result.isUpdateCalled);
     }
 
     /**
@@ -234,11 +234,11 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
         
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(true, result.isInsertCalled);
-        assertEquals(false, result.isQueryCalled);
-        assertEquals(false, result.isUpdateCalled);
+        assertFalse(result.isAuthorizeCalled);
+        assertFalse(result.isDeleteCalled);
+        assertTrue(result.isInsertCalled);
+        assertFalse(result.isQueryCalled);
+        assertFalse(result.isUpdateCalled);
     }
 
     /**
@@ -266,10 +266,10 @@ public class SQLiteRestClientTest extends ThreadedTestCase {
         
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(false, result.isAuthorizeCalled);
-        assertEquals(false, result.isDeleteCalled);
-        assertEquals(false, result.isInsertCalled);
-        assertEquals(false, result.isQueryCalled);
-        assertEquals(true, result.isUpdateCalled);
+        assertFalse(result.isAuthorizeCalled);
+        assertFalse(result.isDeleteCalled);
+        assertFalse(result.isInsertCalled);
+        assertFalse(result.isQueryCalled);
+        assertTrue(result.isUpdateCalled);
     }
 }
