@@ -22,9 +22,8 @@
 
 package com.podio.sdk.provider;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import org.mockito.Mockito;
+
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
@@ -58,11 +57,11 @@ public class OrganizationProviderTest extends AndroidTestCase {
 		OrganizationProvider provider = new OrganizationProvider(mockClient);
 
 		@SuppressWarnings("unchecked")
-		ResultListener<Organization[]> mockListener = mock(ResultListener.class);
+		ResultListener<Organization[]> mockListener = Mockito.mock(ResultListener.class);
 		Object ticket = provider.getAll(mockListener);
 
-		verify(mockListener).onSuccess(ticket, null);
-		verifyNoMoreInteractions(mockListener);
+		Mockito.verify(mockListener).onSuccess(ticket, null);
+		Mockito.verifyNoMoreInteractions(mockListener);
 
 		Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
 		assertEquals(Uri.parse("content://test.uri/org"), uri);

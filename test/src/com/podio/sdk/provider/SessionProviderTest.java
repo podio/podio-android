@@ -21,9 +21,8 @@
  */
 
 package com.podio.sdk.provider;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import org.mockito.Mockito;
+
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
@@ -56,11 +55,11 @@ public class SessionProviderTest extends AndroidTestCase {
         SessionProvider provider = new SessionProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Session> mockListener = mock(ResultListener.class);
+		ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
         Object ticket = provider.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD", mockListener);
         
-        verify(mockListener).onSuccess(ticket, null);
-        verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
         Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(Uri.parse("content://test.uri/oauth/token"
@@ -89,11 +88,11 @@ public class SessionProviderTest extends AndroidTestCase {
         SessionProvider provider = new SessionProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Session> mockListener = mock(ResultListener.class);
+		ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
         Object ticket = provider.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN", mockListener);
 
-        verify(mockListener).onSuccess(ticket, null);
-        verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
         Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(Uri.parse("content://test.uri/oauth/token"

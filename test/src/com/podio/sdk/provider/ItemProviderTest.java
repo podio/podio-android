@@ -22,9 +22,8 @@
 
 package com.podio.sdk.provider;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import org.mockito.Mockito;
+
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
@@ -57,11 +56,11 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider provider = new ItemProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Item.PushResult> mockListener = mock(ResultListener.class);
+		ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
         Object ticket = provider.addItem(2L, new Item().getPushData(), mockListener);
 
-        verify(mockListener).onSuccess(ticket, null);
-        verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
         Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(Uri.parse("content://test.uri/item/app/2"), uri);
@@ -88,11 +87,11 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider provider = new ItemProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Item> mockListener = mock(ResultListener.class);
+		ResultListener<Item> mockListener = Mockito.mock(ResultListener.class);
         Object ticket = provider.fetchItem(3L, mockListener);
         
-        verify(mockListener).onSuccess(ticket, null);
-        verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
         Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(Uri.parse("content://test.uri/item/3"), uri);
@@ -119,11 +118,11 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider provider = new ItemProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<ItemRequest.Result> mockListener = mock(ResultListener.class);
+		ResultListener<ItemRequest.Result> mockListener = Mockito.mock(ResultListener.class);
         Object ticket = provider.fetchItemsForApplication(4L, mockListener);
         
-        verify(mockListener).onSuccess(ticket, null);
-        verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
         Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(Uri.parse("content://test.uri/item/app/4/filter"), uri);
@@ -150,11 +149,11 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider provider = new ItemProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Item.PushResult> mockListener = mock(ResultListener.class);
+		ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
         Object ticket = provider.updateItem(5, new Item().getPushData(), mockListener);
 
-        verify(mockListener).onSuccess(ticket, null);
-        verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
         Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
         assertEquals(Uri.parse("content://test.uri/item/5"), uri);
