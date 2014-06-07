@@ -22,254 +22,215 @@
 
 package com.podio.sdk.client;
 
-import android.app.Instrumentation;
-import android.content.Context;
+import org.mockito.Mockito;
+
 import android.net.Uri;
+import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.test.TestUtils;
-import com.podio.test.ThreadedTestCase;
 
-public class SQLiteRestClientTest extends ThreadedTestCase {
+public class SQLiteRestClientTest extends InstrumentationTestCase {
 
-    private static final class ConcurrentResult {
-        private boolean isAuthorizeCalled;
-        private boolean isDeleteCalled;
-        private boolean isInsertCalled;
-        private boolean isQueryCalled;
-        private boolean isUpdateCalled;
-    }
+	private SQLiteRestClient target;
+	private RestClientDelegate mockDelegate;
 
-    private SQLiteRestClient target;
-    private ConcurrentResult result;
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        Instrumentation instrumentation = getInstrumentation();
-        Context context = instrumentation.getContext();
+		mockDelegate = Mockito.mock(RestClientDelegate.class);
+		target = new SQLiteRestClient(getInstrumentation().getContext(),
+				"authority", mockDelegate, 10);
+	}
 
-        result = new ConcurrentResult();
-        target = new SQLiteRestClient(context, "authority", new RestClientDelegate() {
+	/**
+	 * Verifies that a authorize rest operation is delegated properly to the
+	 * {@link DatabaseClientDelegate}.
+	 * 
+	 * <pre>
+	 * 
+	 * 1. Create a new {@link SQLiteRestClient} and add a mock
+	 *      {@link DatabaseClientDelegate} to it.
+	 * 
+	 * 2. Push a authorize operation to the client.
+	 * 
+	 * 3. Verify that the authorize method of the database helper
+	 *      is called.
+	 * 
+	 * </pre>
+	 */
+	public void testAuthorizeOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.authorize(Mockito.<Uri> any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
 
-            @Override
-            public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> itemParser) {
-                result.isAuthorizeCalled = true;
-                TestUtils.completed();
-                return RestResult.success();
-            }
+		BasicPodioFilter filter = new BasicPodioFilter();
+		RestRequest<Object> restRequest = new RestRequest<Object>() //
+				.setFilter(filter) //
+				.setOperation(RestOperation.AUTHORIZE);
 
-            @Override
-            public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> itemParser) {
-                result.isDeleteCalled = true;
-                TestUtils.completed();
-                return RestResult.success();
-            }
+		target.enqueue(restRequest);
 
-            @Override
-            public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> itemParser) {
-                result.isQueryCalled = true;
-                TestUtils.completed();
-                return RestResult.success();
-            }
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).authorize(
+				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
+	}
 
-            @Override
-            public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> itemParser) {
-                result.isInsertCalled = true;
-                TestUtils.completed();
-                return RestResult.success();
-            }
+	/**
+	 * Verifies that an IllegalArgumentException is thrown when trying to create
+	 * an SQLiteRestClient with a null pointer delegate.
+	 * 
+	 * <pre>
+	 * 
+	 * 1. Create a new SQLiteRestClient with a null pointer database delegate.
+	 * 
+	 * 2. Verify that an IllegalArgumentException was thrown.
+	 * 
+	 * </pre>
+	 */
+	public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
+		try {
+			new SQLiteRestClient(null, null, null, 0);
+			fail("Should have thrown exception");
+		} catch (IllegalArgumentException e) {
+		}
+	}
 
-            @Override
-            public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> itemParser) {
-                result.isUpdateCalled = true;
-                TestUtils.completed();
-                return RestResult.success();
-            }
+	/**
+	 * Verifies that a delete rest operation is delegated correctly to the
+	 * {@link DatabaseClientDelegate}.
+	 * 
+	 * <pre>
+	 * 
+	 * 1. Create a new {@link SQLiteRestClient} and add a mock
+	 *      {@link DatabaseClientDelegate} to it.
+	 * 
+	 * 2. Push a delete operation to the client.
+	 * 
+	 * 3. Verify that the delete method of the database helper
+	 *      is called.
+	 * 
+	 * </pre>
+	 */
+	public void testDeleteOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.delete(Mockito.<Uri> any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
 
-        }, 10);
-    }
+		RestRequest<Object> restRequest = new RestRequest<Object>() //
+				.setFilter(new BasicPodioFilter()) //
+				.setOperation(RestOperation.DELETE);
 
-    /**
-     * Verifies that a authorize rest operation is delegated properly to the
-     * {@link DatabaseClientDelegate}.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseClientDelegate} to it.
-     * 
-     * 2. Push a authorize operation to the client.
-     * 
-     * 3. Verify that the authorize method of the database helper
-     *      is called.
-     * 
-     * </pre>
-     */
-    public void testAuthorizeOperationIsDelegatedCorrectly() {
-        RestRequest<Object> restRequest = new RestRequest<Object>() //
-                .setFilter(new BasicPodioFilter()) //
-                .setOperation(RestOperation.AUTHORIZE);
+		target.enqueue(restRequest);
 
-        target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).delete(
+				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
+	}
 
-        assertTrue(result.isAuthorizeCalled);
-        assertFalse(result.isDeleteCalled);
-        assertFalse(result.isInsertCalled);
-        assertFalse(result.isQueryCalled);
-        assertFalse(result.isUpdateCalled);
-    }
+	/**
+	 * Verifies that a get rest operation is delegated correctly to the
+	 * {@link DatabaseClientDelegate}.
+	 * 
+	 * <pre>
+	 * 
+	 * 1. Create a new {@link SQLiteRestClient} and add a mock
+	 *      {@link DatabaseClientDelegate} to it.
+	 * 
+	 * 2. Push a get operation to the client.
+	 * 
+	 * 3. Verify that the query method of the database helper
+	 *      is called.
+	 * 
+	 * </pre>
+	 */
+	public void testGetOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.get(Mockito.<Uri> any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
 
-    /**
-     * Verifies that an IllegalArgumentException is thrown when trying to create
-     * an SQLiteRestClient with a null pointer delegate.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new SQLiteRestClient with a null pointer database delegate.
-     * 
-     * 2. Verify that an IllegalArgumentException was thrown.
-     * 
-     * </pre>
-     */
-    public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
-        try {
-            new SQLiteRestClient(null, null, null, 0);
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-        }
-    }
+		RestRequest<Object> restRequest = new RestRequest<Object>() //
+				.setFilter(new BasicPodioFilter()) //
+				.setOperation(RestOperation.GET);
 
-    /**
-     * Verifies that a delete rest operation is delegated correctly to the
-     * {@link DatabaseClientDelegate}.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseClientDelegate} to it.
-     * 
-     * 2. Push a delete operation to the client.
-     * 
-     * 3. Verify that the delete method of the database helper
-     *      is called.
-     * 
-     * </pre>
-     */
-    public void testDeleteOperationIsDelegatedCorrectly() {
-        RestRequest<Object> restRequest = new RestRequest<Object>() //
-                .setFilter(new BasicPodioFilter()) //
-                .setOperation(RestOperation.DELETE);
+		target.enqueue(restRequest);
 
-        target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).get(
+				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
+	}
 
-        assertFalse(result.isAuthorizeCalled);
-        assertTrue(result.isDeleteCalled);
-        assertFalse(result.isInsertCalled);
-        assertFalse(result.isQueryCalled);
-        assertFalse(result.isUpdateCalled);
-    }
+	/**
+	 * Verifies that a post rest operation is delegated correctly to the
+	 * {@link DatabaseClientDelegate}.
+	 * 
+	 * <pre>
+	 * 
+	 * 1. Create a new {@link SQLiteRestClient} and add a mock
+	 *      {@link DatabaseClientDelegate} to it.
+	 * 
+	 * 2. Push a post operation to the client.
+	 * 
+	 * 3. Verify that the insert method of the database helper
+	 *      is called.
+	 * 
+	 * </pre>
+	 */
+	public void testPostOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.post(Mockito.<Uri> any(), Mockito.any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
 
-    /**
-     * Verifies that a get rest operation is delegated correctly to the
-     * {@link DatabaseClientDelegate}.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseClientDelegate} to it.
-     * 
-     * 2. Push a get operation to the client.
-     * 
-     * 3. Verify that the query method of the database helper
-     *      is called.
-     * 
-     * </pre>
-     */
-    public void testGetOperationIsDelegatedCorrectly() {
-        RestRequest<Object> restRequest = new RestRequest<Object>() //
-                .setFilter(new BasicPodioFilter()) //
-                .setOperation(RestOperation.GET);
+		RestRequest<Object> restRequest = new RestRequest<Object>() //
+				.setFilter(new BasicPodioFilter()) //
+				.setOperation(RestOperation.POST);
 
-        target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
+		target.enqueue(restRequest);
 
-        assertFalse(result.isAuthorizeCalled);
-        assertFalse(result.isDeleteCalled);
-        assertFalse(result.isInsertCalled);
-        assertTrue(result.isQueryCalled);
-        assertFalse(result.isUpdateCalled);
-    }
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).post(
+				Mockito.<Uri> any(), Mockito.any(),
+				Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
+	}
 
-    /**
-     * Verifies that a post rest operation is delegated correctly to the
-     * {@link DatabaseClientDelegate}.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseClientDelegate} to it.
-     * 
-     * 2. Push a post operation to the client.
-     * 
-     * 3. Verify that the insert method of the database helper
-     *      is called.
-     * 
-     * </pre>
-     */
-    public void testPostOperationIsDelegatedCorrectly() {
-        RestRequest<Object> restRequest = new RestRequest<Object>() //
-                .setFilter(new BasicPodioFilter()) //
-                .setOperation(RestOperation.POST);
+	/**
+	 * Verifies that a put rest operation is delegated correctly to the
+	 * {@link DatabaseClientDelegate}.
+	 * 
+	 * <pre>
+	 * 
+	 * 1. Create a new {@link SQLiteRestClient} and add a mock
+	 *      {@link DatabaseClientDelegate} to it.
+	 * 
+	 * 2. Push a put operation to the client.
+	 * 
+	 * 3. Verify that the update method of the database helper
+	 *      is called.
+	 * 
+	 * </pre>
+	 */
+	public void testPutOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.put(Mockito.<Uri> any(), Mockito.any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
 
-        target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
+		RestRequest<Object> restRequest = new RestRequest<Object>() //
+				.setFilter(new BasicPodioFilter()) //
+				.setOperation(RestOperation.PUT);
 
-        assertFalse(result.isAuthorizeCalled);
-        assertFalse(result.isDeleteCalled);
-        assertTrue(result.isInsertCalled);
-        assertFalse(result.isQueryCalled);
-        assertFalse(result.isUpdateCalled);
-    }
+		target.enqueue(restRequest);
 
-    /**
-     * Verifies that a put rest operation is delegated correctly to the
-     * {@link DatabaseClientDelegate}.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteRestClient} and add a mock
-     *      {@link DatabaseClientDelegate} to it.
-     * 
-     * 2. Push a put operation to the client.
-     * 
-     * 3. Verify that the update method of the database helper
-     *      is called.
-     * 
-     * </pre>
-     */
-    public void testPutOperationIsDelegatedCorrectly() {
-        RestRequest<Object> restRequest = new RestRequest<Object>() //
-                .setFilter(new BasicPodioFilter()) //
-                .setOperation(RestOperation.PUT);
-
-        target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
-
-        assertFalse(result.isAuthorizeCalled);
-        assertFalse(result.isDeleteCalled);
-        assertFalse(result.isInsertCalled);
-        assertFalse(result.isQueryCalled);
-        assertTrue(result.isUpdateCalled);
-    }
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).put(
+				Mockito.<Uri> any(), Mockito.any(),
+				Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
+	}
 }

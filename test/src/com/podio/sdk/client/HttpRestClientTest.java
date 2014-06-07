@@ -22,77 +22,28 @@
 
 package com.podio.sdk.client;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import android.app.Instrumentation;
-import android.content.Context;
+import org.mockito.Mockito;
+
 import android.net.Uri;
+import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.test.TestUtils;
-import com.podio.test.ThreadedTestCase;
 
-public class HttpRestClientTest extends ThreadedTestCase {
+public class HttpRestClientTest extends InstrumentationTestCase {
 
     private HttpRestClient target;
-    private List<RestOperation> calls;
+	private RestClientDelegate mockDelegate;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Instrumentation instrumentation = getInstrumentation();
-        Context context = instrumentation.getContext();
 
-        calls = new ArrayList<RestOperation>();
-        target = new HttpRestClient(context, "authority", new RestClientDelegate() {
-
-            @Override
-            public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> itemParser) {
-            	calls.add(RestOperation.AUTHORIZE);
-                TestUtils.completed();
-                return RestResult.success();
-            }
-
-            @Override
-            public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> itemParser) {
-            	calls.add(RestOperation.DELETE);
-                TestUtils.completed();
-                return RestResult.success();
-            }
-
-            @Override
-            public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> itemParser) {
-            	calls.add(RestOperation.GET);
-                TestUtils.completed();
-                return RestResult.success();
-            }
-
-            @Override
-            public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> itemParser) {
-            	calls.add(RestOperation.POST);
-                TestUtils.completed();
-                return RestResult.success();
-            }
-
-            @Override
-            public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> itemParser) {
-            	calls.add(RestOperation.PUT);
-                TestUtils.completed();
-                return RestResult.success();
-            }
-
-        }, 10);
-    }
-    
-    private void assertCalled(RestOperation... operations) {
-        assertEquals(calls.size(), operations.length);
-        for (int i = 0; i < operations.length; i++) {
-			assertEquals(operations[i], calls.get(i));
-		}
+		mockDelegate = Mockito.mock(RestClientDelegate.class);
+        target = new HttpRestClient(getInstrumentation().getContext(), "authority", mockDelegate, 10);
     }
 
     /**
@@ -112,15 +63,20 @@ public class HttpRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testAuthorizeOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.authorize(Mockito.<Uri> any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
+		
         RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.AUTHORIZE);
 
         target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
 
-        assertCalled(RestOperation.AUTHORIZE);
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).authorize(
+				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
     }
 
     /**
@@ -160,15 +116,20 @@ public class HttpRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testDeleteOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.delete(Mockito.<Uri> any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
+		
         RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.DELETE);
 
         target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
-        
-        assertCalled(RestOperation.DELETE);
+
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).delete(
+				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
     }
 
     /**
@@ -188,15 +149,20 @@ public class HttpRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testGetOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.get(Mockito.<Uri> any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
+		
         RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.GET);
 
         target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
-        
-        assertCalled(RestOperation.GET);
+
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).get(
+				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
     }
 
     /**
@@ -216,15 +182,21 @@ public class HttpRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.post(Mockito.<Uri> any(), Mockito.any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
+		
         RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.POST);
 
         target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
-        
-        assertCalled(RestOperation.POST);
+
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).post(
+				Mockito.<Uri> any(), Mockito.any(),
+				Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
     }
 
     /**
@@ -244,14 +216,20 @@ public class HttpRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPutOperationIsDelegatedCorrectly() {
+		Mockito.when(
+				mockDelegate.put(Mockito.<Uri> any(), Mockito.any(),
+						Mockito.<PodioParser<?>> any())).thenReturn(
+				RestResult.success());
+		
         RestRequest<Object> restRequest = new RestRequest<Object>() //
                 .setFilter(new BasicPodioFilter()) //
                 .setOperation(RestOperation.PUT);
 
         target.enqueue(restRequest);
-        
-        assertTrue(TestUtils.waitUntilCompletion());
-        
-        assertCalled(RestOperation.PUT);
+
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).put(
+				Mockito.<Uri> any(), Mockito.any(),
+				Mockito.<PodioParser<?>> any());
+		Mockito.verifyZeroInteractions(mockDelegate);
     }
 }
