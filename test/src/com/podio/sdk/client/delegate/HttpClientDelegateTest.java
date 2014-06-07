@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mockito.Mockito;
 
 import android.app.Instrumentation;
 import android.content.Context;
@@ -37,7 +38,6 @@ import android.test.InstrumentationTestCase;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
-import com.podio.sdk.client.delegate.mock.MockItemParser;
 import com.podio.sdk.client.mock.MockWebServer;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.provider.BasicPodioProvider;
@@ -64,6 +64,9 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         target = new HttpClientDelegate(context);
         target.restoreSession("http://localhost:8080/auth/token", session);
+        
+		System.setProperty("dexmaker.dexcache", getInstrumentation()
+				.getTargetContext().getCacheDir().getPath());
     }
 
     @Override
@@ -525,8 +528,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         String fakeJsonString = "{item: fake}";
         Object fakeItemObject = new Object();
+        
+        PodioParser<?> mockParser = Mockito.mock(PodioParser.class);
+        Mockito.when(mockParser.parseToJson(fakeItemObject)).thenReturn(fakeJsonString);
 
-        target.post(uri, new Object(), new MockItemParser(fakeJsonString, fakeItemObject));
+        target.post(uri, fakeItemObject, mockParser);
 
         String requestBody = mockWebServer.mock_getRequestBody();
         assertEquals(fakeJsonString, requestBody);
@@ -560,8 +566,12 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         String fakeJsonString = "{}";
         Object fakeDomainObject = new Object();
+        
+        @SuppressWarnings("unchecked")
+		PodioParser<Object> mockParser = Mockito.mock(PodioParser.class);
+        Mockito.when(mockParser.parseToItem(fakeJsonString)).thenReturn(fakeDomainObject);
 
-        RestResult<Object> result = target.get(uri, new MockItemParser(fakeJsonString, fakeDomainObject));
+        RestResult<Object> result = target.get(uri, mockParser);
 
         assertNotNull(result);
         assertEquals(fakeDomainObject, result.item());
