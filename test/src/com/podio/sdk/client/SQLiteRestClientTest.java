@@ -22,7 +22,9 @@
 
 package com.podio.sdk.client;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
@@ -34,14 +36,16 @@ import com.podio.sdk.internal.request.RestOperation;
 
 public class SQLiteRestClientTest extends InstrumentationTestCase {
 
-	private SQLiteRestClient target;
+	@Mock
 	private RestClientDelegate mockDelegate;
+	private SQLiteRestClient target;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		mockDelegate = Mockito.mock(RestClientDelegate.class);
+		MockitoAnnotations.initMocks(this);
+		
 		target = new SQLiteRestClient(getInstrumentation().getContext(),
 				"authority", mockDelegate, 10);
 	}
