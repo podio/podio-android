@@ -155,39 +155,45 @@ public abstract class QueuedRestClient implements RestClient {
 	 *         state of the request.
 	 */
 	protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest);
-
+	
 	/**
-	 * Reports a result back to any callback implementation.
+	 * Reports a result using the callerHandler.
 	 * 
-	 * @param ticket
-	 *            The request ticket to pass back to the caller.
-	 * @param resultListener
-	 *            The callback implementation to call through.
+	 * @param request
+	 *            The request that we are reporting the result of.
 	 * @param result
 	 *            The result of the request.
 	 */
-	protected <T> void reportResult(final Object ticket,
-			final ResultListener<? super T> resultListener, final RestResult<T> result) {
-		if (resultListener == null) {
-			return;
-		}
-
-		// Make sure to post to the caller thread.
+	protected <T> void reportResult(final RestRequest<T> request, final RestResult<T> result) {
 		callerHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				Session session = result.session();
-				if (session != null) {
-					resultListener.onSessionChange(ticket, session);
-				}
-
-				if (result.isSuccess()) {
-					resultListener.onSuccess(ticket, result.item());
-				} else {
-					resultListener.onFailure(ticket, result.message());
-				}
+				callListener(request, result);
 			}
 		});
+	}
+	
+	
+	/**
+	 * Reports a result back to any listeners implementation.
+	 * 
+	 * @param request
+	 *            The request that we are reporting the result of.
+	 * @param result
+	 *            The result of the request.
+	 */
+	protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
+		ResultListener<? super T> resultListener = request.getResultListener();
+		Session session = result.session();
+		if (session != null) {
+			resultListener.onSessionChange(request.getTicket(), session);
+		}
+
+		if (result.isSuccess()) {
+			resultListener.onSuccess(request.getTicket(), result.item());
+		} else {
+			resultListener.onFailure(request.getTicket(), result.message());
+		}
 	}
 
 	/**
@@ -220,9 +226,7 @@ public abstract class QueuedRestClient implements RestClient {
 		public void run() {
 			state = State.PROCESSING;
 			try {			
-				Object ticket = request.getTicket();
-				ResultListener<? super T> resultListener = request.getResultListener();
-				RestResult<T> result = handleRequest(request);
+				final RestResult<T> result = handleRequest(request);
 	
 				// The user is no longer authorized. Remove any pending
 				// requests before proceeding.
@@ -231,7 +235,7 @@ public abstract class QueuedRestClient implements RestClient {
 					queue.clear();
 				}
 	
-				reportResult(ticket, resultListener, result);
+				reportResult(request, result);
 			} finally {			
 				state = State.IDLE;
 			}

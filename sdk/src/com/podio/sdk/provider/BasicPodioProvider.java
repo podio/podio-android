@@ -54,16 +54,18 @@ public class BasicPodioProvider {
     
 	protected <T> Object request(RestOperation operation, PodioFilter filter,
 			Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener) {
+		Object ticket = filter;
+		
 		RestRequest<T> restRequest = new RestRequest<T>() //
 				.setContent(content) //
 				.setFilter(filter) //
 				.setParser(parser) //
 				.setOperation(operation) //
 				.setResultListener(resultListener) //
-				.setTicket(filter);
+				.setTicket(ticket);
 
 		if (client.enqueue(restRequest)) {
-			return restRequest.getTicket();
+			return ticket;
 		} else {
 			return null;
 		}

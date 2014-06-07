@@ -29,7 +29,6 @@ import android.net.Uri;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.request.ResultListener;
 import com.podio.test.TestUtils;
 import com.podio.test.ThreadedTestCase;
 
@@ -63,8 +62,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
         targetRestClient = new CachedRestClient(context, "test.authority", targetNetworkDelegate,
                 targetDatabaseDelegate, 10) {
             @Override
-            protected <T> void reportResult(Object ticket, ResultListener<? super T> resultListener,
-                    RestResult<T> result) {
+			protected <T> void reportResult(RestRequest<T> request, RestResult<T> result) {
 
                 // This call is still running on the worker thread. The super
                 // implementation (QueuedRestClient) will make sure that the
