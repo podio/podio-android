@@ -26,6 +26,8 @@ import android.app.Instrumentation;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.client.delegate.HttpClientDelegate;
+import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
@@ -162,14 +164,14 @@ public class CachedRestClientTest extends ThreadedTestCase {
     public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
         // Verify exception for network delegate.
         try {
-            new CachedRestClient(null, null, null, new MockRestClientDelegate(), 0);
+            new CachedRestClient(null, null, null, new SQLiteClientDelegate(getInstrumentation().getContext(), "foo", 1), 0);
             fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
 
         // Verify exception for cache delegate.
         try {
-            new CachedRestClient(null, null, new MockRestClientDelegate(), null, 0);
+            new CachedRestClient(null, null, new HttpClientDelegate(getInstrumentation().getContext()), null, 0);
             fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
