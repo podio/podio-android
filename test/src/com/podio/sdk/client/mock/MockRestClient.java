@@ -28,15 +28,19 @@ import com.podio.sdk.client.RestResult;
 
 public class MockRestClient extends QueuedRestClient {
 
-    public MockRestClient(String scheme, String authority) {
-        super(scheme, authority);
+    public MockRestClient() {
+        this(1);
     }
 
-    public MockRestClient(String scheme, String authority, int capacity) {
-        super(scheme, authority, capacity);
+    public MockRestClient(int capacity) {
+        this("test://", "podio.test", 1);
     }
 
-    @Override
+    public MockRestClient(String scheme, String authority, int queueCapacity) {
+		super(scheme, authority, queueCapacity);
+	}
+
+	@Override
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
         return RestResult.success();
     }

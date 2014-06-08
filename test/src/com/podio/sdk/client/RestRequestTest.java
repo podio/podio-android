@@ -22,10 +22,11 @@
 
 package com.podio.sdk.client;
 
+import org.mockito.Mockito;
+
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
@@ -79,19 +80,8 @@ public class RestRequestTest extends AndroidTestCase {
                 .addQueryParameter("id", "1") //
                 .addQueryParameter("id", "2");
 
-        ResultListener<Object> resultListener = new ResultListener<Object>() {
-            @Override
-            public void onFailure(Object ticket, String message) {
-            }
-
-            @Override
-            public void onSessionChange(Object ticket, Session session) {
-            }
-
-            @Override
-            public void onSuccess(Object ticket, Object item) {
-            }
-        };
+        @SuppressWarnings("unchecked")
+		ResultListener<Object> resultListener = Mockito.mock(ResultListener.class);
 
         target.setContent(item) //
                 .setFilter(filter) //
