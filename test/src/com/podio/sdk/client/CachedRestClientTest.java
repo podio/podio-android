@@ -171,7 +171,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
         }
 
         // Verify exception for cache delegate.
-        HttpClientDelegate networkDelegate = new HttpClientDelegate(getInstrumentation().getContext(), null);
+        HttpClientDelegate networkDelegate = new HttpClientDelegate(getInstrumentation().getContext());
         try {
             new CachedRestClient(null, null, networkDelegate, null, 0);
             fail("Should have thrown exception");
