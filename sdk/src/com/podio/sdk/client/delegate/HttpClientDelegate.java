@@ -197,18 +197,24 @@ public class HttpClientDelegate implements RestClientDelegate {
 				&& lastRequestError.networkResponse.statusCode == 401;
     }
     
-    private void refreshSession() {
+    private boolean refreshSession() {
     	Map<String, String> refreshParams = new HashMap<String, String>();
         refreshParams.put("grant_type", "refresh_token");
         refreshParams.put("refresh_token", session.refreshToken);
-
+        
+        return authorizeRequest(refreshUrl, refreshParams);
+    }
+    
+    private boolean authorizeRequest(String url, Map<String, String> params) {
         RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new RefreshRequest(refreshUrl, refreshParams, future);
+        StringRequest request = new RefreshRequest(refreshUrl, params, future);
 
         requestQueue.add(request);
         String resultJson = getBlockingResponse(future);
 
         session = new Session(resultJson);
+        
+        return Utils.notEmpty(resultJson);
     }
 
     private boolean checkSession() {
