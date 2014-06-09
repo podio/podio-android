@@ -213,7 +213,8 @@ public class HttpClientDelegate implements RestClientDelegate {
         String resultJson = getBlockingResponse(future);
 
         session = new Session(resultJson);
-        
+
+        //FIXME: This is not a proper way to check for success, we should use status codes instead
         return Utils.notEmpty(resultJson);
     }
 
