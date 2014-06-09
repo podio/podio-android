@@ -20,16 +20,20 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.client.delegate;
+package com.podio.sdk.client.cache;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-final class SQLiteHelper extends SQLiteOpenHelper {
+public class SQLiteHelper extends SQLiteOpenHelper {
+	
+	public static final String TABLE = "content";
+	public static final String KEY_COLUMN = "key";
+	public static final String DATA_COLUMN = "data";
 
-    SQLiteHelper(Context context, String name, int version) {
+    public SQLiteHelper(Context context, String name, int version) {
         super(context, name, null, version);
     }
 
@@ -89,12 +93,14 @@ final class SQLiteHelper extends SQLiteOpenHelper {
     	if (database == null) {
     		throw new NullPointerException("database cannot be null");
     	}
+    	
+    	String sql = "CREATE TABLE %s (" + //
+                " %s TEXT PRIMARY KEY," + //
+                " %s BLOB NOT NULL DEFAULT (''))";
 
         database.beginTransaction();
         try {
-            database.execSQL("CREATE TABLE content (" + //
-                    " uri TEXT PRIMARY KEY," + //
-                    " json TEXT NOT NULL DEFAULT (''))");
+            database.execSQL(String.format(sql, TABLE, KEY_COLUMN, DATA_COLUMN));
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();

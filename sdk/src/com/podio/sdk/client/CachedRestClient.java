@@ -28,10 +28,10 @@ import java.util.List;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.cache.CacheClient;
 import com.podio.sdk.internal.request.RestOperation;
 
 /**
@@ -44,7 +44,7 @@ import com.podio.sdk.internal.request.RestOperation;
  * @author László Urszuly
  */
 public class CachedRestClient extends HttpRestClient {
-    private final RestClientDelegate databaseDelegate;
+    private final CacheClient cacheClient;
     private final List<RestRequest<?>> delegatedRequests;
 
     /**
@@ -71,16 +71,16 @@ public class CachedRestClient extends HttpRestClient {
      *            keep in its queue.
      */
     public CachedRestClient(Context context, String authority, RestClientDelegate networkDelegate,
-    		RestClientDelegate cacheDelegate, int queueCapacity) {
+    		CacheClient cacheClient, int queueCapacity) {
 
         super(context, authority, networkDelegate, queueCapacity);
 
-        if (cacheDelegate == null) {
+        if (cacheClient == null) {
             throw new NullPointerException("The cacheDelegate must not be null");
         }
             
         this.delegatedRequests = new ArrayList<RestRequest<?>>();
-        this.databaseDelegate = cacheDelegate;
+        this.cacheClient = cacheClient;
     }
 
     /**
@@ -100,46 +100,44 @@ public class CachedRestClient extends HttpRestClient {
     @Override
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
         RestOperation operation = restRequest.getOperation();
-        PodioFilter filter = restRequest.getFilter();
         PodioParser<? extends T> parser = restRequest.getParser();
-        Object item = restRequest.getContent();
 
-        Uri uri = filter.buildUri("content", getAuthority());
+        Uri uri = restRequest.getFilter().buildUri("content", getAuthority());
+        String cacheKey = uri.toString();
 
         RestResult<T> result;
-        if (operation != RestOperation.DELETE //
-                && operation != RestOperation.PUT //
-                && operation != RestOperation.AUTHORIZE //
+        if (operation == RestOperation.GET //
                 && !delegatedRequests.contains(restRequest)) {
 
             // Query the locally cached data first and then queue the
             // request again for the super implementation to act upon.
-
-            result = operation.invoke(databaseDelegate, uri, item, parser);
-            assert result != null;
-            
+        	
             delegatedRequests.add(restRequest);
             super.enqueue(restRequest);
+
+        	byte[] data = cacheClient.load(cacheKey);
+        	if (data != null) {
+        		T responseItem = parser.parseToItem(new String(data));
+        		return RestResult.success(responseItem);
+        	} else {
+        		return RestResult.failure();
+        	}
         } else {
             delegatedRequests.remove(restRequest);
             result = super.handleRequest(restRequest);
-            assert result != null;
 
-            if (result.isSuccess() && operation != RestOperation.AUTHORIZE) {
-                if (operation == RestOperation.GET || operation == RestOperation.PUT) {
-                    result = RestOperation.POST.invoke(databaseDelegate, uri, result.item(), parser);
-                } else {
-                    result = operation.invoke(databaseDelegate,  uri, result.item(), parser);
-                }
-
-                //FIXME: Why are we regetting the value from the database? Why not just return the original result?
-                if (result.isSuccess()) {
-                    result = RestOperation.GET.invoke(databaseDelegate, uri, null, parser);
+            if (result.isSuccess()) {
+                if (operation == RestOperation.GET) {
+                	String json = parser.parseToJson(result.item());
+                	
+                	cacheClient.save(cacheKey, json != null ? json.getBytes() : null);
+                } else if (operation != RestOperation.AUTHORIZE) {
+                	cacheClient.delete(cacheKey);
                 }
             }
+            
+            return result;
         }
-
-        return result;
     }
 
 }

@@ -28,8 +28,9 @@ import android.content.Context;
 
 import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.HttpRestClient;
+import com.podio.sdk.client.cache.CacheClient;
+import com.podio.sdk.client.cache.SQLiteCacheClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
-import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.domain.Item;
@@ -481,16 +482,16 @@ public final class Podio {
     public static void setup(Context context, String clientId, String clientSecret, RestBehavior behavior) {
         Podio.clientId = clientId;
         Podio.clientSecret = clientSecret;
-        HttpClientDelegate networkDelegate = new HttpClientDelegate(context);
+        RestClientDelegate networkDelegate = new HttpClientDelegate(context);
 
 		switch (behavior) {
         case HTTP_ONLY:
             Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate, QUEUE_CAPACITY);
             break;
         case CACHED_HTTP:
-        	SQLiteClientDelegate cacheDelegate = new SQLiteClientDelegate(context, DATABASE_NAME, DATABASE_VERSION);
+        	CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
 
-            Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheDelegate,
+            Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient,
                     QUEUE_CAPACITY);
             break;
         default:

@@ -22,12 +22,18 @@
 
 package com.podio.sdk.client;
 
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
 import android.app.Instrumentation;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.PodioParser;
+import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.cache.CacheClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
-import com.podio.sdk.client.delegate.SQLiteClientDelegate;
 import com.podio.sdk.client.delegate.mock.MockRestClientDelegate;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
@@ -41,8 +47,10 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
     private static final Uri REFERENCE_NETWORK_URI = Uri //
             .parse("https://test.authority/path");
+    
+    @Mock
+    private CacheClient mockCacheClient;
 
-    private MockRestClientDelegate targetDatabaseDelegate;
     private MockRestClientDelegate targetNetworkDelegate;
     private CachedRestClient targetRestClient;
 
@@ -52,17 +60,19 @@ public class CachedRestClientTest extends ThreadedTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        
+        MockitoAnnotations.initMocks(this);
+        
         Instrumentation instrumentation = getInstrumentation();
         Context context = instrumentation.getContext();
 
         actualReportCount = 0;
         expectedReportCount = 1;
 
-        targetDatabaseDelegate = new MockRestClientDelegate();
         targetNetworkDelegate = new MockRestClientDelegate();
 
         targetRestClient = new CachedRestClient(context, "test.authority", targetNetworkDelegate,
-                targetDatabaseDelegate, 10) {
+                mockCacheClient, 10) {
             @Override
 			protected <T> void reportResult(RestRequest<T> request, RestResult<T> result) {
 
@@ -111,7 +121,7 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertNull(targetDatabaseDelegate.getUri(RestOperation.AUTHORIZE));
+        Mockito.verifyZeroInteractions(mockCacheClient);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.AUTHORIZE));
     }
 
@@ -141,8 +151,8 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
+        Mockito.verifyZeroInteractions(mockCacheClient);
         assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.AUTHORIZE));
-        assertEquals(0, targetDatabaseDelegate.getCalls(RestOperation.AUTHORIZE));
     }
 
     /**
@@ -163,15 +173,14 @@ public class CachedRestClientTest extends ThreadedTestCase {
      */
     public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
         // Verify exception for network delegate.
-        SQLiteClientDelegate cacheDelegate = new SQLiteClientDelegate(getInstrumentation().getContext(), "foo", 1);
         try {
-			new CachedRestClient(null, null, null, cacheDelegate, 0);
+			new CachedRestClient(null, null, null, mockCacheClient, 0);
             fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
 
         // Verify exception for cache delegate.
-        HttpClientDelegate networkDelegate = new HttpClientDelegate(getInstrumentation().getContext());
+        RestClientDelegate networkDelegate = new HttpClientDelegate(getInstrumentation().getContext());
         try {
             new CachedRestClient(null, null, networkDelegate, null, 0);
             fail("Should have thrown exception");
@@ -206,7 +215,8 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(targetDatabaseDelegate.getCalls(RestOperation.AUTHORIZE), 0); //TODO: Is this really correct?
+        Mockito.verify(mockCacheClient).delete(REFERENCE_CONTENT_URI.toString());
+        Mockito.verifyNoMoreInteractions(mockCacheClient);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.DELETE));
     }
 
@@ -236,9 +246,9 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
+        Mockito.verify(mockCacheClient).delete(REFERENCE_CONTENT_URI.toString());
+        Mockito.verifyNoMoreInteractions(mockCacheClient);
         assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.DELETE));
-        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.DELETE));
-        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.GET));
     }
 
     /**
@@ -270,7 +280,8 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.getUri(RestOperation.GET));
+        Mockito.verify(mockCacheClient).load(REFERENCE_CONTENT_URI.toString());
+        Mockito.verify(mockCacheClient).save(REFERENCE_CONTENT_URI.toString(), null);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.GET));
     }
 
@@ -302,9 +313,10 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(2, targetDatabaseDelegate.getCalls(RestOperation.GET));
+        Mockito.verify(mockCacheClient).load(REFERENCE_CONTENT_URI.toString());
+        Mockito.verify(mockCacheClient).save(REFERENCE_CONTENT_URI.toString(), null);
+        Mockito.verifyNoMoreInteractions(mockCacheClient);
         assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.GET));
-        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
     /**
@@ -329,14 +341,13 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostRequestDelegatesCorrectUri() {
-        expectedReportCount = 2;
-        
         RestRequest<Object> request = buildRestRequest(RestOperation.POST, "path");
         targetRestClient.enqueue(request);
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.getUri(RestOperation.POST));
+        Mockito.verify(mockCacheClient).delete(REFERENCE_CONTENT_URI.toString());
+        Mockito.verifyNoMoreInteractions(mockCacheClient);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.POST));
     }
 
@@ -361,15 +372,13 @@ public class CachedRestClientTest extends ThreadedTestCase {
      * </pre>
      */
     public void testPostRequestTriggersBothClientDelegates() {
-        expectedReportCount = 2;
-        
         RestRequest<Object> request = buildRestRequest(RestOperation.POST);
         targetRestClient.enqueue(request);
         
         assertTrue(TestUtils.waitUntilCompletion());
 
+        Mockito.verify(mockCacheClient).delete(REFERENCE_CONTENT_URI.toString());
         assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.POST));
-        assertEquals(2, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
     /**
@@ -399,7 +408,8 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
-        assertEquals(REFERENCE_CONTENT_URI, targetDatabaseDelegate.getUri(RestOperation.POST));
+        Mockito.verify(mockCacheClient).delete(REFERENCE_CONTENT_URI.toString());
+        Mockito.verifyNoMoreInteractions(mockCacheClient);
         assertEquals(REFERENCE_NETWORK_URI, targetNetworkDelegate.getUri(RestOperation.PUT));
     }
 
@@ -429,18 +439,20 @@ public class CachedRestClientTest extends ThreadedTestCase {
 
         assertTrue(TestUtils.waitUntilCompletion());
 
+        Mockito.verify(mockCacheClient).delete(REFERENCE_CONTENT_URI.toString());
+        Mockito.verifyNoMoreInteractions(mockCacheClient);
         assertEquals(1, targetNetworkDelegate.getCalls(RestOperation.PUT));
-        assertEquals(1, targetDatabaseDelegate.getCalls(RestOperation.POST));
     }
 
     private RestRequest<Object> buildRestRequest(RestOperation operation) {
-        return buildRestRequest(operation, "test");
+        return buildRestRequest(operation, "path");
     }
 
     private RestRequest<Object> buildRestRequest(RestOperation operation, String path) {
         BasicPodioFilter filter = new BasicPodioFilter(path);
 		
         return new RestRequest<Object>() //
+        		.setParser(PodioParser.fromClass(Object.class))
                 .setContent(new Object()) //
                 .setOperation(operation) //
                 .setResultListener(null) //
