@@ -77,26 +77,6 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that a authorize operation request won't throw an exception if
-     * the delegate doesn't have an assigned item parser.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new {@link SQLiteClientDelegate} object.
-     * 
-     * 2. Make sure it has a null pointer {@link BasicPodioProvider} assigned to it.
-     * 
-     * 3. Request a authorize operation.
-     * 
-     * 4. Verify that a {@link InvalidParserException} has not been thrown.
-     * 
-     * </pre>
-     */
-    public void testAuthorizeDoesNotThrowExceptionOnNullPointerParser() {
-    	target.authorize(Uri.parse("http://localhost:8080"), null);
-    }
-
-    /**
      * Verifies that the {@link HttpClientDelegate} returns a valid result with
      * a no-success flag set if the caller provides an empty URI.
      * 
@@ -112,7 +92,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      */
     public void testAuthorizeHandlesEmptyUriCorrectly() {
     	try {    	
-    		target.authorize(Uri.EMPTY, itemParser);
+    		target.authorize(Uri.EMPTY);
 			fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 		}
@@ -134,7 +114,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      */
     public void testAuthorizeHandlesNullUriCorrectly() {
     	try {    	
-    		target.authorize(null, itemParser);
+    		target.authorize(null);
     		fail("Should have thrown exception");
 		} catch (IllegalArgumentException e) {
 		}
@@ -167,7 +147,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         String mockAuthUri = "http://localhost:8080";
 
         Uri authUri = Uri.parse(mockAuthUri + "?" + mockAuthQueryParams);
-        target.authorize(authUri, itemParser);
+        target.authorize(authUri);
 
         String requestBody = mockWebServer.mock_getRequestBody();
         String[] particlesArray = requestBody.split("&");
@@ -203,7 +183,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         mockResponse.put("value", "test");
         mockWebServer.mock_setResponse(mockResponse);
 
-        RestResult<MockContentItem> result = target.authorize(Uri.parse("http://localhost:8080"), itemParser);
+        RestResult<Session> result = target.authorize(Uri.parse("http://localhost:8080"));
         assertNotNull(result);
         assertTrue(result.isSuccess());
 

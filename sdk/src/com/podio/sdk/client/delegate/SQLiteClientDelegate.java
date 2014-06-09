@@ -32,6 +32,7 @@ import android.net.Uri;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
 
 public class SQLiteClientDelegate implements RestClientDelegate {
@@ -43,7 +44,7 @@ public class SQLiteClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> parser) {
+    public RestResult<Session> authorize(Uri uri) {
         throw new UnsupportedOperationException(
                 "SQLiteDatabaseDelegate doesn't support authorization requests");
     }

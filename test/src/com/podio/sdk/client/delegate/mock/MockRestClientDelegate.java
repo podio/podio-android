@@ -30,6 +30,7 @@ import android.net.Uri;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.RestResult;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.RestOperation;
 
 public class MockRestClientDelegate implements RestClientDelegate {
@@ -65,7 +66,7 @@ public class MockRestClientDelegate implements RestClientDelegate {
 	}
 
     @Override
-    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> itemParser) {
+    public RestResult<Session> authorize(Uri uri) {
     	return process(RestOperation.AUTHORIZE, uri);
     }
 

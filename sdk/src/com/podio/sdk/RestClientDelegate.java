@@ -25,10 +25,11 @@ package com.podio.sdk;
 import android.net.Uri;
 
 import com.podio.sdk.client.RestResult;
+import com.podio.sdk.domain.Session;
 
 public interface RestClientDelegate {
 
-    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> parser);
+    public RestResult<Session> authorize(Uri uri);
 
     public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser);
 

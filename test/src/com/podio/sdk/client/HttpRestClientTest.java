@@ -31,6 +31,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 
@@ -68,9 +69,8 @@ public class HttpRestClientTest extends InstrumentationTestCase {
 	 */
 	public void testAuthorizeOperationIsDelegatedCorrectly() {
 		Mockito.when(
-				mockDelegate.authorize(Mockito.<Uri> any(),
-						Mockito.<PodioParser<?>> any())).thenReturn(
-				RestResult.success());
+				mockDelegate.authorize(Mockito.<Uri>any())).thenReturn(
+				RestResult.<Session>success());
 
 		RestRequest<Object> restRequest = new RestRequest<Object>() //
 				.setFilter(new BasicPodioFilter()) //
@@ -78,8 +78,7 @@ public class HttpRestClientTest extends InstrumentationTestCase {
 
 		target.enqueue(restRequest);
 
-		Mockito.verify(mockDelegate, Mockito.timeout(2000)).authorize(
-				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+		Mockito.verify(mockDelegate, Mockito.timeout(2000)).authorize(Mockito.<Uri> any());
 		Mockito.verifyZeroInteractions(mockDelegate);
 	}
 

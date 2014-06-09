@@ -30,10 +30,11 @@ import com.podio.sdk.client.RestResult;
 
 public enum RestOperation {
 	AUTHORIZE() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
 				Object item, PodioParser<? extends T> parser) {
-			return delegate.authorize(uri, parser);
+			return (RestResult<T>) delegate.authorize(uri);
 		}
 	},
 

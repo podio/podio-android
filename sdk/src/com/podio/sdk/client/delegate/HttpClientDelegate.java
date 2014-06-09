@@ -56,26 +56,24 @@ public class HttpClientDelegate implements RestClientDelegate {
         this.requestQueue = Volley.newRequestQueue(context);
     }
 
-    @Override
-    public <T> RestResult<T> authorize(Uri uri, PodioParser<? extends T> parser) {
+	@Override
+    public RestResult<Session> authorize(Uri uri) {
     	if (Utils.isEmpty(uri)) {
     		throw new IllegalArgumentException("uri cannot be empty");
     	}
 
         String url = removeQuery(uri);
-        Map<String, String> body = queryToBody(uri);
-
-        RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new AuthRequest(url, body, future);
-        requestQueue.add(request);
-        String jsonString = getBlockingResponse(future);
+        Map<String, String> params = queryToBody(uri);
         
-        session = new Session(jsonString);
+        boolean success = authorizeRequest(url, params);
 
-        boolean isSuccess = Utils.notEmpty(jsonString);
-        refreshUrl = isSuccess ? url : null;
+        if (success) {
+        	this.refreshUrl = url;
         
-        return new RestResult<T>(isSuccess, session, null, null);
+        	return RestResult.success(session);
+        } else {
+        	return RestResult.failure();
+        }
     }
 
     @Override
