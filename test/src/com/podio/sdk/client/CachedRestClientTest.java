@@ -163,15 +163,17 @@ public class CachedRestClientTest extends ThreadedTestCase {
      */
     public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
         // Verify exception for network delegate.
+        SQLiteClientDelegate cacheDelegate = new SQLiteClientDelegate(getInstrumentation().getContext(), "foo", 1);
         try {
-            new CachedRestClient(null, null, null, new SQLiteClientDelegate(getInstrumentation().getContext(), "foo", 1), 0);
+			new CachedRestClient(null, null, null, cacheDelegate, 0);
             fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
 
         // Verify exception for cache delegate.
+        HttpClientDelegate networkDelegate = new HttpClientDelegate(getInstrumentation().getContext(), null);
         try {
-            new CachedRestClient(null, null, new HttpClientDelegate(getInstrumentation().getContext()), null, 0);
+            new CachedRestClient(null, null, networkDelegate, null, 0);
             fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
