@@ -30,7 +30,7 @@ import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.PodioParser;
-import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
@@ -39,7 +39,7 @@ public class HttpRestClientTest extends InstrumentationTestCase {
 
 	private HttpRestClient target;
 	@Mock
-	private RestClientDelegate mockDelegate;
+	private HttpClientDelegate mockDelegate;
 
 	@Override
 	protected void setUp() throws Exception {
