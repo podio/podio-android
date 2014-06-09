@@ -481,7 +481,7 @@ public final class Podio {
     public static void setup(Context context, String clientId, String clientSecret, RestBehavior behavior) {
         Podio.clientId = clientId;
         Podio.clientSecret = clientSecret;
-        HttpClientDelegate networkDelegate = new HttpClientDelegate(context, sessionListener);
+        HttpClientDelegate networkDelegate = new HttpClientDelegate(context);
 
 		switch (behavior) {
         case HTTP_ONLY:
