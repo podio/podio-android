@@ -20,10 +20,16 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.value;
 
-public interface Pushable {
+import com.podio.sdk.domain.field.Pushable;
 
-    public Object getPushData();
+/**
+ * The value data structure for a field. The super class must offer field
+ * specific attributes added.
+ * 
+ * @author László Urszuly
+ */
+public abstract class AbstractValue implements Pushable {
 
 }

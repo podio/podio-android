@@ -20,30 +20,39 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.value;
 
-public final class EmbedField extends Field {
+/**
+ * @author László Urszuly
+ */
+public class CalculationValue extends AbstractValue {
+    private final String value;
 
-    public EmbedField(String externalId) {
-        super(externalId);
+    private CalculationValue(String value) {
+        this.value = value;
     }
 
     @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    public boolean equals(Object o) {
+        if (o instanceof CalculationValue) {
+            CalculationValue other = (CalculationValue) o;
+
+            if (other.value != null) {
+                return other.value.equals(this.value);
+            }
+        }
+
+        return false;
     }
 
     @Override
     public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
-    public void addValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    public int hashCode() {
+        return this.value != null ? this.value.hashCode() : 0;
     }
 
 }

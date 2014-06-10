@@ -133,7 +133,7 @@ public class ItemTest extends AndroidTestCase {
         String json = new StringBuilder("{")
                 .append("external_id:'EXTERNALID',")
                 .append("fields:[{")
-                .append("  field_id:1,")
+                .append("  external_id:'field-1',")
                 .append("  values: [{")
                 .append("    value: {")
                 .append("      id:2")
@@ -149,7 +149,7 @@ public class ItemTest extends AndroidTestCase {
                 .append("    }")
                 .append("  }")
                 .append("},{")
-                .append("  field_id:4,")
+                .append("  external_id:'field-4',")
                 .append("  values: [{")
                 .append("    value: {")
                 .append("      id:5")
@@ -166,17 +166,19 @@ public class ItemTest extends AndroidTestCase {
                 .append("  }")
                 .append("}]")
                 .append("}").toString();
+
         Gson gson = new GsonBuilder().registerTypeAdapter(Field.class, new JsonDeserializer<Field>() {
             @Override
             public Field deserialize(JsonElement element, Type type, JsonDeserializationContext gsonContext) throws JsonParseException {
                 return gsonContext.deserialize(element, CategoryField.class);
             }
         }).create();
+
         Item item = gson.fromJson(json, Item.class);
 
         Object pushData = item.getPushData();
         String actualPushJson = gson.toJson(pushData);
-        String expectedPushJson = "{\"external_id\":\"EXTERNALID\",\"fields\":{\"1\":[{\"value\":2}],\"4\":[{\"value\":5}]}}";
+        String expectedPushJson = "{\"external_id\":\"EXTERNALID\",\"fields\":{\"field-4\":[{\"value\":5}],\"field-1\":[{\"value\":2}]}}";
 
         assertEquals(expectedPushJson, actualPushJson);
     }

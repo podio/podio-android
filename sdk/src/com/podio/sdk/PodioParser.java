@@ -33,22 +33,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.ApplicationReference;
-import com.podio.sdk.domain.field.CalculationField;
-import com.podio.sdk.domain.field.Category;
-import com.podio.sdk.domain.field.ContactField;
-import com.podio.sdk.domain.field.DateField;
-import com.podio.sdk.domain.field.DurationField;
-import com.podio.sdk.domain.field.EmbedField;
-import com.podio.sdk.domain.field.EmptyField;
 import com.podio.sdk.domain.field.Field;
-import com.podio.sdk.domain.field.ImageField;
-import com.podio.sdk.domain.field.LocationField;
-import com.podio.sdk.domain.field.MoneyField;
-import com.podio.sdk.domain.field.NumberField;
-import com.podio.sdk.domain.field.ProgressField;
-import com.podio.sdk.domain.field.Text;
-import com.podio.sdk.domain.field.TitleField;
 import com.podio.sdk.internal.utils.Utils;
 
 /**
@@ -64,11 +49,10 @@ public class PodioParser<T> {
     private static final class FieldDeserializer implements JsonDeserializer<Field> {
 
         @Override
-        public Field deserialize(JsonElement element, Type type,
-                JsonDeserializationContext gsonContext) throws JsonParseException {
-        	if (element == null || element.isJsonNull()) {
-        		return null;
-        	}
+        public Field deserialize(JsonElement element, Type type, JsonDeserializationContext gsonContext) throws JsonParseException {
+            if (element == null || element.isJsonNull()) {
+                return null;
+            }
 
             JsonObject jsonObject = element.getAsJsonObject();
 
@@ -79,28 +63,29 @@ public class PodioParser<T> {
             }
 
             Field.Type typeEnum = Field.Type.undefined;
-            
+
             JsonElement fieldType = jsonObject.get("type");
-			if (fieldType != null && !fieldType.isJsonNull()) {
-				try {
-					typeEnum = Field.Type.valueOf(fieldType.getAsString());
-				} catch (IllegalArgumentException e) {
-				}
-			}
-			
-			if (typeEnum == Field.Type.undefined) {
-				//Overwrite the type in the json so we get undefined instead of null
-				jsonObject.addProperty("type", Field.Type.undefined.name());
-			}
-			
-			return gsonContext.deserialize(jsonObject, typeEnum.getFieldClass());
+            if (fieldType != null && !fieldType.isJsonNull()) {
+                try {
+                    typeEnum = Enum.valueOf(Field.Type.class, fieldType.getAsString());
+                } catch (IllegalArgumentException e) {
+                }
+            }
+
+            if (typeEnum == Field.Type.undefined) {
+                // Overwrite the type in the json so we get undefined instead of
+                // null
+                jsonObject.addProperty("type", Field.Type.undefined.name());
+            }
+
+            return gsonContext.deserialize(jsonObject, typeEnum.getFieldClass());
         }
     }
-    
-	private static final Gson GSON_PARSER = new GsonBuilder()
-			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-			.registerTypeAdapter(Field.class, new FieldDeserializer())
-			.disableHtmlEscaping().create();
+
+    private static final Gson GSON_PARSER = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(Field.class, new FieldDeserializer())
+            .disableHtmlEscaping().create();
 
     private final Class<T> classOfItem;
 
@@ -118,9 +103,9 @@ public class PodioParser<T> {
      */
     public T parseToItem(String source) {
         if (source == null || Utils.isEmpty(source.trim())) {
-        	return null;
+            return null;
         }
-        
+
         return GSON_PARSER.fromJson(source, classOfItem);
     }
 
@@ -132,15 +117,15 @@ public class PodioParser<T> {
      * @return A json string representation of the given item.
      */
     public String parseToJson(Object item) {
-    	if (item == null) {
-    		return null;
-    	}
-    	
-    	return GSON_PARSER.toJson(item);
+        if (item == null) {
+            return null;
+        }
+
+        return GSON_PARSER.toJson(item);
     }
-    
+
     public static <T> PodioParser<T> fromClass(Class<T> classOfItem) {
-    	return new PodioParser<T>(classOfItem);
+        return new PodioParser<T>(classOfItem);
     }
 
 }

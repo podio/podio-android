@@ -20,10 +20,36 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Object getPushData();
+import com.podio.sdk.domain.field.value.ImageValue;
+
+/**
+ * @author László Urszuly
+ */
+public final class ImageConfiguration extends AbstractConfiguration {
+
+    public final class ImageSettings {
+        private final List<String> allowed_mimetypes = null;
+
+        public List<String> getAllowedMimeTypes() {
+            return new ArrayList<String>(allowed_mimetypes);
+        }
+
+    }
+
+    private final ImageValue default_value = null;
+    private final ImageSettings settings = null;
+
+    public ImageValue getDefaultValue() {
+        return default_value;
+    }
+
+    public ImageSettings getSettings() {
+        return settings;
+    }
 
 }

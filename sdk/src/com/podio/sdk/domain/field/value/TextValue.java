@@ -20,10 +20,52 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.value;
 
-public interface Pushable {
+import java.util.HashMap;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class TextValue extends AbstractValue {
+    private final String value;
+
+    public TextValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof TextValue) {
+            TextValue other = (TextValue) o;
+
+            if (other.value != null) {
+                return other.value.equals(this.value);
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public Object getPushData() {
+        HashMap<String, String> data = null;
+
+        if (value != null) {
+            data = new HashMap<String, String>();
+            data.put("value", value);
+        }
+
+        return data;
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
 }

@@ -25,25 +25,24 @@ package com.podio.sdk.domain.field;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.podio.sdk.domain.File;
-import com.podio.sdk.domain.field.configuration.ImageConfiguration;
-import com.podio.sdk.domain.field.value.ImageValue;
+import com.podio.sdk.domain.field.configuration.MapConfiguration;
+import com.podio.sdk.domain.field.value.MapValue;
 
 /**
  * @author László Urszuly
  */
-public final class ImageField extends Field {
-    private final ImageConfiguration config = null;
-    private final List<ImageValue> values;
+public final class MapField extends Field {
+    private final MapConfiguration config = null;
+    private final List<MapValue> values;
 
-    public ImageField(String externalId) {
+    public MapField(String externalId) {
         super(externalId);
-        this.values = new ArrayList<ImageValue>();
+        this.values = new ArrayList<MapValue>();
     }
 
     @Override
     public void addValue(Object value) throws FieldTypeMismatchException {
-        ImageValue v = validateValue(value);
+        MapValue v = validateValue(value);
 
         if (values != null && !values.contains(v)) {
             values.add(v);
@@ -51,13 +50,13 @@ public final class ImageField extends Field {
     }
 
     @Override
-    protected List<ImageValue> getPushables() {
+    protected List<MapValue> getPushables() {
         return values;
     }
 
     @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
-        ImageValue v = validateValue(value);
+        MapValue v = validateValue(value);
 
         if (values != null && values.contains(v)) {
             values.remove(v);
@@ -69,7 +68,7 @@ public final class ImageField extends Field {
      * 
      * @return The configuration data structure.
      */
-    public ImageConfiguration getConfiguration() {
+    public MapConfiguration getConfiguration() {
         return config;
     }
 
@@ -78,7 +77,7 @@ public final class ImageField extends Field {
      * 
      * @return A value object specific for this field type.
      */
-    public ImageValue getValue(int index) {
+    public MapValue getValue(int index) {
         return values != null ? values.get(index) : null;
     }
 
@@ -92,13 +91,13 @@ public final class ImageField extends Field {
      * @throws FieldTypeMismatchException
      *         If the given object can't be used as value for this field.
      */
-    private ImageValue validateValue(Object value) throws FieldTypeMismatchException {
-        if (value instanceof ImageValue) {
-            return (ImageValue) value;
-        } else if (value instanceof File) {
-            return new ImageValue((File) value);
-        } else if (value instanceof Integer) {
-            return new ImageValue(((Integer) value).intValue());
+    private MapValue validateValue(Object value) throws FieldTypeMismatchException {
+        if (value instanceof MapValue) {
+            return (MapValue) value;
+        } else if (value instanceof MapValue.Data) {
+            return new MapValue((MapValue.Data) value);
+        } else if (value instanceof String) {
+            return new MapValue(value.toString());
         } else {
             throw new FieldTypeMismatchException();
         }

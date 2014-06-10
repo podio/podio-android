@@ -291,7 +291,7 @@ public final class Podio {
          *         with.
          */
         public static final Object add(long applicationId, Item.PushData data,
-        		ResultListener<? super Item.PushResult> resultListener) {
+                ResultListener<? super Item.PushResult> resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
 
@@ -328,7 +328,7 @@ public final class Podio {
          *         with.
          */
         public static final Object getForApplication(long applicationId,
-        		ResultListener<? super ItemRequest.Result> resultListener) {
+                ResultListener<? super ItemRequest.Result> resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
 
@@ -349,7 +349,7 @@ public final class Podio {
          *         with.
          */
         public static final Object update(long itemId, Item.PushData data,
-        		ResultListener<? super Item.PushResult> resultListener) {
+                ResultListener<? super Item.PushResult> resultListener) {
 
             ItemProvider provider = new ItemProvider(client);
 
@@ -439,7 +439,6 @@ public final class Podio {
     private static final int DATABASE_VERSION = 1;
     private static final int QUEUE_CAPACITY = 10;
 
-    private static SQLiteClientDelegate cacheDelegate;
     private static HttpClientDelegate networkDelegate;
 
     private static RestClient client;
@@ -492,12 +491,12 @@ public final class Podio {
         Podio.clientSecret = clientSecret;
         RestClientDelegate networkDelegate = new HttpClientDelegate(context);
 
-		switch (behavior) {
+        switch (behavior) {
         case HTTP_ONLY:
             Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate, QUEUE_CAPACITY);
             break;
         case CACHED_HTTP:
-        	CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
+            CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
             Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient, QUEUE_CAPACITY);
             break;
         default:

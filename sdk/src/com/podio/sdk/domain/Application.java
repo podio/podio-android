@@ -25,7 +25,6 @@ package com.podio.sdk.domain;
 import java.util.List;
 
 import com.podio.sdk.domain.field.Field;
-import com.podio.sdk.domain.helper.UserInfo;
 
 public final class Application {
 
@@ -60,13 +59,19 @@ public final class Application {
     public final List<Field> fields = null;
     public final String link = null;
     public final String link_add = null;
-    public final UserInfo owner = null;
+    public final User owner = null;
     public final String[] rights = null;
     public final Space space = null;
-    public final Long space_id = null;
+    public final Integer space_id = null;
     public final Status status = null;
     public final String url = null;
     public final String url_add = null;
     public final String url_label = null;
+    public final String name = null;
+    public final Integer default_view_id = null;
+    public final String icon = null;
+    public final Integer icon_id = null;
+    public final Integer current_revision = null;
+    public final String item_name = null;
 
 }

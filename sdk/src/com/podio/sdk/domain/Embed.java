@@ -20,10 +20,29 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain;
 
-public interface Pushable {
+/**
+ * @author László Urszuly
+ */
+public class Embed {
+    public static enum Type {
+        link, undefined
+    }
 
-    public Object getPushData();
+    public final Integer embed_id = null;
+    public final String embed_html = null;
+    public final String description = null;
+    public final String original_url = null;
+    public final String hostname = null;
+    public final Integer embed_height = null;
+    public final Integer embed_width = null;
+    public final String resolved_url = null;
+    public final String title = null;
+    public final Type type = null;
+    public final String url;
 
+    public Embed(String url) {
+        this.url = url;
+    }
 }

@@ -20,10 +20,42 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Object getPushData();
+import com.podio.sdk.domain.Application;
+import com.podio.sdk.domain.field.value.RelationshipValue;
+
+/**
+ * @author László Urszuly
+ */
+public final class RelationshipConfiguration extends AbstractConfiguration {
+
+    public final class RelationshipSettings {
+        private List<Application> apps = null;
+        private List<Integer> referencable_types = null;
+
+        public List<Application> getApps() {
+            return new ArrayList<Application>(apps);
+        }
+
+        public List<Integer> getReferencableTypes() {
+            return new ArrayList<Integer>(referencable_types);
+        }
+
+    }
+
+    private final RelationshipValue default_value = null;
+    private final RelationshipSettings settings = null;
+
+    public RelationshipValue getDefaultValue() {
+        return default_value;
+    }
+
+    public RelationshipSettings getSettings() {
+        return settings;
+    }
 
 }

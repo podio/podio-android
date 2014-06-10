@@ -20,10 +20,27 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import com.podio.sdk.domain.field.value.MapValue;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class MapConfiguration extends AbstractConfiguration {
+
+    public final class MapSettings {
+    }
+
+    private final MapValue default_value = null;
+    private final MapSettings settings = null;
+
+    public MapValue getDefaultValue() {
+        return default_value;
+    }
+
+    public MapSettings getSettings() {
+        return settings;
+    }
 
 }

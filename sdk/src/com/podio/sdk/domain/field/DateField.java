@@ -22,28 +22,104 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.podio.sdk.domain.field.configuration.DateConfiguration;
+import com.podio.sdk.domain.field.value.DateValue;
+
+/**
+ * @author László Urszuly
+ */
 public final class DateField extends Field {
+
+    public static enum State {
+        disabled, enabled, undefined
+    }
+
+    private final DateConfiguration config = null;
+    private final List<DateValue> values;
 
     public DateField(String externalId) {
         super(externalId);
+        this.values = new ArrayList<DateValue>();
     }
 
     @Override
-    public void clear(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    public void addValue(Object value) throws FieldTypeMismatchException {
+        DateValue v = validateValue(value);
+
+        if (values != null && !values.contains(v)) {
+            values.add(v);
+        }
     }
 
     @Override
-    public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    protected List<DateValue> getPushables() {
+        return values;
     }
 
     @Override
-    public void set(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    public void removeValue(Object value) throws FieldTypeMismatchException {
+        DateValue v = validateValue(value);
+
+        if (values != null && values.contains(v)) {
+            values.remove(v);
+        }
+    }
+
+    /**
+     * Returns the configuration metrics for this field.
+     * 
+     * @return The configuration data structure.
+     */
+    public DateConfiguration getConfiguration() {
+        return config;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public DateValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    /**
+     * Determines whether the given object can be used as value for this field
+     * or not.
+     * 
+     * @param value
+     *        The object to use as value.
+     * @return A type specific value representation of the given object.
+     * @throws FieldTypeMismatchException
+     *         If the given object can't be used as value for this field.
+     */
+    private DateValue validateValue(Object value) throws FieldTypeMismatchException {
+        if (value instanceof DateValue) {
+            return (DateValue) value;
+        } else if (value instanceof java.util.Date) {
+            return new DateValue((java.util.Date) value);
+        } else if (value instanceof java.util.Date[]) {
+            java.util.Date[] v = (java.util.Date[]) value;
+            if (v.length == 2) {
+                return new DateValue(v[0], v[1]);
+            } else {
+                throw new FieldTypeMismatchException();
+            }
+        } else {
+            throw new FieldTypeMismatchException();
+        }
+    }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
+        return values != null ? values.size() : 0;
     }
 
 }

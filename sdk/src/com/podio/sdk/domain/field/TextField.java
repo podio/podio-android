@@ -23,8 +23,10 @@
 package com.podio.sdk.domain.field;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import com.podio.sdk.domain.field.configuration.TextConfiguration;
+import com.podio.sdk.domain.field.value.TextValue;
 
 /**
  * The Podio Text field domain object.
@@ -42,89 +44,82 @@ public final class TextField extends Field {
         large, small, undefined
     }
 
-    /**
-     * Settings for the text field.
-     * 
-     * @author László Urszuly
-     */
-    public static final class Settings {
-        public final Size size = null;
-    }
-
-    /**
-     * Configuration of the text field.
-     * 
-     * @author László Urszuly
-     */
-    public static final class Config {
-        public final Value default_value = null;
-        public final Integer delta = null;
-        public final String description = null;
-        public final Boolean hidden = null;
-        public final String label = null;
-        public final Boolean required = null;
-        public final Settings settings = null;
-        public final Boolean visible = null;
-    }
-
-    /**
-     * The field value container.
-     * 
-     * @author László Urszuly
-     */
-    public static final class Value {
-        public String value;
-
-        public Value(String value) {
-            this.value = value;
-        }
-    }
-
-    public final Config config = null;
-    public final List<Value> values;
+    private final TextConfiguration config = null;
+    private final List<TextValue> values;
 
     public TextField(String externalId) {
         super(externalId);
-        this.values = new ArrayList<Value>();
-    }
-
-    @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-        if (values != null) {
-            values.clear();
-        }
-    }
-
-    @Override
-    public Object getPushData() {
-        ArrayList<Object> pushData = new ArrayList<Object>();
-
-        if (values != null) {
-            for (Value value : values) {
-                HashMap<String, String> data = new HashMap<String, String>();
-                data.put("value", value.value);
-                pushData.add(data);
-            }
-        }
-
-        return pushData;
+        this.values = new ArrayList<TextValue>();
     }
 
     @Override
     public void addValue(Object value) throws FieldTypeMismatchException {
-        String text = tryCast(value);
-        removeValue(value);
+        TextValue v = validateValue(value);
 
-        if (values != null) {
-            values.add(new Value(text));
+        if (values != null && !values.contains(v)) {
+            values.add(v);
         }
     }
 
-    private String tryCast(Object value) throws FieldTypeMismatchException {
-        if (value instanceof String) {
-            return (String) value;
+    @Override
+    protected List<TextValue> getPushables() {
+        return values;
+    }
+
+    @Override
+    public void removeValue(Object value) throws FieldTypeMismatchException {
+        TextValue v = validateValue(value);
+
+        if (values != null && values.contains(v)) {
+            values.remove(v);
+        }
+    }
+
+    /**
+     * Returns the configuration metrics for this field.
+     * 
+     * @return The configuration data structure.
+     */
+    public TextConfiguration getConfiguration() {
+        return config;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public TextValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    /**
+     * Determines whether the given object can be used as value for this field
+     * or not.
+     * 
+     * @param value
+     *        The object to use as value.
+     * @return A type specific value representation of the given object.
+     * @throws FieldTypeMismatchException
+     *         If the given object can't be used as value for this field.
+     */
+    private TextValue validateValue(Object value) throws FieldTypeMismatchException {
+        if (value instanceof TextValue) {
+            return (TextValue) value;
+        } else if (value instanceof String) {
+            return new TextValue((String) value);
         } else {
             throw new FieldTypeMismatchException();
         }
     }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
+        return values != null ? values.size() : 0;
+    }
+
 }

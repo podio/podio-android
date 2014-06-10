@@ -26,18 +26,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.field.FieldTypeMismatchException;
 import com.podio.sdk.domain.field.Pushable;
-import com.podio.sdk.domain.helper.UserInfo;
 import com.podio.sdk.internal.utils.Utils;
 
 public final class Item implements Pushable {
 
     public static final class PushData {
-        public final String external_id;
-        public final Map<String, Object> fields;
+        @SuppressWarnings("unused")
+        private String external_id;
+        private Map<String, Object> fields;
 
         private PushData(String externalId) {
             this.external_id = externalId;
@@ -63,7 +64,7 @@ public final class Item implements Pushable {
     }
 
     public final Application app = null;
-    public final UserInfo created_by = null;
+    public final User created_by = null;
     public final String created_on = null;
     public final Excerpt excerpt = null;
     public final String[] grant = null;
@@ -89,11 +90,7 @@ public final class Item implements Pushable {
      * Creates a new, empty {@link Item} with no fields.
      */
     public Item() {
-    	this(null);
-    }
-
-    public Item(String externalId) {
-        this.external_id = externalId;
+        this.external_id = null;
         this.fields = new ArrayList<Field>();
     }
 
@@ -103,7 +100,6 @@ public final class Item implements Pushable {
      * 
      * @param application
      *        The application to use as a template.
-     * @return A new, empty item.
      */
     public Item(Application application) {
         this();
@@ -114,12 +110,17 @@ public final class Item implements Pushable {
     }
 
     @Override
-    public Object getPushData() {
+    public PushData getPushData() {
         PushData pushData = new PushData(external_id);
 
         for (Field field : fields) {
-            Object data = field.getPushData();
-            pushData.setValues(field.external_id, data);
+            if (field != null) {
+                Object data = field.getPushData();
+
+                if (data != null) {
+                    pushData.setValues(field.getExternalId(), data);
+                }
+            }
         }
 
         for (Entry<String, List<Object>> entry : data.entrySet()) {
@@ -148,15 +149,17 @@ public final class Item implements Pushable {
             if (f != null) {
                 f.addValue(value);
             } else {
-                List<Object> d = data.get(field);
+                HashMap<String, Object> newValue = new HashMap<String, Object>();
+                newValue.put("value", value);
 
-                if (d == null) {
-                    d = new ArrayList<Object>();
-                    data.put(field, d);
+                List<Object> values = data.get(field);
+
+                if (values == null) {
+                    values = new ArrayList<Object>();
+                    data.put(field, values);
                 }
 
-                Object newValue = Field.buildPushData(value);
-                d.add(newValue);
+                values.add(data);
             }
         }
 
@@ -198,20 +201,20 @@ public final class Item implements Pushable {
      *        The external id of the field to find.
      * @return The field domain object if found, or null.
      */
-    private Field findField(String externalId) {
-    	if (fields == null) {
-    		throw new IllegalStateException("fields has not been loaded");
-    	}
-    	if (Utils.isEmpty(externalId)) {
-    		throw new IllegalArgumentException("externalId cannot be empty");
-    	}
+    private Field findField(String externalId, List<Field> source) {
+        if (fields == null) {
+            throw new IllegalStateException("fields has not been loaded");
+        }
+        if (Utils.isEmpty(externalId)) {
+            throw new IllegalArgumentException("externalId cannot be empty");
+        }
 
-        for (Field field : fields) {
-            if (field.external_id.equals(externalId)) {
+        for (Field field : source) {
+            if (field != null && externalId.equals(field.getExternalId())) {
                 return field;
             }
         }
-        
+
         return null;
     }
 }

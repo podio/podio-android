@@ -20,10 +20,27 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import com.podio.sdk.domain.field.value.ProgressValue;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class ProgressConfiguration extends AbstractConfiguration {
+
+    public final class ProgressSettings {
+    }
+
+    private final ProgressValue default_value = null;
+    private final ProgressSettings settings = null;
+
+    public ProgressValue getDefaultValue() {
+        return default_value;
+    }
+
+    public ProgressSettings getSettings() {
+        return settings;
+    }
 
 }

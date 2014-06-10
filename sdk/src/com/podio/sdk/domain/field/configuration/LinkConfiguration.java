@@ -20,10 +20,27 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import com.podio.sdk.domain.field.value.LinkValue;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class LinkConfiguration extends AbstractConfiguration {
+
+    public final class LinkSettings {
+    }
+
+    private final LinkValue default_value = null;
+    private final LinkSettings settings = null;
+
+    public LinkValue getDefaultValue() {
+        return default_value;
+    }
+
+    public LinkSettings getSettings() {
+        return settings;
+    }
 
 }

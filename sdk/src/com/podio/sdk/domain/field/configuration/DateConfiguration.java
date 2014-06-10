@@ -20,10 +20,44 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import com.podio.sdk.domain.field.DateField.State;
+import com.podio.sdk.domain.field.value.DateValue;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class DateConfiguration extends AbstractConfiguration {
+
+    public static final class DateSettings {
+        private final Boolean calendar = null;
+        private final State end = null;
+        private final State time = null;
+
+        public boolean isCalendar() {
+            return calendar != null ? calendar.booleanValue() : false;
+        }
+
+        public State getEndDateState() {
+            return end != null ? end : State.undefined;
+        }
+
+        public State getTimeState() {
+            return time != null ? time : State.undefined;
+        }
+
+    }
+
+    private final DateValue default_value = null;
+    private final DateSettings settings = null;
+
+    public DateValue getDefaultValue() {
+        return default_value;
+    }
+
+    public DateSettings getSettings() {
+        return settings;
+    }
 
 }

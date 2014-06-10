@@ -20,10 +20,34 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import com.podio.sdk.domain.field.TextField.Size;
+import com.podio.sdk.domain.field.value.TextValue;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class TextConfiguration extends AbstractConfiguration {
+
+    public final class TextSettings {
+        private final Size size = null;
+
+        public Size getSize() {
+            return size != null ? size : Size.undefined;
+        }
+
+    }
+
+    private final TextValue default_value = null;
+    private final TextSettings settings = null;
+
+    public TextValue getDefaultValue() {
+        return default_value;
+    }
+
+    public TextSettings getSettings() {
+        return settings;
+    }
 
 }

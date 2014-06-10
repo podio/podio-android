@@ -20,10 +20,35 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain;
 
-public interface Pushable {
+/**
+ * @author László Urszuly
+ */
+public class Client {
+    private final Boolean display = null;
+    private final Integer auth_client_id = null;
+    private final Integer id = null;
+    private final String name = null;
+    private final String url = null;
 
-    public Object getPushData();
+    public boolean doDisplay() {
+        return display != null ? display.booleanValue() : false;
+    }
 
+    public int getAuthClientId() {
+        return auth_client_id != null ? auth_client_id.intValue() : 0;
+    }
+
+    public int getId() {
+        return id != null ? id.intValue() : 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }

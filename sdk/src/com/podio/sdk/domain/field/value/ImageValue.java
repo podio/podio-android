@@ -20,30 +20,54 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.value;
 
-public final class LocationField extends Field {
+import java.util.HashMap;
 
-    public LocationField(String externalId) {
-        super(externalId);
+import com.podio.sdk.domain.File;
+
+/**
+ * @author László Urszuly
+ */
+public final class ImageValue extends AbstractValue {
+    private final File value;
+
+    public ImageValue(File file) {
+        this.value = file;
+    }
+
+    public ImageValue(int fileId) {
+        this.value = new File(fileId);
     }
 
     @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    public boolean equals(Object o) {
+        if (o instanceof ImageValue) {
+            ImageValue other = (ImageValue) o;
+
+            if (other.value != null && other.value.file_id != null && this.value != null && this.value.file_id != null) {
+                return other.value.file_id.intValue() == this.value.file_id.intValue();
+            }
+        }
+
+        return false;
     }
 
     @Override
     public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        HashMap<String, Integer> data = null;
+
+        if (value != null && value.file_id != null) {
+            data = new HashMap<String, Integer>();
+            data.put("value", value.file_id);
+        }
+
+        return data;
     }
 
     @Override
-    public void addValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    public int hashCode() {
+        return this.value != null && this.value.file_id != null ? this.value.file_id.intValue() : 0;
     }
 
 }

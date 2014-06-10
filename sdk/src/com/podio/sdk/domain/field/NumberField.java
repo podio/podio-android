@@ -22,28 +22,92 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.podio.sdk.domain.field.configuration.NumberConfiguration;
+import com.podio.sdk.domain.field.value.NumberValue;
+
+/**
+ * @author László Urszuly
+ */
 public final class NumberField extends Field {
+    private final NumberConfiguration config = null;
+    private final List<NumberValue> values;
 
     public NumberField(String externalId) {
         super(externalId);
-    }
-
-    @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        this.values = new ArrayList<NumberValue>();
     }
 
     @Override
     public void addValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        NumberValue v = validateValue(value);
+
+        if (values != null && !values.contains(v)) {
+            values.add(v);
+        }
+    }
+
+    @Override
+    protected List<NumberValue> getPushables() {
+        return values;
+    }
+
+    @Override
+    public void removeValue(Object value) throws FieldTypeMismatchException {
+        NumberValue v = validateValue(value);
+
+        if (values != null && values.contains(v)) {
+            values.remove(v);
+        }
+    }
+
+    /**
+     * Returns the configuration metrics for this field.
+     * 
+     * @return The configuration data structure.
+     */
+    public NumberConfiguration getConfiguration() {
+        return config;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public NumberValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    /**
+     * Determines whether the given object can be used as value for this field
+     * or not.
+     * 
+     * @param value
+     *        The object to use as value.
+     * @return A type specific value representation of the given object.
+     * @throws FieldTypeMismatchException
+     *         If the given object can't be used as value for this field.
+     */
+    private NumberValue validateValue(Object value) throws FieldTypeMismatchException {
+        if (value instanceof NumberValue) {
+            return (NumberValue) value;
+        } else if (value instanceof Float) {
+            return new NumberValue(((Float) value).floatValue());
+        } else {
+            throw new FieldTypeMismatchException();
+        }
+    }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
+        return values != null ? values.size() : 0;
     }
 
 }

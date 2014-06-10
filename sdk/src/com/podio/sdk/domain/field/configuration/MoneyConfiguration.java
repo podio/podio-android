@@ -20,10 +20,36 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Object getPushData();
+import com.podio.sdk.domain.field.value.MoneyValue;
+
+/**
+ * @author László Urszuly
+ */
+public final class MoneyConfiguration extends AbstractConfiguration {
+
+    public final class MoneySettings {
+        private final List<String> allowed_currencies = null;
+
+        public List<String> getAllowedCurrencies() {
+            return new ArrayList<String>(allowed_currencies);
+        }
+
+    }
+
+    private final MoneyValue default_value = null;
+    private final MoneySettings settings = null;
+
+    public MoneyValue getDefaultValue() {
+        return default_value;
+    }
+
+    public MoneySettings getSettings() {
+        return settings;
+    }
 
 }

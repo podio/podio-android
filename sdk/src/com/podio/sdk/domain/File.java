@@ -20,10 +20,28 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain;
 
-public interface Pushable {
+/**
+ * @author László Urszuly
+ */
+public class File {
 
-    public Object getPushData();
+    public final String mimetype = null;
+    public final String perma_link = null;
+    public final String description = null;
+    public final Integer size = null;
+    public final String name = null;
+    public final String hosted_by = null;
+    public final String hosted_by_humanized_name = null;
+    public final String thumbnail_link = null;
+    public final String link_target = null;
 
+    public final String link;
+    public final Integer file_id;
+
+    public File(int fileId) {
+        this.link = null;
+        this.file_id = fileId;
+    }
 }

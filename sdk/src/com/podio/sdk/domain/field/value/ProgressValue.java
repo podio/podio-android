@@ -20,10 +20,52 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.value;
 
-public interface Pushable {
+import java.util.HashMap;
 
-    public Object getPushData();
+/**
+ * @author László Urszuly
+ */
+public final class ProgressValue extends AbstractValue {
+    private final Integer value;
+
+    public ProgressValue(int value) {
+        this.value = new Integer(value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ProgressValue) {
+            ProgressValue other = (ProgressValue) o;
+
+            if (other != null && other.value != null && this.value != null) {
+                return other.value.intValue() == this.value.intValue();
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public Object getPushData() {
+        HashMap<String, Integer> data = null;
+
+        if (value != null) {
+            data = new HashMap<String, Integer>();
+            data.put("value", value);
+        }
+
+        return data;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.value != null ? this.value.intValue() : 0;
+    }
+
+    public int getValue() {
+        return value != null ? value.intValue() : 0;
+    }
 
 }

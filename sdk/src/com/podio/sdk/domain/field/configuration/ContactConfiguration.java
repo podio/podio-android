@@ -20,10 +20,49 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Object getPushData();
+import com.podio.sdk.domain.field.ContactField.Type;
+import com.podio.sdk.domain.field.value.ContactValue;
+
+/**
+ * @author László Urszuly
+ */
+public final class ContactConfiguration extends AbstractConfiguration {
+
+    public static final class ContactSettings {
+        private final String type = null;
+        private final List<Type> valid_types = null;
+
+        /**
+         * @return A type string.
+         */
+        public String getType() {
+            return type;
+        }
+
+        /**
+         * Returns a list of valid contact types.
+         * 
+         * @return A list of valid type enumeration values.
+         */
+        public List<Type> getValidTypes() {
+            return new ArrayList<Type>(valid_types);
+        }
+    }
+
+    private final ContactValue default_value = null;
+    private final ContactSettings settings = null;
+
+    public ContactValue getDefaultValue() {
+        return default_value;
+    }
+
+    public ContactSettings getSettings() {
+        return settings;
+    }
 
 }

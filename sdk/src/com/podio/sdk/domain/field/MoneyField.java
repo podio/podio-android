@@ -22,28 +22,100 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.podio.sdk.domain.field.configuration.MoneyConfiguration;
+import com.podio.sdk.domain.field.value.MoneyValue;
+
+/**
+ * @author László Urszuly
+ */
 public final class MoneyField extends Field {
+    private final MoneyConfiguration config = null;
+    private final List<MoneyValue> values;
 
     public MoneyField(String externalId) {
         super(externalId);
-    }
-
-    @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        this.values = new ArrayList<MoneyValue>();
     }
 
     @Override
     public void addValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        MoneyValue v = validateValue(value);
+
+        if (values != null && !values.contains(v)) {
+            values.add(v);
+        }
+    }
+
+    @Override
+    protected List<MoneyValue> getPushables() {
+        return values;
+    }
+
+    @Override
+    public void removeValue(Object value) throws FieldTypeMismatchException {
+        MoneyValue v = validateValue(value);
+
+        if (values != null && values.contains(v)) {
+            values.remove(v);
+        }
+    }
+
+    /**
+     * Returns the configuration metrics for this field.
+     * 
+     * @return The configuration data structure.
+     */
+    public MoneyConfiguration getConfiguration() {
+        return config;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public MoneyValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    /**
+     * Determines whether the given object can be used as value for this field
+     * or not.
+     * 
+     * @param value
+     *        The object to use as value.
+     * @return A type specific value representation of the given object.
+     * @throws FieldTypeMismatchException
+     *         If the given object can't be used as value for this field.
+     */
+    private MoneyValue validateValue(Object value) throws FieldTypeMismatchException {
+        if (value instanceof MoneyValue) {
+            return (MoneyValue) value;
+        } else if (value instanceof MoneyValue.Data) {
+            return new MoneyValue((MoneyValue.Data) value);
+        } else if (value instanceof String[]) {
+            String[] v = (String[]) value;
+
+            if (v.length == 2) {
+                return new MoneyValue(v[0], v[1]);
+            } else {
+                throw new FieldTypeMismatchException();
+            }
+        } else {
+            throw new FieldTypeMismatchException();
+        }
+    }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
+        return values != null ? values.size() : 0;
     }
 
 }

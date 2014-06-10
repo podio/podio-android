@@ -22,28 +22,92 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.podio.sdk.domain.field.configuration.ProgressConfiguration;
+import com.podio.sdk.domain.field.value.ProgressValue;
+
+/**
+ * @author László Urszuly
+ */
 public final class ProgressField extends Field {
+    private final ProgressConfiguration config = null;
+    private final List<ProgressValue> values;
 
     public ProgressField(String externalId) {
         super(externalId);
-    }
-
-    @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        this.values = new ArrayList<ProgressValue>();
     }
 
     @Override
     public void addValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+        ProgressValue v = validateValue(value);
+
+        if (values != null && !values.contains(v)) {
+            values.add(v);
+        }
+    }
+
+    @Override
+    protected List<ProgressValue> getPushables() {
+        return values;
+    }
+
+    @Override
+    public void removeValue(Object value) throws FieldTypeMismatchException {
+        ProgressValue v = validateValue(value);
+
+        if (values != null && values.contains(v)) {
+            values.remove(v);
+        }
+    }
+
+    /**
+     * Returns the configuration metrics for this field.
+     * 
+     * @return The configuration data structure.
+     */
+    public ProgressConfiguration getConfiguration() {
+        return config;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public ProgressValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    /**
+     * Determines whether the given object can be used as value for this field
+     * or not.
+     * 
+     * @param value
+     *        The object to use as value.
+     * @return A type specific value representation of the given object.
+     * @throws FieldTypeMismatchException
+     *         If the given object can't be used as value for this field.
+     */
+    private ProgressValue validateValue(Object value) throws FieldTypeMismatchException {
+        if (value instanceof ProgressValue) {
+            return (ProgressValue) value;
+        } else if (value instanceof Integer) {
+            return new ProgressValue(((Integer) value).intValue());
+        } else {
+            throw new FieldTypeMismatchException();
+        }
+    }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
+        return values != null ? values.size() : 0;
     }
 
 }

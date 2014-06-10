@@ -22,25 +22,54 @@
 
 package com.podio.sdk.domain.field;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.podio.sdk.domain.field.configuration.CalculationConfiguration;
+import com.podio.sdk.domain.field.value.CalculationValue;
+
+/**
+ * @author László Urszuly
+ */
 public final class CalculationField extends Field {
+    private final CalculationConfiguration config = null;
+    private final List<CalculationValue> values;
 
     public CalculationField(String externalId) {
         super(externalId);
+        this.values = new ArrayList<CalculationValue>();
     }
 
     @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-        return true;
-    }
-
-    @Override
-    public Object getPushData() {
+    protected List<CalculationValue> getPushables() {
         return null;
     }
 
-    @Override
-    public void addValue(Object value) throws FieldTypeMismatchException {
-        return true;
+    /**
+     * Returns the configuration metrics for this field.
+     * 
+     * @return The configuration data structure.
+     */
+    public CalculationConfiguration getConfiguration() {
+        return config;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public CalculationValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
+        return values != null ? values.size() : 0;
     }
 
 }

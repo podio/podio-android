@@ -20,16 +20,33 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.helper;
+package com.podio.sdk.domain.field.configuration;
 
-public final class UserInfo {
-    public final Long user_id = null;
-    public final String name = null;
-    public final String url = null;
-    public final String type = null;
-    public final String avatar_type = null;
-    public final Long avatar = null;
-    public final Long id = null;
-    public final Long avatar_id = null;
-    public final String last_seen_on = null;
+import com.podio.sdk.domain.field.value.NumberValue;
+
+/**
+ * @author László Urszuly
+ */
+public final class NumberConfiguration extends AbstractConfiguration {
+
+    public final class NumberSettings {
+        private final Integer decimals = null;
+
+        public int getNumberOfDecimals() {
+            return decimals != null ? decimals.intValue() : 0;
+        }
+
+    }
+
+    private final NumberValue default_value = null;
+    private final NumberSettings settings = null;
+
+    public NumberValue getDefaultValue() {
+        return default_value;
+    }
+
+    public NumberSettings getSettings() {
+        return settings;
+    }
+
 }

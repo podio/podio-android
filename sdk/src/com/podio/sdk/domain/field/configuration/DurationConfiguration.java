@@ -20,10 +20,37 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.field;
+package com.podio.sdk.domain.field.configuration;
 
-public interface Pushable {
+import java.util.ArrayList;
+import java.util.List;
 
-    public Object getPushData();
+import com.podio.sdk.domain.field.DurationField.FieldType;
+import com.podio.sdk.domain.field.value.DurationValue;
+
+/**
+ * @author László Urszuly
+ */
+public final class DurationConfiguration extends AbstractConfiguration {
+
+    public static final class DurationSettings {
+        private final List<FieldType> fields = null;
+
+        public List<FieldType> getFieldTypes() {
+            return new ArrayList<FieldType>(fields);
+        }
+
+    }
+
+    private final DurationValue default_value = null;
+    private final DurationSettings settings = null;
+
+    public DurationValue getDefaultValue() {
+        return default_value;
+    }
+
+    public DurationSettings getSettings() {
+        return settings;
+    }
 
 }

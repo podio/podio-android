@@ -22,28 +22,20 @@
 
 package com.podio.sdk.domain.field;
 
-public class EmptyField extends Field {
+import java.util.List;
+
+/**
+ * @author László Urszuly
+ */
+public final class EmptyField extends Field {
 
     public EmptyField() {
         super(null);
     }
 
     @Override
-    public void removeValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getPushData() {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addValue(Object value) throws FieldTypeMismatchException {
-    	//FIXME: Implement
-    	throw new UnsupportedOperationException();
+    protected List<? extends Pushable> getPushables() {
+        return null;
     }
 
 }
