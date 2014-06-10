@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 import com.podio.sdk.internal.utils.Utils;
 
-public final class Session {
+public class Session {
     public final String accessToken;
     public final String refreshToken;
     public final long expiresMillis;

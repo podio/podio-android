@@ -22,39 +22,38 @@
 
 package com.podio.sdk.client;
 
-import java.util.concurrent.Semaphore;
-
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.podio.sdk.PodioFilter;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.test.InstrumentationTestCase;
+
 import com.podio.sdk.RestClient;
-import com.podio.sdk.client.mock.MockRestClient;
+import com.podio.sdk.client.QueuedRestClient.State;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.DummyRestClient;
-import com.podio.test.TestUtils;
-import com.podio.test.ThreadedTestCase;
+import com.podio.test.ThreadCaptureResultListener;
 
-public class QueuedRestClientTest extends ThreadedTestCase {
+public class QueuedRestClientTest extends InstrumentationTestCase {
 
 	@Mock
 	ResultListener<Object> listener;
+	@Mock
+	Session mockSession;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		MockitoAnnotations.initMocks(this);
-	}
+		System.setProperty("dexmaker.dexcache", getInstrumentation()
+				.getTargetContext().getCacheDir().getPath());
 
-	private static final class ConcurrentResult {
-		private boolean isRequestPushed;
-		private boolean isRequestPopped;
-		private boolean isTicketValid;
+		MockitoAnnotations.initMocks(this);
 	}
 
 	/**
@@ -93,7 +92,8 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 */
 	public void testGetAuthorityReturnsCorrectAuthority() {
 		String expectedAuthority = "a.b.c";
-		MockRestClient testTarget = new MockRestClient(null, expectedAuthority, 1);
+		MockRestClient testTarget = new MockRestClient(null, expectedAuthority,
+				1);
 		String actualAuthority = testTarget.getAuthority();
 
 		assertEquals(expectedAuthority, actualAuthority);
@@ -138,49 +138,28 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testRequestQueueDrainedEventually() {
-		final PodioFilter firstFilter = new BasicPodioFilter("first");
-		final PodioFilter secondFilter = new BasicPodioFilter("second");
+		MockRestClient testTarget = new MockRestClient();
 
-		final ConcurrentResult firstResult = new ConcurrentResult();
-		final ConcurrentResult secondResult = new ConcurrentResult();
-
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				PodioFilter filter = restRequest.getFilter();
-
-				if (filter == firstFilter) {
-					firstResult.isRequestPopped = true;
-					firstResult.isTicketValid = true;
-				} else if (filter == secondFilter) {
-					secondResult.isRequestPopped = true;
-					secondResult.isTicketValid = true;
-				}
-
-				if (firstResult.isTicketValid && secondResult.isTicketValid) {
-					TestUtils.completed();
-				}
-
-				return RestResult.success();
-			}
-		};
-
-		RestRequest<Object> firstRequest = new RestRequest<Object>().setFilter(
-				firstFilter).setOperation(RestOperation.AUTHORIZE);
+		RestRequest<Object> firstRequest = new RestRequest<Object>()
+				.setFilter(new BasicPodioFilter("first"))
+				.setOperation(RestOperation.GET).setTicket(new Object())
+				.setResultListener(listener);
 		RestRequest<Object> secondRequest = new RestRequest<Object>()
-				.setFilter(secondFilter).setOperation(RestOperation.AUTHORIZE);
+				.setFilter(new BasicPodioFilter("second"))
+				.setOperation(RestOperation.GET).setTicket(new Object())
+				.setResultListener(listener);
 
-		firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
-		secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
+		boolean enqueued = testTarget.enqueue(firstRequest);
+		assertTrue(enqueued);
 
-		assertTrue(TestUtils.waitUntilCompletion());
+		enqueued = testTarget.enqueue(secondRequest);
+		assertTrue(enqueued);
 
-		assertTrue(firstResult.isRequestPushed);
-		assertTrue(firstResult.isRequestPopped);
-		assertTrue(firstResult.isTicketValid);
-		assertTrue(secondResult.isRequestPushed);
-		assertTrue(secondResult.isRequestPopped);
-		assertTrue(secondResult.isTicketValid);
+		Mockito.verify(listener, Mockito.timeout(2000)).onSuccess(
+				firstRequest.getTicket(), null);
+		Mockito.verify(listener, Mockito.timeout(2000)).onSuccess(
+				secondRequest.getTicket(), null);
+		Mockito.verifyNoMoreInteractions(listener);
 	}
 
 	/**
@@ -201,26 +180,27 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testRequestQueueProcessedOnWorkerThread() {
-		final String[] threadNames = new String[] {
-				Thread.currentThread().getName(),
-				Thread.currentThread().getName() };
+		final String[] handlerThreadName = new String[1];
 
 		MockRestClient testTarget = new MockRestClient() {
 			@Override
 			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				threadNames[1] = Thread.currentThread().getName();
-				TestUtils.completed();
-				return RestResult.success();
+				handlerThreadName[0] = Thread.currentThread().getName();
+
+				return super.handleRequest(restRequest);
 			}
 		};
 
-		RestRequest<Object> request = new RestRequest<Object>().setFilter(
-				new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+		RestRequest<Object> request = new RestRequest<Object>()
+				.setFilter(new BasicPodioFilter()).setResultListener(listener)
+				.setOperation(RestOperation.GET);
 		testTarget.enqueue(request);
-		assertTrue(TestUtils.waitUntilCompletion());
 
-		assertFalse(threadNames[0] + " vs. " + threadNames[1],
-				threadNames[0].equals(threadNames[1]));
+		Mockito.verify(listener, Mockito.timeout(2000)).onSuccess(
+				request.getTicket(), null);
+
+		assertFalse(Thread.currentThread().getName()
+				.equals(handlerThreadName[0]));
 	}
 
 	/**
@@ -246,33 +226,20 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 */
 	public void testRequestQueuePushFailureOnCapacityReached()
 			throws InterruptedException {
-		final Semaphore waiter = new Semaphore(0);
+		MockRestClient testTarget = new MockRestClient();
 
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				try {
-					waiter.acquire();
-				} catch (InterruptedException e) {
-				}
-
-				return super.handleRequest(restRequest);
-			}
-		};
-
-		RestRequest<Object> request = new RestRequest<Object>().setFilter(
-				new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
+		RestRequest<Object> request = new RestRequest<Object>()
+				.setFilter(new BasicPodioFilter()).setResultListener(listener)
+				.setOperation(RestOperation.AUTHORIZE);
 
 		assertEquals(testTarget.enqueue(request), true);
 		// One is being processed, so room for one more in the queue
 		assertEquals(testTarget.enqueue(request), true);
-
+		// Now we are out of room
 		assertEquals(testTarget.enqueue(request), false);
 
-		// Complete the request, so we can add another
-		waiter.release();
-
-		TestUtils.waitUntilCompletion();
+		Mockito.verify(listener, Mockito.timeout(2000).times(2)).onSuccess(
+				request.getTicket(), null);
 
 		// Now it can be processed
 		assertEquals(testTarget.enqueue(request), true);
@@ -319,38 +286,16 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testRequestQueuePushPopSuccess() {
-		final Object expectedTicket = new Object();
-		final PodioFilter expectedFilter = new BasicPodioFilter("expected");
-		final ConcurrentResult result = new ConcurrentResult();
-
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				result.isRequestPopped = true;
-				result.isTicketValid = (expectedTicket == restRequest
-						.getTicket());
-				TestUtils.completed();
-				return RestResult.success();
-			}
-		};
+		QueuedRestClient testTarget = Mockito.spy(new MockRestClient());
 
 		RestRequest<Object> request = new RestRequest<Object>()
-				//
-				.setFilter(expectedFilter)
-				//
-				.setTicket(expectedTicket)
-				.setOperation(RestOperation.AUTHORIZE);
+				.setFilter(new BasicPodioFilter("expected"))
+				.setTicket(new Object()).setOperation(RestOperation.GET);
 
-		result.isRequestPushed = testTarget.enqueue(request);
+		testTarget.enqueue(request);
 
-		// This line will block execution until the blocking semaphore is
-		// released either by the above result listener or the test global
-		// watch-dog.
-		assertTrue(TestUtils.waitUntilCompletion());
-
-		assertTrue(result.isRequestPushed);
-		assertTrue(result.isRequestPopped);
-		assertTrue(result.isTicketValid);
+		Mockito.verify(testTarget, Mockito.timeout(2000))
+				.handleRequest(request);
 	}
 
 	/**
@@ -373,100 +318,33 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testRequestQueueResumedOnNewRequest() {
-		final ConcurrentResult firstResult = new ConcurrentResult();
-		final ConcurrentResult secondResult = new ConcurrentResult();
-
-		final PodioFilter firstFilter = new BasicPodioFilter("first");
-		final PodioFilter secondFilter = new BasicPodioFilter("second");
-
-		ResultListener<Object> listener = new ResultListener<Object>() {
-			@Override
-			public void onFailure(Object ticket, String message) {
-				fail();
-			}
-
-			@Override
-			public void onSessionChange(Object ticket, Session session) {
-				fail();
-			}
-
-			@Override
-			public void onSuccess(Object ticket, Object item) {
-				if (firstFilter != ticket && secondFilter != ticket) {
-					fail();
-				}
-			}
-		};
-
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				PodioFilter filter = restRequest.getFilter();
-
-				if (firstFilter == filter) {
-					firstResult.isRequestPopped = true;
-					firstResult.isTicketValid = true;
-
-					TestUtils.completed();
-				} else if (secondFilter == filter) {
-					secondResult.isRequestPopped = true;
-					secondResult.isTicketValid = true;
-
-					TestUtils.completed();
-				}
-
-				return super.handleRequest(restRequest);
-			}
-		};
+		QueuedRestClient testTarget = new MockRestClient();
 
 		RestRequest<Object> firstRequest = new RestRequest<Object>()
-				//
-				.setFilter(firstFilter)
-				//
-				.setResultListener(listener)
+				.setFilter(new BasicPodioFilter("first"))
+				.setTicket(new Object()).setResultListener(listener)
 				.setOperation(RestOperation.AUTHORIZE);
 
-		firstResult.isRequestPushed = testTarget.enqueue(firstRequest);
+		boolean enqueued = testTarget.enqueue(firstRequest);
+		assertTrue(enqueued);
 
-		assertTrue(TestUtils.waitUntilCompletion());
-
-		// FIXME: Temporary to get the request handled also
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-
-		assertTrue(firstResult.isRequestPushed);
-		assertTrue(firstResult.isRequestPopped);
-		assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
+		Mockito.verify(listener, Mockito.timeout(2000)).onSuccess(
+				firstRequest.getTicket(), null);
+		assertEquals(State.IDLE, testTarget.state());
 		assertEquals(0, testTarget.size());
-
-		TestUtils.reset();
 
 		RestRequest<Object> secondRequest = new RestRequest<Object>()
-				//
-				.setFilter(secondFilter)
-				//
-				.setResultListener(listener)
+				.setFilter(new BasicPodioFilter("second"))
+				.setTicket(new Object()).setResultListener(listener)
 				.setOperation(RestOperation.AUTHORIZE);
 
-		secondResult.isRequestPushed = testTarget.enqueue(secondRequest);
+		enqueued = testTarget.enqueue(secondRequest);
+		assertTrue(enqueued);
 
-		assertTrue(TestUtils.waitUntilCompletion());
-
-		// FIXME: Temporary to get the request handled also
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-
-		assertTrue(secondResult.isRequestPushed);
-		assertTrue(secondResult.isRequestPopped);
-		assertEquals(QueuedRestClient.State.IDLE, testTarget.state());
+		Mockito.verify(listener, Mockito.timeout(2000)).onSuccess(
+				secondRequest.getTicket(), null);
+		assertEquals(State.IDLE, testTarget.state());
 		assertEquals(0, testTarget.size());
-
-		// The code should return in the above defined listener once the
-		// blockade is released.
 	}
 
 	/**
@@ -487,44 +365,31 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testRequestResultReportedOnCallingThread() {
-		final String[] threadNames = new String[] {
-				Thread.currentThread().getName(), "" };
+		ThreadCaptureResultListener threadListener = Mockito
+				.spy(new ThreadCaptureResultListener());
 
-		ResultListener<Object> listener = new ResultListener<Object>() {
+		final RestRequest<Object> request = new RestRequest<Object>()
+				.setResultListener(threadListener)
+				.setFilter(new BasicPodioFilter())
+				.setOperation(RestOperation.GET).setTicket(new Object());
+
+		HandlerThread handlerThread = new HandlerThread("UIThread");
+		handlerThread.start();
+
+		Handler handler = new Handler(handlerThread.getLooper());
+		handler.post(new Runnable() {
 			@Override
-			public void onFailure(Object ticket, String message) {
-				fail();
+			public void run() {
+				MockRestClient testTarget = new MockRestClient();
+				testTarget.setAsync(true);
+				testTarget.enqueue(request);
 			}
+		});
 
-			@Override
-			public void onSessionChange(Object object, Session session) {
-				fail();
-			}
+		Mockito.verify(threadListener, Mockito.timeout(2000)).onSuccess(
+				request.getTicket(), null);
 
-			@Override
-			public void onSuccess(Object ticket, Object item) {
-				assertEquals(threadNames[0], threadNames[1]);
-			}
-		};
-
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				TestUtils.completed();
-
-				return RestResult.success();
-			}
-		};
-
-		RestRequest<Object> request = new RestRequest<Object>()
-				.setResultListener(listener).setFilter(new BasicPodioFilter())
-				.setOperation(RestOperation.AUTHORIZE);
-		testTarget.enqueue(request);
-
-		assertTrue(TestUtils.waitUntilCompletion());
-
-		// The code should return in the above defined listener once the
-		// blockade is released.
+		assertEquals(threadListener.getThreadName(), "UIThread");
 	}
 
 	/**
@@ -544,40 +409,18 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testResultListenerReportsFailureProperly() {
-		ResultListener<Object> listener = new ResultListener<Object>() {
-			@Override
-			public void onFailure(Object ticket, String message) {
-			}
+		final String mockMessage = "error message";
 
-			@Override
-			public void onSessionChange(Object ticket, Session session) {
-				fail();
-			}
-
-			@Override
-			public void onSuccess(Object ticket, Object item) {
-				fail();
-			}
-		};
-
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				TestUtils.completed();
-
-				return RestResult.success();
-			}
-		};
+		MockRestClient testTarget = new MockRestClient();
+		testTarget.setResult(RestResult.failure(mockMessage));
 
 		RestRequest<Object> request = new RestRequest<Object>()
 				.setResultListener(listener).setFilter(new BasicPodioFilter())
-				.setOperation(RestOperation.AUTHORIZE);
+				.setOperation(RestOperation.GET);
 		testTarget.enqueue(request);
 
-		assertTrue(TestUtils.waitUntilCompletion());
-
-		// The code should return in the above defined listener once the
-		// blockade is released.
+		Mockito.verify(listener, Mockito.timeout(2000)).onFailure(
+				request.getTicket(), mockMessage);
 	}
 
 	/**
@@ -598,41 +441,19 @@ public class QueuedRestClientTest extends ThreadedTestCase {
 	 * </pre>
 	 */
 	public void testResultListenerReportsSessionChangeProperly() {
-		ResultListener<Object> listener = new ResultListener<Object>() {
-			@Override
-			public void onFailure(Object ticket, String message) {
-				fail();
-			}
-
-			@Override
-			public void onSessionChange(Object ticket, Session session) {
-			}
-
-			@Override
-			public void onSuccess(Object ticket, Object item) {
-			}
-		};
-
-		MockRestClient testTarget = new MockRestClient() {
-			@Override
-			protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-				TestUtils.completed();
-
-				Session session = new Session("a", "b", 1L);
-
-				return new RestResult<T>(true, session, null, null);
-			}
-		};
+		MockRestClient testTarget = new MockRestClient();
+		testTarget.setResult(new RestResult<Object>(true, mockSession, null,
+				null));
 
 		RestRequest<Object> request = new RestRequest<Object>()
 				.setResultListener(listener).setFilter(new BasicPodioFilter())
 				.setOperation(RestOperation.AUTHORIZE);
 		testTarget.enqueue(request);
 
-		assertTrue(TestUtils.waitUntilCompletion());
-
-		// The code should return in the above defined listener once the
-		// blockade is released.
+		Mockito.verify(listener, Mockito.timeout(2000)).onSessionChange(
+				request.getTicket(), mockSession);
+		Mockito.verify(listener, Mockito.timeout(2000)).onSuccess(
+				request.getTicket(), null);
 	}
 
 	/**
