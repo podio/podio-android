@@ -31,13 +31,13 @@ import com.podio.sdk.internal.request.ResultListener;
 
 public class CalendarProvider extends BasicPodioProvider {
 
-	public CalendarProvider(RestClient client) {
-		super(client);
-	}
+    public CalendarProvider(RestClient client) {
+        super(client);
+    }
 
-	public Object fetchGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener) {
-		CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
-				.withPriority(priority);
-		return get(filter, CalendarEvent[].class, resultListener);
-	}
+    public Object fetchGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener) {
+        CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
+                .withPriority(priority);
+        return get(filter, CalendarEvent[].class, resultListener);
+    }
 }

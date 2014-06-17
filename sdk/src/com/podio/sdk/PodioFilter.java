@@ -30,7 +30,6 @@ import android.net.Uri;
  * {@link PodioProvider}.
  * 
  * @author László Urszuly
- * 
  */
 public interface PodioFilter {
 
@@ -38,9 +37,9 @@ public interface PodioFilter {
      * Adds a new query parameter with the given name and value.
      * 
      * @param key
-     *            The name of the parameter.
+     *        The name of the parameter.
      * @param value
-     *            The corresponding parameter value.
+     *        The corresponding parameter value.
      * @return This filter object for further chaining.
      */
     public PodioFilter addQueryParameter(String key, String value);
@@ -49,7 +48,7 @@ public interface PodioFilter {
      * Adds a new path segment to the filter.
      * 
      * @param segment
-     *            The new segment.
+     *        The new segment.
      * @return This filter object for further chaining.
      */
     public PodioFilter addPathSegment(String segment);
@@ -59,9 +58,9 @@ public interface PodioFilter {
      * in the filter.
      * 
      * @param scheme
-     *            The Uri scheme.
+     *        The Uri scheme.
      * @param authority
-     *            The Uri authority
+     *        The Uri authority
      * @return The Uri.
      */
     public Uri buildUri(String scheme, String authority);

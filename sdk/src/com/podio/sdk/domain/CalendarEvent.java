@@ -22,10 +22,10 @@
 package com.podio.sdk.domain;
 
 public final class CalendarEvent {
-	public final String start_utc = null;
-	public final String end_utc = null;
-	public final String title = null;
-	public final String description = null;
-	public final String location = null;
-	public final Boolean busy = null;
+    public final String start_utc = null;
+    public final String end_utc = null;
+    public final String title = null;
+    public final String description = null;
+    public final String location = null;
+    public final Boolean busy = null;
 }

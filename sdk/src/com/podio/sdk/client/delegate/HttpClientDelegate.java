@@ -56,44 +56,44 @@ public class HttpClientDelegate implements RestClientDelegate {
         this.requestQueue = Volley.newRequestQueue(context);
     }
 
-	@Override
+    @Override
     public RestResult<Session> authorize(Uri uri) {
-    	if (Utils.isEmpty(uri)) {
-    		throw new IllegalArgumentException("uri cannot be empty");
-    	}
+        if (Utils.isEmpty(uri)) {
+            throw new IllegalArgumentException("uri cannot be empty");
+        }
 
         String url = removeQuery(uri);
         Map<String, String> params = queryToBody(uri);
-        
+
         boolean success = authorizeRequest(url, params);
 
         if (success) {
-        	this.refreshUrl = url;
-        
-        	return RestResult.success(session);
+            this.refreshUrl = url;
+
+            return RestResult.success(session);
         } else {
-        	return RestResult.failure();
+            return RestResult.failure();
         }
     }
 
     @Override
     public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser) {
-    	return request(Method.DELETE, uri, null, parser, true);
+        return request(Method.DELETE, uri, null, parser, true);
     }
 
     @Override
     public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser) {
-    	return request(Method.GET, uri, null, parser, true);
+        return request(Method.GET, uri, null, parser, true);
     }
 
     @Override
     public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser) {
-    	return request(Method.POST, uri, item, parser, true);
+        return request(Method.POST, uri, item, parser, true);
     }
 
     @Override
     public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser) {
-    	return request(Method.PUT, uri, item, parser, true);
+        return request(Method.PUT, uri, item, parser, true);
     }
 
     /**
@@ -109,7 +109,7 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     private String getBlockingResponse(RequestFuture<String> future) {
-    	//FIXME: We need to bubble up these errors, not just swallow them
+        // FIXME: We need to bubble up these errors, not just swallow them
         lastRequestError = null;
 
         try {
@@ -151,60 +151,61 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     private <T> RestResult<T> request(int method, Uri uri, Object item, PodioParser<? extends T> parser, boolean tryRefresh) {
-    	if (Utils.isEmpty(uri)) {
-    		throw new IllegalArgumentException("uri cannot be empty");
-    	}
-    	if (parser == null) {
-    		throw new NullPointerException("parser cannot be null");
-    	}
-    	
-    	boolean refreshedSession = checkSession();
+        if (Utils.isEmpty(uri)) {
+            throw new IllegalArgumentException("uri cannot be empty");
+        }
+        if (parser == null) {
+            throw new NullPointerException("parser cannot be null");
+        }
+
+        boolean refreshedSession = checkSession();
 
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + session.accessToken);
-        
+
         String body = item != null ? body = parser.parseToJson(item) : null;
 
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new PodioRequest(method, uri.toString(), body, headers, future);
         requestQueue.add(request);
-        
+
         String output = getBlockingResponse(future);
 
         if (wasTokenExpiredError()) {
             // For some reason the server has invalidated our access token.
             // Try refresh the access token again.
-        	refreshSession();
-        	refreshedSession = true;
+            refreshSession();
+            refreshedSession = true;
 
-        	return request(method, uri, item, parser, false);
+            return request(method, uri, item, parser, false);
         }
 
-        //FIXME: This is not a proper way to check for success, we should use status codes instead
+        // FIXME: This is not a proper way to check for success, we should use
+        // status codes instead
         boolean isSuccess = Utils.notEmpty(output);
         T content = parser.parseToItem(output);
-        
+
         return new RestResult<T>(isSuccess, refreshedSession ? session : null, null, content);
     }
-    
+
     private boolean wasTokenExpiredError() {
-    	//FIXME: Should also check that:
-    	//error="unauthorized"
-    	//error_description=expired_token
-    	
-		return lastRequestError != null
-				&& lastRequestError.networkResponse != null
-				&& lastRequestError.networkResponse.statusCode == 401;
+        // FIXME: Should also check that:
+        // error="unauthorized"
+        // error_description=expired_token
+
+        return lastRequestError != null
+                && lastRequestError.networkResponse != null
+                && lastRequestError.networkResponse.statusCode == 401;
     }
-    
+
     private boolean refreshSession() {
-    	Map<String, String> refreshParams = new HashMap<String, String>();
+        Map<String, String> refreshParams = new HashMap<String, String>();
         refreshParams.put("grant_type", "refresh_token");
         refreshParams.put("refresh_token", session.refreshToken);
-        
+
         return authorizeRequest(refreshUrl, refreshParams);
     }
-    
+
     private boolean authorizeRequest(String url, Map<String, String> params) {
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new RefreshRequest(refreshUrl, params, future);
@@ -214,23 +215,24 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         session = new Session(resultJson);
 
-        //FIXME: This is not a proper way to check for success, we should use status codes instead
+        // FIXME: This is not a proper way to check for success, we should use
+        // status codes instead
         return Utils.notEmpty(resultJson);
     }
 
     private boolean checkSession() {
-    	if (session == null) {
-    		throw new IllegalStateException("No session is active");
-    	}
-    	if (!session.isAuthorized()) {
-    		throw new IllegalStateException("Session is not authorized");
-    	}
+        if (session == null) {
+            throw new IllegalStateException("No session is active");
+        }
+        if (!session.isAuthorized()) {
+            throw new IllegalStateException("Session is not authorized");
+        }
 
         if (session.shouldRefreshTokens()) {
             refreshSession();
             return true;
         }
-        
+
         return false;
     }
 }

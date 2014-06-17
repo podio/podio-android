@@ -22,7 +22,6 @@
 
 package com.podio.sdk.domain;
 
-
 public final class User {
     public final Long user_id = null;
     public final String name = null;

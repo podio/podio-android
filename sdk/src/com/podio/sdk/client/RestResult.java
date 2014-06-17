@@ -39,13 +39,13 @@ public class RestResult<T> {
      * Constructor. The one and only way to set the state of this object.
      * 
      * @param isSuccess
-     *            Boolean true if this object represents a successfully
-     *            performed {@link RestRequest}. Boolean false otherwise.
+     *        Boolean true if this object represents a successfully performed
+     *        {@link RestRequest}. Boolean false otherwise.
      * @param message
-     *            A optional message provided to the caller by the creator of
-     *            this object.
+     *        A optional message provided to the caller by the creator of this
+     *        object.
      * @param item
-     *            Optional content of this object.
+     *        Optional content of this object.
      */
     public RestResult(boolean isSuccess, String message, T item) {
         this(isSuccess, null, message, item);
@@ -55,15 +55,15 @@ public class RestResult<T> {
      * Constructor. The one and only way to set the state of this object.
      * 
      * @param isSuccess
-     *            Boolean true if this object represents a successfully
-     *            performed {@link RestRequest}. Boolean false otherwise.
+     *        Boolean true if this object represents a successfully performed
+     *        {@link RestRequest}. Boolean false otherwise.
      * @param session
-     *            The new session variables, if changed. Otherwise null.
+     *        The new session variables, if changed. Otherwise null.
      * @param message
-     *            A optional message provided to the caller by the creator of
-     *            this object.
+     *        A optional message provided to the caller by the creator of this
+     *        object.
      * @param item
-     *            Optional content of this object.
+     *        Optional content of this object.
      */
     public RestResult(boolean isSuccess, Session session, String message, T item) {
         this.isSuccess = isSuccess;
@@ -104,21 +104,21 @@ public class RestResult<T> {
     public String message() {
         return message;
     }
-    
+
     public static <T> RestResult<T> failure() {
-    	return failure(null);    	
+        return failure(null);
     }
-    
+
     public static <T> RestResult<T> failure(String message) {
-    	return new RestResult<T>(false, message, null);
+        return new RestResult<T>(false, message, null);
     }
-    
+
     public static <T> RestResult<T> success() {
-    	return success(null);    	
+        return success(null);
     }
-    
+
     public static <T> RestResult<T> success(T item) {
-    	return new RestResult<T>(true, null, item);
+        return new RestResult<T>(true, null, item);
     }
 
 }

@@ -20,7 +20,6 @@
  *  SOFTWARE.
  */
 
-
 package com.podio.sdk.domain;
 
 public enum Status {

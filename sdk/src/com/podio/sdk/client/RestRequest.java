@@ -22,96 +22,110 @@
 
 package com.podio.sdk.client;
 
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.PodioParser;
 import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
 public final class RestRequest<T> {
-	
+
     private Object content;
     private PodioFilter filter;
     private PodioParser<? extends T> parser;
     private RestOperation operation;
     private ResultListener<? super T> resultListener;
     private Object ticket;
-    
+
     @Override
-	public String toString() {
-		return "RestRequest [content=" + content + ", filter=" + filter
-				+ ", parser=" + parser + ", operation=" + operation
-				+ ", resultListener=" + resultListener + ", ticket=" + ticket
-				+ "]";
-	}
+    public String toString() {
+        return "RestRequest [content=" + content + ", filter=" + filter
+                + ", parser=" + parser + ", operation=" + operation
+                + ", resultListener=" + resultListener + ", ticket=" + ticket
+                + "]";
+    }
 
-	/**
-	 * Equals and hashCode is needed for test comparisons
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((content == null) ? 0 : content.hashCode());
-		result = prime * result + ((filter == null) ? 0 : filter.hashCode());
-		result = prime * result
-				+ ((operation == null) ? 0 : operation.hashCode());
-		result = prime * result + ((parser == null) ? 0 : parser.hashCode());
-		result = prime * result
-				+ ((resultListener == null) ? 0 : resultListener.hashCode());
-		result = prime * result + ((ticket == null) ? 0 : ticket.hashCode());
-		return result;
-	}
+    /**
+     * Equals and hashCode is needed for test comparisons
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (content == null ? 0 : content.hashCode());
+        result = prime * result + (filter == null ? 0 : filter.hashCode());
+        result = prime * result
+                + (operation == null ? 0 : operation.hashCode());
+        result = prime * result + (parser == null ? 0 : parser.hashCode());
+        result = prime * result
+                + (resultListener == null ? 0 : resultListener.hashCode());
+        result = prime * result + (ticket == null ? 0 : ticket.hashCode());
+        return result;
+    }
 
-	/**
-	 * Equals and hashCode is needed for test comparisons
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		@SuppressWarnings("rawtypes")
-		RestRequest other = (RestRequest) obj;
-		if (content == null) {
-			if (other.content != null)
-				return false;
-		} else if (!content.equals(other.content))
-			return false;
-		if (filter == null) {
-			if (other.filter != null)
-				return false;
-		} else if (!filter.equals(other.filter))
-			return false;
-		if (operation != other.operation)
-			return false;
-		if (parser == null) {
-			if (other.parser != null)
-				return false;
-		} else if (!parser.equals(other.parser))
-			return false;
-		if (resultListener == null) {
-			if (other.resultListener != null)
-				return false;
-		} else if (!resultListener.equals(other.resultListener))
-			return false;
-		if (ticket == null) {
-			if (other.ticket != null)
-				return false;
-		} else if (!ticket.equals(other.ticket))
-			return false;
-		return true;
-	}
+    /**
+     * Equals and hashCode is needed for test comparisons
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        @SuppressWarnings("rawtypes")
+        RestRequest other = (RestRequest) obj;
+        if (content == null) {
+            if (other.content != null) {
+                return false;
+            }
+        } else if (!content.equals(other.content)) {
+            return false;
+        }
+        if (filter == null) {
+            if (other.filter != null) {
+                return false;
+            }
+        } else if (!filter.equals(other.filter)) {
+            return false;
+        }
+        if (operation != other.operation) {
+            return false;
+        }
+        if (parser == null) {
+            if (other.parser != null) {
+                return false;
+            }
+        } else if (!parser.equals(other.parser)) {
+            return false;
+        }
+        if (resultListener == null) {
+            if (other.resultListener != null) {
+                return false;
+            }
+        } else if (!resultListener.equals(other.resultListener)) {
+            return false;
+        }
+        if (ticket == null) {
+            if (other.ticket != null) {
+                return false;
+            }
+        } else if (!ticket.equals(other.ticket)) {
+            return false;
+        }
+        return true;
+    }
 
-	public void validate() {
-    	if (filter == null) {
-    		throw new NullPointerException("filter cannot be null");
-    	}
-    	if (operation == null) {
-    		throw new NullPointerException("operation cannot be null");
-    	}
+    public void validate() {
+        if (filter == null) {
+            throw new NullPointerException("filter cannot be null");
+        }
+        if (operation == null) {
+            throw new NullPointerException("operation cannot be null");
+        }
     }
 
     public Object getContent() {

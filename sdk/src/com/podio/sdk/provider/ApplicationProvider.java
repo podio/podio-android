@@ -29,56 +29,56 @@ import com.podio.sdk.internal.request.ResultListener;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
-	public ApplicationProvider(RestClient client) {
-		super(client);
-	}
+    public ApplicationProvider(RestClient client) {
+        super(client);
+    }
 
-	public Object fetchApplication(long applicationId, ResultListener<? super Application> resultListener) {
-		ApplicationFilter filter = new ApplicationFilter() //
-				.withApplicationId(applicationId) //
-				.withType("full");
+    public Object fetchApplication(long applicationId, ResultListener<? super Application> resultListener) {
+        ApplicationFilter filter = new ApplicationFilter() //
+        .withApplicationId(applicationId) //
+        .withType("full");
 
-		return get(filter, Application.class, resultListener);
-	}
+        return get(filter, Application.class, resultListener);
+    }
 
-	public Object fetchApplicationShort(long applicationId, ResultListener<? super Application> resultListener) {
-		ApplicationFilter filter = new ApplicationFilter() //
-				.withApplicationId(applicationId) //
-				.withType("short");
+    public Object fetchApplicationShort(long applicationId, ResultListener<? super Application> resultListener) {
+        ApplicationFilter filter = new ApplicationFilter() //
+        .withApplicationId(applicationId) //
+        .withType("short");
 
-		return get(filter, Application.class, resultListener);
-	}
+        return get(filter, Application.class, resultListener);
+    }
 
-	public Object fetchApplicationMini(long applicationId, ResultListener<? super Application> resultListener) {
-		ApplicationFilter filter = new ApplicationFilter() //
-				.withApplicationId(applicationId) //
-				.withType("mini");
+    public Object fetchApplicationMini(long applicationId, ResultListener<? super Application> resultListener) {
+        ApplicationFilter filter = new ApplicationFilter() //
+        .withApplicationId(applicationId) //
+        .withType("mini");
 
-		return get(filter, Application.class, resultListener);
-	}
+        return get(filter, Application.class, resultListener);
+    }
 
-	public Object fetchApplicationMicro(long applicationId, ResultListener<? super Application> resultListener) {
-		ApplicationFilter filter = new ApplicationFilter() //
-				.withApplicationId(applicationId) //
-				.withType("micro");
+    public Object fetchApplicationMicro(long applicationId, ResultListener<? super Application> resultListener) {
+        ApplicationFilter filter = new ApplicationFilter() //
+        .withApplicationId(applicationId) //
+        .withType("micro");
 
-		return get(filter, Application.class, resultListener);
-	}
+        return get(filter, Application.class, resultListener);
+    }
 
-	public Object fetchApplicationsForSpace(long spaceId, ResultListener<? super Application[]> resultListener) {
-		ApplicationFilter filter = new ApplicationFilter() //
-				.withSpaceId(spaceId) //
-				.withInactivesIncluded(false);
+    public Object fetchApplicationsForSpace(long spaceId, ResultListener<? super Application[]> resultListener) {
+        ApplicationFilter filter = new ApplicationFilter() //
+        .withSpaceId(spaceId) //
+        .withInactivesIncluded(false);
 
-		return get(filter, Application[].class, resultListener);
-	}
+        return get(filter, Application[].class, resultListener);
+    }
 
-	public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener<? super Application[]> resultListener) {
-		ApplicationFilter filter = new ApplicationFilter() //
-				.withSpaceId(spaceId) //
-				.withInactivesIncluded(true);
+    public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener<? super Application[]> resultListener) {
+        ApplicationFilter filter = new ApplicationFilter() //
+        .withSpaceId(spaceId) //
+        .withInactivesIncluded(true);
 
-		return get(filter, Application[].class, resultListener);
-	}
+        return get(filter, Application[].class, resultListener);
+    }
 
 }

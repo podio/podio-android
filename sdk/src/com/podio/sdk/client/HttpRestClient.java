@@ -44,25 +44,24 @@ public class HttpRestClient extends QueuedRestClient {
 
     /**
      * @param context
-     *            The context to execute the database operations in.
+     *        The context to execute the database operations in.
      * @param authority
-     *            The authority to use in URIs by this client.
+     *        The authority to use in URIs by this client.
      * @param authToken
-     *            The initial auth token to use when communicating with the
-     *            Podio servers.
+     *        The initial auth token to use when communicating with the Podio
+     *        servers.
      * @param networkDelegate
-     *            The {@link RestClientDelegate} implementation that will
-     *            perform the actual HTTP request.
+     *        The {@link RestClientDelegate} implementation that will perform
+     *        the actual HTTP request.
      * @param queueCapacity
-     *            The custom request queue capacity.
-     * 
+     *        The custom request queue capacity.
      * @see QueuedRestClient
      * @see RestClient
      */
     public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate,
             int queueCapacity) {
         super(SCHEME, authority, queueCapacity);
-        
+
         if (networkDelegate == null) {
             throw new NullPointerException("The networkDelegate must not be null");
         }
@@ -75,18 +74,21 @@ public class HttpRestClient extends QueuedRestClient {
      */
     @Override
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-    	Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
+        Uri uri = restRequest
+                .getFilter()
+                .buildUri(getScheme(), getAuthority());
 
-		return restRequest.getOperation().invoke(networkDelegate, uri, 
-				restRequest.getContent(), restRequest.getParser());
+        return restRequest
+                .getOperation()
+                .invoke(networkDelegate, uri, restRequest.getContent(), restRequest.getParser());
     }
 
     public void restoreSession(String refreshPath, Session session) {
         if (networkDelegate instanceof HttpClientDelegate) {
-            Uri sessionRefreshUri = new Uri.Builder() //
-                    .scheme(SCHEME) //
-                    .authority(getAuthority()) //
-                    .appendEncodedPath(refreshPath) //
+            Uri sessionRefreshUri = new Uri.Builder()
+                    .scheme(SCHEME)
+                    .authority(getAuthority())
+                    .appendEncodedPath(refreshPath)
                     .build();
             String url = sessionRefreshUri.toString();
             ((HttpClientDelegate) networkDelegate).restoreSession(url, session);

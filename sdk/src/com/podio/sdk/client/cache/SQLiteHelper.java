@@ -28,10 +28,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
-	
-	public static final String TABLE = "content";
-	public static final String KEY_COLUMN = "key";
-	public static final String DATA_COLUMN = "data";
+
+    public static final String TABLE = "content";
+    public static final String KEY_COLUMN = "key";
+    public static final String DATA_COLUMN = "data";
 
     public SQLiteHelper(Context context, String name, int version) {
         super(context, name, null, version);
@@ -56,10 +56,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     private void clearDatabase(SQLiteDatabase database) {
-    	if (database == null) {
-    		throw new NullPointerException("database cannot be null");
-    	}
-    	
+        if (database == null) {
+            throw new NullPointerException("database cannot be null");
+        }
+
         Cursor cursor = null;
 
         database.beginTransaction();
@@ -90,13 +90,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     private void setupDatabase(SQLiteDatabase database) {
-    	if (database == null) {
-    		throw new NullPointerException("database cannot be null");
-    	}
-    	
-    	String sql = "CREATE TABLE %s (" + //
-                " %s TEXT PRIMARY KEY," + //
-                " %s BLOB NOT NULL DEFAULT (''))";
+        if (database == null) {
+            throw new NullPointerException("database cannot be null");
+        }
+
+        String sql = "CREATE TABLE %s (" + //
+        " %s TEXT PRIMARY KEY," + //
+        " %s BLOB NOT NULL DEFAULT (''))";
 
         database.beginTransaction();
         try {

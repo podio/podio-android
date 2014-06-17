@@ -30,44 +30,44 @@ import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.internal.request.ResultListener;
 
 public class BasicPodioProvider {
-    
-	private final RestClient client;
+
+    private final RestClient client;
 
     public BasicPodioProvider(RestClient client) {
-    	if (client == null) {
-    		throw new NullPointerException("client cannot be null");
-    	}
+        if (client == null) {
+            throw new NullPointerException("client cannot be null");
+        }
         this.client = client;
     }
-    
-	protected <T> Object get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener) {
-		return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener);
-	}
-    
-	protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
-		return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener);
-	}
-    
-	protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
-		return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener);
-	}
-    
-	protected <T> Object request(RestOperation operation, PodioFilter filter,
-			Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener) {
-		Object ticket = filter;
-		
-		RestRequest<T> restRequest = new RestRequest<T>() //
-				.setContent(content) //
-				.setFilter(filter) //
-				.setParser(parser) //
-				.setOperation(operation) //
-				.setResultListener(resultListener) //
-				.setTicket(ticket);
 
-		if (client.enqueue(restRequest)) {
-			return ticket;
-		} else {
-			return null;
-		}
-	}
+    protected <T> Object get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener) {
+        return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener);
+    }
+
+    protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
+        return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener);
+    }
+
+    protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
+        return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener);
+    }
+
+    protected <T> Object request(RestOperation operation, PodioFilter filter,
+            Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener) {
+        Object ticket = filter;
+
+        RestRequest<T> restRequest = new RestRequest<T>() //
+        .setContent(content) //
+        .setFilter(filter) //
+        .setParser(parser) //
+        .setOperation(operation) //
+        .setResultListener(resultListener) //
+        .setTicket(ticket);
+
+        if (client.enqueue(restRequest)) {
+            return ticket;
+        } else {
+            return null;
+        }
+    }
 }

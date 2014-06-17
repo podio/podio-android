@@ -39,13 +39,13 @@ import com.podio.sdk.internal.request.ResultListener;
  * Facilitates default means of queuing up requests, flirting with the classical
  * Producer Consumer design pattern. This implementation of the Rest client acts
  * as a producer to its own queue and holds a private consumer as well.
- * 
+ * <p>
  * The consumer runs on a worker thread which means that the actual execution of
  * a request will not interfere with with the main thread execution.
- * 
+ * <p>
  * The responsibility of which thread the result is delivered on is delegated to
  * the actual request implementation.
- * 
+ * <p>
  * The responsibility of analyzing the request state is delegated to extending
  * classes.
  * 
@@ -53,194 +53,192 @@ import com.podio.sdk.internal.request.ResultListener;
  */
 public abstract class QueuedRestClient implements RestClient {
 
-	public static final int CAPACITY_DEFAULT = 1;
+    public static final int CAPACITY_DEFAULT = 1;
 
-	public static enum State {
-		IDLE, PROCESSING
-	}
-	
-	private final String scheme;
-	private final String authority;
+    public static enum State {
+        IDLE, PROCESSING
+    }
 
-	private final BlockingQueue<Runnable> queue;
+    private final String scheme;
+    private final String authority;
 
-	private final Executor executor;
+    private final BlockingQueue<Runnable> queue;
 
-	private final Handler callerHandler;
+    private final Executor executor;
 
-	private State state = State.IDLE;
+    private final Handler callerHandler;
 
-	/**
-	 * Initializes the request queue with the
-	 * {@link QueuedRestClient#CAPACITY_DEFAULT} capacity. Any requests that are
-	 * passed on to a full queue will be rejected.
-	 * 
-	 * @param scheme
-	 *            The scheme of this {@link RestClient}.
-	 * @param authority
-	 *            The authority of this {@link RestClient}.
-	 */
-	public QueuedRestClient(String scheme, String authority) {
-		this(scheme, authority, CAPACITY_DEFAULT);
-	}
+    private State state = State.IDLE;
 
-	/**
-	 * Initializes the request queue with the given capacity. Any requests that
-	 * are passed on to a full queue will be rejected.
-	 * 
-	 * @param scheme
-	 *            The scheme of this {@link RestClient}.
-	 * @param authority
-	 *            The authority of this {@link RestClient}.
-	 * @param queueCapacity
-	 *            The capacity of the request queue. If the provided capacity is
-	 *            less than or equal to zero, then the
-	 *            {@link QueuedRestClient#CAPACITY_DEFAULT} will be used
-	 *            instead.
-	 */
-	public QueuedRestClient(String scheme, String authority, int queueCapacity) {
-		int capacity = queueCapacity > 0 ? queueCapacity : CAPACITY_DEFAULT;
+    /**
+     * Initializes the request queue with the
+     * {@link QueuedRestClient#CAPACITY_DEFAULT} capacity. Any requests that are
+     * passed on to a full queue will be rejected.
+     * 
+     * @param scheme
+     *        The scheme of this {@link RestClient}.
+     * @param authority
+     *        The authority of this {@link RestClient}.
+     */
+    public QueuedRestClient(String scheme, String authority) {
+        this(scheme, authority, CAPACITY_DEFAULT);
+    }
 
-		this.scheme = scheme;
-		this.authority = authority;
+    /**
+     * Initializes the request queue with the given capacity. Any requests that
+     * are passed on to a full queue will be rejected.
+     * 
+     * @param scheme
+     *        The scheme of this {@link RestClient}.
+     * @param authority
+     *        The authority of this {@link RestClient}.
+     * @param queueCapacity
+     *        The capacity of the request queue. If the provided capacity is
+     *        less than or equal to zero, then the
+     *        {@link QueuedRestClient#CAPACITY_DEFAULT} will be used instead.
+     */
+    public QueuedRestClient(String scheme, String authority, int queueCapacity) {
+        int capacity = queueCapacity > 0 ? queueCapacity : CAPACITY_DEFAULT;
 
-		this.queue = new LinkedBlockingQueue<Runnable>(capacity);
-		this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, queue);
-		this.callerHandler = new Handler();
-	}
+        this.scheme = scheme;
+        this.authority = authority;
 
-	/**
-	 * {@inheritDoc RestClient#getScheme()}
-	 */
-	@Override
-	public String getScheme() {
-		return scheme;
-	}
+        this.queue = new LinkedBlockingQueue<Runnable>(capacity);
+        this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, queue);
+        this.callerHandler = new Handler();
+    }
 
-	/**
-	 * {@inheritDoc RestClient#getAuthority()}
-	 */
-	@Override
-	public String getAuthority() {
-		return authority;
-	}
+    /**
+     * {@inheritDoc RestClient#getScheme()}
+     */
+    @Override
+    public String getScheme() {
+        return scheme;
+    }
 
-	/**
-	 * {@inheritDoc RestClient#perform(RestRequest)}
-	 */
-	@Override
-	public <T> boolean enqueue(RestRequest<T> request) {
-		if (request == null) {
-			throw new NullPointerException("request cannot be null");
-		}
-		request.validate();
+    /**
+     * {@inheritDoc RestClient#getAuthority()}
+     */
+    @Override
+    public String getAuthority() {
+        return authority;
+    }
 
-		try {
-			this.executor.execute(new RequestRunner<T>(request));
+    /**
+     * {@inheritDoc RestClient#perform(RestRequest)}
+     */
+    @Override
+    public <T> boolean enqueue(RestRequest<T> request) {
+        if (request == null) {
+            throw new NullPointerException("request cannot be null");
+        }
+        request.validate();
 
-			return true;
-		} catch (RejectedExecutionException e) {
-			// TODO: Consider just propagating this exception
-			return false;
-		}
-	}
+        try {
+            this.executor.execute(new RequestRunner<T>(request));
 
-	/**
-	 * Processes the given result and analyzes the result of it, returning a
-	 * generic success/failure bundle.
-	 * 
-	 * @param restRequest
-	 *            The request to process.
-	 * @return A simplified result object which reflects the final processing
-	 *         state of the request.
-	 */
-	protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest);
-	
-	/**
-	 * Reports a result using the callerHandler.
-	 * 
-	 * @param request
-	 *            The request that we are reporting the result of.
-	 * @param result
-	 *            The result of the request.
-	 */
-	protected <T> void reportResult(final RestRequest<T> request, final RestResult<T> result) {
-		callerHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				callListener(request, result);
-			}
-		});
-	}
-	
-	
-	/**
-	 * Reports a result back to any listeners implementation.
-	 * 
-	 * @param request
-	 *            The request that we are reporting the result of.
-	 * @param result
-	 *            The result of the request.
-	 */
-	protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
-		ResultListener<? super T> resultListener = request.getResultListener();
-		Session session = result.session();
-		if (session != null) {
-			resultListener.onSessionChange(request.getTicket(), session);
-		}
+            return true;
+        } catch (RejectedExecutionException e) {
+            // TODO: Consider just propagating this exception
+            return false;
+        }
+    }
 
-		if (result.isSuccess()) {
-			resultListener.onSuccess(request.getTicket(), result.item());
-		} else {
-			resultListener.onFailure(request.getTicket(), result.message());
-		}
-	}
+    /**
+     * Processes the given result and analyzes the result of it, returning a
+     * generic success/failure bundle.
+     * 
+     * @param restRequest
+     *        The request to process.
+     * @return A simplified result object which reflects the final processing
+     *         state of the request.
+     */
+    protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest);
 
-	/**
-	 * Gives information on the current occupied size of the request queue.
-	 * 
-	 * @return The number of requests in the queue.
-	 */
-	public int size() {
-		return queue.size();
-	}
+    /**
+     * Reports a result using the callerHandler.
+     * 
+     * @param request
+     *        The request that we are reporting the result of.
+     * @param result
+     *        The result of the request.
+     */
+    protected <T> void reportResult(final RestRequest<T> request, final RestResult<T> result) {
+        callerHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                callListener(request, result);
+            }
+        });
+    }
 
-	/**
-	 * Gives information on the current state of the consumer thread.
-	 * 
-	 * @return The current state.
-	 */
-	public State state() {
-		return state;
-	}
+    /**
+     * Reports a result back to any listeners implementation.
+     * 
+     * @param request
+     *        The request that we are reporting the result of.
+     * @param result
+     *        The result of the request.
+     */
+    protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
+        ResultListener<? super T> resultListener = request.getResultListener();
+        Session session = result.session();
+        if (session != null) {
+            resultListener.onSessionChange(request.getTicket(), session);
+        }
 
-	private class RequestRunner<T> implements Runnable {
+        if (result.isSuccess()) {
+            resultListener.onSuccess(request.getTicket(), result.item());
+        } else {
+            resultListener.onFailure(request.getTicket(), result.message());
+        }
+    }
 
-		private final RestRequest<T> request;
+    /**
+     * Gives information on the current occupied size of the request queue.
+     * 
+     * @return The number of requests in the queue.
+     */
+    public int size() {
+        return queue.size();
+    }
 
-		private RequestRunner(RestRequest<T> request) {
-			this.request = request;
-		}
+    /**
+     * Gives information on the current state of the consumer thread.
+     * 
+     * @return The current state.
+     */
+    public State state() {
+        return state;
+    }
 
-		@Override
-		public void run() {
-			RestResult<T> result;
-			
-			state = State.PROCESSING;
-			try {			
-				result = handleRequest(request);
-			} finally {			
-				state = State.IDLE;
-			}
-	
-			// The user is no longer authorized. Remove any pending
-			// requests before proceeding.
-			Session session = result.session();
-			if (session != null && !session.isAuthorized()) {
-				queue.clear();
-			}
+    private class RequestRunner<T> implements Runnable {
 
-			reportResult(request, result);
-		}
-	}
+        private final RestRequest<T> request;
+
+        private RequestRunner(RestRequest<T> request) {
+            this.request = request;
+        }
+
+        @Override
+        public void run() {
+            RestResult<T> result;
+
+            state = State.PROCESSING;
+            try {
+                result = handleRequest(request);
+            } finally {
+                state = State.IDLE;
+            }
+
+            // The user is no longer authorized. Remove any pending
+            // requests before proceeding.
+            Session session = result.session();
+            if (session != null && !session.isAuthorized()) {
+                queue.clear();
+            }
+
+            reportResult(request, result);
+        }
+    }
 }
