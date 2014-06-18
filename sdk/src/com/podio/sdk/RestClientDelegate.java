@@ -24,19 +24,20 @@ package com.podio.sdk;
 
 import android.net.Uri;
 
+import com.podio.sdk.client.PodioException;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 
 public interface RestClientDelegate {
 
-    public RestResult<Session> authorize(Uri uri);
+    public RestResult<Session> authorize(Uri uri) throws PodioException;
 
-    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser);
+    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser) throws PodioException;
 
-    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser);
+    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser) throws PodioException;
 
-    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser);
+    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser) throws PodioException;
 
-    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser);
+    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser) throws PodioException;
 
 }

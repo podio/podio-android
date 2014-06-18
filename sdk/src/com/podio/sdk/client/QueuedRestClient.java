@@ -59,6 +59,39 @@ public abstract class QueuedRestClient implements RestClient {
         IDLE, PROCESSING
     }
 
+    private final class RequestRunner<T> implements Runnable {
+
+        private final RestRequest<T> request;
+
+        private RequestRunner(RestRequest<T> request) {
+            this.request = request;
+        }
+
+        @Override
+        public void run() {
+            RestResult<T> result;
+
+            state = State.PROCESSING;
+            try {
+                result = handleRequest(request);
+            } catch (PodioException e) {
+                result = null;
+            } finally {
+                state = State.IDLE;
+            }
+
+            Session session = result != null ? result.session() : null;
+
+            if (session != null && !session.isAuthorized()) {
+                // The user is no longer authorized. Remove any pending
+                // requests before proceeding.
+                queue.clear();
+            }
+
+            reportResult(request, result);
+        }
+    }
+
     private final String scheme;
     private final String authority;
 
@@ -132,6 +165,7 @@ public abstract class QueuedRestClient implements RestClient {
         if (request == null) {
             throw new NullPointerException("request cannot be null");
         }
+
         request.validate();
 
         try {
@@ -153,7 +187,7 @@ public abstract class QueuedRestClient implements RestClient {
      * @return A simplified result object which reflects the final processing
      *         state of the request.
      */
-    protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest);
+    protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException;
 
     /**
      * Reports a result using the callerHandler.
@@ -183,6 +217,7 @@ public abstract class QueuedRestClient implements RestClient {
     protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
         ResultListener<? super T> resultListener = request.getResultListener();
         Session session = result.session();
+
         if (session != null) {
             resultListener.onSessionChange(request.getTicket(), session);
         }
@@ -210,35 +245,5 @@ public abstract class QueuedRestClient implements RestClient {
      */
     public State state() {
         return state;
-    }
-
-    private class RequestRunner<T> implements Runnable {
-
-        private final RestRequest<T> request;
-
-        private RequestRunner(RestRequest<T> request) {
-            this.request = request;
-        }
-
-        @Override
-        public void run() {
-            RestResult<T> result;
-
-            state = State.PROCESSING;
-            try {
-                result = handleRequest(request);
-            } finally {
-                state = State.IDLE;
-            }
-
-            // The user is no longer authorized. Remove any pending
-            // requests before proceeding.
-            Session session = result.session();
-            if (session != null && !session.isAuthorized()) {
-                queue.clear();
-            }
-
-            reportResult(request, result);
-        }
     }
 }

@@ -94,10 +94,11 @@ public class CachedRestClient extends HttpRestClient {
      * request to be handled by the network client as well according to the
      * above pattern.
      * 
+     * @throws PodioException
      * @see com.podio.sdk.client.HttpRestClient#handleRequest(com.podio.sdk.client.RestRequest)
      */
     @Override
-    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
         RestOperation operation = restRequest.getOperation();
         PodioParser<? extends T> parser = restRequest.getParser();
 
@@ -105,8 +106,7 @@ public class CachedRestClient extends HttpRestClient {
         String cacheKey = uri.toString();
 
         RestResult<T> result;
-        if (operation == RestOperation.GET //
-                && !delegatedRequests.contains(restRequest)) {
+        if (operation == RestOperation.GET && !delegatedRequests.contains(restRequest)) {
 
             // Query the locally cached data first and then queue the
             // request again for the super implementation to act upon.
@@ -128,7 +128,6 @@ public class CachedRestClient extends HttpRestClient {
             if (result.isSuccess()) {
                 if (operation == RestOperation.GET) {
                     String json = parser.parseToJson(result.item());
-
                     cacheClient.save(cacheKey, json != null ? json.getBytes() : null);
                 } else if (operation != RestOperation.AUTHORIZE) {
                     cacheClient.delete(cacheKey);

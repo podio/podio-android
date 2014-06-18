@@ -26,6 +26,7 @@ import android.net.Uri;
 
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.PodioException;
 import com.podio.sdk.client.RestResult;
 
 public enum RestOperation {
@@ -33,7 +34,8 @@ public enum RestOperation {
         @SuppressWarnings("unchecked")
         @Override
         public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
-                Object item, PodioParser<? extends T> parser) {
+                Object item, PodioParser<? extends T> parser) throws PodioException {
+
             return (RestResult<T>) delegate.authorize(uri);
         }
     },
@@ -41,7 +43,8 @@ public enum RestOperation {
     DELETE {
         @Override
         public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
-                Object item, PodioParser<? extends T> parser) {
+                Object item, PodioParser<? extends T> parser) throws PodioException {
+
             return delegate.delete(uri, parser);
         }
     },
@@ -49,7 +52,8 @@ public enum RestOperation {
     GET {
         @Override
         public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
-                Object item, PodioParser<? extends T> parser) {
+                Object item, PodioParser<? extends T> parser) throws PodioException {
+
             return delegate.get(uri, parser);
         }
     },
@@ -57,7 +61,8 @@ public enum RestOperation {
     POST {
         @Override
         public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
-                Object item, PodioParser<? extends T> parser) {
+                Object item, PodioParser<? extends T> parser) throws PodioException {
+
             return delegate.post(uri, item, parser);
         }
     },
@@ -65,11 +70,12 @@ public enum RestOperation {
     PUT {
         @Override
         public <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
-                Object item, PodioParser<? extends T> parser) {
+                Object item, PodioParser<? extends T> parser) throws PodioException {
+
             return delegate.put(uri, item, parser);
         }
     };
 
     public abstract <T> RestResult<T> invoke(RestClientDelegate delegate, Uri uri,
-            Object item, PodioParser<? extends T> parser);
+            Object item, PodioParser<? extends T> parser) throws PodioException;
 }

@@ -73,7 +73,7 @@ public class HttpRestClient extends QueuedRestClient {
      * {@inheritDoc}
      */
     @Override
-    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
         Uri uri = restRequest
                 .getFilter()
                 .buildUri(getScheme(), getAuthority());

@@ -32,14 +32,17 @@ import java.util.concurrent.TimeoutException;
 import android.content.Context;
 import android.net.Uri;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
+import com.podio.sdk.client.PodioException;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
@@ -48,7 +51,6 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     private final RequestQueue requestQueue;
 
-    private VolleyError lastRequestError;
     private Session session;
     private String refreshUrl;
 
@@ -57,7 +59,7 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public RestResult<Session> authorize(Uri uri) {
+    public RestResult<Session> authorize(Uri uri) throws PodioException {
         if (Utils.isEmpty(uri)) {
             throw new IllegalArgumentException("uri cannot be empty");
         }
@@ -77,22 +79,22 @@ public class HttpClientDelegate implements RestClientDelegate {
     }
 
     @Override
-    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser) {
+    public <T> RestResult<T> delete(Uri uri, PodioParser<? extends T> parser) throws PodioException {
         return request(Method.DELETE, uri, null, parser, true);
     }
 
     @Override
-    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser) {
+    public <T> RestResult<T> get(Uri uri, PodioParser<? extends T> parser) throws PodioException {
         return request(Method.GET, uri, null, parser, true);
     }
 
     @Override
-    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser) {
+    public <T> RestResult<T> post(Uri uri, Object item, PodioParser<? extends T> parser) throws PodioException {
         return request(Method.POST, uri, item, parser, true);
     }
 
     @Override
-    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser) {
+    public <T> RestResult<T> put(Uri uri, Object item, PodioParser<? extends T> parser) throws PodioException {
         return request(Method.PUT, uri, item, parser, true);
     }
 
@@ -108,22 +110,47 @@ public class HttpClientDelegate implements RestClientDelegate {
         this.session = session;
     }
 
-    private String getBlockingResponse(RequestFuture<String> future) {
-        // FIXME: We need to bubble up these errors, not just swallow them
-        lastRequestError = null;
+    private String getBlockingResponse(RequestFuture<String> future) throws PodioException {
+        String json;
 
         try {
-            return future.get(10, TimeUnit.SECONDS);
+            json = future.get(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
+            PodioException podioException = getPodioException(e);
+            throw podioException;
         } catch (ExecutionException e) {
-            lastRequestError = (VolleyError) e.getCause();
-            e.printStackTrace();
-            return null;
+            PodioException podioException = getPodioException(e);
+            throw podioException;
         } catch (TimeoutException e) {
-            e.printStackTrace();
-            return null;
+            PodioException podioException = getPodioException(e);
+            throw podioException;
+        }
+
+        return json;
+    }
+
+    private PodioException getPodioException(Exception cause) {
+        if (cause instanceof ExecutionException) {
+            VolleyError error = (VolleyError) cause.getCause();
+
+            if (error == null || error.networkResponse == null || error.networkResponse.data == null) {
+                return new PodioException(cause);
+            }
+
+            NetworkResponse response = error.networkResponse;
+            byte[] errorData = response.data;
+            int statusCode = response.statusCode;
+
+            String json = new String(errorData);
+            Gson gson = new Gson();
+
+            PodioException exception = gson.fromJson(json, PodioException.class);
+            exception.initCause(cause);
+            exception.initStatusCode(statusCode);
+
+            return exception;
+        } else {
+            return new PodioException(cause);
         }
     }
 
@@ -150,16 +177,7 @@ public class HttpClientDelegate implements RestClientDelegate {
         return params;
     }
 
-    private <T> RestResult<T> request(int method, Uri uri, Object item, PodioParser<? extends T> parser, boolean tryRefresh) {
-        if (Utils.isEmpty(uri)) {
-            throw new IllegalArgumentException("uri cannot be empty");
-        }
-        if (parser == null) {
-            throw new NullPointerException("parser cannot be null");
-        }
-
-        boolean refreshedSession = checkSession();
-
+    private <T> RestResult<T> request(int method, Uri uri, Object item, PodioParser<? extends T> parser, boolean tryRefresh) throws PodioException {
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + session.accessToken);
 
@@ -169,36 +187,23 @@ public class HttpClientDelegate implements RestClientDelegate {
         StringRequest request = new PodioRequest(method, uri.toString(), body, headers, future);
         requestQueue.add(request);
 
-        String output = getBlockingResponse(future);
+        try {
+            boolean didRefreshSession = checkSession();
+            String output = getBlockingResponse(future);
+            T content = parser.parseToItem(output);
 
-        if (wasTokenExpiredError()) {
-            // For some reason the server has invalidated our access token.
-            // Try refresh the access token again.
-            refreshSession();
-            refreshedSession = true;
-
-            return request(method, uri, item, parser, false);
+            return new RestResult<T>(true, didRefreshSession ? session : null, null, content);
+        } catch (PodioException e) {
+            if (e.isExpiredError() && tryRefresh) {
+                refreshSession();
+                return request(method, uri, item, parser, false);
+            } else {
+                throw e;
+            }
         }
-
-        // FIXME: This is not a proper way to check for success, we should use
-        // status codes instead
-        boolean isSuccess = Utils.notEmpty(output);
-        T content = parser.parseToItem(output);
-
-        return new RestResult<T>(isSuccess, refreshedSession ? session : null, null, content);
     }
 
-    private boolean wasTokenExpiredError() {
-        // FIXME: Should also check that:
-        // error="unauthorized"
-        // error_description=expired_token
-
-        return lastRequestError != null
-                && lastRequestError.networkResponse != null
-                && lastRequestError.networkResponse.statusCode == 401;
-    }
-
-    private boolean refreshSession() {
+    private boolean refreshSession() throws PodioException {
         Map<String, String> refreshParams = new HashMap<String, String>();
         refreshParams.put("grant_type", "refresh_token");
         refreshParams.put("refresh_token", session.refreshToken);
@@ -206,24 +211,23 @@ public class HttpClientDelegate implements RestClientDelegate {
         return authorizeRequest(refreshUrl, refreshParams);
     }
 
-    private boolean authorizeRequest(String url, Map<String, String> params) {
+    private boolean authorizeRequest(String url, Map<String, String> params) throws PodioException {
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new RefreshRequest(refreshUrl, params, future);
 
         requestQueue.add(request);
-        String resultJson = getBlockingResponse(future);
 
+        String resultJson = getBlockingResponse(future);
         session = new Session(resultJson);
 
-        // FIXME: This is not a proper way to check for success, we should use
-        // status codes instead
-        return Utils.notEmpty(resultJson);
+        return true;
     }
 
-    private boolean checkSession() {
+    private boolean checkSession() throws PodioException {
         if (session == null) {
             throw new IllegalStateException("No session is active");
         }
+
         if (!session.isAuthorized()) {
             throw new IllegalStateException("Session is not authorized");
         }

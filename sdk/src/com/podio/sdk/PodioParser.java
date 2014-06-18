@@ -63,8 +63,8 @@ public class PodioParser<T> {
             }
 
             Field.Type typeEnum = Field.Type.undefined;
-
             JsonElement fieldType = jsonObject.get("type");
+
             if (fieldType != null && !fieldType.isJsonNull()) {
                 try {
                     typeEnum = Enum.valueOf(Field.Type.class, fieldType.getAsString());
@@ -74,7 +74,7 @@ public class PodioParser<T> {
 
             if (typeEnum == Field.Type.undefined) {
                 // Overwrite the type in the json so we get undefined instead of
-                // null
+                // null.
                 jsonObject.addProperty("type", Field.Type.undefined.name());
             }
 
