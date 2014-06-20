@@ -33,13 +33,32 @@ import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.filter.CalendarFilter;
 
+/**
+ * Enables access to the Calendar API end point.
+ * 
+ * @author Tobias Lindberg
+ */
 public class CalendarProvider extends BasicPodioProvider {
 
     public CalendarProvider(RestClient client) {
         super(client);
     }
 
-    public Future<RestResult<CalendarEvent[]>> fetchGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches all global calendar events.
+     * 
+     * @param from
+     *        The Date from which the result should start from.
+     * @param to
+     *        The Date from which the result should end at.
+     * @param priority
+     *        The priority level of the results.
+     * @param resultListener
+     *        The callback implementation called when the calendar events are
+     *        fetched. Null is valid, but doesn't make any sense.
+     * @return
+     */
+    public Future<RestResult<CalendarEvent[]>> getGlobal(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         CalendarFilter filter = new CalendarFilter()
                 .withDateFromTo(from, to)
                 .withPriority(priority);

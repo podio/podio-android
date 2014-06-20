@@ -38,6 +38,12 @@ public class BasicPodioProvider {
 
     private final RestClient client;
 
+    /**
+     * Constructor.
+     * 
+     * @param client
+     *        The rest client that will access the data.
+     */
     public BasicPodioProvider(RestClient client) {
         if (client == null) {
             throw new NullPointerException("client cannot be null");

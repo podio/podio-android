@@ -32,13 +32,23 @@ import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.filter.ApplicationFilter;
 
-public final class ApplicationProvider extends BasicPodioProvider {
+public class ApplicationProvider extends BasicPodioProvider {
 
     public ApplicationProvider(RestClient client) {
         super(client);
     }
 
-    public Future<RestResult<Application>> fetchApplication(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches the full content set of the application with the given id.
+     * 
+     * @param applicationId
+     *        The id of the application to fetch.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Application>> get(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("full");
@@ -46,7 +56,17 @@ public final class ApplicationProvider extends BasicPodioProvider {
         return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Future<RestResult<Application>> fetchApplicationShort(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches a short subset of the application with the given id.
+     * 
+     * @param applicationId
+     *        The id of the application to fetch.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Application>> getShort(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("short");
@@ -54,7 +74,17 @@ public final class ApplicationProvider extends BasicPodioProvider {
         return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Future<RestResult<Application>> fetchApplicationMini(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches a mini subset of the application with the given id.
+     * 
+     * @param applicationId
+     *        The id of the application to fetch.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Application>> getMini(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("mini");
@@ -62,7 +92,17 @@ public final class ApplicationProvider extends BasicPodioProvider {
         return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Future<RestResult<Application>> fetchApplicationMicro(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches a micro subset of the application with the given id.
+     * 
+     * @param applicationId
+     *        The id of the application to fetch.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Application>> getMicro(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("micro");
@@ -70,7 +110,17 @@ public final class ApplicationProvider extends BasicPodioProvider {
         return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Future<RestResult<Application[]>> fetchApplicationsForSpace(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches all active applications in the workspace with the given id.
+     * 
+     * @param spaceId
+     *        The id of the parent workspace.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Application[]>> getAllActive(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withSpaceId(spaceId)
                 .withInactivesIncluded(false);
@@ -78,7 +128,18 @@ public final class ApplicationProvider extends BasicPodioProvider {
         return get(filter, Application[].class, resultListener, errorListener, sessionListener);
     }
 
-    public Future<RestResult<Application[]>> fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    /**
+     * Fetches all applications, including the inactive ones, in the workspace
+     * with the given id.
+     * 
+     * @param spaceId
+     *        The id of the parent workspace.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Application[]>> getAll(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withSpaceId(spaceId)
                 .withInactivesIncluded(true);

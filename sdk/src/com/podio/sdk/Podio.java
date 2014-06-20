@@ -22,8 +22,6 @@
 
 package com.podio.sdk;
 
-import java.util.Date;
-
 import android.content.Context;
 import android.net.Uri;
 
@@ -32,11 +30,6 @@ import com.podio.sdk.client.HttpRestClient;
 import com.podio.sdk.client.cache.CacheClient;
 import com.podio.sdk.client.cache.SQLiteCacheClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
-import com.podio.sdk.domain.Application;
-import com.podio.sdk.domain.CalendarEvent;
-import com.podio.sdk.domain.Item;
-import com.podio.sdk.domain.ItemRequest;
-import com.podio.sdk.domain.Organization;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.provider.ApplicationProvider;
@@ -52,354 +45,6 @@ import com.podio.sdk.provider.SessionProvider;
  * @author László Urszuly
  */
 public final class Podio {
-
-    /**
-     * Enables means of easy operating on the Application API end point.
-     * 
-     * @author László Urszuly
-     */
-    public static final class ApplicationAPI {
-
-        private ApplicationAPI() {
-            // Hiding the constructor of this class as it's not meant to be
-            // instantiated.
-        }
-
-        /**
-         * Fetches the full content set of the Podio Application with the given
-         * id.
-         * 
-         * @param applicationId
-         *        The id of the application to fetch.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object get(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ApplicationProvider provider = new ApplicationProvider(client);
-
-            return provider.fetchApplication(applicationId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches all App items in the workspace with the given id.
-         * 
-         * @param spaceId
-         *        The id of the parent workspace.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getForSpace(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ApplicationProvider provider = new ApplicationProvider(client);
-
-            return provider.fetchApplicationsForSpace(spaceId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches all App items, including the inactive ones, in the workspace
-         * with the given id.
-         * 
-         * @param spaceId
-         *        The id of the parent workspace.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getForSpaceIncludingInactive(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ApplicationProvider provider = new ApplicationProvider(client);
-
-            return provider.fetchApplicationsForSpaceWithInactivesIncluded(spaceId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches a micro content subset of the Podio Application with the
-         * given id.
-         * 
-         * @param applicationId
-         *        The id of the application to fetch.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getMicro(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ApplicationProvider provider = new ApplicationProvider(client);
-
-            return provider.fetchApplicationMicro(applicationId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches a mini content subset of the Podio Application with the given
-         * id.
-         * 
-         * @param applicationId
-         *        The id of the application to fetch.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getMini(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ApplicationProvider provider = new ApplicationProvider(client);
-
-            return provider.fetchApplicationMini(applicationId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches a short content subset of the Podio Application with the
-         * given id.
-         * 
-         * @param applicationId
-         *        The id of the application to fetch.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getShort(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ApplicationProvider provider = new ApplicationProvider(client);
-
-            return provider.fetchApplicationShort(applicationId, resultListener, errorListener, sessionListener);
-        }
-    }
-
-    /**
-     * Enables means of authentication and basic session management with the
-     * Podio servers.
-     * 
-     * @author László Urszuly
-     */
-    public static final class ClientAPI {
-
-        private ClientAPI() {
-            // Hiding the constructor of this class as it's not meant to be
-            // instantiated.
-        }
-
-        /**
-         * Authenticates the caller with the given user credentials. On success
-         * a new session object with the access and refresh tokens will be
-         * delivered through the given {@link ResultListener}.
-         * 
-         * @param username
-         *        The user name of the Podio account to authenticate with.
-         * @param password
-         *        The corresponding password of the Podio account.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object authenticateAsUser(String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
-            SessionProvider provider = new SessionProvider(client);
-
-            return provider.authenticateWithUserCredentials(clientId, clientSecret, username, password, resultListener, errorListener, null);
-        }
-
-        /**
-         * Authenticates the caller with the given app credentials. On success a
-         * new session object with the access and refresh tokens will be
-         * delivered through the given {@link ResultListener}.
-         * 
-         * @param appId
-         *        The id of the app to authenticate with.
-         * @param appToken
-         *        The token that has been generated for a particular app.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object authenticateAsApp(String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
-            SessionProvider provider = new SessionProvider(client);
-
-            return provider.authenticateWithAppCredentials(clientId, clientSecret, appId, appToken, resultListener, errorListener, null);
-        }
-
-        /**
-         * Revokes a previously created Podio session. Even though the access
-         * token may have expired, the refresh token can be used to get a new
-         * access token. The idea here is to enable the caller to persist the
-         * session and avoid an unnecessary re-authentication. NOTE! The server
-         * may very well invalidate both the access and refresh tokens, which
-         * would require a re-authentication anyway.
-         * 
-         * @param session
-         *        The previously stored session object.
-         */
-        public static final void restoreSession(Session session) {
-            Uri sessionRefreshUri = new Uri.Builder()
-                    .scheme(client.getScheme())
-                    .authority(client.getAuthority())
-                    .appendEncodedPath(SessionFilter.PATH)
-                    .build();
-            String url = sessionRefreshUri.toString();
-            networkDelegate.restoreSession(url, session);
-        }
-
-    }
-
-    /**
-     * Enables means of easy operating on the Item API end point.
-     * 
-     * @author László Urszuly
-     */
-    public static final class ItemAPI {
-
-        private ItemAPI() {
-            // Hiding the constructor of this class as it's not meant to be
-            // instantiated.
-        }
-
-        /**
-         * Sends a new item to the Podio servers.
-         * 
-         * @param applicationId
-         *        The id of the application to which this item is to be added.
-         * @param data
-         *        The definition of the item content to push.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object add(long applicationId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-
-            ItemProvider provider = new ItemProvider(client);
-
-            return provider.addItem(applicationId, data, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches a single item with the given id.
-         * 
-         * @param itemId
-         *        The id of the item to fetch.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object get(long itemId, ResultListener<? super Item> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ItemProvider provider = new ItemProvider(client);
-
-            return provider.fetchItem(itemId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Fetches a default set of filtered items for the application with the
-         * given id.
-         * 
-         * @param applicationId
-         *        The id of the parent application.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getForApplication(long applicationId, ResultListener<? super ItemRequest.Result> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ItemProvider provider = new ItemProvider(client);
-
-            return provider.fetchItemsForApplication(applicationId, resultListener, errorListener, sessionListener);
-        }
-
-        /**
-         * Sends the new values for the fields of an item to the API.
-         * 
-         * @param itemId
-         *        The id of the item to update.
-         * @param data
-         *        The changed data bundle.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object update(long itemId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            ItemProvider provider = new ItemProvider(client);
-
-            return provider.updateItem(itemId, data, resultListener, errorListener, sessionListener);
-
-        }
-    }
-
-    /**
-     * Enables means of easy operating on the Organization API end point.
-     * 
-     * @author László Urszuly
-     */
-    public static final class OrganizationAPI {
-
-        private OrganizationAPI() {
-            // Hiding the constructor of this class as it's not meant to be
-            // instantiated.
-        }
-
-        /**
-         * Fetches all Organizations (including a minimal set of information on
-         * the contained workspaces) that are available to the user.
-         * 
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         */
-        public static final Object getAll(ResultListener<? super Organization[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            OrganizationProvider provider = new OrganizationProvider(client);
-
-            return provider.getAll(resultListener, errorListener, sessionListener);
-        }
-    }
-
-    /**
-     * Enables means of easy operating on the Calendar API end point.
-     * 
-     * @author Tobias Lindberg
-     */
-    public static final class CalendarAPI {
-
-        private CalendarAPI() {
-            // Hiding the constructor of this class as it's not meant to be
-            // instantiated.
-        }
-
-        /**
-         * Fetches all global Calendar events.
-         * 
-         * @param from
-         *        The Date from which the result should start from.
-         * @param to
-         *        The Date from which the result should end at.
-         * @param priority
-         *        The priority level of the results.
-         * @param resultListener
-         *        The callback implementation called when the calendar events
-         *        are fetched. Null is valid, but doesn't make any sense.
-         * @return
-         */
-        public static final Object getGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-            CalendarProvider provider = new CalendarProvider(client);
-
-            return provider.fetchGlobalCalendar(from, to, priority, resultListener, errorListener, sessionListener);
-        }
-    }
 
     /**
      * Describes the behavior of the {@link RestClient} implementation used by
@@ -419,14 +64,42 @@ public final class Podio {
     private static final int DATABASE_VERSION = 1;
 
     private static HttpClientDelegate networkDelegate;
+    private static RestClient restClient;
 
-    private static RestClient client;
-    private static String clientId;
-    private static String clientSecret;
+    /**
+     * Enables means of easy operating on the {@link ApplicationProvider} API
+     * end point.
+     */
+    public static final ApplicationProvider application = new ApplicationProvider(restClient);
 
+    /**
+     * Enables means of easy operating on the {@link CalendarProvider} API end
+     * point.
+     */
+    public static final CalendarProvider calendar = new CalendarProvider(restClient);
+
+    /**
+     * Enables means of easy operating on the {@link ItemProvider} API end
+     * point.
+     */
+    public static final ItemProvider item = new ItemProvider(restClient);
+
+    /**
+     * Enables means of easy operating on the {@link OrganizationProvider} API
+     * end point.
+     */
+    public static final OrganizationProvider organization = new OrganizationProvider(restClient);
+
+    /**
+     * Enables means of easy operating on the {@link SessionProvider} API end
+     * point.
+     */
+    public static final SessionProvider client = new SessionProvider(restClient);
+
+    /**
+     * Hidden constructor.
+     */
     private Podio() {
-        // Hiding the constructor of this class as it's not meant to be
-        // instantiated.
     }
 
     /**
@@ -466,21 +139,42 @@ public final class Podio {
      *        The behavior to expect from the {@link RestClient} implementation.
      */
     public static void setup(Context context, String clientId, String clientSecret, RestBehavior behavior) {
-        Podio.clientId = clientId;
-        Podio.clientSecret = clientSecret;
         RestClientDelegate networkDelegate = new HttpClientDelegate(context);
+        client.setup(clientId, clientSecret);
 
         switch (behavior) {
         case HTTP_ONLY:
-            Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate);
+            Podio.restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
             break;
         case CACHED_HTTP:
             CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
-            Podio.client = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient);
+            Podio.restClient = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient);
             break;
         default:
-            Podio.client = new HttpRestClient(context, AUTHORITY, networkDelegate);
+            Podio.restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
             break;
         }
     }
+
+    /**
+     * Revokes a previously created Podio session. Even though the access token
+     * may have expired, the refresh token can be used to get a new access
+     * token. The idea here is to enable the caller to persist the session and
+     * avoid an unnecessary re-authentication. NOTE! The server may very well
+     * invalidate both the access and refresh tokens, which would require a
+     * re-authentication anyway.
+     * 
+     * @param session
+     *        The previously stored session object.
+     */
+    public static final void restoreSession(Session session) {
+        Uri sessionRefreshUri = new Uri.Builder()
+                .scheme(restClient.getScheme())
+                .authority(restClient.getAuthority())
+                .appendEncodedPath(SessionFilter.PATH)
+                .build();
+        String url = sessionRefreshUri.toString();
+        networkDelegate.restoreSession(url, session);
+    }
+
 }

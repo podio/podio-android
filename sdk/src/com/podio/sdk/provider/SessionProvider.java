@@ -37,31 +37,68 @@ import com.podio.sdk.internal.request.RestOperation;
 
 public class SessionProvider extends BasicPodioProvider {
 
+    private String clientId;
+    private String clientSecret;
+
     public SessionProvider(RestClient client) {
         super(client);
+        clientId = clientSecret = null;
     }
 
-    public Future<RestResult<Session>> authenticateWithUserCredentials(String clientId, String clientSecret,
-            String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-
+    /**
+     * Authenticates the caller with the given user credentials. On success a
+     * new session object with the access and refresh tokens will be delivered
+     * through the given {@link ResultListener}.
+     * 
+     * @param username
+     *        The user name of the Podio account to authenticate with.
+     * @param password
+     *        The corresponding password of the Podio account.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Session>> authenticateWithUserCredentials(String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withUserCredentials(username, password);
 
-        return authorize(filter, resultListener, errorListener, sessionListener);
+        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, sessionListener);
     }
 
-    public Future<RestResult<Session>> authenticateWithAppCredentials(String clientId, String clientSecret,
-            String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-
+    /**
+     * Authenticates the caller with the given app credentials. On success a new
+     * session object with the access and refresh tokens will be delivered
+     * through the given {@link ResultListener}.
+     * 
+     * @param appId
+     *        The id of the app to authenticate with.
+     * @param appToken
+     *        The token that has been generated for a particular app.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Session>> authenticateWithAppCredentials(String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken);
 
-        return authorize(filter, resultListener, errorListener, sessionListener);
+        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, sessionListener);
     }
 
-    private Future<RestResult<Session>> authorize(PodioFilter filter, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, sessionListener);
+    /**
+     * Initializes the provider with the given client id and secret.
+     * 
+     * @param clientId
+     *        The user client id.
+     * @param clientSecret
+     *        The user client secret.
+     */
+    public void setup(String clientId, String clientSecret) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
     }
 }
