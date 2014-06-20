@@ -22,27 +22,76 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.internal.utils.Utils;
+
 /**
  * @author László Urszuly
  */
 public class Embed {
+
     public static enum Type {
         link, undefined
     }
 
-    public final Integer embed_id = null;
-    public final String embed_html = null;
-    public final String description = null;
-    public final String original_url = null;
-    public final String hostname = null;
-    public final Integer embed_height = null;
-    public final Integer embed_width = null;
-    public final String resolved_url = null;
-    public final String title = null;
-    public final Type type = null;
-    public final String url;
+    private final Integer embed_height = null;
+    private final Integer embed_id = null;
+    private final Integer embed_width = null;
+
+    private final String description = null;
+    private final String embed_html = null;
+    private final String hostname = null;
+    private final String original_url = null;
+    private final String resolved_url = null;
+    private final String title = null;
+    private final String url;
+
+    private final Type type = null;
 
     public Embed(String url) {
         this.url = url;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getEmbedHeight() {
+        return Utils.getNative(embed_height, 0);
+    }
+
+    public String getEmbedHtml() {
+        return embed_html;
+    }
+
+    public int getEmbedId() {
+        return Utils.getNative(embed_id, -1);
+    }
+
+    public int getEmbedWidth() {
+        return Utils.getNative(embed_width, 0);
+    }
+
+    public String getHostName() {
+        return hostname;
+    }
+
+    public String getOriginalUrl() {
+        return original_url;
+    }
+
+    public String getResolvedUrl() {
+        return resolved_url;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public Type getType() {
+        return type != null ? type : Type.undefined;
     }
 }

@@ -64,8 +64,8 @@ public final class LinkValue extends AbstractValue {
         if (o instanceof LinkValue) {
             LinkValue other = (LinkValue) o;
 
-            if (other.value != null && other.value.embed != null && this.value != null && this.value.embed != null && this.value.embed.url != null) {
-                return this.value.embed.url.equals(other.value.embed.url);
+            if (other.value != null && other.value.embed != null && this.value != null && this.value.embed != null && this.value.embed.getUrl() != null) {
+                return this.value.embed.getUrl().equals(other.value.embed.getUrl());
             }
         }
 
@@ -76,9 +76,9 @@ public final class LinkValue extends AbstractValue {
     public Object getPushData() {
         HashMap<String, String> data = null;
 
-        if (value != null && value.embed != null && value.embed.url != null) {
+        if (value != null && value.embed != null && value.embed.getUrl() != null) {
             data = new HashMap<String, String>();
-            data.put("value", value.embed.url);
+            data.put("value", value.embed.getUrl());
         }
 
         return data;
@@ -86,7 +86,7 @@ public final class LinkValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return this.value != null && this.value.embed != null && this.value.embed.embed_id != null ? this.value.embed.embed_id.intValue() : 0;
+        return value != null && value.embed != null ? value.embed.getEmbedId() : -1;
     }
 
     public File getFile() {
