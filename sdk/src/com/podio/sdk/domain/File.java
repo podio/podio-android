@@ -22,26 +22,73 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.internal.utils.Utils;
+
 /**
  * @author László Urszuly
  */
 public class File {
 
-    public final String mimetype = null;
-    public final String perma_link = null;
-    public final String description = null;
-    public final Integer size = null;
-    public final String name = null;
-    public final String hosted_by = null;
-    public final String hosted_by_humanized_name = null;
-    public final String thumbnail_link = null;
-    public final String link_target = null;
+    private final Integer file_id;
+    private final Integer size = null;
 
-    public final String link;
-    public final Integer file_id;
+    private final String description = null;
+    private final String hosted_by = null;
+    private final String hosted_by_humanized_name = null;
+    private final String link;
+    private final String link_target = null;
+    private final String mimetype = null;
+    private final String name = null;
+    private final String perma_link = null;
+    private final String thumbnail_link = null;
 
     public File(int fileId) {
         this.link = null;
         this.file_id = fileId;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getId() {
+        return Utils.getNative(file_id, -1);
+    }
+
+    public String getHostName() {
+        return hosted_by;
+    }
+
+    public String getHumanizedHostName() {
+        return hosted_by_humanized_name;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public String getLinkTarget() {
+        return link_target;
+    }
+
+    public String getMimeType() {
+        return mimetype;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPermaLink() {
+        return perma_link;
+    }
+
+    public int getSize() {
+        return Utils.getNative(size, 0);
+    }
+
+    public String getThumbnailLink() {
+        return thumbnail_link;
+    }
+
 }

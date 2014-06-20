@@ -45,8 +45,8 @@ public final class ImageValue extends AbstractValue {
         if (o instanceof ImageValue) {
             ImageValue other = (ImageValue) o;
 
-            if (other.value != null && other.value.file_id != null && this.value != null && this.value.file_id != null) {
-                return other.value.file_id.intValue() == this.value.file_id.intValue();
+            if (other.value != null && this.value != null) {
+                return other.value.getId() == this.value.getId();
             }
         }
 
@@ -57,9 +57,13 @@ public final class ImageValue extends AbstractValue {
     public Object getPushData() {
         HashMap<String, Integer> data = null;
 
-        if (value != null && value.file_id != null) {
-            data = new HashMap<String, Integer>();
-            data.put("value", value.file_id);
+        if (value != null) {
+            int fileId = value.getId();
+
+            if (fileId != -1) {
+                data = new HashMap<String, Integer>();
+                data.put("value", fileId);
+            }
         }
 
         return data;
@@ -67,7 +71,7 @@ public final class ImageValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return this.value != null && this.value.file_id != null ? this.value.file_id.intValue() : 0;
+        return this.value != null ? this.value.getId() : -1;
     }
 
 }
