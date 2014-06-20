@@ -22,12 +22,17 @@
 package com.podio.sdk.domain;
 
 public final class Organization {
-    public static enum Type {
-        free, sponsored, premium
-    }
 
     public static enum Role {
         admin, regular, light
+    }
+
+    public static enum Status {
+        active, inactive, deleted
+    }
+
+    public static enum Type {
+        free, sponsored, premium
     }
 
     public final Integer grants_count = null;

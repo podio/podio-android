@@ -33,6 +33,14 @@ public final class Utils {
         // Hide constructor.
     }
 
+    public static boolean getNative(Boolean object, boolean fallback) {
+        return object != null ? object.booleanValue() : fallback;
+    }
+
+    public static int getNative(Integer object, int fallback) {
+        return object != null ? object.intValue() : fallback;
+    }
+
     public static boolean isAnyEmpty(String... strings) {
         boolean isEmpty = isEmpty(strings);
 

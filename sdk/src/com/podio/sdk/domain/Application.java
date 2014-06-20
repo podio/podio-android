@@ -22,56 +22,309 @@
 
 package com.podio.sdk.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.internal.utils.Utils;
 
-public final class Application {
+public class Application {
 
-    public static final class Configuration {
-        public static enum Type {
-            standard, meeting
-        }
-
-        public final Boolean allow_attachments = null;
-        public final Boolean allow_comments = null;
-        public final Boolean allow_edit = null;
-        public final Boolean approved = null;
-        public final String description = null;
-        public final String external_id = null;
-        public final Boolean fivestar = null;
-        public final String fivestar_label = null;
-        public final String icon = null;
-        public final Integer icon_id = null;
-        public final String item_name = null;
-        public final String name = null;
-        public final Boolean rsvp = null;
-        public final String rsvp_label = null;
-        public final Boolean thumbs = null;
-        public final String thumbs_label = null;
-        public final Type type = null;
-        public final Boolean yesno = null;
-        public final String yesno_label = null;
+    public static enum Status {
+        active, inactive, deleted, undefined
     }
 
-    public final Long app_id = null;
-    public final Configuration config = null;
-    public final List<Field> fields = null;
-    public final String link = null;
-    public final String link_add = null;
-    public final User owner = null;
-    public final String[] rights = null;
-    public final Space space = null;
-    public final Integer space_id = null;
-    public final Status status = null;
-    public final String url = null;
-    public final String url_add = null;
-    public final String url_label = null;
-    public final String name = null;
-    public final Integer default_view_id = null;
-    public final String icon = null;
-    public final Integer icon_id = null;
-    public final Integer current_revision = null;
-    public final String item_name = null;
+    public static enum Type {
+        standard, meeting, undefined
+    }
 
+    public static enum View {
+        badge, calendar, card, stream, table, undefined
+    }
+
+    public static class Configuration {
+        private final Boolean allow_attachments = null;
+        private final Boolean allow_comments = null;
+        private final Boolean allow_create = null;
+        private final Boolean allow_edit = null;
+        private final Boolean allow_tags = null;
+        private final Boolean approved = null;
+        private final Boolean disable_notifications = null;
+        private final Boolean fivestar = null;
+        private final Boolean rsvp = null;
+        private final Boolean show_app_item_id = null;
+        private final Boolean silent_creates = null;
+        private final Boolean silent_edits = null;
+        private final Boolean thumbs = null;
+        private final Boolean yesno = null;
+        private final Integer app_item_id_padding = null;
+        private final String app_item_id_prefix = null;
+        private final String description = null;
+        private final String external_id = null;
+        private final String fivestar_label = null;
+        private final String icon = null;
+        private final String item_name = null;
+        private final String name = null;
+        private final String rsvp_label = null;
+        private final String thumbs_label = null;
+        private final String usage = null;
+        private final String yesno_label = null;
+        private final Type type = null;
+        private final View default_view = null;
+
+        private Configuration() {
+        }
+
+        public boolean allowsAttachments() {
+            return Utils.getNative(allow_attachments, true);
+        }
+
+        public boolean allowsComments() {
+            return Utils.getNative(allow_comments, true);
+        }
+
+        public boolean allowsCreate() {
+            return Utils.getNative(allow_create, true);
+        }
+
+        public boolean allowsEdit() {
+            return Utils.getNative(allow_edit, true);
+        }
+
+        public boolean allowsTags() {
+            return Utils.getNative(allow_tags, true);
+        }
+
+        public String getAppItemIdPrefix() {
+            return app_item_id_prefix;
+        }
+
+        public View getDefaultView() {
+            return default_view != null ? default_view : View.badge;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getExternalId() {
+            return external_id;
+        }
+
+        public String getFiveStarLabel() {
+            return fivestar_label;
+        }
+
+        public String getIconName() {
+            return icon;
+        }
+
+        public String getItemName() {
+            return item_name;
+        }
+
+        public int getAppItemIdPaddingCount() {
+            return Utils.getNative(app_item_id_padding, 0);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getRsvpLabel() {
+            return rsvp_label;
+        }
+
+        public String getThumbsLabel() {
+            return thumbs_label;
+        }
+
+        public Type getType() {
+            return type != null ? type : Type.standard;
+        }
+
+        public String getUsageInfo() {
+            return usage;
+        }
+
+        public String getYesNoLabel() {
+            return yesno_label;
+        }
+
+        public boolean hasDisabledNotifications() {
+            return Utils.getNative(disable_notifications, false);
+        }
+
+        public boolean hasFiveStarRating() {
+            return Utils.getNative(fivestar, false);
+        }
+
+        public boolean hasRsvpState() {
+            return Utils.getNative(rsvp, false);
+        }
+
+        public boolean hasSilentCreates() {
+            return Utils.getNative(silent_creates, false);
+        }
+
+        public boolean hasSilentEdits() {
+            return Utils.getNative(silent_edits, false);
+        }
+
+        public boolean hasThumbsVoting() {
+            return Utils.getNative(thumbs, false);
+        }
+
+        public boolean hasYesNoVoting() {
+            return Utils.getNative(yesno, false);
+        }
+
+        public boolean isApproved() {
+            return Utils.getNative(approved, false);
+        }
+
+        public boolean showAppItemId() {
+            return Utils.getNative(show_app_item_id, false);
+        }
+    }
+
+    private final Boolean pinned = null;
+    private final Boolean subscribed = null;
+    private final Configuration config = null;
+    private final Integer app_id = null;
+    private final Integer current_revision = null;
+    private final Integer default_view_id = null;
+    private final Integer original = null;
+    private final Integer original_revision = null;
+    private final Integer space_id = null;
+    // private final Integration integration = null;
+    private final List<Field> fields = null;
+    private final List<String> rights = null;
+    private final Status status = null;
+    private final String link = null;
+    private final String link_add = null;
+    private final String mailbox = null;
+    private final String token = null;
+    private final String url = null;
+    private final String url_add = null;
+    private final String url_label = null;
+    private final User owner = null;
+
+    public boolean isPinned() {
+        return Utils.getNative(pinned, false);
+    }
+
+    public boolean isSubscribed() {
+        return Utils.getNative(subscribed, false);
+    }
+
+    public String getAddLink() {
+        return link_add;
+    }
+
+    public String getAddUrl() {
+        return url_add;
+    }
+
+    public int getAppId() {
+        return Utils.getNative(app_id, -1);
+    }
+
+    /**
+     * Returns the configuration settings for this application. If the API
+     * didn't provide a configuration bundle then a default configuration will
+     * be returned.
+     * 
+     * @return A configuration bundle. Never null.
+     */
+    public Configuration getConfiguration() {
+        return config != null ? config : new Configuration();
+    }
+
+    public int getCurrentRevisionId() {
+        return Utils.getNative(current_revision, 0);
+    }
+
+    public int getDefaultViewId() {
+        return Utils.getNative(default_view_id, -1);
+    }
+
+    /**
+     * Gets a copy of the fields list for this application. No changes to the
+     * returned list will be reflected back to this applications fields list.
+     * 
+     * @return A list of fields. Never null.
+     */
+    public List<Field> getFields() {
+        return fields != null ?
+                new ArrayList<Field>(fields) :
+                new ArrayList<Field>();
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public String getMailbox() {
+        return mailbox;
+    }
+
+    public int getNumberOfPermissions() {
+        return rights != null ? rights.size() : 0;
+    }
+
+    public int getOriginAppId() {
+        return Utils.getNative(original, -1);
+    }
+
+    public int getOriginAppRevisionId() {
+        return Utils.getNative(original_revision, 0);
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public int getSpaceId() {
+        return Utils.getNative(space_id, -1);
+    }
+
+    public Status getStatus() {
+        return status != null ? status : Status.undefined;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUrlLabel() {
+        return url_label;
+    }
+
+    /**
+     * Checks whether the list of rights the user has for this application
+     * contains <em>all</em> the given permissions.
+     * 
+     * @param permissions
+     *        The list of permissions to check for.
+     * @return Boolean true if all given permissions are found or no permissions
+     *         are given. Boolean false otherwise.
+     */
+    public boolean hasPermissions(String... permissions) {
+        if (rights != null) {
+            for (String permission : permissions) {
+                if (!rights.contains(permission)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

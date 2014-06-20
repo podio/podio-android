@@ -105,7 +105,7 @@ public final class Item implements Pushable {
         this();
 
         if (application != null) {
-            this.fields.addAll(application.fields);
+            this.fields.addAll(application.getFields());
         }
     }
 

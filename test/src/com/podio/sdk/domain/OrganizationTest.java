@@ -72,7 +72,7 @@ public class OrganizationTest extends AndroidTestCase {
         assertEquals(Organization.Role.regular, organization.role);
         assertNotNull(organization.spaces);
         assertEquals(0, organization.spaces.length);
-        assertEquals(Status.inactive, organization.status);
+        assertEquals(Organization.Status.inactive, organization.status);
         assertEquals(Organization.Type.premium, organization.type);
         assertEquals("URL", organization.url);
         assertEquals("URLLABEL", organization.url_label);

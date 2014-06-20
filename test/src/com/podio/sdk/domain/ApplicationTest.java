@@ -22,9 +22,12 @@
 
 package com.podio.sdk.domain;
 
+import java.util.List;
+
 import android.test.AndroidTestCase;
 
 import com.google.gson.Gson;
+import com.podio.sdk.domain.field.Field;
 
 public class ApplicationTest extends AndroidTestCase {
 
@@ -56,7 +59,6 @@ public class ApplicationTest extends AndroidTestCase {
         .append(" fivestar:true,") //
         .append(" fivestar_label:'FIVESTARLABEL',") //
         .append(" icon:'ICON',") //
-        .append(" icon_id:1,") //
         .append(" item_name:'ITEMNAME',") //
         .append(" name:'NAME',") //
         .append(" rsvp:true,") //
@@ -72,7 +74,6 @@ public class ApplicationTest extends AndroidTestCase {
         .append("link_add:'LINKADD',") //
         .append("owner:{},") //
         .append("rights:[],") //
-        .append("space:{},") //
         .append("space_id:1,") //
         .append("status:'inactive',") //
         .append("url:'URL',") //
@@ -84,39 +85,43 @@ public class ApplicationTest extends AndroidTestCase {
         Application application = gson.fromJson(json, Application.class);
 
         assertNotNull(application);
-        assertEquals(Long.valueOf(1), application.app_id);
-        assertNotNull(application.config);
-        assertEquals(Boolean.TRUE, application.config.allow_attachments);
-        assertEquals(Boolean.TRUE, application.config.allow_comments);
-        assertEquals(Boolean.TRUE, application.config.allow_edit);
-        assertEquals(Boolean.TRUE, application.config.approved);
-        assertEquals("DESCRIPTION", application.config.description);
-        assertEquals("EXTERNALID", application.config.external_id);
-        assertEquals(Boolean.TRUE, application.config.fivestar);
-        assertEquals("FIVESTARLABEL", application.config.fivestar_label);
-        assertEquals("ICON", application.config.icon);
-        assertEquals(Integer.valueOf(1), application.config.icon_id);
-        assertEquals("ITEMNAME", application.config.item_name);
-        assertEquals("NAME", application.config.name);
-        assertEquals(Boolean.TRUE, application.config.rsvp);
-        assertEquals("RSVPLABEL", application.config.rsvp_label);
-        assertEquals(Boolean.TRUE, application.config.thumbs);
-        assertEquals("THUMBSLABEL", application.config.thumbs_label);
-        assertEquals(Application.Configuration.Type.meeting, application.config.type);
-        assertEquals(Boolean.TRUE, application.config.yesno);
-        assertEquals("YESNOLABEL", application.config.yesno_label);
-        assertNotNull(application.fields);
-        assertEquals(0, application.fields.size());
-        assertEquals("LINK", application.link);
-        assertEquals("LINKADD", application.link_add);
-        assertNotNull(application.owner);
-        assertNotNull(application.rights);
-        assertEquals(0, application.rights.length);
-        assertNotNull(application.space);
-        assertEquals(Status.inactive, application.status);
-        assertEquals("URL", application.url);
-        assertEquals("URLADD", application.url_add);
-        assertEquals("URLLABEL", application.url_label);
+        assertEquals(1, application.getAppId());
+
+        Application.Configuration config = application.getConfiguration();
+        assertNotNull(config);
+        assertEquals(true, config.allowsAttachments());
+        assertEquals(true, config.allowsComments());
+        assertEquals(true, config.allowsEdit());
+        assertEquals(true, config.isApproved());
+        assertEquals(true, config.hasFiveStarRating());
+        assertEquals(true, config.hasRsvpState());
+        assertEquals(true, config.hasThumbsVoting());
+        assertEquals(true, config.hasYesNoVoting());
+        assertEquals("DESCRIPTION", config.getDescription());
+        assertEquals("EXTERNALID", config.getExternalId());
+        assertEquals("FIVESTARLABEL", config.getFiveStarLabel());
+        assertEquals("ICON", config.getIconName());
+        assertEquals("ITEMNAME", config.getItemName());
+        assertEquals("NAME", config.getName());
+        assertEquals("RSVPLABEL", config.getRsvpLabel());
+        assertEquals("THUMBSLABEL", config.getThumbsLabel());
+        assertEquals("YESNOLABEL", config.getYesNoLabel());
+        assertEquals(Application.Type.meeting, config.getType());
+
+        assertEquals("LINK", application.getLink());
+        assertEquals("LINKADD", application.getAddLink());
+        assertEquals("URL", application.getUrl());
+        assertEquals("URLADD", application.getAddUrl());
+        assertEquals("URLLABEL", application.getUrlLabel());
+
+        List<Field> fields = application.getFields();
+        assertNotNull(application.getFields());
+        assertEquals(0, fields.size());
+
+        assertNotNull(application.getOwner());
+        assertEquals(0, application.getNumberOfPermissions());
+        assertEquals(1, application.getSpaceId());
+        assertEquals(Application.Status.inactive, application.getStatus());
     }
 
     /**
@@ -142,13 +147,13 @@ public class ApplicationTest extends AndroidTestCase {
         Application.Configuration configuration1 = gson.fromJson(json1, Application.Configuration.class);
 
         assertNotNull(configuration1);
-        assertEquals(Application.Configuration.Type.standard, configuration1.type);
+        assertEquals(Application.Type.standard, configuration1.getType());
 
         String json2 = "{type:'meeting'}";
         Application.Configuration configuration2 = gson.fromJson(json2, Application.Configuration.class);
 
         assertNotNull(configuration2);
-        assertEquals(Application.Configuration.Type.meeting, configuration2.type);
+        assertEquals(Application.Type.meeting, configuration2.getType());
     }
 
     /**
@@ -162,7 +167,7 @@ public class ApplicationTest extends AndroidTestCase {
      * </pre>
      */
     public void testTypeEnumGivesExpectedValueOf() {
-        assertEquals(Application.Configuration.Type.standard, Application.Configuration.Type.valueOf("standard"));
-        assertEquals(Application.Configuration.Type.meeting, Application.Configuration.Type.valueOf("meeting"));
+        assertEquals(Application.Type.standard, Application.Type.valueOf("standard"));
+        assertEquals(Application.Type.meeting, Application.Type.valueOf("meeting"));
     }
 }
