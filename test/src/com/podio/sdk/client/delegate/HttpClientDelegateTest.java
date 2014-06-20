@@ -25,6 +25,7 @@ package com.podio.sdk.client.delegate;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.test.InstrumentationTestCase;
 
+import com.android.volley.VolleyError;
+import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.client.delegate.mock.MockContentItem;
@@ -64,9 +67,9 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         target = new HttpClientDelegate(context);
         target.restoreSession("http://localhost:8080/auth/token", session);
-        
-		System.setProperty("dexmaker.dexcache", getInstrumentation()
-				.getTargetContext().getCacheDir().getPath());
+
+        System.setProperty("dexmaker.dexcache", getInstrumentation()
+                .getTargetContext().getCacheDir().getPath());
     }
 
     @Override
@@ -91,11 +94,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeHandlesEmptyUriCorrectly() {
-    	try {    	
-    		target.authorize(Uri.EMPTY);
-			fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.authorize(Uri.EMPTY);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -113,11 +116,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testAuthorizeHandlesNullUriCorrectly() {
-    	try {    	
-    		target.authorize(null);
-    		fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.authorize(null);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     /**
@@ -185,7 +188,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<Session> result = target.authorize(Uri.parse("http://localhost:8080"));
         assertNotNull(result);
-        assertTrue(result.isSuccess());
+        assertFalse(result.hasException());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.POST, servedMethod);
@@ -208,11 +211,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteThrowExceptionOnNullPointerParser() {
-    	try {
-    		target.delete(Uri.parse("http://localhost:8080"), null);
-    		fail("Should have thrown exception");
-    	} catch (NullPointerException e) {
-    	}
+        try {
+            target.delete(Uri.parse("http://localhost:8080"), null);
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
+        }
     }
 
     /**
@@ -230,11 +233,13 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesEmptyUriCorrectly() {
-    	try {
-    		target.delete(Uri.EMPTY, itemParser);
-    		fail("Should have thrown exception");
-    	} catch (IllegalArgumentException e) {
-    	}
+        try {
+            target.delete(Uri.EMPTY, itemParser);
+            fail("Should have thrown exception");
+        } catch (PodioException e) {
+            assertEquals(ExecutionException.class, e.getCause().getClass());
+            assertEquals(VolleyError.class, e.getCause().getCause().getClass());
+        }
     }
 
     /**
@@ -252,11 +257,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testDeleteHandlesNullUriCorrectly() {
-    	try {    	
-    		target.delete(null, itemParser);
-    		fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.delete(null, itemParser);
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
+        }
     }
 
     /**
@@ -291,7 +296,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult<MockContentItem> result = target.delete(uri, itemParser);
 
-        boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
+        boolean isNewSessionValid = result.getSession().expiresMillis > System.currentTimeMillis();
         assertTrue(isNewSessionValid);
     }
 
@@ -322,7 +327,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = target.delete(Uri.parse("http://localhost:8080"), itemParser);
         assertNotNull(result);
-        assertTrue(result.isSuccess());
+        assertFalse(result.hasException());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.DELETE, servedMethod);
@@ -367,11 +372,13 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesEmptyUriCorrectly() {
-		try {
-			target.get(Uri.EMPTY, itemParser);
-			fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.get(Uri.EMPTY, itemParser);
+            fail("Should have thrown exception");
+        } catch (PodioException e) {
+            assertEquals(ExecutionException.class, e.getCause().getClass());
+            assertEquals(VolleyError.class, e.getCause().getCause().getClass());
+        }
     }
 
     /**
@@ -389,11 +396,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetHandlesNullUriCorrectly() {
-    	try {    	
-	        target.get(null, itemParser);
-			fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.get(null, itemParser);
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
+        }
     }
 
     /**
@@ -428,7 +435,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult<MockContentItem> result = target.get(uri, itemParser);
 
-        boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
+        boolean isNewSessionValid = result.getSession().expiresMillis > System.currentTimeMillis();
         assertTrue(isNewSessionValid);
     }
 
@@ -467,10 +474,10 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
 
         RestResult<MockContentItem> result = target.get(uri, itemParser);
         assertNotNull(result);
-        assertNotNull(result.item());
-        assertTrue(result.isSuccess());
+        assertNotNull(result.getItem());
+        assertFalse(result.hasException());
 
-        MockContentItem item = (MockContentItem) result.item();
+        MockContentItem item = result.getItem();
         PodioParser<MockContentItem> parser = PodioParser.fromClass(MockContentItem.class);
         String fetchedJson = parser.parseToJson(item);
         String mockedJson = mockResponse.toString();
@@ -508,7 +515,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         String fakeJsonString = "{item: fake}";
         Object fakeItemObject = new Object();
-        
+
         PodioParser<?> mockParser = Mockito.mock(PodioParser.class);
         Mockito.when(mockParser.parseToJson(fakeItemObject)).thenReturn(fakeJsonString);
 
@@ -546,15 +553,15 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         String fakeJsonString = "{}";
         Object fakeDomainObject = new Object();
-        
+
         @SuppressWarnings("unchecked")
-		PodioParser<Object> mockParser = Mockito.mock(PodioParser.class);
+        PodioParser<Object> mockParser = Mockito.mock(PodioParser.class);
         Mockito.when(mockParser.parseToItem(fakeJsonString)).thenReturn(fakeDomainObject);
 
         RestResult<Object> result = target.get(uri, mockParser);
 
         assertNotNull(result);
-        assertEquals(fakeDomainObject, result.item());
+        assertEquals(fakeDomainObject, result.getItem());
     }
 
     /**
@@ -596,11 +603,13 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesEmptyUriCorrectly() {
-		try {
-			target.post(Uri.EMPTY, null, itemParser);
-			fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.post(Uri.EMPTY, null, itemParser);
+            fail("Should have thrown exception");
+        } catch (PodioException e) {
+            assertEquals(ExecutionException.class, e.getCause().getClass());
+            assertEquals(VolleyError.class, e.getCause().getCause().getClass());
+        }
     }
 
     /**
@@ -618,11 +627,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPostHandlesNullUriCorrectly() {
-    	try {    	
-	        target.post(null, null, itemParser);
-			fail("Should have thrown exception");
-		} catch (IllegalArgumentException e) {
-		}
+        try {
+            target.post(null, null, itemParser);
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
+        }
     }
 
     /**
@@ -657,7 +666,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult<MockContentItem> result = target.post(uri, new Object(), itemParser);
 
-        boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
+        boolean isNewSessionValid = result.getSession().expiresMillis > System.currentTimeMillis();
         assertTrue(isNewSessionValid);
     }
 
@@ -687,7 +696,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         MockContentItem item = new MockContentItem(uri.toString(), "{text: 'test'}");
         RestResult<MockContentItem> result = target.post(uri, item, itemParser);
         assertNotNull(result);
-        assertTrue(result.isSuccess());
+        assertFalse(result.hasException());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.POST, servedMethod);
@@ -733,9 +742,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      */
     public void testPutHandlesEmptyUriCorrectly() {
         try {
-        	target.put(Uri.EMPTY, null, itemParser);
-        	fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
+            target.put(Uri.EMPTY, null, itemParser);
+            fail("Should have thrown exception");
+        } catch (PodioException e) {
+            assertEquals(ExecutionException.class, e.getCause().getClass());
+            assertEquals(VolleyError.class, e.getCause().getCause().getClass());
         }
     }
 
@@ -754,11 +765,11 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testPutHandlesNullUriCorrectly() {
-    	try {    	
-    		target.put(null, null, itemParser);
-    		fail("Should have thrown exception");
-    	} catch (IllegalArgumentException e) {
-    	}
+        try {
+            target.put(null, null, itemParser);
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
+        }
     }
 
     /**
@@ -793,7 +804,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse("http://localhost:8080");
         RestResult<MockContentItem> result = target.put(uri, new Object(), itemParser);
 
-        boolean isNewSessionValid = result.session().expiresMillis > System.currentTimeMillis();
+        boolean isNewSessionValid = result.getSession().expiresMillis > System.currentTimeMillis();
         assertTrue(isNewSessionValid);
     }
 
@@ -822,7 +833,7 @@ public class HttpClientDelegateTest extends InstrumentationTestCase {
         Uri uri = Uri.parse(item.uri);
         RestResult<MockContentItem> result = target.put(uri, item, itemParser);
         assertNotNull(result);
-        assertTrue(result.isSuccess());
+        assertFalse(result.hasException());
 
         Method servedMethod = mockWebServer.mock_getRequestMethod();
         assertEquals(Method.PUT, servedMethod);

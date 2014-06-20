@@ -51,8 +51,9 @@ public class RestRequestTest extends AndroidTestCase {
         assertEquals(target, target.setContent(null));
         assertEquals(target, target.setFilter(null));
         assertEquals(target, target.setOperation(null));
+        assertEquals(target, target.setErrorListener(null));
         assertEquals(target, target.setResultListener(null));
-        assertEquals(target, target.setTicket(null));
+        assertEquals(target, target.setSessionListener(null));
     }
 
     /**
@@ -74,25 +75,22 @@ public class RestRequestTest extends AndroidTestCase {
         RestRequest<Object> target = new RestRequest<Object>();
         RestOperation operation = RestOperation.GET;
         Object item = new Object();
-        Object ticket = new Object();
 
-        PodioFilter filter = new BasicPodioFilter("test") //
-                .addQueryParameter("id", "1") //
+        PodioFilter filter = new BasicPodioFilter("test")
+                .addQueryParameter("id", "1")
                 .addQueryParameter("id", "2");
 
         @SuppressWarnings("unchecked")
-		ResultListener<Object> resultListener = Mockito.mock(ResultListener.class);
+        ResultListener<Object> resultListener = Mockito.mock(ResultListener.class);
 
-        target.setContent(item) //
-                .setFilter(filter) //
-                .setOperation(operation) //
-                .setResultListener(resultListener) //
-                .setTicket(ticket);
+        target.setContent(item)
+                .setFilter(filter)
+                .setOperation(operation)
+                .setResultListener(resultListener);
 
         assertEquals(item, target.getContent());
         assertEquals(filter, target.getFilter());
         assertEquals(operation, target.getOperation());
         assertEquals(resultListener, target.getResultListener());
-        assertEquals(ticket, target.getTicket());
     }
 }

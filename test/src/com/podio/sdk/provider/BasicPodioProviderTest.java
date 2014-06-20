@@ -22,16 +22,15 @@
 
 package com.podio.sdk.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.ErrorListener;
+import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
@@ -42,315 +41,250 @@ import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class BasicPodioProviderTest extends AndroidTestCase {
 
-	/**
-	 * Verify that the abstract {@link BasicPodioProvider} implementation builds
-	 * the correct {@link RestRequest} for a DELETE request.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around.
-	 * 
-	 * 2. Call a delete operation on the ItemProvider object.
-	 * 
-	 * 3. Pick up the produced RestRequest from the mocked RestClient and
-	 *      verify that it conforms to expectations.
-	 * 
-	 * </pre>
-	 */
-	public void testCorrectDeleteRestRequestProduced() {	
-		PodioFilter filter = new BasicPodioFilter();
+    /**
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds
+     * the correct {@link RestRequest} for a DELETE request.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around.
+     * 
+     * 2. Call a delete operation on the ItemProvider object.
+     * 
+     * 3. Pick up the produced RestRequest from the mocked RestClient and
+     *      verify that it conforms to expectations.
+     * 
+     * </pre>
+     */
+    public void testCorrectDeleteRestRequestProduced() {
+        PodioFilter filter = new BasicPodioFilter();
+        RestClient client = Mockito.mock(RestClient.class);
 
-		RestClient client = Mockito.mock(RestClient.class);
-		Mockito.doReturn(true).when(client).enqueue(Matchers.<RestRequest<Object>>anyObject());
-		
-		// Perform the delete request.
-		BasicPodioProvider provider = new BasicPodioProvider(client);
-		Object ticket = provider.request(RestOperation.DELETE, filter, null, null, null);
+        // Perform the delete request.
+        BasicPodioProvider provider = new BasicPodioProvider(client);
+        provider.request(RestOperation.DELETE, filter, null, null, null, null, null);
 
-		assertEquals(ticket, filter);
-		
-		// Verify that the correct DELETE RestRequest is built.
-		RestRequest<Object> expectedRequest = new RestRequest<Object>()
-				.setOperation(RestOperation.DELETE)
-				.setFilter(filter)
-				.setTicket(ticket);
-		Mockito.verify(client).enqueue(expectedRequest);
-	}
+        // Verify that the correct DELETE RestRequest is built.
+        RestRequest<Object> expectedRequest = new RestRequest<Object>()
+                .setOperation(RestOperation.DELETE)
+                .setFilter(filter);
 
-	/**
-	 * Verify that the abstract {@link BasicPodioProvider} implementation builds
-	 * the correct {@link RestRequest} for a GET request.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around.
-	 * 
-	 * 2. Call a fetch operation on the ItemProvider object.
-	 * 
-	 * 3. Pick up the produced RestRequest from the mocked RestClient and
-	 *      verify that it conforms to expectations.
-	 * 
-	 * </pre>
-	 */
-	public void testCorrectGetRestRequestProduced() {
-		PodioFilter filter = new BasicPodioFilter();
+        Mockito.verify(client).enqueue(expectedRequest);
+    }
 
-		RestClient client = Mockito.mock(RestClient.class);
-		Mockito.doReturn(true).when(client).enqueue(Matchers.<RestRequest<Object>>anyObject());
+    /**
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds
+     * the correct {@link RestRequest} for a GET request.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around.
+     * 
+     * 2. Call a fetch operation on the ItemProvider object.
+     * 
+     * 3. Pick up the produced RestRequest from the mocked RestClient and
+     *      verify that it conforms to expectations.
+     * 
+     * </pre>
+     */
+    public void testCorrectGetRestRequestProduced() {
+        PodioFilter filter = new BasicPodioFilter();
+        RestClient client = Mockito.mock(RestClient.class);
 
-		// Perform the fetch request.
-		BasicPodioProvider provider = new BasicPodioProvider(client);
-		Object ticket = provider.request(RestOperation.GET, filter, null, null,
-				null);
-		
-		assertEquals(ticket, filter);
+        // Perform the fetch request.
+        BasicPodioProvider provider = new BasicPodioProvider(client);
+        provider.request(RestOperation.GET, filter, null, null, null, null, null);
 
-		// Verify that the correct GET RestRequest is built.
-		RestRequest<Object> expectedRequest = new RestRequest<Object>()
-				.setOperation(RestOperation.GET)
-				.setFilter(filter)
-				.setTicket(ticket);
-		Mockito.verify(client).enqueue(expectedRequest);
-	}
+        // Verify that the correct GET RestRequest is built.
+        RestRequest<Object> expectedRequest = new RestRequest<Object>()
+                .setOperation(RestOperation.GET)
+                .setFilter(filter);
 
-	/**
-	 * Verify that the abstract {@link BasicPodioProvider} implementation builds
-	 * the correct {@link RestRequest} for a POST request.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around.
-	 * 
-	 * 2. Call a push operation on the ItemProvider object.
-	 * 
-	 * 3. Pick up the produced RestRequest from the mocked RestClient and
-	 *      verify that it conforms to expectations.
-	 * 
-	 * </pre>
-	 */
-	public void testCorrectPostRestRequestProduced() {
-		RestClient client = Mockito.mock(RestClient.class);
-		Mockito.doReturn(true).when(client).enqueue(Matchers.<RestRequest<Object>>anyObject());
+        Mockito.verify(client).enqueue(expectedRequest);
+    }
 
-		PodioFilter filter = new BasicPodioFilter();
-		Object item = new Object();
-		
-		// Perform the push request.
-		BasicPodioProvider provider = new BasicPodioProvider(client);
-		Object ticket = provider.request(RestOperation.POST, filter, item,
-				null, null);
-		
-		assertEquals(ticket, filter);
+    /**
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds
+     * the correct {@link RestRequest} for a POST request.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around.
+     * 
+     * 2. Call a push operation on the ItemProvider object.
+     * 
+     * 3. Pick up the produced RestRequest from the mocked RestClient and
+     *      verify that it conforms to expectations.
+     * 
+     * </pre>
+     */
+    public void testCorrectPostRestRequestProduced() {
+        PodioFilter filter = new BasicPodioFilter();
+        Object item = new Object();
+        RestClient client = Mockito.mock(RestClient.class);
 
-		// Verify that the correct POST RestRequest is built.
-		RestRequest<Object> expectedRequest = new RestRequest<Object>()
-				.setOperation(RestOperation.POST)
-				.setFilter(filter)
-				.setContent(item)
-				.setTicket(ticket);
-		Mockito.verify(client).enqueue(expectedRequest);
-	}
+        // Perform the push request.
+        BasicPodioProvider provider = new BasicPodioProvider(client);
+        provider.request(RestOperation.POST, filter, item, null, null, null, null);
 
-	/**
-	 * Verify that the abstract {@link BasicPodioProvider} implementation builds
-	 * the correct {@link RestRequest} for a PUT request.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around.
-	 * 
-	 * 2. Call a change operation on the ItemProvider object.
-	 * 
-	 * 3. Pick up the produced RestRequest from the mocked RestClient and
-	 *      verify that it conforms to expectations.
-	 * 
-	 * </pre>
-	 */
-	public void testCorrectPutRestRequestProduced() {
-		PodioFilter filter = new BasicPodioFilter();
-		Object item = new Object();
+        // Verify that the correct POST RestRequest is built.
+        RestRequest<Object> expectedRequest = new RestRequest<Object>()
+                .setOperation(RestOperation.POST)
+                .setFilter(filter)
+                .setContent(item);
 
-		RestClient client = Mockito.mock(RestClient.class);
-		Mockito.doReturn(true).when(client).enqueue(Matchers.<RestRequest<Object>>anyObject());
+        Mockito.verify(client).enqueue(expectedRequest);
+    }
 
-		// Perform the change request.
-		BasicPodioProvider provider = new BasicPodioProvider(client);
-		Object ticket = provider.request(RestOperation.PUT, filter, item, null,
-				null);
-		
-		assertEquals(ticket, filter);
+    /**
+     * Verify that the abstract {@link BasicPodioProvider} implementation builds
+     * the correct {@link RestRequest} for a PUT request.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around.
+     * 
+     * 2. Call a change operation on the ItemProvider object.
+     * 
+     * 3. Pick up the produced RestRequest from the mocked RestClient and
+     *      verify that it conforms to expectations.
+     * 
+     * </pre>
+     */
+    public void testCorrectPutRestRequestProduced() {
+        PodioFilter filter = new BasicPodioFilter();
+        Object item = new Object();
+        RestClient client = Mockito.mock(RestClient.class);
 
-		// Verify that the correct PUT RestRequest is built.
-		RestRequest<Object> expectedRequest = new RestRequest<Object>()
-				.setOperation(RestOperation.PUT)
-				.setFilter(filter)
-				.setContent(item)
-				.setTicket(ticket);
-		Mockito.verify(client).enqueue(expectedRequest);
-	}
+        // Perform the change request.
+        BasicPodioProvider provider = new BasicPodioProvider(client);
+        provider.request(RestOperation.PUT, filter, item, null, null, null, null);
 
-	/**
-	 * Verifies that the failure method on the {@link PodioresultListener}
-	 * callback is called if the (mocked) {@link RestClient} fails to finish
-	 * properly.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around. Also assign a custom {@link PodioresultListener} to the
-	 *      ItemProvider.
-	 * 
-	 * 2. Perform a request (any rest request) and simulate the mock RestClient
-	 *      working on it and failing (the {@link DummyRestClient} holds the
-	 *      details).
-	 * 
-	 * 3. Verify that the failure is propagated properly to your custom callback.
-	 * 
-	 * </pre>
-	 */
-	public void testProviderCallbackFailureCalledProperly() {
-		PodioFilter itemFilter = new BasicPodioFilter();
-		Object itemObject = new Object();
-		String errorMessage = "ohno";
-		List<Object> resultList = new ArrayList<Object>();
-		resultList.add(itemObject);
+        // Verify that the correct PUT RestRequest is built.
+        RestRequest<Object> expectedRequest = new RestRequest<Object>()
+                .setOperation(RestOperation.PUT)
+                .setFilter(filter)
+                .setContent(item);
 
-		DummyRestClient client = new DummyRestClient(new RestResult<Object>(
-				false, errorMessage, resultList));
-		@SuppressWarnings("unchecked")
-		ResultListener<Object> mockListener = Mockito.mock(ResultListener.class);
+        Mockito.verify(client).enqueue(expectedRequest);
+    }
 
-		BasicPodioProvider provider = new BasicPodioProvider(client);
-		Object ticket = provider.request(RestOperation.PUT, itemFilter,
-				itemObject, null, mockListener);
+    /**
+     * Verifies that the failure method on the {@link PodioresultListener}
+     * callback is called if the (mocked) {@link RestClient} fails to finish
+     * properly.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around. Also assign a custom {@link PodioresultListener} to the
+     *      ItemProvider.
+     * 
+     * 2. Perform a request (any rest request) and simulate the mock RestClient
+     *      working on it and failing (the {@link DummyRestClient} holds the
+     *      details).
+     * 
+     * 3. Verify that the failure is propagated properly to your custom callback.
+     * 
+     * </pre>
+     */
+    public void testProviderCallbackFailureCalledProperly() {
+        PodioFilter itemFilter = new BasicPodioFilter();
+        Object itemObject = new Object();
+        PodioException exception = new PodioException("ohno");
 
-		Mockito.verify(mockListener).onFailure(ticket, errorMessage);
-		Mockito.verifyNoMoreInteractions(mockListener);
-	}
+        DummyRestClient client = new DummyRestClient(RestResult.failure(exception));
 
-	/**
-	 * Verifies that the session change method on the
-	 * {@link PodioresultListener} callback is called if the (mocked)
-	 * {@link RestClient} decides to change the session object.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around. Also assign a custom {@link PodioresultListener} to the
-	 *      ItemProvider.
-	 * 
-	 * 2. Perform a request (any rest request) and simulate the mock RestClient
-	 *      working successfully on it (the {@link DummyRestClient} holds the
-	 *      details), but having the session changed.
-	 * 
-	 * 3. Verify that the success is propagated properly to your custom callback.
-	 * 
-	 * </pre>
-	 */
-	public void testProviderCallbackSessionChangeAndSuccessCalledProperly() {
-		PodioFilter itemFilter = new BasicPodioFilter();
-		Object itemObject = new Object();
-		Session session = new Session("accessToken", "refreshToken", 3600);
-		String errorMessage = "ohno";
+        ErrorListener mockListener = Mockito.mock(ErrorListener.class);
 
-		DummyRestClient client = new DummyRestClient(new RestResult<Object>(true,
-				session, errorMessage, itemObject));
-		BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider(client);
+        provider.request(RestOperation.PUT, itemFilter, itemObject, null, null, mockListener, null);
 
-		@SuppressWarnings("unchecked")
-		ResultListener<Object> mockListener = Mockito.mock(ResultListener.class);
-		Object ticket = provider.request(RestOperation.PUT, itemFilter,
-				itemObject, null, mockListener);
+        Mockito.verify(mockListener).onExceptionOccurred(exception);
+        Mockito.verifyNoMoreInteractions(mockListener);
+    }
 
-		Mockito.verify(mockListener).onSuccess(ticket, itemObject);
-		Mockito.verify(mockListener).onSessionChange(ticket, session);
-		Mockito.verifyNoMoreInteractions(mockListener);
-	}
+    /**
+     * Verifies that the session change method on the
+     * {@link PodioresultListener} callback is called if the (mocked)
+     * {@link RestClient} decides to change the session object.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around. Also assign a custom {@link PodioresultListener} to the
+     *      ItemProvider.
+     * 
+     * 2. Perform a request (any rest request) and simulate the mock RestClient
+     *      working successfully on it (the {@link DummyRestClient} holds the
+     *      details), but having the session changed.
+     * 
+     * 3. Verify that the success is propagated properly to your custom callback.
+     * 
+     * </pre>
+     */
+    public void testProviderCallbackSessionChangeAndSuccessCalledProperly() {
+        PodioFilter itemFilter = new BasicPodioFilter();
+        Object itemObject = new Object();
+        Session session = new Session("accessToken", "refreshToken", 3600);
 
-	/**
-	 * Verifies that the session change method on the
-	 * {@link PodioresultListener} callback is called if the (mocked)
-	 * {@link RestClient} decides to change the session object.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around. Also assign a custom {@link PodioresultListener} to the
-	 *      ItemProvider.
-	 * 
-	 * 2. Perform a request (any rest request) and simulate the mock RestClient
-	 *      working successfully on it (the {@link DummyRestClient} holds the
-	 *      details), but having the session changed.
-	 * 
-	 * 3. Verify that the success is propagated properly to your custom callback.
-	 * 
-	 * </pre>
-	 */
-	public void testProviderCallbackSessionChangeAndFailureCalledProperly() {
-		PodioFilter itemFilter = new BasicPodioFilter();
-		Session session = new Session("accessToken", "refreshToken", 3600);
-		String errorMessage = "ohno";
+        DummyRestClient client = new DummyRestClient(RestResult.success(itemObject, session));
+        BasicPodioProvider provider = new BasicPodioProvider(client);
 
-		DummyRestClient client = new DummyRestClient(new RestResult<Object>(
-				false, session, errorMessage, null));
-		BasicPodioProvider provider = new BasicPodioProvider(client);
+        @SuppressWarnings("unchecked")
+        ResultListener<Object> mockResultListener = Mockito.mock(ResultListener.class);
+        SessionListener mockSessionListener = Mockito.mock(SessionListener.class);
 
-		@SuppressWarnings("unchecked")
-		ResultListener<Object> mockListener = Mockito.mock(ResultListener.class);
-		Object ticket = provider.request(RestOperation.PUT, itemFilter, null,
-				null, mockListener);
+        provider.request(RestOperation.PUT, itemFilter, itemObject, null, mockResultListener, null, mockSessionListener);
 
-		Mockito.verify(mockListener).onFailure(ticket, errorMessage);
-		Mockito.verify(mockListener).onSessionChange(ticket, session);
-		Mockito.verifyNoMoreInteractions(mockListener);
-	}
+        Mockito.verify(mockResultListener).onRequestPerformed(itemObject);
+        Mockito.verify(mockSessionListener).onSessionChanged(session);
+        Mockito.verifyNoMoreInteractions(mockResultListener);
+        Mockito.verifyNoMoreInteractions(mockSessionListener);
+    }
 
-	/**
-	 * Verifies that the success method on the {@link PodioresultListener}
-	 * callback is called if the (mocked) {@link RestClient} finishes
-	 * successfully.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new instance of the ItemProvider class and assign a mock
-	 *      RestClient to it, which basically has no logic but just shuffles
-	 *      data around. Also assign a custom {@link PodioresultListener} to the
-	 *      ItemProvider.
-	 * 
-	 * 2. Perform a request (any rest request) and simulate the mock RestClient
-	 *      working successfully on it (the {@link DummyRestClient} holds the
-	 *      details).
-	 * 
-	 * 3. Verify that the success is propagated properly to your custom callback.
-	 * 
-	 * </pre>
-	 */
-	public void testProviderCallbackSuccessCalledProperly() {
-		PodioFilter itemFilter = new BasicPodioFilter();
-		Object itemObject = new Object();
-		String errorMessage = "ohno";
+    /**
+     * Verifies that the success method on the {@link PodioresultListener}
+     * callback is called if the (mocked) {@link RestClient} finishes
+     * successfully.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new instance of the ItemProvider class and assign a mock
+     *      RestClient to it, which basically has no logic but just shuffles
+     *      data around. Also assign a custom {@link PodioresultListener} to the
+     *      ItemProvider.
+     * 
+     * 2. Perform a request (any rest request) and simulate the mock RestClient
+     *      working successfully on it (the {@link DummyRestClient} holds the
+     *      details).
+     * 
+     * 3. Verify that the success is propagated properly to your custom callback.
+     * 
+     * </pre>
+     */
+    public void testProviderCallbackSuccessCalledProperly() {
+        PodioFilter itemFilter = new BasicPodioFilter();
+        Object itemObject = new Object();
 
-		DummyRestClient client = new DummyRestClient(new RestResult<Object>(true,
-				errorMessage, itemObject));
-		BasicPodioProvider provider = new BasicPodioProvider(client);
+        DummyRestClient client = new DummyRestClient(RestResult.success(itemObject));
+        BasicPodioProvider provider = new BasicPodioProvider(client);
 
-		@SuppressWarnings("unchecked")
-		ResultListener<Object> mockListener = Mockito.mock(ResultListener.class);
-		Object ticket = provider.request(RestOperation.PUT, itemFilter,
-				itemObject, null, mockListener);
+        @SuppressWarnings("unchecked")
+        ResultListener<Object> mockListener = Mockito.mock(ResultListener.class);
+        provider.request(RestOperation.PUT, itemFilter, itemObject, null, mockListener, null, null);
 
-		Mockito.verify(mockListener).onSuccess(ticket, itemObject);
-		Mockito.verifyNoMoreInteractions(mockListener);
-	}
+        Mockito.verify(mockListener).onRequestPerformed(itemObject);
+        Mockito.verifyNoMoreInteractions(mockListener);
+    }
 }

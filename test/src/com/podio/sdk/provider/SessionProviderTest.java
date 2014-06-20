@@ -21,12 +21,12 @@
  */
 
 package com.podio.sdk.provider;
+
 import org.mockito.Mockito;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.request.ResultListener;
@@ -51,17 +51,17 @@ public class SessionProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testAuthenticateWithUserCredentials() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Session>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         SessionProvider provider = new SessionProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD", mockListener);
-        
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
+        provider.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD", mockListener, null, null);
+
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/oauth/token"
                 + "?client_id=CLIENTID&client_secret=CLIENTSECRET"
                 + "&grant_type=password&username=USERNAME&password=PASSWORD"), uri);
@@ -84,17 +84,17 @@ public class SessionProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testAuthenticateWithAppCredentials() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Session>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         SessionProvider provider = new SessionProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN", mockListener);
+        ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
+        provider.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN", mockListener, null, null);
 
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/oauth/token"
                 + "?client_id=CLIENTID&client_secret=CLIENTSECRET"
                 + "&grant_type=app&app_id=APPID&app_token=APPTOKEN"), uri);

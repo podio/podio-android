@@ -22,10 +22,9 @@
 
 package com.podio.sdk.client;
 
-import java.util.ArrayList;
-
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.PodioException;
 import com.podio.sdk.domain.Session;
 
 public class RestResultTest extends AndroidTestCase {
@@ -44,17 +43,17 @@ public class RestResultTest extends AndroidTestCase {
      * 
      * </pre>
      */
-    public void testCreateRestResultSuccessMessageItems() {
-        boolean isSuccess = true;
-        String message = "success";
+    public void testCreateSuccessRestResultWithItem() {
         Object item = new Object();
 
-        RestResult<Object> target = new RestResult<Object>(isSuccess, message, item);
+        RestResult<Object> target = RestResult.success(item);
         assertNotNull(target);
-        assertNull(target.session());
-        assertEquals(isSuccess, target.isSuccess());
-        assertEquals(message, target.message());
-        assertEquals(item, target.item());
+        assertFalse(target.hasSession());
+        assertFalse(target.hasAuthorizedSession());
+        assertFalse(target.hasException());
+        assertNull(target.getSession());
+        assertNull(target.getException());
+        assertEquals(item, target.getItem());
     }
 
     /**
@@ -72,18 +71,17 @@ public class RestResultTest extends AndroidTestCase {
      * 
      * </pre>
      */
-    public void testCreateRestResultSuccessSessionMessageItems() {
-        boolean isSuccess = true;
+    public void testCreateSuccessRestResultWithSessionAndItem() {
         Session session = new Session("accessToken", "refreshToken", 1L);
-        String message = "success";
         Object item = new Object();
 
-        RestResult<Object> target = new RestResult<Object>(isSuccess, session, message, item);
+        RestResult<Object> target = RestResult.success(item, session);
         assertNotNull(target);
-        assertNotNull(target.session());
-        assertEquals(isSuccess, target.isSuccess());
-        assertEquals(message, target.message());
-        assertEquals(item, target.item());
+        assertTrue(target.hasSession());
+        assertTrue(target.hasAuthorizedSession());
+        assertFalse(target.hasException());
+        assertNotNull(target.getSession());
+        assertEquals(item, target.getItem());
     }
 
     /**
@@ -100,17 +98,17 @@ public class RestResultTest extends AndroidTestCase {
      * 
      * </pre>
      */
-    public void testCreateRestResultFailureNoMessageNoItems() {
-        boolean isSuccess = false;
-        String message = null;
-        ArrayList<Object> items = null;
+    public void testCreateFailureRestResultWithNoSessionAndNoItem() {
+        PodioException exception = new PodioException("Ohno");
 
-        RestResult<Object> target = new RestResult<Object>(isSuccess, message, items);
+        RestResult<Object> target = RestResult.failure(exception);
         assertNotNull(target);
-        assertNull(target.session());
-        assertEquals(isSuccess, target.isSuccess());
-        assertEquals(message, target.message());
-        assertEquals(items, target.item());
+        assertFalse(target.hasSession());
+        assertFalse(target.hasAuthorizedSession());
+        assertNull(target.getSession());
+        assertTrue(target.hasException());
+        assertEquals(exception, target.getException());
+        assertNull(target.getItem());
     }
 
 }

@@ -27,7 +27,6 @@ import org.mockito.Mockito;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.internal.request.ResultListener;
@@ -51,17 +50,17 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationRequestsFullItemSetByDefault() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Application>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ApplicationProvider provider = new ApplicationProvider(mockClient);
 
-    	@SuppressWarnings("unchecked")
-		ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.fetchApplication(2L, mockListener);
-        
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        @SuppressWarnings("unchecked")
+        ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
+        provider.fetchApplication(2L, mockListener, null, null);
+
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=full"), uri);
     }
 
@@ -81,17 +80,17 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationMicroRequestsMicroItemSet() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Application>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ApplicationProvider provider = new ApplicationProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.fetchApplicationMicro(2L, mockListener);
+        ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
+        provider.fetchApplicationMicro(2L, mockListener, null, null);
 
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=micro"), uri);
     }
 
@@ -111,17 +110,17 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationMiniRequestsMiniItemSet() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Application>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ApplicationProvider provider = new ApplicationProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.fetchApplicationMini(2L, mockListener);
-        
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
+        provider.fetchApplicationMini(2L, mockListener, null, null);
+
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=mini"), uri);
     }
 
@@ -141,17 +140,17 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationsForSpaceDoesntRequestInactiveItems() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Application>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ApplicationProvider provider = new ApplicationProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.fetchApplicationsForSpace(1, mockListener);
-        
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
+        provider.fetchApplicationsForSpace(1, mockListener, null, null);
+
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/app/space/1?include_inactive=false"), uri);
     }
 
@@ -171,18 +170,17 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationsForSpaceWithInactivesIncludedRequestsInactiveItems() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Application>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ApplicationProvider provider = new ApplicationProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
+        ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
+        provider.fetchApplicationsForSpaceWithInactivesIncluded(2, mockListener, null, null);
 
-        Object ticket = provider.fetchApplicationsForSpaceWithInactivesIncluded(2, mockListener);
-
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/app/space/2?include_inactive=true"), uri);
     }
 
@@ -202,17 +200,17 @@ public class ApplicationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testFetchApplicationShortRequestsShortItemSet() {
-        DummyRestClient mockClient = new DummyRestClient(new RestResult<Application>(true, null, null));
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ApplicationProvider provider = new ApplicationProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-		ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        Object ticket = provider.fetchApplicationShort(2L, mockListener);
+        ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
+        provider.fetchApplicationShort(2L, mockListener, null, null);
 
-        Mockito.verify(mockListener).onSuccess(ticket, null);
+        Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
+        Uri uri = mockClient.getMockUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=short"), uri);
     }
 

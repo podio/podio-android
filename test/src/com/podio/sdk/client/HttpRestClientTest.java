@@ -37,205 +37,204 @@ import com.podio.sdk.internal.request.RestOperation;
 
 public class HttpRestClientTest extends InstrumentationTestCase {
 
-	private HttpRestClient target;
-	@Mock
-	private HttpClientDelegate mockDelegate;
+    private HttpRestClient target;
+    @Mock
+    private HttpClientDelegate mockDelegate;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		System.setProperty("dexmaker.dexcache", getInstrumentation()
-				.getTargetContext().getCacheDir().getPath());
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		MockitoAnnotations.initMocks(this);
+        System.setProperty("dexmaker.dexcache", getInstrumentation()
+                .getTargetContext().getCacheDir().getPath());
 
-		target = new HttpRestClient(getInstrumentation().getContext(),
-				"authority", mockDelegate, 10);
-	}
+        MockitoAnnotations.initMocks(this);
 
-	/**
-	 * Verifies that a authorize rest operation is delegated correctly to the
-	 * {@link NetworkClientDelegate}.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new {@link HttpRestClient} and add a mock
-	 *      {@link NetworkClientDelegate} to it.
-	 * 
-	 * 2. Push a authorize operation to the client.
-	 * 
-	 * 3. Verify that the authorize method of the network helper
-	 *      is called.
-	 * 
-	 * </pre>
-	 */
-	public void testAuthorizeOperationIsDelegatedCorrectly() {
-		Mockito.when(
-				mockDelegate.authorize(Mockito.<Uri>any())).thenReturn(
-				RestResult.<Session>success());
+        target = new HttpRestClient(getInstrumentation().getContext(), "authority", mockDelegate);
+    }
 
-		RestRequest<Object> restRequest = new RestRequest<Object>() //
-				.setFilter(new BasicPodioFilter()) //
-				.setOperation(RestOperation.AUTHORIZE);
+    /**
+     * Verifies that a authorize rest operation is delegated correctly to the
+     * {@link NetworkClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link HttpRestClient} and add a mock
+     *      {@link NetworkClientDelegate} to it.
+     * 
+     * 2. Push a authorize operation to the client.
+     * 
+     * 3. Verify that the authorize method of the network helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testAuthorizeOperationIsDelegatedCorrectly() {
+        Mockito.when(
+                mockDelegate.authorize(Mockito.<Uri> any())).thenReturn(
+                RestResult.<Session> success());
 
-		target.enqueue(restRequest);
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
+        .setFilter(new BasicPodioFilter()) //
+        .setOperation(RestOperation.AUTHORIZE);
 
-		Mockito.verify(mockDelegate, Mockito.timeout(2000)).authorize(Mockito.<Uri> any());
-		Mockito.verifyZeroInteractions(mockDelegate);
-	}
+        target.enqueue(restRequest);
 
-	/**
-	 * Verifies that an IllegalArgumentException is thrown when trying to create
-	 * an HttpRestClient with a null pointer delegate.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new HttpRestClient with a null pointer network delegate.
-	 * 
-	 * 2. Verify that an IllegalArgumentException was thrown.
-	 * 
-	 * </pre>
-	 */
-	public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
-		try {
-			new HttpRestClient(null, null, null, 0);
-			fail("Should have thrown exception");
-		} catch (NullPointerException e) {
-		}
-	}
+        Mockito.verify(mockDelegate, Mockito.timeout(2000)).authorize(Mockito.<Uri> any());
+        Mockito.verifyZeroInteractions(mockDelegate);
+    }
 
-	/**
-	 * Verifies that a delete rest operation is delegated correctly to the
-	 * {@link NetworkClientDelegate}.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new {@link HttpRestClient} and add a mock
-	 *      {@link NetworkClientDelegate} to it.
-	 * 
-	 * 2. Push a delete operation to the client.
-	 * 
-	 * 3. Verify that the delete method of the network helper
-	 *      is called.
-	 * 
-	 * </pre>
-	 */
-	public void testDeleteOperationIsDelegatedCorrectly() {
-		Mockito.when(
-				mockDelegate.delete(Mockito.<Uri> any(),
-						Mockito.<PodioParser<?>> any())).thenReturn(
-				RestResult.success());
+    /**
+     * Verifies that an IllegalArgumentException is thrown when trying to create
+     * an HttpRestClient with a null pointer delegate.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new HttpRestClient with a null pointer network delegate.
+     * 
+     * 2. Verify that an IllegalArgumentException was thrown.
+     * 
+     * </pre>
+     */
+    public void testConstructorThrowsIllegalArgumentExceptionOnInvalidDelegates() {
+        try {
+            new HttpRestClient(null, null, null);
+            fail("Should have thrown exception");
+        } catch (NullPointerException e) {
+        }
+    }
 
-		RestRequest<Object> restRequest = new RestRequest<Object>() //
-				.setFilter(new BasicPodioFilter()) //
-				.setOperation(RestOperation.DELETE);
+    /**
+     * Verifies that a delete rest operation is delegated correctly to the
+     * {@link NetworkClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link HttpRestClient} and add a mock
+     *      {@link NetworkClientDelegate} to it.
+     * 
+     * 2. Push a delete operation to the client.
+     * 
+     * 3. Verify that the delete method of the network helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testDeleteOperationIsDelegatedCorrectly() {
+        Mockito.when(
+                mockDelegate.delete(Mockito.<Uri> any(),
+                        Mockito.<PodioParser<?>> any())).thenReturn(
+                RestResult.success());
 
-		target.enqueue(restRequest);
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
+        .setFilter(new BasicPodioFilter()) //
+        .setOperation(RestOperation.DELETE);
 
-		Mockito.verify(mockDelegate, Mockito.timeout(2000)).delete(
-				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
-		Mockito.verifyZeroInteractions(mockDelegate);
-	}
+        target.enqueue(restRequest);
 
-	/**
-	 * Verifies that a get rest operation is delegated correctly to the
-	 * {@link NetworkClientDelegate}.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new {@link HttpRestClient} and add a mock
-	 *      {@link NetworkClientDelegate} to it.
-	 * 
-	 * 2. Push a get operation to the client.
-	 * 
-	 * 3. Verify that the get method of the network helper
-	 *      is called.
-	 * 
-	 * </pre>
-	 */
-	public void testGetOperationIsDelegatedCorrectly() {
-		Mockito.when(
-				mockDelegate.get(Mockito.<Uri> any(),
-						Mockito.<PodioParser<?>> any())).thenReturn(
-				RestResult.success());
+        Mockito.verify(mockDelegate, Mockito.timeout(2000)).delete(
+                Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+        Mockito.verifyZeroInteractions(mockDelegate);
+    }
 
-		RestRequest<Object> restRequest = new RestRequest<Object>() //
-				.setFilter(new BasicPodioFilter()) //
-				.setOperation(RestOperation.GET);
+    /**
+     * Verifies that a get rest operation is delegated correctly to the
+     * {@link NetworkClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link HttpRestClient} and add a mock
+     *      {@link NetworkClientDelegate} to it.
+     * 
+     * 2. Push a get operation to the client.
+     * 
+     * 3. Verify that the get method of the network helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testGetOperationIsDelegatedCorrectly() {
+        Mockito.when(
+                mockDelegate.get(Mockito.<Uri> any(),
+                        Mockito.<PodioParser<?>> any())).thenReturn(
+                RestResult.success());
 
-		target.enqueue(restRequest);
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
+        .setFilter(new BasicPodioFilter()) //
+        .setOperation(RestOperation.GET);
 
-		Mockito.verify(mockDelegate, Mockito.timeout(2000)).get(
-				Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
-		Mockito.verifyZeroInteractions(mockDelegate);
-	}
+        target.enqueue(restRequest);
 
-	/**
-	 * Verifies that a post rest operation is delegated correctly to the
-	 * {@link NetworkClientDelegate}.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new {@link HttpRestClient} and add a mock
-	 *      {@link NetworkClientDelegate} to it.
-	 * 
-	 * 2. Push a post operation to the client.
-	 * 
-	 * 3. Verify that the post method of the network helper
-	 *      is called.
-	 * 
-	 * </pre>
-	 */
-	public void testPostOperationIsDelegatedCorrectly() {
-		Mockito.when(
-				mockDelegate.post(Mockito.<Uri> any(), Mockito.any(),
-						Mockito.<PodioParser<?>> any())).thenReturn(
-				RestResult.success());
+        Mockito.verify(mockDelegate, Mockito.timeout(2000)).get(
+                Mockito.<Uri> any(), Mockito.<PodioParser<?>> any());
+        Mockito.verifyZeroInteractions(mockDelegate);
+    }
 
-		RestRequest<Object> restRequest = new RestRequest<Object>() //
-				.setFilter(new BasicPodioFilter()) //
-				.setOperation(RestOperation.POST);
+    /**
+     * Verifies that a post rest operation is delegated correctly to the
+     * {@link NetworkClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link HttpRestClient} and add a mock
+     *      {@link NetworkClientDelegate} to it.
+     * 
+     * 2. Push a post operation to the client.
+     * 
+     * 3. Verify that the post method of the network helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testPostOperationIsDelegatedCorrectly() {
+        Mockito.when(
+                mockDelegate.post(Mockito.<Uri> any(), Mockito.any(),
+                        Mockito.<PodioParser<?>> any())).thenReturn(
+                RestResult.success());
 
-		target.enqueue(restRequest);
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
+        .setFilter(new BasicPodioFilter()) //
+        .setOperation(RestOperation.POST);
 
-		Mockito.verify(mockDelegate, Mockito.timeout(2000)).post(
-				Mockito.<Uri> any(), Mockito.any(),
-				Mockito.<PodioParser<?>> any());
-		Mockito.verifyZeroInteractions(mockDelegate);
-	}
+        target.enqueue(restRequest);
 
-	/**
-	 * Verifies that a put rest operation is delegated correctly to the
-	 * {@link NetworkClientDelegate}.
-	 * 
-	 * <pre>
-	 * 
-	 * 1. Create a new {@link HttpRestClient} and add a mock
-	 *      {@link NetworkClientDelegate} to it.
-	 * 
-	 * 2. Push a put operation to the client.
-	 * 
-	 * 3. Verify that the put method of the network helper
-	 *      is called.
-	 * 
-	 * </pre>
-	 */
-	public void testPutOperationIsDelegatedCorrectly() {
-		Mockito.when(
-				mockDelegate.put(Mockito.<Uri> any(), Mockito.any(),
-						Mockito.<PodioParser<?>> any())).thenReturn(
-				RestResult.success());
+        Mockito.verify(mockDelegate, Mockito.timeout(2000)).post(
+                Mockito.<Uri> any(), Mockito.any(),
+                Mockito.<PodioParser<?>> any());
+        Mockito.verifyZeroInteractions(mockDelegate);
+    }
 
-		RestRequest<Object> restRequest = new RestRequest<Object>() //
-				.setFilter(new BasicPodioFilter()) //
-				.setOperation(RestOperation.PUT);
+    /**
+     * Verifies that a put rest operation is delegated correctly to the
+     * {@link NetworkClientDelegate}.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link HttpRestClient} and add a mock
+     *      {@link NetworkClientDelegate} to it.
+     * 
+     * 2. Push a put operation to the client.
+     * 
+     * 3. Verify that the put method of the network helper
+     *      is called.
+     * 
+     * </pre>
+     */
+    public void testPutOperationIsDelegatedCorrectly() {
+        Mockito.when(
+                mockDelegate.put(Mockito.<Uri> any(), Mockito.any(),
+                        Mockito.<PodioParser<?>> any())).thenReturn(
+                RestResult.success());
 
-		target.enqueue(restRequest);
+        RestRequest<Object> restRequest = new RestRequest<Object>() //
+        .setFilter(new BasicPodioFilter()) //
+        .setOperation(RestOperation.PUT);
 
-		Mockito.verify(mockDelegate, Mockito.timeout(2000)).put(
-				Mockito.<Uri> any(), Mockito.any(),
-				Mockito.<PodioParser<?>> any());
-		Mockito.verifyZeroInteractions(mockDelegate);
-	}
+        target.enqueue(restRequest);
+
+        Mockito.verify(mockDelegate, Mockito.timeout(2000)).put(
+                Mockito.<Uri> any(), Mockito.any(),
+                Mockito.<PodioParser<?>> any());
+        Mockito.verifyZeroInteractions(mockDelegate);
+    }
 }

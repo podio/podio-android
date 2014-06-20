@@ -27,7 +27,6 @@ import org.mockito.Mockito;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Organization;
 import com.podio.sdk.internal.request.ResultListener;
@@ -52,19 +51,18 @@ public class OrganizationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testGetAllOrganizations() {
-		DummyRestClient mockClient = new DummyRestClient(
-				new RestResult<Organization[]>(true, null, null));
-		OrganizationProvider provider = new OrganizationProvider(mockClient);
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        OrganizationProvider provider = new OrganizationProvider(mockClient);
 
-		@SuppressWarnings("unchecked")
-		ResultListener<Organization[]> mockListener = Mockito.mock(ResultListener.class);
-		Object ticket = provider.getAll(mockListener);
+        @SuppressWarnings("unchecked")
+        ResultListener<Organization[]> mockListener = Mockito.mock(ResultListener.class);
+        provider.getAll(mockListener, null, null);
 
-		Mockito.verify(mockListener).onSuccess(ticket, null);
-		Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(mockListener).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(mockListener);
 
-		Uri uri = ((PodioFilter) ticket).buildUri("content", "test.uri");
-		assertEquals(Uri.parse("content://test.uri/org"), uri);
+        Uri uri = mockClient.getMockUri();
+        assertEquals(Uri.parse("content://test.uri/org"), uri);
     }
 
 }

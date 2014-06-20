@@ -22,31 +22,71 @@
 
 package com.podio.sdk.provider.mock;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import android.net.Uri;
+
 import com.podio.sdk.client.QueuedRestClient;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.client.RestResult;
 
 public final class DummyRestClient extends QueuedRestClient {
 
-    private RestResult<?> result;
+    private final RestResult<?> result;
+    private Uri mockUri;
 
-	public DummyRestClient(RestResult<?> result) {
-		super(null, null);
-		
-		this.result = result;
-	}
+    public DummyRestClient(RestResult<?> result) {
+        super("content", "test.uri");
+        this.result = result;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-		return (RestResult<T>) result;
-	}
+    public Uri getMockUri() {
+        return mockUri;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-    public <T> boolean enqueue(RestRequest<T> request) {
-        this.callListener(request, (RestResult<T>) result);
-        return true;
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
+        return (RestResult<T>) result;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Future<RestResult<T>> enqueue(RestRequest<T> request) {
+        mockUri = request.getFilter().buildUri(getScheme(), getAuthority());
+        callListener(request, (RestResult<T>) result);
+
+        return new Future<RestResult<T>>() {
+
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public RestResult<T> get() throws InterruptedException, ExecutionException {
+                return (RestResult<T>) result;
+            }
+
+            @Override
+            public RestResult<T> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return (RestResult<T>) result;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+
+            @Override
+            public boolean isDone() {
+                return true;
+            }
+
+        };
     }
 
 }

@@ -22,52 +22,48 @@
 
 package com.podio.sdk.client;
 
-import com.podio.sdk.client.QueuedRestClient;
-import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.client.RestResult;
-
 public class MockRestClient extends QueuedRestClient {
+    private RestResult<?> result = RestResult.success();
+    private boolean async = false;
 
-	private RestResult<?> result = RestResult.success();
+    public MockRestClient() {
+        this(-1);
+    }
 
-	private boolean async = false;
+    public MockRestClient(int capacity) {
+        this("test://", "podio.test", capacity);
+    }
 
-	public MockRestClient() {
-		this(1);
-	}
+    public MockRestClient(String scheme, String authority) {
+        this(scheme, authority, -1);
+    }
 
-	public MockRestClient(int capacity) {
-		this("test://", "podio.test", 1);
-	}
+    public MockRestClient(String scheme, String authority, int capacity) {
+        super(scheme, authority, capacity);
+    }
 
-	public MockRestClient(String scheme, String authority, int queueCapacity) {
-		super(scheme, authority, queueCapacity);
-	}
+    public void setResult(RestResult<?> result) {
+        this.result = result;
+    }
 
-	public void setResult(RestResult<?> result) {
-		this.result = result;
-	}
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
 
-	public void setAsync(boolean async) {
-		this.async = async;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
+        return (RestResult<T>) result;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-		return (RestResult<T>) result;
-	}
-
-	@Override
-	protected <T> void reportResult(RestRequest<T> request, RestResult<T> result) {
-		if (async) {
-			super.reportResult(request, result);
-		} else {
-			// This makes sure the listeners are called on the worker thread
-			if (request.getResultListener() != null) {
-				callListener(request, result);
-			}
-		}
-	}
+    @Override
+    protected <T> void reportResult(RestRequest<T> request, RestResult<T> result) {
+        if (async) {
+            super.reportResult(request, result);
+        } else {
+            // This makes sure the listeners are called on the worker thread
+            super.callListener(request, result);
+        }
+    }
 
 }
