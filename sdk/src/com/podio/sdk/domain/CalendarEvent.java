@@ -21,11 +21,85 @@
  */
 package com.podio.sdk.domain;
 
-public final class CalendarEvent {
-    public final String start_utc = null;
-    public final String end_utc = null;
-    public final String title = null;
-    public final String description = null;
-    public final String location = null;
-    public final Boolean busy = null;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.podio.sdk.internal.utils.Utils;
+
+/**
+ * @author Tobias Lindberg
+ */
+public class CalendarEvent {
+    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private final String start_utc = null;
+    private final String end_utc = null;
+    private final String title = null;
+    private final String description = null;
+    private final String location = null;
+    private final Boolean busy = null;
+
+    /**
+     * Gets the end date of the calendar event as a Java Date object.
+     * 
+     * @return A date object, or null if the date couldn't be parsed.
+     */
+    public Date getEndDate() {
+        Date date;
+
+        try {
+            date = FORMATTER_DATETIME.parse(end_utc);
+        } catch (ParseException e) {
+            date = null;
+        } catch (NullPointerException e) {
+            date = null;
+        }
+
+        return date;
+    }
+
+    public String getEndDateAsString() {
+        return end_utc;
+    }
+
+    /**
+     * Gets the start date of the calendar event as a Java Date object.
+     * 
+     * @return A date object, or null if the date couldn't be parsed.
+     */
+    public Date getStartDate() {
+        Date date;
+
+        try {
+            date = FORMATTER_DATETIME.parse(start_utc);
+        } catch (ParseException e) {
+            date = null;
+        } catch (NullPointerException e) {
+            date = null;
+        }
+
+        return date;
+    }
+
+    public String getStartDateAsString() {
+        return start_utc;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public boolean getIsBusy() {
+        return Utils.getNative(busy, false);
+    }
+
 }
