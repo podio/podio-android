@@ -36,11 +36,11 @@ import android.test.InstrumentationTestCase;
 import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.DummyRestClient;
 import com.podio.test.ThreadCaptureResultListener;
 

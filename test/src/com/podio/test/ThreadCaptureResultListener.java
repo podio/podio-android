@@ -1,6 +1,6 @@
 package com.podio.test;
 
-import com.podio.sdk.internal.request.ResultListener;
+import com.podio.sdk.ResultListener;
 
 public class ThreadCaptureResultListener implements ResultListener<Object> {
 

@@ -27,9 +27,9 @@ import org.mockito.Mockito;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Organization;
-import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class OrganizationProviderTest extends AndroidTestCase {

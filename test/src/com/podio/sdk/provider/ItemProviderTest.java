@@ -27,10 +27,10 @@ import org.mockito.Mockito;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.domain.ItemRequest;
-import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class ItemProviderTest extends AndroidTestCase {
@@ -56,7 +56,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.addItem(2L, new Item().getPushData(), mockListener, null, null);
+        provider.create(2L, new Item().getPushData(), mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -87,7 +87,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Item> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchItem(3L, mockListener, null, null);
+        provider.get(3L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -118,7 +118,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<ItemRequest.Result> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchItemsForApplication(4L, mockListener, null, null);
+        provider.getFiltered(4L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -149,7 +149,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.updateItem(5, new Item().getPushData(), mockListener, null, null);
+        provider.update(5, new Item().getPushData(), mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);

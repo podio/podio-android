@@ -27,9 +27,9 @@ import org.mockito.Mockito;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Application;
-import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class ApplicationProviderTest extends AndroidTestCase {
@@ -55,7 +55,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchApplication(2L, mockListener, null, null);
+        provider.get(2L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -85,7 +85,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchApplicationMicro(2L, mockListener, null, null);
+        provider.getMicro(2L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -115,7 +115,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchApplicationMini(2L, mockListener, null, null);
+        provider.getMini(2L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -145,7 +145,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchApplicationsForSpace(1, mockListener, null, null);
+        provider.getAllActive(1, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -175,7 +175,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchApplicationsForSpaceWithInactivesIncluded(2, mockListener, null, null);
+        provider.getAll(2, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -205,7 +205,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
-        provider.fetchApplicationShort(2L, mockListener, null, null);
+        provider.getShort(2L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);

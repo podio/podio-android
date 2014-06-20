@@ -27,9 +27,9 @@ import org.mockito.Mockito;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.internal.request.ResultListener;
 import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class SessionProviderTest extends AndroidTestCase {
@@ -56,7 +56,8 @@ public class SessionProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
-        provider.authenticateWithUserCredentials("CLIENTID", "CLIENTSECRET", "USERNAME", "PASSWORD", mockListener, null, null);
+        provider.setup("CLIENTID", "CLIENTSECRET");
+        provider.authenticateWithUserCredentials("USERNAME", "PASSWORD", mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -89,7 +90,8 @@ public class SessionProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
-        provider.authenticateWithAppCredentials("CLIENTID", "CLIENTSECRET", "APPID", "APPTOKEN", mockListener, null, null);
+        provider.setup("CLIENTID", "CLIENTSECRET");
+        provider.authenticateWithAppCredentials("APPID", "APPTOKEN", mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
