@@ -40,9 +40,9 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.PodioException;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.internal.utils.Utils;
@@ -67,15 +67,10 @@ public class HttpClientDelegate implements RestClientDelegate {
         String url = removeQuery(uri);
         Map<String, String> params = queryToBody(uri);
 
-        boolean success = authorizeRequest(url, params);
+        authorizeRequest(url, params);
+        this.refreshUrl = url;
 
-        if (success) {
-            this.refreshUrl = url;
-
-            return RestResult.success(session);
-        } else {
-            return RestResult.failure();
-        }
+        return RestResult.success(session);
     }
 
     @Override
@@ -191,8 +186,9 @@ public class HttpClientDelegate implements RestClientDelegate {
             boolean didRefreshSession = checkSession();
             String output = getBlockingResponse(future);
             T content = parser.parseToItem(output);
+            Session newSession = didRefreshSession ? session : null;
 
-            return new RestResult<T>(true, didRefreshSession ? session : null, null, content);
+            return RestResult.success(content, newSession);
         } catch (PodioException e) {
             if (e.isExpiredError() && tryRefresh) {
                 refreshSession();
@@ -203,15 +199,15 @@ public class HttpClientDelegate implements RestClientDelegate {
         }
     }
 
-    private boolean refreshSession() throws PodioException {
+    private void refreshSession() throws PodioException {
         Map<String, String> refreshParams = new HashMap<String, String>();
         refreshParams.put("grant_type", "refresh_token");
         refreshParams.put("refresh_token", session.refreshToken);
 
-        return authorizeRequest(refreshUrl, refreshParams);
+        authorizeRequest(refreshUrl, refreshParams);
     }
 
-    private boolean authorizeRequest(String url, Map<String, String> params) throws PodioException {
+    private void authorizeRequest(String url, Map<String, String> params) throws PodioException {
         RequestFuture<String> future = RequestFuture.newFuture();
         StringRequest request = new RefreshRequest(refreshUrl, params, future);
 
@@ -219,17 +215,17 @@ public class HttpClientDelegate implements RestClientDelegate {
 
         String resultJson = getBlockingResponse(future);
         session = new Session(resultJson);
-
-        return true;
     }
 
     private boolean checkSession() throws PodioException {
         if (session == null) {
-            throw new IllegalStateException("No session is active");
+            Throwable cause = new IllegalStateException("No session is active");
+            throw new PodioException("Invalid session", cause);
         }
 
         if (!session.isAuthorized()) {
-            throw new IllegalStateException("Session is not authorized");
+            Throwable cause = new IllegalStateException("Session is not authorized");
+            throw new PodioException("Invalid session", cause);
         }
 
         if (session.shouldRefreshTokens()) {

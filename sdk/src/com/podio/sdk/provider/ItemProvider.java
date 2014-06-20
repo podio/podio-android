@@ -22,11 +22,16 @@
 
 package com.podio.sdk.provider;
 
+import java.util.concurrent.Future;
+
+import com.podio.sdk.ErrorListener;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
+import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.domain.ItemRequest;
 import com.podio.sdk.filter.ItemFilter;
-import com.podio.sdk.internal.request.ResultListener;
 
 public class ItemProvider extends BasicPodioProvider {
 
@@ -34,29 +39,29 @@ public class ItemProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object addItem(long applicationId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener) {
+    public Future<RestResult<Item.PushResult>> addItem(long applicationId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
 
-        return post(filter, data, Item.PushResult.class, resultListener);
+        return post(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchItem(long itemId, ResultListener<? super Item> resultListener) {
+    public Future<RestResult<Item>> fetchItem(long itemId, ResultListener<? super Item> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
-        return get(filter, Item.class, resultListener);
+        return get(filter, Item.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchItemsForApplication(long applicationId, ResultListener<? super ItemRequest.Result> resultListener) {
+    public Future<RestResult<ItemRequest.Result>> fetchItemsForApplication(long applicationId, ResultListener<? super ItemRequest.Result> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
         ItemRequest filterRequest = new ItemRequest(null, null, null, null, null, null);
 
-        return post(filter, filterRequest, ItemRequest.Result.class, resultListener);
+        return post(filter, filterRequest, ItemRequest.Result.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object updateItem(long itemId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener) {
+    public Future<RestResult<Item.PushResult>> updateItem(long itemId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
-        return put(filter, data, Item.PushResult.class, resultListener);
+        return put(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
     }
 
 }

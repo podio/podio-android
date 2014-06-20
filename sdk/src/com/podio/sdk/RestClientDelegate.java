@@ -24,7 +24,6 @@ package com.podio.sdk;
 
 import android.net.Uri;
 
-import com.podio.sdk.client.PodioException;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 

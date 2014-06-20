@@ -24,9 +24,9 @@ package com.podio.sdk.internal.request;
 
 import android.net.Uri;
 
+import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClientDelegate;
-import com.podio.sdk.client.PodioException;
 import com.podio.sdk.client.RestResult;
 
 public enum RestOperation {

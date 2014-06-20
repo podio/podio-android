@@ -22,10 +22,15 @@
 
 package com.podio.sdk.provider;
 
+import java.util.concurrent.Future;
+
+import com.podio.sdk.ErrorListener;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
+import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.filter.ApplicationFilter;
-import com.podio.sdk.internal.request.ResultListener;
 
 public final class ApplicationProvider extends BasicPodioProvider {
 
@@ -33,52 +38,52 @@ public final class ApplicationProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object fetchApplication(long applicationId, ResultListener<? super Application> resultListener) {
-        ApplicationFilter filter = new ApplicationFilter() //
-        .withApplicationId(applicationId) //
-        .withType("full");
+    public Future<RestResult<Application>> fetchApplication(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        ApplicationFilter filter = new ApplicationFilter()
+                .withApplicationId(applicationId)
+                .withType("full");
 
-        return get(filter, Application.class, resultListener);
+        return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchApplicationShort(long applicationId, ResultListener<? super Application> resultListener) {
-        ApplicationFilter filter = new ApplicationFilter() //
-        .withApplicationId(applicationId) //
-        .withType("short");
+    public Future<RestResult<Application>> fetchApplicationShort(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        ApplicationFilter filter = new ApplicationFilter()
+                .withApplicationId(applicationId)
+                .withType("short");
 
-        return get(filter, Application.class, resultListener);
+        return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchApplicationMini(long applicationId, ResultListener<? super Application> resultListener) {
-        ApplicationFilter filter = new ApplicationFilter() //
-        .withApplicationId(applicationId) //
-        .withType("mini");
+    public Future<RestResult<Application>> fetchApplicationMini(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        ApplicationFilter filter = new ApplicationFilter()
+                .withApplicationId(applicationId)
+                .withType("mini");
 
-        return get(filter, Application.class, resultListener);
+        return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchApplicationMicro(long applicationId, ResultListener<? super Application> resultListener) {
-        ApplicationFilter filter = new ApplicationFilter() //
-        .withApplicationId(applicationId) //
-        .withType("micro");
+    public Future<RestResult<Application>> fetchApplicationMicro(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        ApplicationFilter filter = new ApplicationFilter()
+                .withApplicationId(applicationId)
+                .withType("micro");
 
-        return get(filter, Application.class, resultListener);
+        return get(filter, Application.class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchApplicationsForSpace(long spaceId, ResultListener<? super Application[]> resultListener) {
-        ApplicationFilter filter = new ApplicationFilter() //
-        .withSpaceId(spaceId) //
-        .withInactivesIncluded(false);
+    public Future<RestResult<Application[]>> fetchApplicationsForSpace(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        ApplicationFilter filter = new ApplicationFilter()
+                .withSpaceId(spaceId)
+                .withInactivesIncluded(false);
 
-        return get(filter, Application[].class, resultListener);
+        return get(filter, Application[].class, resultListener, errorListener, sessionListener);
     }
 
-    public Object fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener<? super Application[]> resultListener) {
-        ApplicationFilter filter = new ApplicationFilter() //
-        .withSpaceId(spaceId) //
-        .withInactivesIncluded(true);
+    public Future<RestResult<Application[]>> fetchApplicationsForSpaceWithInactivesIncluded(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        ApplicationFilter filter = new ApplicationFilter()
+                .withSpaceId(spaceId)
+                .withInactivesIncluded(true);
 
-        return get(filter, Application[].class, resultListener);
+        return get(filter, Application[].class, resultListener, errorListener, sessionListener);
     }
 
 }

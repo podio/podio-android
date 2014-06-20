@@ -28,6 +28,7 @@ import java.util.List;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
@@ -70,9 +71,9 @@ public class CachedRestClient extends HttpRestClient {
      *        its queue.
      */
     public CachedRestClient(Context context, String authority, RestClientDelegate networkDelegate,
-            CacheClient cacheClient, int queueCapacity) {
+            CacheClient cacheClient) {
 
-        super(context, authority, networkDelegate, queueCapacity);
+        super(context, authority, networkDelegate);
 
         if (cacheClient == null) {
             throw new NullPointerException("The cacheDelegate must not be null");
@@ -115,19 +116,20 @@ public class CachedRestClient extends HttpRestClient {
             super.enqueue(restRequest);
 
             byte[] data = cacheClient.load(cacheKey);
+            T responseItem = null;
+
             if (data != null) {
-                T responseItem = parser.parseToItem(new String(data));
-                return RestResult.success(responseItem);
-            } else {
-                return RestResult.failure();
+                responseItem = parser.parseToItem(new String(data));
             }
+
+            return RestResult.success(responseItem);
         } else {
             delegatedRequests.remove(restRequest);
             result = super.handleRequest(restRequest);
 
-            if (result.isSuccess()) {
+            if (!result.hasException()) {
                 if (operation == RestOperation.GET) {
-                    String json = parser.parseToJson(result.item());
+                    String json = parser.parseToJson(result.getItem());
                     cacheClient.save(cacheKey, json != null ? json.getBytes() : null);
                 } else if (operation != RestOperation.AUTHORIZE) {
                     cacheClient.delete(cacheKey);

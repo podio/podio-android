@@ -22,6 +22,7 @@
 
 package com.podio.sdk.client;
 
+import com.podio.sdk.PodioException;
 import com.podio.sdk.domain.Session;
 
 /**
@@ -30,95 +31,117 @@ import com.podio.sdk.domain.Session;
  * @author László Urszuly
  */
 public class RestResult<T> {
-    private final boolean isSuccess;
+    private final PodioException exception;
     private final Session session;
-    private final String message;
     private final T item;
 
     /**
-     * Constructor. The one and only way to set the state of this object.
+     * Creates a new rest result object with the given parameters.
      * 
-     * @param isSuccess
-     *        Boolean true if this object represents a successfully performed
-     *        {@link RestRequest}. Boolean false otherwise.
-     * @param message
-     *        A optional message provided to the caller by the creator of this
-     *        object.
      * @param item
      *        Optional content of this object.
-     */
-    public RestResult(boolean isSuccess, String message, T item) {
-        this(isSuccess, null, message, item);
-    }
-
-    /**
-     * Constructor. The one and only way to set the state of this object.
-     * 
-     * @param isSuccess
-     *        Boolean true if this object represents a successfully performed
-     *        {@link RestRequest}. Boolean false otherwise.
      * @param session
      *        The new session variables, if changed. Otherwise null.
-     * @param message
-     *        A optional message provided to the caller by the creator of this
-     *        object.
-     * @param item
-     *        Optional content of this object.
+     * @param exception
+     *        The exception stack describing any error while performing the
+     *        corresponding request.
      */
-    public RestResult(boolean isSuccess, Session session, String message, T item) {
-        this.isSuccess = isSuccess;
-        this.session = session;
-        this.message = message;
+    private RestResult(T item, Session session, PodioException exception) {
         this.item = item;
+        this.session = session;
+        this.exception = exception;
     }
 
     /**
-     * Returns the read-only success state.
+     * Returns the error state flag.
      * 
-     * @return Boolean true if the corresponding request was successfully
-     *         performed. Boolean false otherwise.
+     * @return Boolean true if this result object has any exception information.
      */
-    public boolean isSuccess() {
-        return isSuccess;
+    public boolean hasException() {
+        return exception != null;
     }
 
-    public Session session() {
+    /**
+     * Returns whether this result object contains new session information.
+     * 
+     * @return
+     */
+    public boolean hasSession() {
+        return session != null;
+    }
+
+    /**
+     * Returns whether this result object contains new session information and,
+     * if so, the information indicates an authorized session.
+     * 
+     * @return
+     */
+    public boolean hasAuthorizedSession() {
+        return hasSession() && session.isAuthorized();
+    }
+
+    /**
+     * Returns the error description object associated with this result.
+     * 
+     * @return A custom exception object.
+     */
+    public PodioException getException() {
+        return exception;
+    }
+
+    /**
+     * Returns the new session information associated with this result.
+     * 
+     * @return A session object.
+     */
+    public Session getSession() {
         return session;
     }
 
     /**
-     * Returns any items associated with the corresponding request. May be null.
+     * Returns any content associated with the corresponding request.
      * 
-     * @return A list of items or null.
+     * @return The requested content.
      */
-    public T item() {
+    public T getItem() {
         return item;
     }
 
     /**
-     * Returns any message provided by the underlying infrastructure. May be
-     * null or empty.
+     * Creates a new failure result object with a custom exception describing
+     * the cause of the failure.
      * 
-     * @return A message string.
+     * @return A failure result.
      */
-    public String message() {
-        return message;
+    public static <T> RestResult<T> failure(PodioException exception) {
+        return new RestResult<T>(null, null, exception);
     }
 
-    public static <T> RestResult<T> failure() {
-        return failure(null);
-    }
-
-    public static <T> RestResult<T> failure(String message) {
-        return new RestResult<T>(false, message, null);
-    }
-
+    /**
+     * Creates a new success result object with no further information.
+     * 
+     * @return A success result.
+     */
     public static <T> RestResult<T> success() {
         return success(null);
     }
 
+    /**
+     * Creates a new success result object, containing the requested data.
+     * 
+     * @return A success result.
+     */
     public static <T> RestResult<T> success(T item) {
-        return new RestResult<T>(true, null, item);
+        return success(item, null);
     }
 
+    /**
+     * Creates a new success result object, containing the requested data and
+     * the new session information.
+     * 
+     * @return A success result.
+     */
+    public static <T> RestResult<T> success(T item, Session session) {
+        return new RestResult<T>(item, session, null);
+    }
 }

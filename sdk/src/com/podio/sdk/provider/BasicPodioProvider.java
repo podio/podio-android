@@ -22,12 +22,17 @@
 
 package com.podio.sdk.provider;
 
+import java.util.concurrent.Future;
+
+import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.client.RestResult;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.request.ResultListener;
 
 public class BasicPodioProvider {
 
@@ -40,34 +45,30 @@ public class BasicPodioProvider {
         this.client = client;
     }
 
-    protected <T> Object get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener) {
-        return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener);
+    protected <T> Future<RestResult<T>> get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
     }
 
-    protected <T> Object post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
-        return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener);
+    protected <T> Future<RestResult<T>> post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
     }
 
-    protected <T> Object put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener) {
-        return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener);
+    protected <T> Future<RestResult<T>> put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
     }
 
-    protected <T> Object request(RestOperation operation, PodioFilter filter,
-            Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener) {
-        Object ticket = filter;
+    protected <T> Future<RestResult<T>> request(RestOperation operation, PodioFilter filter,
+            Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
 
-        RestRequest<T> restRequest = new RestRequest<T>() //
-        .setContent(content) //
-        .setFilter(filter) //
-        .setParser(parser) //
-        .setOperation(operation) //
-        .setResultListener(resultListener) //
-        .setTicket(ticket);
+        RestRequest<T> restRequest = new RestRequest<T>()
+                .setContent(content)
+                .setFilter(filter)
+                .setParser(parser)
+                .setOperation(operation)
+                .setResultListener(resultListener)
+                .setErrorListener(errorListener)
+                .setSessionListener(sessionListener);
 
-        if (client.enqueue(restRequest)) {
-            return ticket;
-        } else {
-            return null;
-        }
+        return client.enqueue(restRequest);
     }
 }

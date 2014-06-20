@@ -23,17 +23,23 @@
 package com.podio.sdk.client;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import android.os.Handler;
 
+import com.podio.sdk.ErrorListener;
+import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.internal.request.ResultListener;
 
 /**
  * Facilitates default means of queuing up requests, flirting with the classical
@@ -52,61 +58,50 @@ import com.podio.sdk.internal.request.ResultListener;
  * @author László Urszuly
  */
 public abstract class QueuedRestClient implements RestClient {
-
-    public static final int CAPACITY_DEFAULT = 1;
-
-    public static enum State {
-        IDLE, PROCESSING
-    }
-
-    private final class RequestRunner<T> implements Runnable {
-
-        private final RestRequest<T> request;
-
-        private RequestRunner(RestRequest<T> request) {
-            this.request = request;
-        }
-
-        @Override
-        public void run() {
-            RestResult<T> result;
-
-            state = State.PROCESSING;
-            try {
-                result = handleRequest(request);
-            } catch (PodioException e) {
-                result = null;
-            } finally {
-                state = State.IDLE;
-            }
-
-            Session session = result != null ? result.session() : null;
-
-            if (session != null && !session.isAuthorized()) {
-                // The user is no longer authorized. Remove any pending
-                // requests before proceeding.
-                queue.clear();
-            }
-
-            reportResult(request, result);
-        }
-    }
-
     private final String scheme;
     private final String authority;
 
     private final BlockingQueue<Runnable> queue;
-
-    private final Executor executor;
-
+    private final ExecutorService executorService;
     private final Handler callerHandler;
 
-    private State state = State.IDLE;
+    /**
+     * @author László Urszuly
+     * @param <T>
+     */
+    private final class RequestCallable<T> implements Callable<RestResult<T>> {
+
+        private final RestRequest<T> request;
+
+        private RequestCallable(RestRequest<T> request) {
+            this.request = request;
+        }
+
+        @Override
+        public RestResult<T> call() throws Exception {
+            RestResult<T> result = null;
+
+            try {
+                result = handleRequest(request);
+
+                if (result.hasSession() && !result.getSession().isAuthorized()) {
+                    // The user is no longer authorized. Remove any pending
+                    // requests (allowing any running requests to finish).
+                    queue.clear();
+                }
+            } catch (PodioException e) {
+                result = RestResult.failure(e);
+            } finally {
+                reportResult(request, result);
+            }
+
+            return result;
+        }
+    }
 
     /**
-     * Initializes the request queue with the
-     * {@link QueuedRestClient#CAPACITY_DEFAULT} capacity. Any requests that are
-     * passed on to a full queue will be rejected.
+     * Initializes the request executor service with a {@link Integer#MAX_VALUE}
+     * capacity request queue.
      * 
      * @param scheme
      *        The scheme of this {@link RestClient}.
@@ -114,30 +109,29 @@ public abstract class QueuedRestClient implements RestClient {
      *        The authority of this {@link RestClient}.
      */
     public QueuedRestClient(String scheme, String authority) {
-        this(scheme, authority, CAPACITY_DEFAULT);
+        this(scheme, authority, Integer.MAX_VALUE);
     }
 
     /**
-     * Initializes the request queue with the given capacity. Any requests that
-     * are passed on to a full queue will be rejected.
+     * Initializes the request executor service.
      * 
      * @param scheme
      *        The scheme of this {@link RestClient}.
      * @param authority
      *        The authority of this {@link RestClient}.
      * @param queueCapacity
-     *        The capacity of the request queue. If the provided capacity is
-     *        less than or equal to zero, then the
-     *        {@link QueuedRestClient#CAPACITY_DEFAULT} will be used instead.
+     *        The desired capacity of the request queue. Defaults to
+     *        {@link Integer#MAX_VALUE} if less than zero.
      */
     public QueuedRestClient(String scheme, String authority, int queueCapacity) {
-        int capacity = queueCapacity > 0 ? queueCapacity : CAPACITY_DEFAULT;
-
         this.scheme = scheme;
         this.authority = authority;
 
+        ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        int capacity = queueCapacity > 0 ? queueCapacity : Integer.MAX_VALUE;
+
         this.queue = new LinkedBlockingQueue<Runnable>(capacity);
-        this.executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, queue);
+        this.executorService = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, queue, threadFactory);
         this.callerHandler = new Handler();
     }
 
@@ -161,21 +155,13 @@ public abstract class QueuedRestClient implements RestClient {
      * {@inheritDoc RestClient#perform(RestRequest)}
      */
     @Override
-    public <T> boolean enqueue(RestRequest<T> request) {
+    public <T> Future<RestResult<T>> enqueue(RestRequest<T> request) throws NullPointerException {
         if (request == null) {
             throw new NullPointerException("request cannot be null");
         }
 
-        request.validate();
-
-        try {
-            this.executor.execute(new RequestRunner<T>(request));
-
-            return true;
-        } catch (RejectedExecutionException e) {
-            // TODO: Consider just propagating this exception
-            return false;
-        }
+        RequestCallable<T> callable = new RequestCallable<T>(request);
+        return executorService.submit(callable);
     }
 
     /**
@@ -207,6 +193,15 @@ public abstract class QueuedRestClient implements RestClient {
     }
 
     /**
+     * Returns the number of requests in the executor queue.
+     * 
+     * @return
+     */
+    public int size() {
+        return queue.size();
+    }
+
+    /**
      * Reports a result back to any listeners implementation.
      * 
      * @param request
@@ -215,35 +210,27 @@ public abstract class QueuedRestClient implements RestClient {
      *        The result of the request.
      */
     protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
+        SessionListener sessionListener = request.getSessionListener();
+
+        if (sessionListener != null) {
+            Session session = result.getSession();
+            sessionListener.onSessionChanged(session);
+        }
+
         ResultListener<? super T> resultListener = request.getResultListener();
-        Session session = result.session();
-
-        if (session != null) {
-            resultListener.onSessionChange(request.getTicket(), session);
+        if (resultListener != null) {
+            T item = result.getItem();
+            resultListener.onRequestPerformed(item);
         }
 
-        if (result.isSuccess()) {
-            resultListener.onSuccess(request.getTicket(), result.item());
-        } else {
-            resultListener.onFailure(request.getTicket(), result.message());
+        if (result.hasException()) {
+            ErrorListener errorListener = request.getErrorListener();
+
+            if (errorListener != null) {
+                PodioException error = result.getException();
+                errorListener.onExceptionOccurred(error);
+            }
         }
     }
 
-    /**
-     * Gives information on the current occupied size of the request queue.
-     * 
-     * @return The number of requests in the queue.
-     */
-    public int size() {
-        return queue.size();
-    }
-
-    /**
-     * Gives information on the current state of the consumer thread.
-     * 
-     * @return The current state.
-     */
-    public State state() {
-        return state;
-    }
 }

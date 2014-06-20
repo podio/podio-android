@@ -20,29 +20,14 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.provider;
+package com.podio.sdk;
 
-import java.util.concurrent.Future;
+/**
+ * @author László Urszuly
+ * @param <T>
+ */
+public interface ResultListener<T> {
 
-import com.podio.sdk.ErrorListener;
-import com.podio.sdk.PodioFilter;
-import com.podio.sdk.RestClient;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
-import com.podio.sdk.domain.Organization;
-import com.podio.sdk.filter.OrganizationFilter;
-
-public class OrganizationProvider extends BasicPodioProvider {
-
-    public OrganizationProvider(RestClient client) {
-        super(client);
-    }
-
-    public Future<RestResult<Organization[]>> getAll(ResultListener<? super Organization[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        PodioFilter filter = new OrganizationFilter();
-
-        return get(filter, Organization[].class, resultListener, errorListener, sessionListener);
-    }
+    public void onRequestPerformed(T content);
 
 }

@@ -22,25 +22,30 @@
 
 package com.podio.sdk.client;
 
+import com.podio.sdk.ErrorListener;
+import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.request.ResultListener;
 
 public final class RestRequest<T> {
 
     private Object content;
     private PodioFilter filter;
-    private PodioParser<? extends T> parser;
     private RestOperation operation;
+    private PodioParser<? extends T> parser;
+
+    private ErrorListener errorListener;
     private ResultListener<? super T> resultListener;
-    private Object ticket;
+    private SessionListener sessionListener;
 
     @Override
     public String toString() {
         return "RestRequest [content=" + content + ", filter=" + filter
                 + ", parser=" + parser + ", operation=" + operation
-                + ", resultListener=" + resultListener + ", ticket=" + ticket
+                + ", resultListener=" + resultListener
                 + "]";
     }
 
@@ -51,14 +56,15 @@ public final class RestRequest<T> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+
         result = prime * result + (content == null ? 0 : content.hashCode());
         result = prime * result + (filter == null ? 0 : filter.hashCode());
-        result = prime * result
-                + (operation == null ? 0 : operation.hashCode());
+        result = prime * result + (operation == null ? 0 : operation.hashCode());
         result = prime * result + (parser == null ? 0 : parser.hashCode());
-        result = prime * result
-                + (resultListener == null ? 0 : resultListener.hashCode());
-        result = prime * result + (ticket == null ? 0 : ticket.hashCode());
+        result = prime * result + (errorListener == null ? 0 : errorListener.hashCode());
+        result = prime * result + (resultListener == null ? 0 : resultListener.hashCode());
+        result = prime * result + (sessionListener == null ? 0 : sessionListener.hashCode());
+
         return result;
     }
 
@@ -70,12 +76,15 @@ public final class RestRequest<T> {
         if (this == obj) {
             return true;
         }
+
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         @SuppressWarnings("rawtypes")
         RestRequest other = (RestRequest) obj;
         if (content == null) {
@@ -85,6 +94,7 @@ public final class RestRequest<T> {
         } else if (!content.equals(other.content)) {
             return false;
         }
+
         if (filter == null) {
             if (other.filter != null) {
                 return false;
@@ -92,9 +102,11 @@ public final class RestRequest<T> {
         } else if (!filter.equals(other.filter)) {
             return false;
         }
+
         if (operation != other.operation) {
             return false;
         }
+
         if (parser == null) {
             if (other.parser != null) {
                 return false;
@@ -102,6 +114,15 @@ public final class RestRequest<T> {
         } else if (!parser.equals(other.parser)) {
             return false;
         }
+
+        if (errorListener == null) {
+            if (other.errorListener != null) {
+                return false;
+            }
+        } else if (!errorListener.equals(other.errorListener)) {
+            return false;
+        }
+
         if (resultListener == null) {
             if (other.resultListener != null) {
                 return false;
@@ -109,22 +130,27 @@ public final class RestRequest<T> {
         } else if (!resultListener.equals(other.resultListener)) {
             return false;
         }
-        if (ticket == null) {
-            if (other.ticket != null) {
+
+        if (sessionListener == null) {
+            if (other.sessionListener != null) {
                 return false;
             }
-        } else if (!ticket.equals(other.ticket)) {
+        } else if (!sessionListener.equals(other.sessionListener)) {
             return false;
         }
+
         return true;
     }
 
-    public void validate() {
+    public void validate() throws PodioException {
         if (filter == null) {
-            throw new NullPointerException("filter cannot be null");
+            Throwable cause = new NullPointerException("filter cannot be null");
+            throw new PodioException("RestRequest invalid", cause);
         }
+
         if (operation == null) {
-            throw new NullPointerException("operation cannot be null");
+            Throwable cause = new NullPointerException("operation cannot be null");
+            throw new PodioException("RestRequest invalid", cause);
         }
     }
 
@@ -144,12 +170,16 @@ public final class RestRequest<T> {
         return operation;
     }
 
+    public ErrorListener getErrorListener() {
+        return errorListener;
+    }
+
     public ResultListener<? super T> getResultListener() {
         return resultListener;
     }
 
-    public Object getTicket() {
-        return ticket;
+    public SessionListener getSessionListener() {
+        return sessionListener;
     }
 
     public RestRequest<T> setContent(Object item) {
@@ -162,13 +192,18 @@ public final class RestRequest<T> {
         return this;
     }
 
+    public RestRequest<T> setOperation(RestOperation operation) {
+        this.operation = operation;
+        return this;
+    }
+
     public RestRequest<T> setParser(PodioParser<? extends T> parser) {
         this.parser = parser;
         return this;
     }
 
-    public RestRequest<T> setOperation(RestOperation operation) {
-        this.operation = operation;
+    public RestRequest<T> setErrorListener(ErrorListener errorListener) {
+        this.errorListener = errorListener;
         return this;
     }
 
@@ -177,8 +212,8 @@ public final class RestRequest<T> {
         return this;
     }
 
-    public RestRequest<T> setTicket(Object ticket) {
-        this.ticket = ticket;
+    public RestRequest<T> setSessionListener(SessionListener sessionListener) {
+        this.sessionListener = sessionListener;
         return this;
     }
 }

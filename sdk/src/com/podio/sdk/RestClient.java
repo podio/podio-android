@@ -22,7 +22,10 @@
 
 package com.podio.sdk;
 
+import java.util.concurrent.Future;
+
 import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.client.RestResult;
 
 /**
  * Manages the communication between the client application and the content
@@ -51,7 +54,7 @@ public interface RestClient {
      * @return Boolean true if the client accepted the request, boolean false
      *         otherwise.
      */
-    public <T> boolean enqueue(RestRequest<T> request);
+    public <T> Future<RestResult<T>> enqueue(RestRequest<T> request);
 
     /**
      * Returns the authority string for this rest client. The authority is the

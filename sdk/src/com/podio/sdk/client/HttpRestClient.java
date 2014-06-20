@@ -25,6 +25,7 @@ package com.podio.sdk.client;
 import android.content.Context;
 import android.net.Uri;
 
+import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.RestClientDelegate;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
@@ -53,14 +54,31 @@ public class HttpRestClient extends QueuedRestClient {
      * @param networkDelegate
      *        The {@link RestClientDelegate} implementation that will perform
      *        the actual HTTP request.
-     * @param queueCapacity
-     *        The custom request queue capacity.
      * @see QueuedRestClient
      * @see RestClient
      */
-    public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate,
-            int queueCapacity) {
-        super(SCHEME, authority, queueCapacity);
+    public HttpRestClient(Context context, String authority, RestClientDelegate networkDelegate) {
+        this(context, authority, Integer.MAX_VALUE, networkDelegate);
+    }
+
+    /**
+     * @param context
+     *        The context to execute the database operations in.
+     * @param authority
+     *        The authority to use in URIs by this client.
+     * @param authToken
+     *        The initial auth token to use when communicating with the Podio
+     *        servers.
+     * @param capacity
+     *        The desired request queue capacity.
+     * @param networkDelegate
+     *        The {@link RestClientDelegate} implementation that will perform
+     *        the actual HTTP request.
+     * @see QueuedRestClient
+     * @see RestClient
+     */
+    public HttpRestClient(Context context, String authority, int capacity, RestClientDelegate networkDelegate) {
+        super(SCHEME, authority, capacity);
 
         if (networkDelegate == null) {
             throw new NullPointerException("The networkDelegate must not be null");

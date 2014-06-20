@@ -22,13 +22,18 @@
 
 package com.podio.sdk.provider;
 
+import java.util.concurrent.Future;
+
+import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
+import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.internal.request.RestOperation;
-import com.podio.sdk.internal.request.ResultListener;
 
 public class SessionProvider extends BasicPodioProvider {
 
@@ -36,27 +41,27 @@ public class SessionProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object authenticateWithUserCredentials(String clientId, String clientSecret,
-            String username, String password, ResultListener<? super Session> resultListener) {
+    public Future<RestResult<Session>> authenticateWithUserCredentials(String clientId, String clientSecret,
+            String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
 
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withUserCredentials(username, password);
 
-        return authorize(filter, resultListener);
+        return authorize(filter, resultListener, errorListener, sessionListener);
     }
 
-    public Object authenticateWithAppCredentials(String clientId, String clientSecret,
-            String appId, String appToken, ResultListener<? super Session> resultListener) {
+    public Future<RestResult<Session>> authenticateWithAppCredentials(String clientId, String clientSecret,
+            String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
 
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken);
 
-        return authorize(filter, resultListener);
+        return authorize(filter, resultListener, errorListener, sessionListener);
     }
 
-    private Object authorize(PodioFilter filter, ResultListener<? super Session> resultListener) {
-        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener);
+    private Future<RestResult<Session>> authorize(PodioFilter filter, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, sessionListener);
     }
 }

@@ -20,16 +20,15 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.internal.request;
+package com.podio.sdk;
 
 import com.podio.sdk.domain.Session;
 
-public interface ResultListener<T> {
+/**
+ * @author László Urszuly
+ */
+public interface SessionListener {
 
-    public void onFailure(Object ticket, String message);
-
-    public void onSessionChange(Object ticket, Session session);
-
-    public void onSuccess(Object ticket, T content);
+    public void onSessionChanged(Session session);
 
 }

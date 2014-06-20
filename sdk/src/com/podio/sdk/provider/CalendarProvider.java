@@ -23,11 +23,15 @@
 package com.podio.sdk.provider;
 
 import java.util.Date;
+import java.util.concurrent.Future;
 
+import com.podio.sdk.ErrorListener;
 import com.podio.sdk.RestClient;
+import com.podio.sdk.ResultListener;
+import com.podio.sdk.SessionListener;
+import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.filter.CalendarFilter;
-import com.podio.sdk.internal.request.ResultListener;
 
 public class CalendarProvider extends BasicPodioProvider {
 
@@ -35,9 +39,11 @@ public class CalendarProvider extends BasicPodioProvider {
         super(client);
     }
 
-    public Object fetchGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener) {
-        CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
+    public Future<RestResult<CalendarEvent[]>> fetchGlobalCalendar(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        CalendarFilter filter = new CalendarFilter()
+                .withDateFromTo(from, to)
                 .withPriority(priority);
-        return get(filter, CalendarEvent[].class, resultListener);
+
+        return get(filter, CalendarEvent[].class, resultListener, errorListener, sessionListener);
     }
 }
