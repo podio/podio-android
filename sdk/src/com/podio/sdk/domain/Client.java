@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.internal.utils.Utils;
+
 /**
  * @author László Urszuly
  */
@@ -33,15 +35,15 @@ public class Client {
     private final String url = null;
 
     public boolean doDisplay() {
-        return display != null ? display.booleanValue() : false;
+        return Utils.getNative(display, false);
     }
 
     public int getAuthClientId() {
-        return auth_client_id != null ? auth_client_id.intValue() : 0;
+        return Utils.getNative(auth_client_id, -1);
     }
 
     public int getId() {
-        return id != null ? id.intValue() : 0;
+        return Utils.getNative(id, -1);
     }
 
     public String getName() {
