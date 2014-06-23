@@ -22,6 +22,8 @@
 
 package com.podio.sdk;
 
+import java.util.List;
+
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.domain.Item;
@@ -110,10 +112,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof RelationshipField);
         assertEquals(Field.Type.app, field.getType());
@@ -141,10 +145,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof CalculationField);
         assertEquals(Field.Type.calculation, field.getType());
@@ -172,10 +178,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof CategoryField);
         assertEquals(Field.Type.category, field.getType());
@@ -203,10 +211,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof ContactField);
         assertEquals(Field.Type.contact, field.getType());
@@ -234,10 +244,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof DateField);
         assertEquals(Field.Type.date, field.getType());
@@ -265,10 +277,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof DurationField);
         assertEquals(Field.Type.duration, field.getType());
@@ -296,10 +310,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof LinkField);
         assertEquals(Field.Type.embed, field.getType());
@@ -326,10 +342,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof EmptyField);
         assertEquals(Field.Type.undefined, field.getType());
@@ -357,10 +375,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof EmptyField);
         assertEquals(Field.Type.undefined, field.getType());
@@ -387,10 +407,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof EmptyField);
         assertEquals(Field.Type.undefined, field.getType());
@@ -418,10 +440,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof ImageField);
         assertEquals(Field.Type.image, field.getType());
@@ -449,10 +473,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof MapField);
         assertEquals(Field.Type.location, field.getType());
@@ -480,10 +506,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof MoneyField);
         assertEquals(Field.Type.money, field.getType());
@@ -511,10 +539,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof NumberField);
         assertEquals(Field.Type.number, field.getType());
@@ -542,10 +572,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof ProgressField);
         assertEquals(Field.Type.progress, field.getType());
@@ -573,10 +605,12 @@ public class PodioParserTest extends AndroidTestCase {
         Item item = parser.parseToItem(json);
 
         assertNotNull(item);
-        assertNotNull(item.fields);
-        assertEquals(1, item.fields.size());
 
-        Field field = item.fields.get(0);
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(1, fields.size());
+
+        Field field = fields.get(0);
         assertNotNull(field);
         assertTrue(field instanceof TextField);
         assertEquals(Field.Type.text, field.getType());

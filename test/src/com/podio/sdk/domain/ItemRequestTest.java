@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain;
 
+import java.util.List;
+
 import android.test.AndroidTestCase;
 
 import com.google.gson.Gson;
@@ -44,17 +46,18 @@ public class ItemRequestTest extends AndroidTestCase {
      * </pre>
      */
     public void testItemRequestCanBePopulatedByGson() {
-        String json = "{sort_by:'SORTBY', sort_desc:true, filters:{}, limit:12, offset:3, remember:true}";
+        String json = "{sort_by:'SORTBY', sort_desc:true, filters:{ key1: 1, key2: 'value'}, limit:12, offset:3, remember:false}";
         Gson gson = new Gson();
-        ItemRequest itemRequest = gson.fromJson(json, ItemRequest.class);
+        Item.FilterData filterData = gson.fromJson(json, Item.FilterData.class);
 
-        assertNotNull(itemRequest);
-        assertEquals("SORTBY", itemRequest.sort_by);
-        assertEquals(Boolean.TRUE, itemRequest.sort_desc);
-        assertNotNull(itemRequest.filters);
-        assertEquals(Integer.valueOf(12), itemRequest.limit);
-        assertEquals(Integer.valueOf(3), itemRequest.offset);
-        assertEquals(Boolean.TRUE, itemRequest.remember);
+        assertNotNull(filterData);
+        assertEquals("SORTBY", filterData.getSortKey());
+        assertEquals(true, filterData.doSortDescending());
+        assertTrue(filterData.hasConstraint("key1"));
+        assertTrue(filterData.hasConstraint("key2"));
+        assertEquals(12, filterData.getLimit());
+        assertEquals(3, filterData.getOffset());
+        assertEquals(false, filterData.doRemember());
     }
 
     /**
@@ -71,16 +74,18 @@ public class ItemRequestTest extends AndroidTestCase {
      * </pre>
      */
     public void testItemRequestCanBePopulatedFromConstructor() {
-        ItemRequest.Filter filter = new ItemRequest.Filter();
-        ItemRequest itemRequest = new ItemRequest("SORTBY", true, filter, 12, 3, true);
+        Item.FilterData filterData = new Item.FilterData("SORTBY", true, 12, 3, false);
+        filterData.addConstraint("key1", 1);
+        filterData.addConstraint("key2", "value");
 
-        assertNotNull(itemRequest);
-        assertEquals("SORTBY", itemRequest.sort_by);
-        assertEquals(Boolean.TRUE, itemRequest.sort_desc);
-        assertNotNull(itemRequest.filters);
-        assertEquals(Integer.valueOf(12), itemRequest.limit);
-        assertEquals(Integer.valueOf(3), itemRequest.offset);
-        assertEquals(Boolean.TRUE, itemRequest.remember);
+        assertNotNull(filterData);
+        assertEquals("SORTBY", filterData.getSortKey());
+        assertEquals(true, filterData.doSortDescending());
+        assertTrue(filterData.hasConstraint("key1"));
+        assertTrue(filterData.hasConstraint("key2"));
+        assertEquals(12, filterData.getLimit());
+        assertEquals(3, filterData.getOffset());
+        assertEquals(false, filterData.doRemember());
     }
 
     /**
@@ -99,14 +104,16 @@ public class ItemRequestTest extends AndroidTestCase {
      * </pre>
      */
     public void testItemRequestResultCanBePopulatedByGson() {
-        String json = "{total:100, filtered:7, items:[]}";
+        String json = "{total:100, filtered:2, items:[{external_id: 'one'}, {external_id: 'two'}]}";
         Gson gson = new Gson();
-        ItemRequest.Result result = gson.fromJson(json, ItemRequest.Result.class);
+        Item.FilterResult result = gson.fromJson(json, Item.FilterResult.class);
 
         assertNotNull(result);
-        assertEquals(Integer.valueOf(100), result.total);
-        assertEquals(Integer.valueOf(7), result.filtered);
-        assertNotNull(result.items);
-        assertEquals(0, result.items.length);
+        assertEquals(100, result.getTotalCount());
+        assertEquals(2, result.getFilteredCount());
+
+        List<Item> items = result.getItems();
+        assertNotNull(items);
+        assertEquals(2, items.size());
     }
 }

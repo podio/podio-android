@@ -22,7 +22,10 @@
 
 package com.podio.sdk.domain;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +36,84 @@ import com.podio.sdk.domain.field.FieldTypeMismatchException;
 import com.podio.sdk.domain.field.Pushable;
 import com.podio.sdk.internal.utils.Utils;
 
-public final class Item implements Pushable {
+public class Item implements Pushable {
 
-    public static final class PushData {
+    public static class FilterData {
+        private final Boolean remember;
+        private final Boolean sort_desc;
+        private final Integer limit;
+        private final Integer offset;
+        private final Map<String, Object> filters;
+        private final String sort_by;
+
+        public FilterData(String sortKey, boolean doSortDescending, int limit, int offset, boolean doRemember) {
+            this.filters = new HashMap<String, Object>();
+
+            this.sort_by = sortKey;
+            this.sort_desc = Boolean.valueOf(doSortDescending);
+            this.limit = Integer.valueOf(limit);
+            this.offset = Integer.valueOf(offset);
+            this.remember = Boolean.valueOf(doRemember);
+        }
+
+        public void addConstraint(String key, Object value) {
+            if (value != null) {
+                filters.put(key, value);
+            } else {
+                filters.remove(key);
+            }
+        }
+
+        public boolean doRemember() {
+            return Utils.getNative(remember, false);
+        }
+
+        public boolean doSortDescending() {
+            return Utils.getNative(sort_desc, false);
+        }
+
+        public int getLimit() {
+            return Utils.getNative(limit, 0);
+        }
+
+        public int getOffset() {
+            return Utils.getNative(offset, 0);
+        }
+
+        public String getSortKey() {
+            return sort_by;
+        }
+
+        public Object getConstraint(String key) {
+            return filters.get(key);
+        }
+
+        public boolean hasConstraint(String key) {
+            return filters.containsKey(key);
+        }
+    }
+
+    public static class FilterResult {
+        private final Integer total = null;
+        private final Integer filtered = null;
+        private final List<Item> items = null;
+
+        public int getTotalCount() {
+            return Utils.getNative(total, 0);
+        }
+
+        public int getFilteredCount() {
+            return Utils.getNative(filtered, 0);
+        }
+
+        public List<Item> getItems() {
+            return items != null ?
+                    new ArrayList<Item>(items) :
+                    new ArrayList<Item>();
+        }
+    }
+
+    public static class PushData {
         @SuppressWarnings("unused")
         private String external_id;
         private Map<String, Object> fields;
@@ -52,38 +130,59 @@ public final class Item implements Pushable {
         }
     }
 
-    public static final class PushResult {
-        public final Integer revision = null;
-        public final Long item_id = null;
-        public final String title = null;
+    public static class PushResult {
+        private final Integer item_id = null;
+        private final Integer revision = null;
+        private final String title = null;
+
+        public int getItemId() {
+            return Utils.getNative(item_id, -1);
+        }
+
+        public int getRevisionId() {
+            return Utils.getNative(revision, -1);
+        }
+
+        public String getTitle() {
+            return title;
+        }
     }
 
-    public static final class Excerpt {
-        public final String label = null;
-        public final String text = null;
+    public static class Excerpt {
+        private final String label = null;
+        private final String text = null;
+
+        public String getLabel() {
+            return label;
+        }
+
+        public String getText() {
+            return text;
+        }
     }
 
-    public final Application app = null;
-    public final User created_by = null;
-    public final String created_on = null;
-    public final Excerpt excerpt = null;
-    public final String[] grant = null;
-    public final Integer grant_count = null;
-    public final Long item_id = null;
-    public final String link = null;
-    public final Boolean pinned = null;
-    public final Integer priority = null;
-    public final Integer revision = null;
-    public final String[] rights = null;
-    public final Space space = null;
-    public final Boolean subscribed = null;
-    public final Integer subscribed_count = null;
-    public final String[] tags = null;
-    public final String title = null;
+    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public final String external_id;
-    public final List<Field> fields;
+    private final Application app = null;
+    private final Boolean pinned = null;
+    private final Boolean subscribed = null;
+    private final Excerpt excerpt = null;
+    private final Integer item_id = null;
+    private final Integer priority = null;
+    private final Integer revision = null;
+    private final Integer subscribed_count = null;
+    private final List<Field> fields;
+    private final List<String> rights = null;
+    private final List<String> tags = null;
+    private final Space space = null;
+    private final String created_on = null;
+    private final String external_id;
+    private final String link = null;
+    private final String title = null;
+    private final User created_by = null;
 
+    // This member should not be included in any JSON built from this class,
+    // hence the 'transient' keyword.
     private transient final HashMap<String, List<Object>> data = new HashMap<String, List<Object>>();
 
     /**
@@ -164,6 +263,116 @@ public final class Item implements Pushable {
         }
 
         return true;
+    }
+
+    public Application getApplication() {
+        return app;
+    }
+
+    public User getCreatedByUser() {
+        return created_by;
+    }
+
+    /**
+     * Gets the end date of the calendar event as a Java Date object.
+     * 
+     * @return A date object, or null if the date couldn't be parsed.
+     */
+    public Date getCreatedDate() {
+        Date date;
+
+        try {
+            date = FORMATTER_DATETIME.parse(created_on);
+        } catch (ParseException e) {
+            date = null;
+        } catch (NullPointerException e) {
+            date = null;
+        }
+
+        return date;
+    }
+
+    public String getCreatedDateString() {
+        return created_on;
+    }
+
+    public Excerpt getExcerpt() {
+        return excerpt;
+    }
+
+    public String getExternalId() {
+        return external_id;
+    }
+
+    public List<Field> getFields() {
+        return fields != null ?
+                new ArrayList<Field>(fields) :
+                new ArrayList<Field>();
+    }
+
+    public int getId() {
+        return Utils.getNative(item_id, -1);
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public int getNumberOfSubscriptions() {
+        return Utils.getNative(subscribed_count, 0);
+    }
+
+    public int getPriority() {
+        return Utils.getNative(priority, 0);
+    }
+
+    public int getRevisionId() {
+        return Utils.getNative(revision, -1);
+    }
+
+    public List<String> getTags() {
+        return tags != null ?
+                new ArrayList<String>(tags) :
+                new ArrayList<String>();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Space getWorkspace() {
+        return space;
+    }
+
+    /**
+     * Checks whether the list of rights the user has for this application
+     * contains <em>all</em> the given permissions.
+     * 
+     * @param permissions
+     *        The list of permissions to check for.
+     * @return Boolean true if all given permissions are found or no permissions
+     *         are given. Boolean false otherwise.
+     */
+    public boolean hasPermissions(String... permissions) {
+        if (rights != null) {
+            for (String permission : permissions) {
+                if (!rights.contains(permission)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isPinned() {
+        return Utils.getNative(pinned, false);
+    }
+
+    public boolean isSubscribed() {
+        return Utils.getNative(subscribed, false);
     }
 
     /**

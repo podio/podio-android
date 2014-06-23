@@ -27,6 +27,7 @@
 package com.podio.sdk.domain;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import android.test.AndroidTestCase;
 
@@ -67,14 +68,12 @@ public class ItemTest extends AndroidTestCase {
                 .append("},")
                 .append("external_id:'EXTERNALID',")
                 .append("fields:[],")
-                .append("grant:[],")
-                .append("grant_count:1,")
                 .append("item_id:1,")
                 .append("link:'LINK',")
                 .append("pinned:true,")
                 .append("priority:1,")
                 .append("revision:1,")
-                .append("rights:[],")
+                .append("rights:['hellothere'],")
                 .append("space:{},")
                 .append("subscribed:true,")
                 .append("subscribed_count:1,")
@@ -84,31 +83,32 @@ public class ItemTest extends AndroidTestCase {
         Gson gson = new Gson();
         Item item = gson.fromJson(json, Item.class);
 
-        assertNotNull(item.app);
-        assertNotNull(item.created_by);
-        assertEquals("CREATEDON", item.created_on);
-        assertNotNull(item.excerpt);
-        assertEquals("LABEL", item.excerpt.label);
-        assertEquals("TEXT", item.excerpt.text);
-        assertEquals("EXTERNALID", item.external_id);
-        assertNotNull(item.fields);
-        assertEquals(0, item.fields.size());
-        assertNotNull(item.grant);
-        assertEquals(0, item.grant.length);
-        assertEquals(Integer.valueOf(1), item.grant_count);
-        assertEquals(Long.valueOf(1), item.item_id);
-        assertEquals("LINK", item.link);
-        assertEquals(Boolean.TRUE, item.pinned);
-        assertEquals(Integer.valueOf(1), item.priority);
-        assertEquals(Integer.valueOf(1), item.revision);
-        assertNotNull(item.rights);
-        assertEquals(0, item.rights.length);
-        assertNotNull(item.space);
-        assertEquals(Boolean.TRUE, item.subscribed);
-        assertEquals(Integer.valueOf(1), item.subscribed_count);
-        assertNotNull(item.tags);
-        assertEquals(0, item.tags.length);
-        assertEquals("TITLE", item.title);
+        assertNotNull(item.getApplication());
+        assertNotNull(item.getCreatedByUser());
+        assertEquals("CREATEDON", item.getCreatedDateString());
+        assertNull(item.getCreatedDate());
+        Item.Excerpt excerpt = item.getExcerpt();
+        assertNotNull(excerpt);
+        assertEquals("LABEL", excerpt.getLabel());
+        assertEquals("TEXT", excerpt.getText());
+        assertEquals("EXTERNALID", item.getExternalId());
+        List<Field> fields = item.getFields();
+        assertNotNull(fields);
+        assertEquals(0, fields.size());
+        assertEquals(1, item.getId());
+        assertEquals("LINK", item.getLink());
+        assertEquals(true, item.isPinned());
+        assertEquals(1, item.getPriority());
+        assertEquals(1, item.getRevisionId());
+        assertTrue(item.hasPermissions("hellothere"));
+        assertFalse(item.hasPermissions("noyoudont"));
+        assertNotNull(item.getWorkspace());
+        assertEquals(true, item.isSubscribed());
+        assertEquals(1, item.getNumberOfSubscriptions());
+        List<String> tags = item.getTags();
+        assertNotNull(tags);
+        assertEquals(0, tags.size());
+        assertEquals("TITLE", item.getTitle());
     }
 
     /**
@@ -203,8 +203,8 @@ public class ItemTest extends AndroidTestCase {
         Gson gson = new Gson();
         Item.PushResult result = gson.fromJson(json, Item.PushResult.class);
 
-        assertEquals(Integer.valueOf(1), result.revision);
-        assertEquals(Long.valueOf(1L), result.item_id);
-        assertEquals("TITLE", result.title);
+        assertEquals(1, result.getRevisionId());
+        assertEquals(1, result.getItemId());
+        assertEquals("TITLE", result.getTitle());
     }
 }

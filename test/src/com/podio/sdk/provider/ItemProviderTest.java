@@ -30,7 +30,6 @@ import android.test.AndroidTestCase;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Item;
-import com.podio.sdk.domain.ItemRequest;
 import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class ItemProviderTest extends AndroidTestCase {
@@ -117,7 +116,7 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider provider = new ItemProvider(mockClient);
 
         @SuppressWarnings("unchecked")
-        ResultListener<ItemRequest.Result> mockListener = Mockito.mock(ResultListener.class);
+        ResultListener<Item.FilterResult> mockListener = Mockito.mock(ResultListener.class);
         provider.getFiltered(4L, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);

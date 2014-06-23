@@ -59,7 +59,7 @@ public class CalendarEvent {
         return date;
     }
 
-    public String getEndDateAsString() {
+    public String getEndDateString() {
         return end_utc;
     }
 
@@ -82,7 +82,7 @@ public class CalendarEvent {
         return date;
     }
 
-    public String getStartDateAsString() {
+    public String getStartDateString() {
         return start_utc;
     }
 
