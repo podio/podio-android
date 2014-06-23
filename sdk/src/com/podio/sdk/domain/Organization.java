@@ -54,7 +54,7 @@ public class Organization {
     private final Integer sales_agent_id = null;
     private final Integer user_limit = null;
     private final List<String> domains = null;
-    private final List<String> rights = null;
+    private final List<Right> rights = null;
     private final List<Space> spaces = null;
     private final Role role = null;
     private final Segment segment = null;
@@ -162,9 +162,9 @@ public class Organization {
      * @return Boolean true if all given permissions are found or no permissions
      *         are given. Boolean false otherwise.
      */
-    public boolean hasPermissions(String... permissions) {
+    public boolean hasRights(Right... permissions) {
         if (rights != null) {
-            for (String permission : permissions) {
+            for (Right permission : permissions) {
                 if (!rights.contains(permission)) {
                     return false;
                 }

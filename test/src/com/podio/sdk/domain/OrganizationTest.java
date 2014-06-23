@@ -51,7 +51,7 @@ public class OrganizationTest extends AndroidTestCase {
                 .append("name:'NAME',")
                 .append("org_id:1,")
                 .append("rank:1,")
-                .append("rights:['hellothere'],")
+                .append("rights:['view'],")
                 .append("role:'regular',")
                 .append("spaces:[],")
                 .append("status:'inactive',")
@@ -67,8 +67,8 @@ public class OrganizationTest extends AndroidTestCase {
         assertEquals("NAME", organization.getName());
         assertEquals(1, organization.getId());
         assertEquals(1, organization.getRank());
-        assertTrue(organization.hasPermissions("hellothere"));
-        assertFalse(organization.hasPermissions("noyoudont"));
+        assertTrue(organization.hasRights(Right.view));
+        assertFalse(organization.hasRights(Right.add_file));
         assertEquals(Organization.Role.regular, organization.getRole());
         List<Space> spaces = organization.getSpaces();
         assertNotNull(organization.getSpaces());

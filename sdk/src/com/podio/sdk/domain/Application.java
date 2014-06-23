@@ -199,7 +199,7 @@ public class Application {
     private final Integer space_id = null;
     // private final Integration integration = null;
     private final List<Field> fields = null;
-    private final List<String> rights = null;
+    private final List<Right> rights = null;
     private final Status status = null;
     private final String link = null;
     private final String link_add = null;
@@ -314,9 +314,9 @@ public class Application {
      * @return Boolean true if all given permissions are found or no permissions
      *         are given. Boolean false otherwise.
      */
-    public boolean hasPermissions(String... permissions) {
+    public boolean hasRights(Right... permissions) {
         if (rights != null) {
-            for (String permission : permissions) {
+            for (Right permission : permissions) {
                 if (!rights.contains(permission)) {
                     return false;
                 }

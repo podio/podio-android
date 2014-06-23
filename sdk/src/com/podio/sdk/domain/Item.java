@@ -172,7 +172,7 @@ public class Item implements Pushable {
     private final Integer revision = null;
     private final Integer subscribed_count = null;
     private final List<Field> fields;
-    private final List<String> rights = null;
+    private final List<Right> rights = null;
     private final List<String> tags = null;
     private final Space space = null;
     private final String created_on = null;
@@ -353,9 +353,9 @@ public class Item implements Pushable {
      * @return Boolean true if all given permissions are found or no permissions
      *         are given. Boolean false otherwise.
      */
-    public boolean hasPermissions(String... permissions) {
+    public boolean hasRights(Right... permissions) {
         if (rights != null) {
-            for (String permission : permissions) {
+            for (Right permission : permissions) {
                 if (!rights.contains(permission)) {
                     return false;
                 }

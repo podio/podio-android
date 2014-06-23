@@ -73,7 +73,7 @@ public class ItemTest extends AndroidTestCase {
                 .append("pinned:true,")
                 .append("priority:1,")
                 .append("revision:1,")
-                .append("rights:['hellothere'],")
+                .append("rights:['view'],")
                 .append("space:{},")
                 .append("subscribed:true,")
                 .append("subscribed_count:1,")
@@ -100,8 +100,8 @@ public class ItemTest extends AndroidTestCase {
         assertEquals(true, item.isPinned());
         assertEquals(1, item.getPriority());
         assertEquals(1, item.getRevisionId());
-        assertTrue(item.hasPermissions("hellothere"));
-        assertFalse(item.hasPermissions("noyoudont"));
+        assertTrue(item.hasRights(Right.view));
+        assertFalse(item.hasRights(Right.add_file));
         assertNotNull(item.getWorkspace());
         assertEquals(true, item.isSubscribed());
         assertEquals(1, item.getNumberOfSubscriptions());

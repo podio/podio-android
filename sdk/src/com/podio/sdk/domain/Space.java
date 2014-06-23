@@ -64,7 +64,7 @@ public class Space {
     private final Boolean premium = null;
     private final Integer rank = null;
     private final Integer space_id = null;
-    private final List<String> rights = null;
+    private final List<Right> rights = null;
     private final Organization org = null;
     private final Privacy privacy = null;
     private final Role role = null;
@@ -169,9 +169,9 @@ public class Space {
      * @return Boolean true if all given permissions are found or no permissions
      *         are given. Boolean false otherwise.
      */
-    public boolean hasPermissions(String... permissions) {
+    public boolean hasRights(Right... permissions) {
         if (rights != null) {
-            for (String permission : permissions) {
+            for (Right permission : permissions) {
                 if (!rights.contains(permission)) {
                     return false;
                 }
