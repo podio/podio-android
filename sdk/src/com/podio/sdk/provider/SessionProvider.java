@@ -29,7 +29,6 @@ import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
@@ -59,12 +58,12 @@ public class SessionProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Session>> authenticateWithUserCredentials(String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public Future<RestResult<Session>> authenticateWithUserCredentials(String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withUserCredentials(username, password);
 
-        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, sessionListener);
+        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
     }
 
     /**
@@ -81,12 +80,12 @@ public class SessionProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Session>> authenticateWithAppCredentials(String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public Future<RestResult<Session>> authenticateWithAppCredentials(String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken);
 
-        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, sessionListener);
+        return request(RestOperation.AUTHORIZE, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
     }
 
     /**

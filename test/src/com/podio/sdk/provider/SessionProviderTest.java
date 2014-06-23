@@ -57,7 +57,7 @@ public class SessionProviderTest extends AndroidTestCase {
         @SuppressWarnings("unchecked")
         ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
         provider.setup("CLIENTID", "CLIENTSECRET");
-        provider.authenticateWithUserCredentials("USERNAME", "PASSWORD", mockListener, null, null);
+        provider.authenticateWithUserCredentials("USERNAME", "PASSWORD", mockListener, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -91,7 +91,7 @@ public class SessionProviderTest extends AndroidTestCase {
         @SuppressWarnings("unchecked")
         ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
         provider.setup("CLIENTID", "CLIENTSECRET");
-        provider.authenticateWithAppCredentials("APPID", "APPTOKEN", mockListener, null, null);
+        provider.authenticateWithAppCredentials("APPID", "APPTOKEN", mockListener, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
