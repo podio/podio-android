@@ -21,30 +21,159 @@
  */
 package com.podio.sdk.domain;
 
-public final class Organization {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.podio.sdk.internal.utils.Utils;
+
+public class Organization {
+    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static enum Role {
-        admin, regular, light
+        admin, regular, light, undefined
+    }
+
+    public static enum Segment {
+        education, undefined
     }
 
     public static enum Status {
-        active, inactive, deleted
+        active, inactive, deleted, undefined
     }
 
     public static enum Type {
-        free, sponsored, premium
+        free, sponsored, premium, undefined
     }
 
-    public final Integer grants_count = null;
-    public final Long logo = null;
-    public final String name = null;
-    public final Long org_id = null;
-    public final Integer rank = null;
-    public final String[] rights = null;
-    public final Role role = null;
-    public final Space[] spaces = null;
-    public final Status status = null;
-    public final Type type = null;
-    public final String url = null;
-    public final String url_label = null;
+    private final Integer logo = null;
+    private final Integer org_id = null;
+    private final Integer rank = null;
+    private final Integer sales_agent_id = null;
+    private final Integer user_limit = null;
+    private final List<String> domains = null;
+    private final List<String> rights = null;
+    private final List<Space> spaces = null;
+    private final Role role = null;
+    private final Segment segment = null;
+    private final Status status = null;
+    private final String created_on = null;
+    private final String name = null;
+    private final String url = null;
+    private final String url_label = null;
+    private final Type type = null;
+    private final User created_by = null;
+
+    public User getCreatedByUser() {
+        return created_by;
+    }
+
+    /**
+     * Gets the end date of the calendar event as a Java Date object.
+     * 
+     * @return A date object, or null if the date couldn't be parsed.
+     */
+    public Date getCreatedDate() {
+        Date date;
+
+        try {
+            date = FORMATTER_DATETIME.parse(created_on);
+        } catch (ParseException e) {
+            date = null;
+        } catch (NullPointerException e) {
+            date = null;
+        }
+
+        return date;
+    }
+
+    public String getCreatedDateString() {
+        return created_on;
+    }
+
+    public List<String> getDomains() {
+        return domains != null ?
+                new ArrayList<String>(domains) :
+                new ArrayList<String>();
+    }
+
+    public int getId() {
+        return Utils.getNative(org_id, -1);
+    }
+
+    public int getLogoId() {
+        return Utils.getNative(logo, -1);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getRank() {
+        return Utils.getNative(rank, 0);
+    }
+
+    public Role getRole() {
+        return role != null ? role : Role.undefined;
+    }
+
+    public int getSalesAgentId() {
+        return Utils.getNative(sales_agent_id, -1);
+    }
+
+    public Segment getSegment() {
+        return segment != null ? segment : Segment.undefined;
+    }
+
+    public List<Space> getSpaces() {
+        return spaces != null ?
+                new ArrayList<Space>(spaces) :
+                new ArrayList<Space>();
+    }
+
+    public Status getStatus() {
+        return status != null ? status : Status.undefined;
+    }
+
+    public Type getType() {
+        return type != null ? type : Type.undefined;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUrlLabel() {
+        return url_label;
+    }
+
+    public int getUserLimit() {
+        return Utils.getNative(user_limit, 5);
+    }
+
+    /**
+     * Checks whether the list of rights the user has for this application
+     * contains <em>all</em> the given permissions.
+     * 
+     * @param permissions
+     *        The list of permissions to check for.
+     * @return Boolean true if all given permissions are found or no permissions
+     *         are given. Boolean false otherwise.
+     */
+    public boolean hasPermissions(String... permissions) {
+        if (rights != null) {
+            for (String permission : permissions) {
+                if (!rights.contains(permission)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
 }

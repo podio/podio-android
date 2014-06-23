@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain;
 
+import java.util.List;
+
 import android.test.AndroidTestCase;
 
 import com.google.gson.Gson;
@@ -45,12 +47,11 @@ public class OrganizationTest extends AndroidTestCase {
      */
     public void testOrganizationCanBePopulatedByGson() {
         String json = new StringBuilder("{")
-                .append("grants_count:1,")
                 .append("logo:1,")
                 .append("name:'NAME',")
                 .append("org_id:1,")
                 .append("rank:1,")
-                .append("rights:[],")
+                .append("rights:['hellothere'],")
                 .append("role:'regular',")
                 .append("spaces:[],")
                 .append("status:'inactive',")
@@ -62,20 +63,20 @@ public class OrganizationTest extends AndroidTestCase {
         Organization organization = gson.fromJson(json, Organization.class);
 
         assertNotNull(organization);
-        assertEquals(Integer.valueOf(1), organization.grants_count);
-        assertEquals(Long.valueOf(1), organization.logo);
-        assertEquals("NAME", organization.name);
-        assertEquals(Long.valueOf(1), organization.org_id);
-        assertEquals(Integer.valueOf(1), organization.rank);
-        assertNotNull(organization.rights);
-        assertEquals(0, organization.rights.length);
-        assertEquals(Organization.Role.regular, organization.role);
-        assertNotNull(organization.spaces);
-        assertEquals(0, organization.spaces.length);
-        assertEquals(Organization.Status.inactive, organization.status);
-        assertEquals(Organization.Type.premium, organization.type);
-        assertEquals("URL", organization.url);
-        assertEquals("URLLABEL", organization.url_label);
+        assertEquals(1, organization.getLogoId());
+        assertEquals("NAME", organization.getName());
+        assertEquals(1, organization.getId());
+        assertEquals(1, organization.getRank());
+        assertTrue(organization.hasPermissions("hellothere"));
+        assertFalse(organization.hasPermissions("noyoudont"));
+        assertEquals(Organization.Role.regular, organization.getRole());
+        List<Space> spaces = organization.getSpaces();
+        assertNotNull(organization.getSpaces());
+        assertEquals(0, spaces.size());
+        assertEquals(Organization.Status.inactive, organization.getStatus());
+        assertEquals(Organization.Type.premium, organization.getType());
+        assertEquals("URL", organization.getUrl());
+        assertEquals("URLLABEL", organization.getUrlLabel());
     }
 
     /**
@@ -101,19 +102,19 @@ public class OrganizationTest extends AndroidTestCase {
         Organization organization1 = gson.fromJson(json1, Organization.class);
 
         assertNotNull(organization1);
-        assertEquals(Organization.Role.admin, organization1.role);
+        assertEquals(Organization.Role.admin, organization1.getRole());
 
         String json2 = "{role:'light'}";
         Organization organization2 = gson.fromJson(json2, Organization.class);
 
         assertNotNull(organization2);
-        assertEquals(Organization.Role.light, organization2.role);
+        assertEquals(Organization.Role.light, organization2.getRole());
 
         String json3 = "{role:'regular'}";
         Organization organization3 = gson.fromJson(json3, Organization.class);
 
         assertNotNull(organization3);
-        assertEquals(Organization.Role.regular, organization3.role);
+        assertEquals(Organization.Role.regular, organization3.getRole());
     }
 
     /**
@@ -139,19 +140,19 @@ public class OrganizationTest extends AndroidTestCase {
         Organization organization1 = gson.fromJson(json1, Organization.class);
 
         assertNotNull(organization1);
-        assertEquals(Organization.Type.free, organization1.type);
+        assertEquals(Organization.Type.free, organization1.getType());
 
         String json2 = "{type:'sponsored'}";
         Organization organization2 = gson.fromJson(json2, Organization.class);
 
         assertNotNull(organization2);
-        assertEquals(Organization.Type.sponsored, organization2.type);
+        assertEquals(Organization.Type.sponsored, organization2.getType());
 
         String json3 = "{type:'premium'}";
         Organization organization3 = gson.fromJson(json3, Organization.class);
 
         assertNotNull(organization3);
-        assertEquals(Organization.Type.premium, organization3.type);
+        assertEquals(Organization.Type.premium, organization3.getType());
     }
 
     /**
