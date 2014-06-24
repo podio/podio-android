@@ -22,8 +22,8 @@
 
 package com.podio.sdk.domain;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -161,7 +161,7 @@ public class Item implements Pushable {
         }
     }
 
-    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
 
     private final Application app = null;
     private final Boolean pinned = null;

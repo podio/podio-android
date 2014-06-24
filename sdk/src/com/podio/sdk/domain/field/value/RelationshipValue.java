@@ -22,8 +22,8 @@
 
 package com.podio.sdk.domain.field.value;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ import com.podio.sdk.internal.utils.Utils;
 public final class RelationshipValue extends AbstractValue {
 
     public static final class Data {
-        private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
 
         private final Application app = null;
         private final Client created_via = null;

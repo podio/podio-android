@@ -21,8 +21,8 @@
  */
 package com.podio.sdk.domain;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 import com.podio.sdk.internal.utils.Utils;
 
 public class Organization {
-    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
 
     public static enum Role {
         admin, regular, light, undefined

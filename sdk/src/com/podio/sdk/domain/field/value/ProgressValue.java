@@ -31,7 +31,7 @@ public final class ProgressValue extends AbstractValue {
     private final Integer value;
 
     public ProgressValue(int value) {
-        this.value = new Integer(value);
+        this.value = Integer.valueOf(value);
     }
 
     @Override

@@ -31,7 +31,7 @@ public final class DurationValue extends AbstractValue {
     private final Integer value;
 
     public DurationValue(int value) {
-        this.value = new Integer(value);
+        this.value = Integer.valueOf(value);
     }
 
     @Override

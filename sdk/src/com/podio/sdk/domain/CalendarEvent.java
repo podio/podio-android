@@ -21,8 +21,8 @@
  */
 package com.podio.sdk.domain;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.podio.sdk.internal.utils.Utils;
@@ -31,7 +31,7 @@ import com.podio.sdk.internal.utils.Utils;
  * @author Tobias Lindberg
  */
 public class CalendarEvent {
-    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
 
     private final String start_utc = null;
     private final String end_utc = null;

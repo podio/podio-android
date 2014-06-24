@@ -22,8 +22,8 @@
 
 package com.podio.sdk.domain.field.value;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import com.podio.sdk.internal.utils.Utils;
@@ -32,9 +32,9 @@ import com.podio.sdk.internal.utils.Utils;
  * @author László Urszuly
  */
 public final class DateValue extends AbstractValue {
-    private static final transient SimpleDateFormat FORMATTER_DATETIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final transient SimpleDateFormat FORMATTER_DATE = new SimpleDateFormat("yyyy-MM-dd");
-    private static final transient SimpleDateFormat FORMATTER_TIME = new SimpleDateFormat("HH:mm:ss");
+    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
+    private static final transient DateFormat FORMATTER_DATE = DateFormat.getDateInstance();
+    private static final transient DateFormat FORMATTER_TIME = DateFormat.getTimeInstance();
 
     private final String end;
     private final String end_date = null;
@@ -149,7 +149,7 @@ public final class DateValue extends AbstractValue {
         return parse(start_utc, FORMATTER_DATETIME);
     }
 
-    private java.util.Date parse(String value, SimpleDateFormat formatter) {
+    private java.util.Date parse(String value, DateFormat formatter) {
         java.util.Date date = null;
 
         if (formatter != null && Utils.notEmpty(value)) {
