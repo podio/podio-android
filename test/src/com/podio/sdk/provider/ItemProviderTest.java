@@ -51,7 +51,8 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testAddItem() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ItemProvider provider = new ItemProvider(mockClient);
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
@@ -82,7 +83,8 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testFetchItem() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ItemProvider provider = new ItemProvider(mockClient);
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Item> mockListener = Mockito.mock(ResultListener.class);
@@ -113,7 +115,8 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testFetchItemsForApplication() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ItemProvider provider = new ItemProvider(mockClient);
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.FilterResult> mockListener = Mockito.mock(ResultListener.class);
@@ -144,7 +147,8 @@ public class ItemProviderTest extends AndroidTestCase {
      */
     public void testUpdateItem() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ItemProvider provider = new ItemProvider(mockClient);
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);

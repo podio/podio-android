@@ -52,7 +52,8 @@ public class SessionProviderTest extends AndroidTestCase {
      */
     public void testAuthenticateWithUserCredentials() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        SessionProvider provider = new SessionProvider(mockClient);
+        SessionProvider provider = new SessionProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);
@@ -86,7 +87,8 @@ public class SessionProviderTest extends AndroidTestCase {
      */
     public void testAuthenticateWithAppCredentials() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        SessionProvider provider = new SessionProvider(mockClient);
+        SessionProvider provider = new SessionProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Session> mockListener = Mockito.mock(ResultListener.class);

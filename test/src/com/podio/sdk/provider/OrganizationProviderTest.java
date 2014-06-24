@@ -52,7 +52,8 @@ public class OrganizationProviderTest extends AndroidTestCase {
      */
     public void testGetAllOrganizations() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        OrganizationProvider provider = new OrganizationProvider(mockClient);
+        OrganizationProvider provider = new OrganizationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Organization[]> mockListener = Mockito.mock(ResultListener.class);

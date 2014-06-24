@@ -51,7 +51,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
      */
     public void testFetchApplicationRequestsFullItemSetByDefault() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ApplicationProvider provider = new ApplicationProvider(mockClient);
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
@@ -81,7 +82,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
      */
     public void testFetchApplicationMicroRequestsMicroItemSet() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ApplicationProvider provider = new ApplicationProvider(mockClient);
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
@@ -111,7 +113,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
      */
     public void testFetchApplicationMiniRequestsMiniItemSet() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ApplicationProvider provider = new ApplicationProvider(mockClient);
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);
@@ -141,7 +144,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
      */
     public void testFetchApplicationsForSpaceDoesntRequestInactiveItems() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ApplicationProvider provider = new ApplicationProvider(mockClient);
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
@@ -171,7 +175,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
      */
     public void testFetchApplicationsForSpaceWithInactivesIncludedRequestsInactiveItems() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ApplicationProvider provider = new ApplicationProvider(mockClient);
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Application[]> mockListener = Mockito.mock(ResultListener.class);
@@ -201,7 +206,8 @@ public class ApplicationProviderTest extends AndroidTestCase {
      */
     public void testFetchApplicationShortRequestsShortItemSet() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ApplicationProvider provider = new ApplicationProvider(mockClient);
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setRestClient(mockClient);
 
         @SuppressWarnings("unchecked")
         ResultListener<Application> mockListener = Mockito.mock(ResultListener.class);

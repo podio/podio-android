@@ -63,7 +63,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         RestClient client = Mockito.mock(RestClient.class);
 
         // Perform the delete request.
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
         provider.request(RestOperation.DELETE, filter, null, null, null, null, null);
 
         // Verify that the correct DELETE RestRequest is built.
@@ -96,7 +97,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         RestClient client = Mockito.mock(RestClient.class);
 
         // Perform the fetch request.
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
         provider.request(RestOperation.GET, filter, null, null, null, null, null);
 
         // Verify that the correct GET RestRequest is built.
@@ -130,7 +132,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         RestClient client = Mockito.mock(RestClient.class);
 
         // Perform the push request.
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
         provider.request(RestOperation.POST, filter, item, null, null, null, null);
 
         // Verify that the correct POST RestRequest is built.
@@ -165,7 +168,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         RestClient client = Mockito.mock(RestClient.class);
 
         // Perform the change request.
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
         provider.request(RestOperation.PUT, filter, item, null, null, null, null);
 
         // Verify that the correct PUT RestRequest is built.
@@ -206,7 +210,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
         ErrorListener mockListener = Mockito.mock(ErrorListener.class);
 
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
         provider.request(RestOperation.PUT, itemFilter, itemObject, null, null, mockListener, null);
 
         Mockito.verify(mockListener).onExceptionOccurred(exception);
@@ -239,7 +244,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         Session session = new Session("accessToken", "refreshToken", 3600);
 
         DummyRestClient client = new DummyRestClient(RestResult.success(itemObject, session));
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
 
         @SuppressWarnings("unchecked")
         ResultListener<Object> mockResultListener = Mockito.mock(ResultListener.class);
@@ -278,7 +284,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         Object itemObject = new Object();
 
         DummyRestClient client = new DummyRestClient(RestResult.success(itemObject));
-        BasicPodioProvider provider = new BasicPodioProvider(client);
+        BasicPodioProvider provider = new BasicPodioProvider();
+        provider.setRestClient(client);
 
         @SuppressWarnings("unchecked")
         ResultListener<Object> mockListener = Mockito.mock(ResultListener.class);
