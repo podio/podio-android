@@ -56,7 +56,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.create(2L, new Item().getPushData(), mockListener, null, null);
+        provider.create(2L, new Item(), mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
@@ -152,7 +152,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.update(5, new Item().getPushData(), mockListener, null, null);
+        provider.update(5, new Item(), mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);

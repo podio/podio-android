@@ -50,8 +50,9 @@ public class ItemProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Item.PushResult>> create(long applicationId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public Future<RestResult<Item.PushResult>> create(long applicationId, Item item, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
+        Item.PushData data = item != null ? item.getPushData() : null;
 
         return post(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
     }
@@ -102,8 +103,9 @@ public class ItemProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Item.PushResult>> update(long itemId, Item.PushData data, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public Future<RestResult<Item.PushResult>> update(long itemId, Item item, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
+        Item.PushData data = item != null ? item.getPushData() : null;
 
         return put(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
     }
