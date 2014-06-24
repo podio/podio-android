@@ -36,7 +36,11 @@ import com.podio.sdk.internal.request.RestOperation;
 
 public class BasicPodioProvider {
 
-    private final RestClient client;
+    private RestClient client;
+
+    public void setRestClient(RestClient client) {
+        this.client = client;
+    }
 
     /**
      * Constructor.
@@ -44,11 +48,7 @@ public class BasicPodioProvider {
      * @param client
      *        The rest client that will access the data.
      */
-    public BasicPodioProvider(RestClient client) {
-        if (client == null) {
-            throw new NullPointerException("client cannot be null");
-        }
-        this.client = client;
+    public BasicPodioProvider() {
     }
 
     protected <T> Future<RestResult<T>> get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {

@@ -25,7 +25,6 @@ package com.podio.sdk.provider;
 import java.util.concurrent.Future;
 
 import com.podio.sdk.ErrorListener;
-import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestResult;
@@ -33,10 +32,6 @@ import com.podio.sdk.domain.Application;
 import com.podio.sdk.filter.ApplicationFilter;
 
 public class ApplicationProvider extends BasicPodioProvider {
-
-    public ApplicationProvider(RestClient client) {
-        super(client);
-    }
 
     /**
      * Fetches the full content set of the application with the given id.

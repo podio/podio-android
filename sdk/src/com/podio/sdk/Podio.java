@@ -70,31 +70,31 @@ public final class Podio {
      * Enables means of easy operating on the {@link ApplicationProvider} API
      * end point.
      */
-    public static final ApplicationProvider application = new ApplicationProvider(restClient);
+    public static final ApplicationProvider application = new ApplicationProvider();
 
     /**
      * Enables means of easy operating on the {@link CalendarProvider} API end
      * point.
      */
-    public static final CalendarProvider calendar = new CalendarProvider(restClient);
+    public static final CalendarProvider calendar = new CalendarProvider();
 
     /**
      * Enables means of easy operating on the {@link ItemProvider} API end
      * point.
      */
-    public static final ItemProvider item = new ItemProvider(restClient);
+    public static final ItemProvider item = new ItemProvider();
 
     /**
      * Enables means of easy operating on the {@link OrganizationProvider} API
      * end point.
      */
-    public static final OrganizationProvider organization = new OrganizationProvider(restClient);
+    public static final OrganizationProvider organization = new OrganizationProvider();
 
     /**
      * Enables means of easy operating on the {@link SessionProvider} API end
      * point.
      */
-    public static final SessionProvider client = new SessionProvider(restClient);
+    public static final SessionProvider client = new SessionProvider();
 
     /**
      * Hidden constructor.
@@ -144,16 +144,22 @@ public final class Podio {
 
         switch (behavior) {
         case HTTP_ONLY:
-            Podio.restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
+            restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
             break;
         case CACHED_HTTP:
             CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
-            Podio.restClient = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient);
+            restClient = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient);
             break;
         default:
-            Podio.restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
+            restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
             break;
         }
+
+        application.setRestClient(restClient);
+        calendar.setRestClient(restClient);
+        item.setRestClient(restClient);
+        organization.setRestClient(restClient);
+        client.setRestClient(restClient);
     }
 
     /**

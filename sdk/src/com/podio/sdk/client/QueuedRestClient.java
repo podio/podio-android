@@ -210,25 +210,27 @@ public abstract class QueuedRestClient implements RestClient {
      *        The result of the request.
      */
     protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
-        SessionListener sessionListener = request.getSessionListener();
+        if (result != null) {
+            SessionListener sessionListener = request.getSessionListener();
 
-        if (sessionListener != null) {
-            Session session = result.getSession();
-            sessionListener.onSessionChanged(session);
-        }
+            if (sessionListener != null) {
+                Session session = result.getSession();
+                sessionListener.onSessionChanged(session);
+            }
 
-        ResultListener<? super T> resultListener = request.getResultListener();
-        if (resultListener != null) {
-            T item = result.getItem();
-            resultListener.onRequestPerformed(item);
-        }
+            ResultListener<? super T> resultListener = request.getResultListener();
+            if (resultListener != null) {
+                T item = result.getItem();
+                resultListener.onRequestPerformed(item);
+            }
 
-        if (result.hasException()) {
-            ErrorListener errorListener = request.getErrorListener();
+            if (result.hasException()) {
+                ErrorListener errorListener = request.getErrorListener();
 
-            if (errorListener != null) {
-                PodioException error = result.getException();
-                errorListener.onExceptionOccurred(error);
+                if (errorListener != null) {
+                    PodioException error = result.getException();
+                    errorListener.onExceptionOccurred(error);
+                }
             }
         }
     }

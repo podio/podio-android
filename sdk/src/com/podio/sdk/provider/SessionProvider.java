@@ -27,7 +27,6 @@ import java.util.concurrent.Future;
 import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
-import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
@@ -39,8 +38,7 @@ public class SessionProvider extends BasicPodioProvider {
     private String clientId;
     private String clientSecret;
 
-    public SessionProvider(RestClient client) {
-        super(client);
+    public SessionProvider() {
         clientId = clientSecret = null;
     }
 

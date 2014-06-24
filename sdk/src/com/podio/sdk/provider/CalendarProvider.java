@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.concurrent.Future;
 
 import com.podio.sdk.ErrorListener;
-import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestResult;
@@ -39,10 +38,6 @@ import com.podio.sdk.filter.CalendarFilter;
  * @author Tobias Lindberg
  */
 public class CalendarProvider extends BasicPodioProvider {
-
-    public CalendarProvider(RestClient client) {
-        super(client);
-    }
 
     /**
      * Fetches all global calendar events.

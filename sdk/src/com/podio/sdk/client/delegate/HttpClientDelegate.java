@@ -209,7 +209,7 @@ public class HttpClientDelegate implements RestClientDelegate {
 
     private void authorizeRequest(String url, Map<String, String> params) throws PodioException {
         RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new RefreshRequest(refreshUrl, params, future);
+        StringRequest request = new RefreshRequest(url, params, future);
 
         requestQueue.add(request);
 

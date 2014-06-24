@@ -26,7 +26,6 @@ import java.util.concurrent.Future;
 
 import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestResult;
@@ -39,10 +38,6 @@ import com.podio.sdk.filter.OrganizationFilter;
  * @author László Urszuly
  */
 public class OrganizationProvider extends BasicPodioProvider {
-
-    public OrganizationProvider(RestClient client) {
-        super(client);
-    }
 
     /**
      * Fetches all organizations - including a minimal set of information on the

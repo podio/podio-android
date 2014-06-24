@@ -25,7 +25,6 @@ package com.podio.sdk.provider;
 import java.util.concurrent.Future;
 
 import com.podio.sdk.ErrorListener;
-import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestResult;
@@ -38,10 +37,6 @@ import com.podio.sdk.filter.ItemFilter;
  * @author László Urszuly
  */
 public class ItemProvider extends BasicPodioProvider {
-
-    public ItemProvider(RestClient client) {
-        super(client);
-    }
 
     /**
      * Requests the API to create a new item
@@ -88,9 +83,9 @@ public class ItemProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Item.FilterResult>> getFiltered(long applicationId, ResultListener<? super Item.FilterResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public Future<RestResult<Item.FilterResult>> getAll(long applicationId, ResultListener<? super Item.FilterResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
-        Item.FilterData filterData = new Item.FilterData(null, true, 0, 0, true);
+        Item.FilterData filterData = new Item.FilterData(null, true, 20, 0, true);
 
         return post(filter, filterData, Item.FilterResult.class, resultListener, errorListener, sessionListener);
     }
