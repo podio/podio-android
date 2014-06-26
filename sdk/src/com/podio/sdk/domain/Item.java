@@ -258,7 +258,7 @@ public class Item implements Pushable {
                     data.put(field, values);
                 }
 
-                values.add(data);
+                values.add(newValue);
             }
         }
 
