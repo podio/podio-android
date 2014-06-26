@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +29,6 @@ import java.util.List;
 import com.podio.sdk.internal.utils.Utils;
 
 public class User {
-    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
 
     public static enum Flag {
         god, bulletin_author, app_store_manager, experiment_manager,
@@ -119,17 +116,7 @@ public class User {
          * @return A date object, or null if the date couldn't be parsed.
          */
         public Date getLastSeenDate() {
-            Date date;
-
-            try {
-                date = FORMATTER_DATETIME.parse(last_seen_on);
-            } catch (ParseException e) {
-                date = null;
-            } catch (NullPointerException e) {
-                date = null;
-            }
-
-            return date;
+            return Utils.parseDateTime(last_seen_on);
         }
 
         public String getLastSeenDateString() {
@@ -214,17 +201,7 @@ public class User {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getActivatedDate() {
-        Date date;
-
-        try {
-            date = FORMATTER_DATETIME.parse(activated_on);
-        } catch (ParseException e) {
-            date = null;
-        } catch (NullPointerException e) {
-            date = null;
-        }
-
-        return date;
+        return Utils.parseDateTime(activated_on);
     }
 
     public String getActivatedDateString() {
@@ -237,17 +214,7 @@ public class User {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getCreatedDate() {
-        Date date;
-
-        try {
-            date = FORMATTER_DATETIME.parse(created_on);
-        } catch (ParseException e) {
-            date = null;
-        } catch (NullPointerException e) {
-            date = null;
-        }
-
-        return date;
+        return Utils.parseDateTime(created_on);
     }
 
     public String getCreatedDateString() {

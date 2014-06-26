@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain.field.value;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.HashMap;
 
 import com.podio.sdk.internal.utils.Utils;
@@ -32,10 +30,6 @@ import com.podio.sdk.internal.utils.Utils;
  * @author László Urszuly
  */
 public final class DateValue extends AbstractValue {
-    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
-    private static final transient DateFormat FORMATTER_DATE = DateFormat.getDateInstance();
-    private static final transient DateFormat FORMATTER_TIME = DateFormat.getTimeInstance();
-
     private final String end;
     private final String end_date = null;
     private final String end_date_utc = null;
@@ -54,8 +48,8 @@ public final class DateValue extends AbstractValue {
     }
 
     public DateValue(java.util.Date start, java.util.Date end) {
-        this.start = start != null ? FORMATTER_DATETIME.format(start) : null;
-        this.end = end != null ? FORMATTER_DATETIME.format(end) : null;
+        this.start = start != null ? Utils.formatDateTime(start) : null;
+        this.end = end != null ? Utils.formatDateTime(end) : null;
     }
 
     @Override
@@ -102,64 +96,51 @@ public final class DateValue extends AbstractValue {
     }
 
     public java.util.Date getEndDateTime() {
-        return parse(end, FORMATTER_DATETIME);
+        return Utils.parseDateTime(end);
     }
 
     public java.util.Date getEndDate() {
-        return parse(end_date, FORMATTER_DATE);
+        return Utils.parseDate(end_date);
     }
 
     public java.util.Date getEndDateUtc() {
-        return parse(end_date_utc, FORMATTER_DATE);
+        return Utils.parseDate(end_date_utc);
     }
 
     public java.util.Date getEndTime() {
-        return parse(end_time, FORMATTER_TIME);
+        return Utils.parseTime(end_time);
     }
 
     public java.util.Date getEndTimeUtc() {
-        return parse(end_time_utc, FORMATTER_TIME);
+        return Utils.parseTime(end_time_utc);
     }
 
     public java.util.Date getEndUtc() {
-        return parse(end_utc, FORMATTER_DATETIME);
+        return Utils.parseDateTime(end_utc);
     }
 
     public java.util.Date getStartDateTime() {
-        return parse(start, FORMATTER_DATETIME);
+        return Utils.parseDateTime(start);
     }
 
     public java.util.Date getStartDate() {
-        return parse(start_date, FORMATTER_DATE);
+        return Utils.parseDate(start_date);
     }
 
     public java.util.Date getStartDateUtc() {
-        return parse(start_date_utc, FORMATTER_DATE);
+        return Utils.parseDate(start_date_utc);
     }
 
     public java.util.Date getStartTime() {
-        return parse(start_time, FORMATTER_TIME);
+        return Utils.parseTime(start_time);
     }
 
     public java.util.Date getStartTimeUtc() {
-        return parse(start_time_utc, FORMATTER_TIME);
+        return Utils.parseTime(start_time_utc);
     }
 
     public java.util.Date getStartUtc() {
-        return parse(start_utc, FORMATTER_DATETIME);
+        return Utils.parseDateTime(start_utc);
     }
 
-    private java.util.Date parse(String value, DateFormat formatter) {
-        java.util.Date date = null;
-
-        if (formatter != null && Utils.notEmpty(value)) {
-            try {
-                date = formatter.parse(value);
-            } catch (ParseException e) {
-                date = null;
-            }
-        }
-
-        return date;
-    }
 }

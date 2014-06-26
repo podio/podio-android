@@ -21,8 +21,6 @@
  */
 package com.podio.sdk.domain;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Date;
 
 import com.podio.sdk.internal.utils.Utils;
@@ -31,8 +29,6 @@ import com.podio.sdk.internal.utils.Utils;
  * @author Tobias Lindberg
  */
 public class CalendarEvent {
-    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
-
     private final String start_utc = null;
     private final String end_utc = null;
     private final String title = null;
@@ -46,17 +42,7 @@ public class CalendarEvent {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getEndDate() {
-        Date date;
-
-        try {
-            date = FORMATTER_DATETIME.parse(end_utc);
-        } catch (ParseException e) {
-            date = null;
-        } catch (NullPointerException e) {
-            date = null;
-        }
-
-        return date;
+        return Utils.parseDateTime(end_utc);
     }
 
     public String getEndDateString() {
@@ -69,17 +55,7 @@ public class CalendarEvent {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getStartDate() {
-        Date date;
-
-        try {
-            date = FORMATTER_DATETIME.parse(start_utc);
-        } catch (ParseException e) {
-            date = null;
-        } catch (NullPointerException e) {
-            date = null;
-        }
-
-        return date;
+        return Utils.parseDateTime(start_utc);
     }
 
     public String getStartDateString() {

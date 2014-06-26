@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain.field.value;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,8 +37,6 @@ import com.podio.sdk.internal.utils.Utils;
 public final class ContactValue extends AbstractValue {
 
     public static final class Data {
-        private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
-
         private final File image = null;
         private final Integer org_id = null;
         private final Integer profile_id = null;
@@ -91,17 +87,7 @@ public final class ContactValue extends AbstractValue {
         }
 
         public java.util.Date getLastSeenDate() {
-            java.util.Date date = null;
-
-            if (Utils.notEmpty(last_seen_on)) {
-                try {
-                    date = FORMATTER_DATETIME.parse(last_seen_on);
-                } catch (ParseException e) {
-                    date = null;
-                }
-            }
-
-            return date;
+            return Utils.parseDateTime(last_seen_on);
         }
 
         public String getLink() {

@@ -22,15 +22,24 @@
 
 package com.podio.sdk.internal.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 
 public final class Utils {
 
     private Utils() {
         // Hide constructor.
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String formatDateTime(Date dateTime) {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
     }
 
     public static boolean getNative(Boolean object, boolean fallback) {
@@ -109,5 +118,38 @@ public final class Utils {
 
     public static boolean notEmpty(String string) {
         return !isEmpty(string);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static Date parseDateTime(String dateTime) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
+        } catch (ParseException e) {
+            return null;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static Date parseDate(String date) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (ParseException e) {
+            return null;
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static Date parseTime(String time) {
+        try {
+            return new SimpleDateFormat("HH:mm:ss").parse(time);
+        } catch (ParseException e) {
+            return null;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }

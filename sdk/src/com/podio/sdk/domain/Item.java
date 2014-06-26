@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -183,8 +181,6 @@ public class Item implements Pushable {
         }
     }
 
-    private static final transient DateFormat FORMATTER_DATETIME = DateFormat.getDateTimeInstance();
-
     private final Application app = null;
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
@@ -199,6 +195,7 @@ public class Item implements Pushable {
     private final Space space = null;
     private final String created_on = null;
     private final String external_id;
+    private final String last_event_on = null;
     private final String link = null;
     private final String title = null;
     private final User created_by = null;
@@ -313,17 +310,7 @@ public class Item implements Pushable {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getCreatedDate() {
-        Date date;
-
-        try {
-            date = FORMATTER_DATETIME.parse(created_on);
-        } catch (ParseException e) {
-            date = null;
-        } catch (NullPointerException e) {
-            date = null;
-        }
-
-        return date;
+        return Utils.parseDateTime(created_on);
     }
 
     public String getCreatedDateString() {
@@ -346,6 +333,19 @@ public class Item implements Pushable {
 
     public int getId() {
         return Utils.getNative(item_id, -1);
+    }
+
+    /**
+     * Gets the last event date of the item as a Java Date object.
+     * 
+     * @return A date object, or null if the date couldn't be parsed.
+     */
+    public Date getLastEventDate() {
+        return Utils.parseDateTime(last_event_on);
+    }
+
+    public String getLastEventDateString() {
+        return last_event_on;
     }
 
     public String getLink() {
