@@ -49,12 +49,8 @@ public final class TextValue extends AbstractValue {
 
     @Override
     public Object getPushData() {
-        HashMap<String, String> data = null;
-
-        if (value != null) {
-            data = new HashMap<String, String>();
-            data.put("value", value);
-        }
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("value", value);
 
         return data;
     }
