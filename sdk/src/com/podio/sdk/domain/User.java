@@ -67,6 +67,137 @@ public class User {
         }
     }
 
+    public static class Profile {
+        private final File image = null;
+        private final Integer avatar = null;
+        private final Integer org_id = null;
+        private final Integer profile_id = null;
+        private final Integer space_id = null;
+        private final Integer user_id = null;
+        private final List<String> location = null;
+        private final List<String> mail = null;
+        private final List<String> phone = null;
+        private final List<Right> rights = null;
+        private final List<String> title = null;
+        private final String about = null;
+        private final String external_id = null;
+        private final String link = null;
+        private final String last_seen_on = null;
+        private final String name = null;
+
+        // private final Type type = null;
+
+        public String getAbout() {
+            return about;
+        }
+
+        public int getAvatar() {
+            return Utils.getNative(avatar, -1);
+        }
+
+        public List<String> getEmailAddresses() {
+            return mail != null ?
+                    new ArrayList<String>(mail) :
+                    new ArrayList<String>();
+        }
+
+        public String getExternalId() {
+            return external_id;
+        }
+
+        public int getId() {
+            return Utils.getNative(profile_id, -1);
+        }
+
+        public File getImage() {
+            return image;
+        }
+
+        /**
+         * Gets the date when the user was activated.
+         * 
+         * @return A date object, or null if the date couldn't be parsed.
+         */
+        public Date getLastSeenDate() {
+            Date date;
+
+            try {
+                date = FORMATTER_DATETIME.parse(last_seen_on);
+            } catch (ParseException e) {
+                date = null;
+            } catch (NullPointerException e) {
+                date = null;
+            }
+
+            return date;
+        }
+
+        public String getLastSeenDateString() {
+            return last_seen_on;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public List<String> getLocations() {
+            return location != null ?
+                    new ArrayList<String>(location) :
+                    new ArrayList<String>();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getOrganizationId() {
+            return Utils.getNative(org_id, -1);
+        }
+
+        public List<String> getPhoneNumbers() {
+            return phone != null ?
+                    new ArrayList<String>(phone) :
+                    new ArrayList<String>();
+        }
+
+        public List<String> getTitles() {
+            return title != null ?
+                    new ArrayList<String>(title) :
+                    new ArrayList<String>();
+        }
+
+        public int getUserId() {
+            return Utils.getNative(user_id, -1);
+        }
+
+        public int getWorkspaceId() {
+            return Utils.getNative(space_id, -1);
+        }
+
+        /**
+         * Checks whether the list of rights the user has for this application
+         * contains <em>all</em> the given permissions.
+         * 
+         * @param permissions
+         *        The list of permissions to check for.
+         * @return Boolean true if all given permissions are found or no
+         *         permissions are given. Boolean false otherwise.
+         */
+        public boolean hasRights(Right... permissions) {
+            if (rights != null) {
+                for (Right permission : permissions) {
+                    if (!rights.contains(permission)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     private final Integer user_id = null;
     private final List<Flag> flags = null;
     private final List<Email> mails = null;
