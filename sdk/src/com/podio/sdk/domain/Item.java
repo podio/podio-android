@@ -287,6 +287,18 @@ public class Item implements Pushable {
         return true;
     }
 
+    /**
+     * The same as {@link Item#addValue(String, Object)} but with some
+     * convenience validation of the value (replaces empty string with null).
+     * 
+     * @throws FieldTypeMismatchException
+     * @see {@link Item#addValue(String, Object)}
+     */
+    public boolean addValue(String field, String value) throws FieldTypeMismatchException {
+        String actualData = Utils.isEmpty(value) ? null : value;
+        return addValue(field, (Object) actualData);
+    }
+
     public Application getApplication() {
         return app;
     }
