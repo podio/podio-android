@@ -46,8 +46,8 @@ public class ItemFilterTest extends AndroidTestCase {
     public void testApplicationIdIsIncludedInResultUri() {
         Uri reference = Uri.parse("content://test.uri/item/app/12");
 
-        Uri result = new ItemFilter() //
-                .withApplicationId(12L) //
+        Uri result = new ItemFilter()
+                .withApplicationId(12)
                 .buildUri("content", "test.uri");
 
         assertEquals(reference, result);
@@ -73,8 +73,8 @@ public class ItemFilterTest extends AndroidTestCase {
     public void testFilterPropertyIsIncludedInResultUri() {
         Uri reference = Uri.parse("content://test.uri/item/app/12/filter");
 
-        Uri result = new ItemFilter() //
-                .withApplicationIdFilter(12L) //
+        Uri result = new ItemFilter()
+                .withApplicationIdFilter(12)
                 .buildUri("content", "test.uri");
 
         assertEquals(reference, result);
@@ -99,8 +99,8 @@ public class ItemFilterTest extends AndroidTestCase {
     public void testItemIdIsIncludedInResultUri() {
         Uri reference = Uri.parse("content://test.uri/item/12");
 
-        Uri result = new ItemFilter() //
-                .withItemId(12L) //
+        Uri result = new ItemFilter()
+                .withItemId(12)
                 .buildUri("content", "test.uri");
 
         assertEquals(reference, result);
