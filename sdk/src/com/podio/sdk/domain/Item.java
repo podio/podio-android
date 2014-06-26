@@ -39,21 +39,22 @@ import com.podio.sdk.internal.utils.Utils;
 public class Item implements Pushable {
 
     public static class FilterData {
-        private final Boolean remember;
-        private final Boolean sort_desc;
-        private final Integer limit;
-        private final Integer offset;
-        private final Map<String, Object> filters;
-        private final String sort_by;
+        public static final transient int DEFAULT_LIMIT = 20;
+        public static final transient int DEFAULT_OFFSET = 0;
 
-        public FilterData(String sortKey, boolean doSortDescending, int limit, int offset, boolean doRemember) {
+        private boolean remember;
+        private boolean sort_desc;
+        private int limit;
+        private int offset;
+        private Map<String, Object> filters;
+        private String sort_by;
+
+        public FilterData() {
             this.filters = new HashMap<String, Object>();
-
-            this.sort_by = sortKey;
-            this.sort_desc = Boolean.valueOf(doSortDescending);
-            this.limit = Integer.valueOf(limit);
-            this.offset = Integer.valueOf(offset);
-            this.remember = Boolean.valueOf(doRemember);
+            this.sort_desc = true;
+            this.limit = DEFAULT_LIMIT;
+            this.offset = DEFAULT_OFFSET;
+            this.remember = true;
         }
 
         public void addConstraint(String key, Object value) {
@@ -64,11 +65,11 @@ public class Item implements Pushable {
             }
         }
 
-        public boolean doRemember() {
+        public boolean getDoRemember() {
             return Utils.getNative(remember, false);
         }
 
-        public boolean doSortDescending() {
+        public boolean getDoSortDescending() {
             return Utils.getNative(sort_desc, false);
         }
 
@@ -84,12 +85,33 @@ public class Item implements Pushable {
             return sort_by;
         }
 
-        public Object getConstraint(String key) {
-            return filters.get(key);
+        public Object removeConstraint(String key) {
+            return filters.remove(key);
         }
 
         public boolean hasConstraint(String key) {
             return filters.containsKey(key);
+        }
+
+        public FilterData setDoRemember(boolean doRemember) {
+            this.remember = doRemember;
+            return this;
+        }
+
+        public FilterData setLimit(int limit) {
+            this.limit = limit;
+            return this;
+        }
+
+        public FilterData setOffset(int offset) {
+            this.offset = offset;
+            return this;
+        }
+
+        public FilterData setOrderByField(String fieldName, boolean doSortDescending) {
+            this.sort_by = fieldName;
+            this.sort_desc = doSortDescending;
+            return this;
         }
     }
 

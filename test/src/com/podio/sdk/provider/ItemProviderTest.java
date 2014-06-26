@@ -120,7 +120,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         @SuppressWarnings("unchecked")
         ResultListener<Item.FilterResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.getAll(4, mockListener, null, null);
+        provider.filter.get(4, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);

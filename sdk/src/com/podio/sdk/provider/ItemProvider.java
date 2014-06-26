@@ -39,6 +39,129 @@ import com.podio.sdk.filter.ItemFilter;
 public class ItemProvider extends BasicPodioProvider {
 
     /**
+     * Enables a forced set of methods to be called in order to be able to
+     * filter items.
+     * 
+     * @author László Urszuly
+     */
+    public class ItemFilterProvider {
+        private final Item.FilterData filterData;
+
+        /**
+         * Constructor.
+         */
+        private ItemFilterProvider() {
+            filterData = new Item.FilterData();
+        }
+
+        /**
+         * Prepares a filter constraint, used when fetching filtered items.
+         * 
+         * @param key
+         *        The constraint key.
+         * @param value
+         *        The constraint value.
+         * @return This instance of the {@link ItemFilterProvider}, to enable
+         *         convenient chaining.
+         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         */
+        public ItemFilterProvider onConstraint(String key, Object value) {
+            filterData.addConstraint(key, value);
+            return this;
+        }
+
+        /**
+         * Prepares the remember filter, used when fetching filtered items.
+         * 
+         * @param doRemember
+         *        True if the API should remember this filter for you, otherwise
+         *        false. Defaults to true.
+         * @return This instance of the {@link ItemFilterProvider}, to enable
+         *         convenient chaining.
+         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         */
+        public ItemFilterProvider onDoRemember(boolean doRemember) {
+            filterData.setDoRemember(doRemember);
+            return this;
+        }
+
+        /**
+         * Prepares the limit and offset of the filter, used when fetching
+         * filtered items.
+         * 
+         * @param maxCount
+         *        The max number of items to fetch. The result could contain
+         *        less items, but never more.
+         * @param offset
+         *        The zero-based offset of the first item in the span to fetch.
+         * @return This instance of the {@link ItemFilterProvider}, to enable
+         *         convenient chaining.
+         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         */
+        public ItemFilterProvider onSpan(int maxCount, int offset) {
+            filterData.setLimit(maxCount);
+            filterData.setOffset(offset);
+            return this;
+        }
+
+        /**
+         * Prepares the sort order of the filter, used when fetching filtered
+         * items.
+         * 
+         * @param fieldName
+         *        The name of the field to sort by.
+         * @param doSortDescending
+         *        True for a descending sort order, false for an ascending.
+         * @return This instance of the {@link ItemFilterProvider}, to enable
+         *         convenient chaining.
+         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         */
+        public ItemFilterProvider onSortOrder(String fieldName, boolean doSortDescending) {
+            filterData.setOrderByField(fieldName, doSortDescending);
+            return this;
+        }
+
+        /**
+         * Fetches a set of filtered items for the application with the given
+         * id.
+         * <p>
+         * If no filter data has been configured, then the default filter will
+         * be used, with a behavior as the API sees fit.
+         * <p>
+         * Note that, while the other methods in this class are optional, this
+         * method must be called in order for the filtered request to take place
+         * 
+         * @param applicationId
+         *        The id of the parent application.
+         * @param resultListener
+         *        The callback implementation called when the items are fetched.
+         *        Null is valid, but doesn't make any sense.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         * @see {@link ItemFilterProvider#onConstraint(String, Object)}
+         * @see {@link ItemFilterProvider#onRemember(boolean)}
+         * @see {@link ItemFilterProvider#onSpan(int)}
+         * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
+         */
+        public Future<RestResult<Item.FilterResult>> get(int applicationId, ResultListener<? super Item.FilterResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+            ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
+            return post(filter, filterData, Item.FilterResult.class, resultListener, errorListener, sessionListener);
+        }
+    }
+
+    /**
+     * Enables filtered request of items.
+     */
+    public final ItemFilterProvider filter;
+
+    /**
+     * Constructor.
+     */
+    public ItemProvider() {
+        filter = new ItemFilterProvider();
+    }
+
+    /**
      * Requests the API to create a new item
      * 
      * @param applicationId
@@ -71,24 +194,6 @@ public class ItemProvider extends BasicPodioProvider {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
         return get(filter, Item.class, resultListener, errorListener, sessionListener);
-    }
-
-    /**
-     * Fetches a default set of filtered items for the application with the
-     * given id.
-     * 
-     * @param applicationId
-     *        The id of the parent application.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
-     * @return A ticket which the caller can use to identify this request with.
-     */
-    public Future<RestResult<Item.FilterResult>> getAll(int applicationId, ResultListener<? super Item.FilterResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
-        Item.FilterData filterData = new Item.FilterData(null, true, 20, 0, true);
-
-        return post(filter, filterData, Item.FilterResult.class, resultListener, errorListener, sessionListener);
     }
 
     /**

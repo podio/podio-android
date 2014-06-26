@@ -52,12 +52,12 @@ public class ItemRequestTest extends AndroidTestCase {
 
         assertNotNull(filterData);
         assertEquals("SORTBY", filterData.getSortKey());
-        assertEquals(true, filterData.doSortDescending());
+        assertEquals(true, filterData.getDoSortDescending());
         assertTrue(filterData.hasConstraint("key1"));
         assertTrue(filterData.hasConstraint("key2"));
         assertEquals(12, filterData.getLimit());
         assertEquals(3, filterData.getOffset());
-        assertEquals(false, filterData.doRemember());
+        assertEquals(false, filterData.getDoRemember());
     }
 
     /**
@@ -74,18 +74,22 @@ public class ItemRequestTest extends AndroidTestCase {
      * </pre>
      */
     public void testItemRequestCanBePopulatedFromConstructor() {
-        Item.FilterData filterData = new Item.FilterData("SORTBY", true, 12, 3, false);
+        Item.FilterData filterData = new Item.FilterData()
+                .setOrderByField("SORTBY", true)
+                .setLimit(12)
+                .setOffset(3)
+                .setDoRemember(false);
         filterData.addConstraint("key1", 1);
         filterData.addConstraint("key2", "value");
 
         assertNotNull(filterData);
         assertEquals("SORTBY", filterData.getSortKey());
-        assertEquals(true, filterData.doSortDescending());
+        assertEquals(true, filterData.getDoSortDescending());
         assertTrue(filterData.hasConstraint("key1"));
         assertTrue(filterData.hasConstraint("key2"));
         assertEquals(12, filterData.getLimit());
         assertEquals(3, filterData.getOffset());
-        assertEquals(false, filterData.doRemember());
+        assertEquals(false, filterData.getDoRemember());
     }
 
     /**
