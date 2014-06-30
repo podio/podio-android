@@ -146,7 +146,7 @@ public final class Podio {
      *        The behavior to expect from the {@link RestClient} implementation.
      */
     public static void setup(Context context, String clientId, String clientSecret, RestBehavior behavior) {
-        RestClientDelegate networkDelegate = new HttpClientDelegate(context);
+        networkDelegate = new HttpClientDelegate(context);
         client.setup(clientId, clientSecret);
 
         switch (behavior) {
