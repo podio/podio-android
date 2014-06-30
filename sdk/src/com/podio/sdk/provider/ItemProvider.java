@@ -150,15 +150,9 @@ public class ItemProvider extends BasicPodioProvider {
     }
 
     /**
-     * Enables filtered request of items.
-     */
-    public final ItemFilterProvider filter;
-
-    /**
      * Constructor.
      */
     public ItemProvider() {
-        filter = new ItemFilterProvider();
     }
 
     /**
@@ -178,6 +172,16 @@ public class ItemProvider extends BasicPodioProvider {
         Item.PushData data = item != null ? item.getPushData() : null;
 
         return post(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
+    }
+
+    /**
+     * Enables filtered request of items.
+     * 
+     * @return An ItemFilterProvider enabling the caller to configure the filter
+     *         details.
+     */
+    public ItemFilterProvider filter() {
+        return new ItemFilterProvider();
     }
 
     /**
