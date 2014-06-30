@@ -67,6 +67,11 @@ public final class TextField extends Field {
     }
 
     @Override
+    public TextValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         TextValue v = validateValue(value);
 
@@ -82,15 +87,6 @@ public final class TextField extends Field {
      */
     public TextConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public TextValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

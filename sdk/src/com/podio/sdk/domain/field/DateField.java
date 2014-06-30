@@ -60,6 +60,11 @@ public final class DateField extends Field {
     }
 
     @Override
+    public DateValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         DateValue v = validateValue(value);
 
@@ -75,15 +80,6 @@ public final class DateField extends Field {
      */
     public DateConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public DateValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

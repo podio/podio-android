@@ -91,19 +91,6 @@ public abstract class Field implements Pushable {
         this.external_id = externalId;
     }
 
-    /**
-     * Tries to locally add the given value to the current field. The changes
-     * are NOT updated on the servers by this method call.
-     * 
-     * @param value
-     *        The value domain object to set.
-     * @throws FieldTypeMismatchException
-     *         If the value can't be applied to this field type.
-     */
-    public void addValue(Object value) throws FieldTypeMismatchException {
-        throw new FieldTypeMismatchException();
-    }
-
     @Override
     public Object getPushData() {
         List<Object> pushData = new ArrayList<Object>();
@@ -120,6 +107,19 @@ public abstract class Field implements Pushable {
         }
 
         return pushData;
+    }
+
+    /**
+     * Tries to locally add the given value to the current field. The changes
+     * are NOT updated on the servers by this method call.
+     * 
+     * @param value
+     *        The value domain object to set.
+     * @throws FieldTypeMismatchException
+     *         If the value can't be applied to this field type.
+     */
+    public void addValue(Object value) throws FieldTypeMismatchException {
+        throw new FieldTypeMismatchException();
     }
 
     /**
@@ -159,12 +159,21 @@ public abstract class Field implements Pushable {
     }
 
     /**
-     * The type of this field.
+     * Returns the type of this field.
      * 
      * @return An enumeration value, describing the field type.
      */
     public Type getType() {
         return type != null ? type : Type.undefined;
+    }
+
+    /**
+     * Returns the value at the given position for this field.
+     * 
+     * @return A value object specific for this field type.
+     */
+    public Object getValue(int index) {
+        throw new FieldTypeMismatchException();
     }
 
     /**

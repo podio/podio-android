@@ -374,6 +374,56 @@ public class Item implements Pushable {
         return title;
     }
 
+    /**
+     * Tries to return a value for the given field. The value may or may not
+     * have been verified by server. If you only want to get values that have
+     * been verified by the server you should call the
+     * {@link Item#getVerifiedValue(String)} method instead.
+     * 
+     * @param field
+     *        The external id of the field you wish to fetch the value for.
+     * @param index
+     *        The index of the value you wish to get (fields can have multiple
+     *        values, you know).
+     * @return A Object representation of the value for the field or null.
+     */
+    public Object getValue(String field, int index) {
+        if (field != null && fields != null) {
+            Field f = findField(field, fields);
+
+            if (f != null) {
+                return f.getValue(index);
+            } else {
+                List<Object> values = data.get(field);
+                return values != null ? values.get(index) : null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Tries to return an API verified value for the given field.
+     * 
+     * @param field
+     *        The external id of the field you wish to fetch the value for.
+     * @param index
+     *        The index of the value you wish to get (fields can have multiple
+     *        values, you know).
+     * @return A Object representation of the value for the field or null.
+     */
+    public Object getVerifiedValue(String field, int index) {
+        if (field != null && fields != null) {
+            Field f = findField(field, fields);
+
+            if (f != null) {
+                return f.getValue(index);
+            }
+        }
+
+        return null;
+    }
+
     public Space getWorkspace() {
         return space;
     }

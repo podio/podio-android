@@ -56,6 +56,11 @@ public final class ImageField extends Field {
     }
 
     @Override
+    public ImageValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         ImageValue v = validateValue(value);
 
@@ -71,15 +76,6 @@ public final class ImageField extends Field {
      */
     public ImageConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public ImageValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

@@ -55,6 +55,11 @@ public final class RelationshipField extends Field {
     }
 
     @Override
+    public RelationshipValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         RelationshipValue v = validateValue(value);
 
@@ -70,15 +75,6 @@ public final class RelationshipField extends Field {
      */
     public RelationshipConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public RelationshipValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

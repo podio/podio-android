@@ -45,6 +45,11 @@ public final class CalculationField extends Field {
         return null;
     }
 
+    @Override
+    public CalculationValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
     /**
      * Returns the configuration metrics for this field.
      * 
@@ -52,15 +57,6 @@ public final class CalculationField extends Field {
      */
     public CalculationConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public CalculationValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

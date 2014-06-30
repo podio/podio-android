@@ -55,6 +55,11 @@ public final class ProgressField extends Field {
     }
 
     @Override
+    public ProgressValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         ProgressValue v = validateValue(value);
 
@@ -70,15 +75,6 @@ public final class ProgressField extends Field {
      */
     public ProgressConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public ProgressValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

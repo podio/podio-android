@@ -63,6 +63,11 @@ public final class ContactField extends Field {
     }
 
     @Override
+    public ContactValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         ContactValue v = validateValue(value);
 
@@ -78,15 +83,6 @@ public final class ContactField extends Field {
      */
     public ContactConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public ContactValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

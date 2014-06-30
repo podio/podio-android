@@ -55,6 +55,11 @@ public final class NumberField extends Field {
     }
 
     @Override
+    public NumberValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         NumberValue v = validateValue(value);
 
@@ -70,15 +75,6 @@ public final class NumberField extends Field {
      */
     public NumberConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public NumberValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

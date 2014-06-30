@@ -41,15 +41,6 @@ public final class CategoryField extends Field {
         this.values = new ArrayList<CategoryValue>();
     }
 
-    /**
-     * Tries to locally add the given value to the current field. The changes
-     * are NOT updated on the servers by this method call.
-     * 
-     * @param value
-     *        The value domain object to set.
-     * @throws FieldTypeMismatchException
-     *         If the value can't be applied to this field type.
-     */
     @Override
     public void addValue(Object value) throws FieldTypeMismatchException {
         CategoryValue v = validateValue(value);
@@ -62,6 +53,11 @@ public final class CategoryField extends Field {
     @Override
     protected List<CategoryValue> getPushables() {
         return values;
+    }
+
+    @Override
+    public CategoryValue getValue(int index) {
+        return values != null ? values.get(index) : null;
     }
 
     /**
@@ -91,15 +87,6 @@ public final class CategoryField extends Field {
      */
     public CategoryConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public CategoryValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**

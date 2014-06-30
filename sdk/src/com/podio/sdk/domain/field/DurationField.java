@@ -60,6 +60,11 @@ public final class DurationField extends Field {
     }
 
     @Override
+    public DurationValue getValue(int index) {
+        return values != null ? values.get(index) : null;
+    }
+
+    @Override
     public void removeValue(Object value) throws FieldTypeMismatchException {
         DurationValue v = validateValue(value);
 
@@ -75,15 +80,6 @@ public final class DurationField extends Field {
      */
     public DurationConfiguration getConfiguration() {
         return config;
-    }
-
-    /**
-     * Returns the value at the given position for this field.
-     * 
-     * @return A value object specific for this field type.
-     */
-    public DurationValue getValue(int index) {
-        return values != null ? values.get(index) : null;
     }
 
     /**
