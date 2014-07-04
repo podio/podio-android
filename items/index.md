@@ -3,9 +3,9 @@ layout: default
 ---
 # Working with Apps & Items
 
-## Fetch items
 Apps and items are the cornerstones of the Podio platform. A Podio app is a container of several items, which in turn may have several fields. A simple analogy would be a spreadsheet of any kind. The sheet itself would be equivalent to the Podio app, the columns in the sheet would be the fields and the rows would be the items.
 
+## Fetch items
 You can use the Podio SDK to fetch items you have already created in Podio. You can, e.g. fetch the 20 last edited items for a given app like this:
 
 {% highlight java %}
