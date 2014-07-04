@@ -25,10 +25,7 @@ package com.podio.sdk;
 import android.content.Context;
 import android.net.Uri;
 
-import com.podio.sdk.client.CachedRestClient;
 import com.podio.sdk.client.HttpRestClient;
-import com.podio.sdk.client.cache.CacheClient;
-import com.podio.sdk.client.cache.SQLiteCacheClient;
 import com.podio.sdk.client.delegate.HttpClientDelegate;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
@@ -47,22 +44,7 @@ import com.podio.sdk.provider.UserProvider;
  */
 public final class Podio {
 
-    /**
-     * Describes the behavior of the {@link RestClient} implementation used by
-     * the SDK. The {@link RestBehavior#HTTP_ONLY} option doesn't cache any
-     * content locally, but hits the API for each call. The
-     * {@link RestBehavior#CACHED_HTTP} option on the other hand, tries to cache
-     * some content. It also returns the cached content first when requested and
-     * then hits the API. The caller will therefore sometimes get two callback
-     * calls; once for the cache request and once for the API request.
-     */
-    public static enum RestBehavior {
-        HTTP_ONLY, CACHED_HTTP
-    }
-
     private static final String AUTHORITY = "api.podio.com";
-    private static final String DATABASE_NAME = "podio.db";
-    private static final int DATABASE_VERSION = 1;
 
     private static HttpClientDelegate networkDelegate;
     private static RestClient restClient;
@@ -113,8 +95,8 @@ public final class Podio {
      * Initializes the Podio SDK with the given client credentials. This method
      * MUST be called before any other request is made. The caller can then
      * either choose to revoke a previously stored session (the SDK doesn't
-     * store or cache the session), or authenticate with user or app
-     * credentials. These operations are done in the {@link ClientAPI} area.
+     * store or cache the session for any long term reuse), or authenticate with
+     * user or app credentials.
      * 
      * @param context
      *        The context to initialize the cache database and network clients
@@ -125,42 +107,10 @@ public final class Podio {
      *        The corresponding Podio client secret.
      */
     public static void setup(Context context, String clientId, String clientSecret) {
-        Podio.setup(context, clientId, clientSecret, RestBehavior.HTTP_ONLY);
-    }
-
-    /**
-     * Initializes the Podio SDK with the given client credentials. This method
-     * MUST be called before any other request is made. The caller can then
-     * either choose to revoke a previously stored session (the SDK doesn't
-     * store or cache the session), or authenticate with user or app
-     * credentials. These operations are done in the {@link ClientAPI} area.
-     * 
-     * @param context
-     *        The context to initialize the cache database and network clients
-     *        in.
-     * @param clientId
-     *        The pre-shared Podio client id.
-     * @param clientSecret
-     *        The corresponding Podio client secret.
-     * @param behavior
-     *        The behavior to expect from the {@link RestClient} implementation.
-     */
-    public static void setup(Context context, String clientId, String clientSecret, RestBehavior behavior) {
         networkDelegate = new HttpClientDelegate(context);
         client.setup(clientId, clientSecret);
 
-        switch (behavior) {
-        case HTTP_ONLY:
-            restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
-            break;
-        case CACHED_HTTP:
-            CacheClient cacheClient = new SQLiteCacheClient(context, DATABASE_NAME, DATABASE_VERSION);
-            restClient = new CachedRestClient(context, AUTHORITY, networkDelegate, cacheClient);
-            break;
-        default:
-            restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
-            break;
-        }
+        restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
 
         application.setRestClient(restClient);
         calendar.setRestClient(restClient);
