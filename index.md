@@ -10,19 +10,19 @@ Apart from above Android requirements, the SDK also uses the [Android Volley](ht
 
 The test project is using the [NanoHTTPD](http://nanohttpd.com/) web server for mocking the Internet on the test target.
 
-The Podio SDK for Android is currently in a very early development stage where the entire feature set has not yet been fully implemented. We are working very actively on making it feature complete within the near future.
+The Podio SDK for Android is currently in a early development stage where the entire feature set has not yet been fully implemented. We are working very actively on making it feature complete within the near future.
 
 ## Integrate with your Android project
-The project is currently made available as raw source code. You can get the source by cloning the git repository like this: `git clone git@github.com:podio/podio-android.git`.
+The project is currently made available as raw source code. You can get the source by cloning the git repository: `git clone git@github.com:podio/podio-android.git`.
 
-Your options of integration from here on are as wide as the Android framework enables: You can e.g. choose to import the cloned source as an Android Library Project or build a JAR file out of it (don't forget to manually add the Volley and Gson jars as they are not included in the podio-sdk JAR) and add it to your projects `libs` folder.
+Your options of integration from here on are as wide as the Android framework enables. You can e.g. choose to import the cloned source as an Android Library Project or build a JAR file out of it (don't forget to also manually copy the Volley and Gson JARs to your `libs` directory as they are not included in the podio-sdk JAR).
 
-The provided Ant build script gives you the option of building a JAR file by issuing the `ant clean jar` command from the SDK root. You can then add the `podio-sdk.jar` file to your existing Android projects `libs` folder.
+The provided Ant build script gives you the option of building a JAR file by executing the `ant clean jar` command from the SDK root. You can then add the `podio-sdk.jar` file to your existing Android projects `libs` folder.
 
 ### Setup your API keys
-But before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details on this [here](https://developers.podio.com/api-key).
+Before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details [here](https://developers.podio.com/api-key).
 
-Once you have a key and corresponding secret, you need to configure the Podio SDK to use it. You can do so by adding the following code to your `Application.onCreate()` method:
+Once you have a key and corresponding secret, you need to setup the Podio SDK to use them.
 
 {% highlight java %}
 Podio.setup(context, "my_api_key", "my_secret");
