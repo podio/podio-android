@@ -26,15 +26,15 @@ import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.PodioParser;
+import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
-import com.podio.sdk.internal.request.RestOperation;
 
 public final class RestRequest<T> {
 
     private Object content;
     private PodioFilter filter;
-    private RestOperation operation;
+    private RestClient.Operation operation;
     private PodioParser<? extends T> parser;
 
     private ErrorListener errorListener;
@@ -166,7 +166,7 @@ public final class RestRequest<T> {
         return parser;
     }
 
-    public RestOperation getOperation() {
+    public RestClient.Operation getOperation() {
         return operation;
     }
 
@@ -192,7 +192,7 @@ public final class RestRequest<T> {
         return this;
     }
 
-    public RestRequest<T> setOperation(RestOperation operation) {
+    public RestRequest<T> setOperation(RestClient.Operation operation) {
         this.operation = operation;
         return this;
     }

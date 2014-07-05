@@ -22,6 +22,9 @@
 
 package com.podio.sdk.client;
 
+/**
+ * @author Christian Holm
+ */
 public class MockRestClient extends QueuedRestClient {
     private RestResult<?> result = RestResult.success();
     private boolean async = false;

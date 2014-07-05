@@ -38,11 +38,10 @@ import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
+import com.podio.sdk.ThreadCaptureResultListener;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
-import com.podio.sdk.internal.request.RestOperation;
 import com.podio.sdk.provider.mock.DummyRestClient;
-import com.podio.test.ThreadCaptureResultListener;
 
 public class QueuedRestClientTest extends InstrumentationTestCase {
 
@@ -126,10 +125,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      */
     public void testRequestQueueCapacityValid() {
         MockRestClient testTarget = new MockRestClient();
-        RestRequest<Object> request = new RestRequest<Object>().setFilter(
-                new BasicPodioFilter()).setOperation(RestOperation.AUTHORIZE);
-        Future<RestResult<Object>> future = testTarget.enqueue(request);
+        RestRequest<Object> request = new RestRequest<Object>()
+                .setFilter(new BasicPodioFilter())
+                .setOperation(RestClient.Operation.GET);
 
+        Future<RestResult<Object>> future = testTarget.enqueue(request);
         assertNotNull(future);
     }
 
@@ -152,12 +152,12 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         RestRequest<Object> firstRequest = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter("first"))
-                .setOperation(RestOperation.GET)
+                .setOperation(RestClient.Operation.GET)
                 .setResultListener(resultListener);
 
         RestRequest<Object> secondRequest = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter("second"))
-                .setOperation(RestOperation.GET)
+                .setOperation(RestClient.Operation.GET)
                 .setResultListener(resultListener);
 
         Future<RestResult<Object>> future = testTarget.enqueue(firstRequest);
@@ -202,7 +202,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         RestRequest<Object> request = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter()).setResultListener(resultListener)
-                .setOperation(RestOperation.GET);
+                .setOperation(RestClient.Operation.GET);
         testTarget.enqueue(request);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
@@ -237,8 +237,9 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         MockRestClient testTarget = new MockRestClient(1);
 
         RestRequest<Object> request = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter()).setResultListener(resultListener)
-                .setOperation(RestOperation.AUTHORIZE);
+                .setFilter(new BasicPodioFilter())
+                .setResultListener(resultListener)
+                .setOperation(RestClient.Operation.GET);
 
         assertNotNull(testTarget.enqueue(request));
 
@@ -304,7 +305,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         RestRequest<Object> request = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter("expected"))
-                .setOperation(RestOperation.GET);
+                .setOperation(RestClient.Operation.GET);
 
         testTarget.enqueue(request);
 
@@ -339,7 +340,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         RestRequest<Object> firstRequest = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter("first"))
                 .setResultListener(resultListener)
-                .setOperation(RestOperation.AUTHORIZE);
+                .setOperation(RestClient.Operation.GET);
 
         assertNotNull(testTarget.enqueue(firstRequest));
 
@@ -349,7 +350,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         RestRequest<Object> secondRequest = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter("second"))
                 .setResultListener(resultListener)
-                .setOperation(RestOperation.AUTHORIZE);
+                .setOperation(RestClient.Operation.GET);
 
         assertNotNull(testTarget.enqueue(secondRequest));
 
@@ -382,7 +383,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         final RestRequest<Object> request = new RestRequest<Object>()
                 .setResultListener(threadListener)
                 .setFilter(new BasicPodioFilter())
-                .setOperation(RestOperation.GET);
+                .setOperation(RestClient.Operation.GET);
 
         HandlerThread handlerThread = new HandlerThread("UIThread");
         handlerThread.start();
@@ -426,7 +427,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         RestRequest<Object> request = new RestRequest<Object>()
                 .setErrorListener(errorListener)
                 .setFilter(new BasicPodioFilter())
-                .setOperation(RestOperation.GET);
+                .setOperation(RestClient.Operation.GET);
 
         testTarget.enqueue(request);
 
@@ -458,7 +459,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .setSessionListener(sessionListener)
                 .setResultListener(resultListener)
                 .setFilter(new BasicPodioFilter())
-                .setOperation(RestOperation.AUTHORIZE);
+                .setOperation(RestClient.Operation.GET);
 
         testTarget.enqueue(request);
 
@@ -488,7 +489,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
         RestRequest<Object> request = new RestRequest<Object>()
                 .setResultListener(resultListener)
                 .setFilter(new BasicPodioFilter())
-                .setOperation(RestOperation.AUTHORIZE);
+                .setOperation(RestClient.Operation.GET);
 
         testTarget.enqueue(request);
 

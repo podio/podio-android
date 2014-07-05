@@ -58,6 +58,7 @@ import com.podio.sdk.domain.Session;
  * @author László Urszuly
  */
 public abstract class QueuedRestClient implements RestClient {
+
     private final String scheme;
     private final String authority;
 
@@ -100,19 +101,6 @@ public abstract class QueuedRestClient implements RestClient {
     }
 
     /**
-     * Initializes the request executor service with a {@link Integer#MAX_VALUE}
-     * capacity request queue.
-     * 
-     * @param scheme
-     *        The scheme of this {@link RestClient}.
-     * @param authority
-     *        The authority of this {@link RestClient}.
-     */
-    public QueuedRestClient(String scheme, String authority) {
-        this(scheme, authority, Integer.MAX_VALUE);
-    }
-
-    /**
      * Initializes the request executor service.
      * 
      * @param scheme
@@ -121,7 +109,7 @@ public abstract class QueuedRestClient implements RestClient {
      *        The authority of this {@link RestClient}.
      * @param queueCapacity
      *        The desired capacity of the request queue. Defaults to
-     *        {@link Integer#MAX_VALUE} if less than zero.
+     *        {@link Integer#MAX_VALUE} if less than or equal to zero.
      */
     public QueuedRestClient(String scheme, String authority, int queueCapacity) {
         this.scheme = scheme;
@@ -135,25 +123,16 @@ public abstract class QueuedRestClient implements RestClient {
         this.callerHandler = new Handler();
     }
 
-    /**
-     * {@inheritDoc RestClient#getScheme()}
-     */
     @Override
     public String getScheme() {
         return scheme;
     }
 
-    /**
-     * {@inheritDoc RestClient#getAuthority()}
-     */
     @Override
     public String getAuthority() {
         return authority;
     }
 
-    /**
-     * {@inheritDoc RestClient#perform(RestRequest)}
-     */
     @Override
     public <T> Future<RestResult<T>> enqueue(RestRequest<T> request) throws NullPointerException {
         if (request == null) {

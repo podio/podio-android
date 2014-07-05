@@ -24,7 +24,7 @@ package com.podio.sdk.domain.field.value;
 
 import java.util.HashMap;
 
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly

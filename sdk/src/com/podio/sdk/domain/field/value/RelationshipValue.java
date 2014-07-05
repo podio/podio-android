@@ -31,7 +31,7 @@ import com.podio.sdk.domain.Client;
 import com.podio.sdk.domain.File;
 import com.podio.sdk.domain.Space;
 import com.podio.sdk.domain.User;
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly

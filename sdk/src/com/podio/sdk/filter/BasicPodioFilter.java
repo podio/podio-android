@@ -25,7 +25,7 @@ package com.podio.sdk.filter;
 import android.net.Uri;
 
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 public class BasicPodioFilter implements PodioFilter {
     private final Uri.Builder uriBuilder;

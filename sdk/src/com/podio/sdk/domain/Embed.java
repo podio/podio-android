@@ -22,7 +22,7 @@
 
 package com.podio.sdk.domain;
 
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly

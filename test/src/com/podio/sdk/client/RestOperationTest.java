@@ -20,28 +20,30 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.internal.request;
+package com.podio.sdk.client;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.test.AndroidTestCase;
 
+import com.podio.sdk.RestClient;
+
 public class RestOperationTest extends AndroidTestCase {
 
     /**
-     * Verifies that the {@link RestOperation} enumeration parses the "DELETE"
-     * string into the correct enumeration value.
+     * Verifies that the {@link RestClient.Operation} enumeration parses the
+     * "DELETE" string into the correct enumeration value.
      * 
      * <pre>
      * 
-     * 1. Call the <code>valueOf()</code> method on the {@link RestOperation}
+     * 1. Call the <code>valueOf()</code> method on the {@link RestClient.Operation}
      *      enumeration with the "DELETE" string as argument.
      * 
      * 2. Verify that the expected object was returned.
      * 
      * 3. Call the <code>valueOf()</code> method on the platform {@link Enum}
-     *      implementation with the class of the {@link RestOperation} object
+     *      implementation with the class of the {@link RestClient.Operation} object
      *      and the "DELETE" string as arguments.
      * 
      * 4. Verify that the expected object was returned.
@@ -49,26 +51,26 @@ public class RestOperationTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestOperationValueOfDelete() {
-        RestOperation target1 = RestOperation.valueOf("DELETE");
-        assertEquals(RestOperation.DELETE, target1);
+        RestClient.Operation target1 = RestClient.Operation.valueOf("DELETE");
+        assertEquals(RestClient.Operation.DELETE, target1);
 
-        RestOperation target2 = Enum.valueOf(RestOperation.class, "DELETE");
-        assertEquals(RestOperation.DELETE, target2);
+        RestClient.Operation target2 = Enum.valueOf(RestClient.Operation.class, "DELETE");
+        assertEquals(RestClient.Operation.DELETE, target2);
     }
 
     /**
-     * Verifies that the {@link RestOperation} enumeration parses the "GET"
-     * string into the correct enumeration value.
+     * Verifies that the {@link RestClient.Operation} enumeration parses the
+     * "GET" string into the correct enumeration value.
      * 
      * <pre>
      * 
-     * 1. Call the <code>valueOf()</code> method on the {@link RestOperation}
+     * 1. Call the <code>valueOf()</code> method on the {@link RestClient.Operation}
      *      enumeration with the "GET" string as argument.
      * 
      * 2. Verify that the expected object was returned.
      * 
      * 3. Call the <code>valueOf()</code> method on the platform {@link Enum}
-     *      implementation with the class of the {@link RestOperation} object
+     *      implementation with the class of the {@link RestClient.Operation} object
      *      and the "GET" string as arguments.
      * 
      * 4. Verify that the expected object was returned.
@@ -76,26 +78,26 @@ public class RestOperationTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestOperationValueOfGet() {
-        RestOperation target = RestOperation.valueOf("GET");
-        assertEquals(RestOperation.GET, target);
+        RestClient.Operation target = RestClient.Operation.valueOf("GET");
+        assertEquals(RestClient.Operation.GET, target);
 
-        RestOperation target2 = Enum.valueOf(RestOperation.class, "GET");
-        assertEquals(RestOperation.GET, target2);
+        RestClient.Operation target2 = Enum.valueOf(RestClient.Operation.class, "GET");
+        assertEquals(RestClient.Operation.GET, target2);
     }
 
     /**
-     * Verifies that the {@link RestOperation} enumeration parses the "POST"
-     * string into the correct enumeration value.
+     * Verifies that the {@link RestClient.Operation} enumeration parses the
+     * "POST" string into the correct enumeration value.
      * 
      * <pre>
      * 
-     * 1. Call the <code>valueOf()</code> method on the {@link RestOperation}
+     * 1. Call the <code>valueOf()</code> method on the {@link RestClient.Operation}
      *      enumeration with the "POST" string as argument.
      * 
      * 2. Verify that the expected object was returned.
      * 
      * 3. Call the <code>valueOf()</code> method on the platform {@link Enum}
-     *      implementation with the class of the {@link RestOperation} object
+     *      implementation with the class of the {@link RestClient.Operation} object
      *      and the "POST" string as arguments.
      * 
      * 4. Verify that the expected object was returned.
@@ -103,26 +105,26 @@ public class RestOperationTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestOperationValueOfPost() {
-        RestOperation target1 = RestOperation.valueOf("POST");
-        assertEquals(RestOperation.POST, target1);
+        RestClient.Operation target1 = RestClient.Operation.valueOf("POST");
+        assertEquals(RestClient.Operation.POST, target1);
 
-        RestOperation target2 = Enum.valueOf(RestOperation.class, "POST");
-        assertEquals(RestOperation.POST, target2);
+        RestClient.Operation target2 = Enum.valueOf(RestClient.Operation.class, "POST");
+        assertEquals(RestClient.Operation.POST, target2);
     }
 
     /**
-     * Verifies that the {@link RestOperation} enumeration parses the "PUT"
-     * string into the correct enumeration value.
+     * Verifies that the {@link RestClient.Operation} enumeration parses the
+     * "PUT" string into the correct enumeration value.
      * 
      * <pre>
      * 
-     * 1. Call the <code>valueOf()</code> method on the {@link RestOperation}
+     * 1. Call the <code>valueOf()</code> method on the {@link RestClient.Operation}
      *      enumeration with the "PUT" string as argument.
      * 
      * 2. Verify that the expected object was returned.
      * 
      * 3. Call the <code>valueOf()</code> method on the platform {@link Enum}
-     *      implementation with the class of the {@link RestOperation} object
+     *      implementation with the class of the {@link RestClient.Operation} object
      *      and the "PUT" string as arguments.
      * 
      * 4. Verify that the expected object was returned.
@@ -130,20 +132,20 @@ public class RestOperationTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestOperationValueOfPut() {
-        RestOperation target = RestOperation.valueOf("PUT");
-        assertEquals(RestOperation.PUT, target);
+        RestClient.Operation target = RestClient.Operation.valueOf("PUT");
+        assertEquals(RestClient.Operation.PUT, target);
 
-        RestOperation target2 = Enum.valueOf(RestOperation.class, "PUT");
-        assertEquals(RestOperation.PUT, target2);
+        RestClient.Operation target2 = Enum.valueOf(RestClient.Operation.class, "PUT");
+        assertEquals(RestClient.Operation.PUT, target2);
     }
 
     /**
-     * Verifies that all expected {@link RestOperation} values are included in
-     * the result of the <code>values()</code> method call.
+     * Verifies that all expected {@link RestClient.Operation} values are
+     * included in the result of the <code>values()</code> method call.
      * 
      * <pre>
      * 
-     * 1. Call the <code>values()</code> method on the {@link RestOperation}
+     * 1. Call the <code>values()</code> method on the {@link RestClient.Operation}
      *      enumeration.
      * 
      * 2. Verify that the returned array is not a null pointer.
@@ -156,21 +158,20 @@ public class RestOperationTest extends AndroidTestCase {
      * </pre>
      */
     public void testRestOperationValues() {
-        RestOperation[] targetArray = RestOperation.values();
+        RestClient.Operation[] targetArray = RestClient.Operation.values();
         assertNotNull(targetArray);
-        assertEquals(5, targetArray.length);
+        assertEquals(4, targetArray.length);
 
-        List<RestOperation> targetList = new ArrayList<RestOperation>();
+        List<RestClient.Operation> targetList = new ArrayList<RestClient.Operation>();
 
-        for (RestOperation operation : targetArray) {
+        for (RestClient.Operation operation : targetArray) {
             targetList.add(operation);
         }
 
-        assertTrue(targetList.contains(RestOperation.AUTHORIZE));
-        assertTrue(targetList.contains(RestOperation.DELETE));
-        assertTrue(targetList.contains(RestOperation.GET));
-        assertTrue(targetList.contains(RestOperation.POST));
-        assertTrue(targetList.contains(RestOperation.PUT));
+        assertTrue(targetList.contains(RestClient.Operation.DELETE));
+        assertTrue(targetList.contains(RestClient.Operation.GET));
+        assertTrue(targetList.contains(RestClient.Operation.POST));
+        assertTrue(targetList.contains(RestClient.Operation.PUT));
     }
 
 }

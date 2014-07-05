@@ -27,9 +27,9 @@ import org.mockito.Mockito;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
+import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.filter.BasicPodioFilter;
-import com.podio.sdk.internal.request.RestOperation;
 
 public class RestRequestTest extends AndroidTestCase {
 
@@ -73,7 +73,7 @@ public class RestRequestTest extends AndroidTestCase {
      */
     public void testRestRequestGettersReturnCorrectValues() {
         RestRequest<Object> target = new RestRequest<Object>();
-        RestOperation operation = RestOperation.GET;
+        RestClient.Operation operation = RestClient.Operation.GET;
         Object item = new Object();
 
         PodioFilter filter = new BasicPodioFilter("test")

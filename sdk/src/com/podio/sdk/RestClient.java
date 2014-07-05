@@ -43,6 +43,10 @@ import com.podio.sdk.client.RestResult;
  */
 public interface RestClient {
 
+    public static enum Operation {
+        DELETE, GET, POST, PUT;
+    }
+
     /**
      * Performs an initial validation of the request and returns a boolean flag
      * depending on whether the request is accepted for future processing or

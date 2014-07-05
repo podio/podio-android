@@ -23,12 +23,10 @@
 package com.podio.sdk;
 
 import android.content.Context;
-import android.net.Uri;
 
-import com.podio.sdk.client.HttpRestClient;
-import com.podio.sdk.client.delegate.HttpClientDelegate;
+import com.podio.sdk.client.VolleyHttpClient;
+import com.podio.sdk.client.VolleySessionClient;
 import com.podio.sdk.domain.Session;
-import com.podio.sdk.filter.SessionFilter;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ItemProvider;
@@ -46,8 +44,8 @@ public final class Podio {
 
     private static final String AUTHORITY = "api.podio.com";
 
-    private static HttpClientDelegate networkDelegate;
-    private static RestClient restClient;
+    private static VolleySessionClient sessionClient;
+    private static VolleyHttpClient restClient;
 
     /**
      * Enables means of easy operating on the {@link ApplicationProvider} API
@@ -107,16 +105,16 @@ public final class Podio {
      *        The corresponding Podio client secret.
      */
     public static void setup(Context context, String clientId, String clientSecret) {
-        networkDelegate = new HttpClientDelegate(context);
-        client.setup(clientId, clientSecret);
+        sessionClient = new VolleySessionClient(context, AUTHORITY);
+        restClient = new VolleyHttpClient(context, AUTHORITY, sessionClient);
 
-        restClient = new HttpRestClient(context, AUTHORITY, networkDelegate);
+        client.setup(clientId, clientSecret);
+        client.setRestClient(sessionClient);
 
         application.setRestClient(restClient);
         calendar.setRestClient(restClient);
         item.setRestClient(restClient);
         organization.setRestClient(restClient);
-        client.setRestClient(restClient);
         user.setRestClient(restClient);
     }
 
@@ -131,14 +129,8 @@ public final class Podio {
      * @param session
      *        The previously stored session object.
      */
-    public static final void restoreSession(Session session) {
-        Uri sessionRefreshUri = new Uri.Builder()
-                .scheme(restClient.getScheme())
-                .authority(restClient.getAuthority())
-                .appendEncodedPath(SessionFilter.PATH)
-                .build();
-        String url = sessionRefreshUri.toString();
-        networkDelegate.restoreSession(url, session);
+    public static void restoreSession(Session session) {
+        sessionClient.setSession(session);
     }
 
 }

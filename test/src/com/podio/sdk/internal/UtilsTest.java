@@ -20,10 +20,12 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.internal.utils;
+package com.podio.sdk.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.podio.sdk.internal.Utils;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;

@@ -32,7 +32,7 @@ import java.util.Map.Entry;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.field.FieldTypeMismatchException;
 import com.podio.sdk.domain.field.Pushable;
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 public class Item implements Pushable {
 

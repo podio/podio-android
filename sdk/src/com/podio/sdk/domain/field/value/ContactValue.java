@@ -29,7 +29,7 @@ import java.util.List;
 import com.podio.sdk.domain.File;
 import com.podio.sdk.domain.field.ContactField.Rights;
 import com.podio.sdk.domain.field.ContactField.Type;
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly

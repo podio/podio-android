@@ -48,4 +48,10 @@ public class SessionFilter extends BasicPodioFilter {
         addQueryParameter("app_token", appToken);
         return this;
     }
+
+    public SessionFilter withRefreshToken(String refreshToken) {
+        addQueryParameter("grant_type", "refresh_token");
+        addQueryParameter("refresh_token", refreshToken);
+        return this;
+    }
 }

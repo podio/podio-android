@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.internal.utils;
+package com.podio.sdk.internal;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

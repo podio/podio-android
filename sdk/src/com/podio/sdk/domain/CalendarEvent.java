@@ -23,7 +23,7 @@ package com.podio.sdk.domain;
 
 import java.util.Date;
 
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author Tobias Lindberg

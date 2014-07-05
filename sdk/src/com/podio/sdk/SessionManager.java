@@ -20,43 +20,21 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.client.delegate;
+package com.podio.sdk;
 
-import java.util.Map;
+import com.podio.sdk.domain.Session;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.StringRequest;
+/**
+ * @author László Urszuly
+ */
+public interface SessionManager {
 
-public class PodioRequest extends StringRequest {
-    private static final String PROTOCOL_CONTENT_TYPE = "application/json; charset=utf-8";
+    public Session checkSession();
 
-    private final Map<String, String> headers;
-    private final String body;
+    public String getAccessToken();
 
-    public PodioRequest(int method, String url, String body, Map<String, String> headers,
-            RequestFuture<String> future) {
+    public void refreshSession();
 
-        super(method, url, future, future);
-        setShouldCache(false);
-
-        this.headers = headers;
-        this.body = body;
-    }
-
-    @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
-        return headers;
-    }
-
-    @Override
-    public byte[] getBody() {
-        return body != null ? body.getBytes() : null;
-    }
-
-    @Override
-    public String getBodyContentType() {
-        return PROTOCOL_CONTENT_TYPE;
-    }
+    public void setSession(Session session);
 
 }

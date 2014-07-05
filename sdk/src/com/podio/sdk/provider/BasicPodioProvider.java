@@ -32,7 +32,6 @@ import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RestRequest;
 import com.podio.sdk.client.RestResult;
-import com.podio.sdk.internal.request.RestOperation;
 
 public class BasicPodioProvider {
 
@@ -52,18 +51,18 @@ public class BasicPodioProvider {
     }
 
     protected <T> Future<RestResult<T>> get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestOperation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
+        return request(RestClient.Operation.GET, filter, null, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
     }
 
     protected <T> Future<RestResult<T>> post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestOperation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
+        return request(RestClient.Operation.POST, filter, content, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
     }
 
     protected <T> Future<RestResult<T>> put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestOperation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
+        return request(RestClient.Operation.PUT, filter, content, PodioParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
     }
 
-    protected <T> Future<RestResult<T>> request(RestOperation operation, PodioFilter filter,
+    protected <T> Future<RestResult<T>> request(RestClient.Operation operation, PodioFilter filter,
             Object content, PodioParser<? extends T> parser, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
 
         RestRequest<T> restRequest = new RestRequest<T>()

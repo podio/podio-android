@@ -1,4 +1,4 @@
-package com.podio.test;
+package com.podio.sdk;
 
 import com.podio.sdk.ResultListener;
 

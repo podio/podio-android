@@ -25,7 +25,7 @@ package com.podio.sdk.domain;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.podio.sdk.internal.utils.Utils;
+import com.podio.sdk.internal.Utils;
 
 public class Session {
     public final String accessToken;
@@ -50,8 +50,7 @@ public class Session {
             if (jsonObject.has("expires")) {
                 this.expiresMillis = jsonObject.optLong("expires", 0L);
             } else if (jsonObject.has("expires_in")) {
-                this.expiresMillis = System.currentTimeMillis()
-                        + jsonObject.optLong("expires_in", 0L) * 1000;
+                this.expiresMillis = System.currentTimeMillis() + jsonObject.optLong("expires_in", 0L) * 1000;
             } else {
                 this.expiresMillis = 0L;
             }

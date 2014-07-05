@@ -39,7 +39,7 @@ public final class DummyRestClient extends QueuedRestClient {
     private Uri mockUri;
 
     public DummyRestClient(RestResult<?> result) {
-        super("content", "test.uri");
+        super("content", "test.uri", Integer.MAX_VALUE);
         this.result = result;
     }
 
