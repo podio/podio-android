@@ -63,6 +63,10 @@ public class Item implements Pushable {
             }
         }
 
+        public Object getConstraint(String key) {
+            return filters.get(key);
+        }
+
         public boolean getDoRemember() {
             return Utils.getNative(remember, false);
         }

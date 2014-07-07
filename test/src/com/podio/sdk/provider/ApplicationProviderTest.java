@@ -61,7 +61,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=full"), uri);
     }
 
@@ -92,7 +92,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=micro"), uri);
     }
 
@@ -123,7 +123,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=mini"), uri);
     }
 
@@ -154,7 +154,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/app/space/1?include_inactive=false"), uri);
     }
 
@@ -185,7 +185,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/app/space/2?include_inactive=true"), uri);
     }
 
@@ -216,7 +216,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/app/2?type=short"), uri);
     }
 

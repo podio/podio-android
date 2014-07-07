@@ -63,7 +63,7 @@ public class SessionProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/oauth/token"
                 + "?client_id=CLIENTID&client_secret=CLIENTSECRET"
                 + "&grant_type=password&username=USERNAME&password=PASSWORD"), uri);
@@ -98,7 +98,7 @@ public class SessionProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/oauth/token"
                 + "?client_id=CLIENTID&client_secret=CLIENTSECRET"
                 + "&grant_type=app&app_id=APPID&app_token=APPTOKEN"), uri);

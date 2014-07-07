@@ -62,7 +62,7 @@ public class OrganizationProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/org"), uri);
     }
 

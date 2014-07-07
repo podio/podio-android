@@ -169,7 +169,7 @@ public class ItemProvider extends BasicPodioProvider {
      */
     public Future<RestResult<Item.PushResult>> create(int applicationId, Item item, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
-        Item.PushData data = item != null ? item.getPushData() : null;
+        Item.PushData data = item.getPushData();
 
         return post(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
     }
@@ -214,7 +214,7 @@ public class ItemProvider extends BasicPodioProvider {
      */
     public Future<RestResult<Item.PushResult>> update(int itemId, Item item, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
-        Item.PushData data = item != null ? item.getPushData() : null;
+        Item.PushData data = item.getPushData();
 
         return put(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
     }

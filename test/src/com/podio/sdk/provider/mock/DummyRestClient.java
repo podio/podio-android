@@ -36,15 +36,20 @@ import com.podio.sdk.client.RestResult;
 public final class DummyRestClient extends QueuedRestClient {
 
     private final RestResult<?> result;
-    private Uri mockUri;
+    private Object data;
+    private Uri uri;
 
     public DummyRestClient(RestResult<?> result) {
         super("content", "test.uri", Integer.MAX_VALUE);
         this.result = result;
     }
 
-    public Uri getMockUri() {
-        return mockUri;
+    public Object mock_getRequestData() {
+        return data;
+    }
+
+    public Uri mock_getUri() {
+        return uri;
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +61,8 @@ public final class DummyRestClient extends QueuedRestClient {
     @SuppressWarnings("unchecked")
     @Override
     public <T> Future<RestResult<T>> enqueue(RestRequest<T> request) {
-        mockUri = request.getFilter().buildUri(getScheme(), getAuthority());
+        uri = request.getFilter().buildUri(getScheme(), getAuthority());
+        data = request.getContent();
         callListener(request, (RestResult<T>) result);
 
         return new Future<RestResult<T>>() {

@@ -36,20 +36,20 @@ public class ItemProviderTest extends AndroidTestCase {
 
     /**
      * Verifies that the {@link ItemProvider} calls through to the (mock) rest
-     * client with expected uri parameters when trying to add a new item.
+     * client with expected uri parameters when trying to create a new item.
      * 
      * <pre>
      * 
      * 1. Create a new ItemProvider.
      * 
-     * 2. Try to push a new (mock) item.
+     * 2. Try to create a new (mock) item.
      * 
      * 3. Verify that the designated rest client is called with a uri that
      *      contains the expected parameters.
      * 
      * </pre>
      */
-    public void testAddItem() {
+    public void testCreateItem() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
@@ -61,27 +61,100 @@ public class ItemProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/item/app/2"), uri);
     }
 
     /**
-     * Verifies that the {@link ItemProvider} calls through to the (mock) rest
-     * client with expected uri parameters when trying to fetch an existing
-     * item.
+     * Verifies that the {@link ItemProvider} throws a NullPointerException when
+     * trying to create a new item with a null pointer.
      * 
      * <pre>
      * 
      * 1. Create a new ItemProvider.
      * 
-     * 2. Try to fetch an item.
+     * 2. Try to create a new item with a null pointer data description.
+     * 
+     * 3. Verify that a NullPointerException is thrown.
+     * 
+     * </pre>
+     */
+    public void testCreateItemWithNullPointer() {
+        DummyRestClient mockClient = new DummyRestClient(RestResult.failure(null));
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
+
+        try {
+            provider.create(7, null, null, null, null);
+            fail("Should have thrown NullPointerException");
+        } catch (NullPointerException e) {
+        }
+    }
+
+    /**
+     * Verifies that the {@link ItemProvider} calls through to the (mock) rest
+     * client with expected uri parameters when trying to get a filtered set of
+     * items.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ItemProvider.
+     * 
+     * 2. Try to get a filtered set of items.
      * 
      * 3. Verify that the designated rest client is called with a uri that
      *      contains the expected parameters.
      * 
      * </pre>
      */
-    public void testFetchItem() {
+    public void testFilterItems() {
+        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
+
+        @SuppressWarnings("unchecked")
+        ResultListener<Item.FilterResult> mockListener = Mockito.mock(ResultListener.class);
+        provider.filter()
+                .onConstraint("test-key", "test-value")
+                .onDoRemember(false)
+                .onSortOrder("test-column", false)
+                .onSpan(100, 1000)
+                .get(4, mockListener, null, null);
+
+        Object data = mockClient.mock_getRequestData();
+        assertTrue(data instanceof Item.FilterData);
+        Item.FilterData f = (Item.FilterData) data;
+        assertTrue(f.hasConstraint("test-key"));
+        assertEquals("test-value", f.getConstraint("test-key").toString());
+        assertEquals(false, f.getDoRemember());
+        assertEquals("test-column", f.getSortKey());
+        assertEquals(false, f.getDoSortDescending());
+        assertEquals(100, f.getLimit());
+        assertEquals(1000, f.getOffset());
+
+        Uri uri = mockClient.mock_getUri();
+        assertEquals(Uri.parse("content://test.uri/item/app/4/filter"), uri);
+
+        Mockito.verify(mockListener).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(mockListener);
+    }
+
+    /**
+     * Verifies that the {@link ItemProvider} calls through to the (mock) rest
+     * client with expected uri parameters when trying to get an existing item.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ItemProvider.
+     * 
+     * 2. Try to get an item.
+     * 
+     * 3. Verify that the designated rest client is called with a uri that
+     *      contains the expected parameters.
+     * 
+     * </pre>
+     */
+    public void testGetItem() {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
@@ -93,40 +166,8 @@ public class ItemProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/item/3"), uri);
-    }
-
-    /**
-     * Verifies that the {@link ItemProvider} calls through to the (mock) rest
-     * client with expected uri parameters when trying to fetch all items for a
-     * given application.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new ItemProvider.
-     * 
-     * 2. Try to fetch all items for a known application.
-     * 
-     * 3. Verify that the designated rest client is called with a uri that
-     *      contains the expected parameters.
-     * 
-     * </pre>
-     */
-    public void testFetchItemsForApplication() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
-        ItemProvider provider = new ItemProvider();
-        provider.setRestClient(mockClient);
-
-        @SuppressWarnings("unchecked")
-        ResultListener<Item.FilterResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.filter().get(4, mockListener, null, null);
-
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
-
-        Uri uri = mockClient.getMockUri();
-        assertEquals(Uri.parse("content://test.uri/item/app/4/filter"), uri);
     }
 
     /**
@@ -157,7 +198,33 @@ public class ItemProviderTest extends AndroidTestCase {
         Mockito.verify(mockListener).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(mockListener);
 
-        Uri uri = mockClient.getMockUri();
+        Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/item/5"), uri);
+    }
+
+    /**
+     * Verifies that the {@link ItemProvider} throws a NullPointerException when
+     * trying to update an item with a null pointer.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ItemProvider.
+     * 
+     * 2. Try to update an item with a null pointer data description.
+     * 
+     * 3. Verify that a NullPointerException is thrown.
+     * 
+     * </pre>
+     */
+    public void testUpdateItemWithNullPointer() {
+        DummyRestClient mockClient = new DummyRestClient(RestResult.failure(null));
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(mockClient);
+
+        try {
+            provider.update(7, null, null, null, null);
+            fail("Should have thrown NullPointerException");
+        } catch (NullPointerException e) {
+        }
     }
 }
