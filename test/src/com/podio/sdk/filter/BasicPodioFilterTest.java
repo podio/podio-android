@@ -27,10 +27,7 @@ import java.util.List;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.PodioFilter;
-import com.podio.sdk.filter.BasicPodioFilter;
-
-public class PodioFilterTest extends AndroidTestCase {
+public class BasicPodioFilterTest extends AndroidTestCase {
 
     /**
      * Verifies that path segments can be added and are persisted in the same
@@ -50,8 +47,14 @@ public class PodioFilterTest extends AndroidTestCase {
      */
     public void testAddPathSegments() {
         Uri reference = Uri.parse("scheme://authority/path1/path2");
+        BasicPodioFilter filter = new BasicPodioFilter();
 
-        PodioFilter filter = new BasicPodioFilter();
+        try {
+            filter.addPathSegment(null);
+            fail("should have thrown IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+
         filter.addPathSegment("path1");
         filter.addPathSegment("path2");
 
@@ -80,13 +83,74 @@ public class PodioFilterTest extends AndroidTestCase {
         String key = "test-key";
         String value = "test-value";
 
-        PodioFilter target = new BasicPodioFilter();
-        target.addQueryParameter(key, value);
+        BasicPodioFilter filter = new BasicPodioFilter();
 
-        Uri uri = target.buildUri("scheme", "authority");
+        try {
+            filter.addQueryParameter(null, value);
+            fail("should have thrown IllegalArgumentException");
+        } catch (Exception e) {
+        }
+
+        try {
+            filter.addQueryParameter("null-pointer-value", null);
+        } catch (Exception e) {
+            fail("null-pointer query values should be allowed");
+        }
+
+        filter.addQueryParameter(key, value);
+
+        Uri uri = filter.buildUri("scheme", "authority");
         assertNotNull(uri);
-        assertEquals(1, uri.getQueryParameterNames().size());
+
+        // +1 for the accepted null-pointer value.
+        assertEquals(2, uri.getQueryParameterNames().size());
+
         assertEquals(value, uri.getQueryParameter(key));
+    }
+
+    /**
+     * Verifies that the ItemFilter can build a valid URI.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ItemFilter object.
+     * 
+     * 2. Add a path segment to it.
+     * 
+     * 3. Add a query parameter to it.
+     * 
+     * 4. Try to build a URI from the ItemFilter with null pointer scheme/authority.
+     * 
+     * 5. Verify that exceptions are thrown.
+     * 
+     * 6. Try to build a URI from the ItemFilter with valid scheme/authority.
+     * 
+     * 7. Verify that an expected URI is built.
+     * 
+     * </pre>
+     */
+    public void testBuildUri() {
+        Uri reference = Uri.parse("scheme://authority/path?key=value");
+        BasicPodioFilter filter = new BasicPodioFilter();
+
+        filter.addPathSegment("path");
+        filter.addQueryParameter("key", "value");
+
+        try {
+            filter.buildUri(null, "authority");
+            fail("null pointer scheme shouldn't be accepted");
+        } catch (IllegalArgumentException e) {
+        }
+
+        try {
+            filter.buildUri("scheme", null);
+            fail("null pointer authority shouldn't be accepted");
+        } catch (IllegalArgumentException e) {
+        }
+
+        Uri target = filter.buildUri("scheme", "authority");
+        assertNotNull(target);
+        assertEquals(reference, target);
     }
 
     /**
@@ -110,7 +174,7 @@ public class PodioFilterTest extends AndroidTestCase {
         String value1 = "test-value-1";
         String value2 = "test-value-2";
 
-        PodioFilter target = new BasicPodioFilter();
+        BasicPodioFilter target = new BasicPodioFilter();
         target.addQueryParameter(key, value1);
         target.addQueryParameter(key, value2);
 
