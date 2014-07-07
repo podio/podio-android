@@ -22,7 +22,9 @@
 
 package com.podio.sdk.provider;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.mockito.Mockito;
 
@@ -51,8 +53,10 @@ public class CalendarProviderTest extends AndroidTestCase {
      *      contains the expected parameters.
      * 
      * </pre>
+     * 
+     * @throws ParseException
      */
-    public void testGetGlobalCalendar() {
+    public void testGetGlobalCalendar() throws ParseException {
         DummyRestClient mockClient = new DummyRestClient(RestResult.success());
         CalendarProvider provider = new CalendarProvider();
         provider.setRestClient(mockClient);
@@ -60,8 +64,9 @@ public class CalendarProviderTest extends AndroidTestCase {
         @SuppressWarnings("unchecked")
         ResultListener<CalendarEvent[]> mockListener = Mockito.mock(ResultListener.class);
 
-        Date fromDate = Date.valueOf("1970-01-01");
-        Date toDate = Date.valueOf("1970-01-02");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date fromDate = dateFormat.parse("1970-01-01");
+        Date toDate = dateFormat.parse("1970-01-02");
         provider.getGlobal(fromDate, toDate, 1, mockListener, null, null);
 
         Mockito.verify(mockListener).onRequestPerformed(null);
