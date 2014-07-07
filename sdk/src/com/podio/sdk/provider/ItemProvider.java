@@ -50,7 +50,7 @@ public class ItemProvider extends BasicPodioProvider {
         /**
          * Constructor.
          */
-        private ItemFilterProvider() {
+        public ItemFilterProvider() {
             filterData = new Item.FilterData();
         }
 

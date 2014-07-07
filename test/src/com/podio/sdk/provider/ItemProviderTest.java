@@ -30,6 +30,7 @@ import android.test.AndroidTestCase;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Item;
+import com.podio.sdk.provider.ItemProvider.ItemFilterProvider;
 import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class ItemProviderTest extends AndroidTestCase {
@@ -168,6 +169,28 @@ public class ItemProviderTest extends AndroidTestCase {
 
         Uri uri = mockClient.mock_getUri();
         assertEquals(Uri.parse("content://test.uri/item/3"), uri);
+    }
+
+    /**
+     * Verifies that the {@link ItemProvider} will return a non-null-pointer
+     * {@link ItemFilterProvider} when initiating a filtering of items.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new ItemProvider.
+     * 
+     * 2. Try to start filtering items.
+     * 
+     * 3. Verify that a {@link ItemFilterProvider} is returned.
+     * 
+     * </pre>
+     */
+    public void testItemFilterProvider() {
+        ItemProvider provider = new ItemProvider();
+        provider.setRestClient(null);
+        ItemFilterProvider p = provider.filter();
+
+        assertTrue(p instanceof ItemFilterProvider);
     }
 
     /**
