@@ -47,8 +47,8 @@ public class SessionFilterTest extends AndroidTestCase {
         Uri reference = Uri
                 .parse("content://test.uri/oauth/token?grant_type=app&app_id=APPID&app_token=APPTOKEN");
 
-        Uri result = new SessionFilter() //
-                .withAppCredentials("APPID", "APPTOKEN") //
+        Uri result = new SessionFilter()
+                .withAppCredentials("APPID", "APPTOKEN")
                 .buildUri("content", "test.uri");
 
         assertEquals(reference, result);
@@ -74,8 +74,35 @@ public class SessionFilterTest extends AndroidTestCase {
         Uri reference = Uri
                 .parse("content://test.uri/oauth/token?client_id=CLIENTID&client_secret=CLIENTSECRET");
 
-        Uri result = new SessionFilter() //
-                .withClientCredentials("CLIENTID", "CLIENTSECRET") //
+        Uri result = new SessionFilter()
+                .withClientCredentials("CLIENTID", "CLIENTSECRET")
+                .buildUri("content", "test.uri");
+
+        assertEquals(reference, result);
+    }
+
+    /**
+     * Verifies that the {@link SessionFilter} doesn't omit any properties when
+     * describing a refresh auth-tokens request.
+     * 
+     * <pre>
+     * 
+     * 1. Create a new {@link SessionFilter} object.
+     * 
+     * 2. Add values for auth-token refresh properties.
+     * 
+     * 3. Make it build the result Uri.
+     * 
+     * 4. Verify that all properties are reflected in the result Uri.
+     * 
+     * </pre>
+     */
+    public void testAllRefreshTokensIncludedInResultUri() {
+        Uri reference = Uri
+                .parse("content://test.uri/oauth/token?grant_type=refresh_token&refresh_token=REFRESHTOKEN");
+
+        Uri result = new SessionFilter()
+                .withRefreshToken("REFRESHTOKEN")
                 .buildUri("content", "test.uri");
 
         assertEquals(reference, result);
@@ -101,8 +128,8 @@ public class SessionFilterTest extends AndroidTestCase {
         Uri reference = Uri
                 .parse("content://test.uri/oauth/token?grant_type=password&username=USERNAME&password=PASSWORD");
 
-        Uri result = new SessionFilter() //
-                .withUserCredentials("USERNAME", "PASSWORD") //
+        Uri result = new SessionFilter()
+                .withUserCredentials("USERNAME", "PASSWORD")
                 .buildUri("content", "test.uri");
 
         assertEquals(reference, result);
