@@ -22,15 +22,42 @@
 
 package com.podio.sdk.internal;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-
-import com.podio.sdk.internal.Utils;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 public class UtilsTest extends AndroidTestCase {
+
+    public void testFormatDateTime() throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date date = dateFormat.parse("2014-07-07");
+        String dateString = Utils.formatDateTime(date);
+        assertEquals("2014-07-07 00:00:00", dateString);
+
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        Date time = timeFormat.parse("21:14:59");
+        String timeString = Utils.formatDateTime(time);
+        assertEquals("1970-01-01 21:14:59", timeString);
+    }
+
+    public void testGetNativeBoolean() {
+        Boolean value = Boolean.TRUE;
+        assertEquals(true, Utils.getNative(value, false));
+        assertEquals(true, Utils.getNative(null, true));
+    }
+
+    public void testGetNativeInteger() {
+        Integer value = Integer.valueOf(1);
+        assertEquals(1, Utils.getNative(value, 0));
+        assertEquals(1, Utils.getNative(null, 1));
+    }
 
     public void testCollectionIsEmpty() {
         ArrayList<Object> empty = new ArrayList<Object>();
@@ -132,6 +159,60 @@ public class UtilsTest extends AndroidTestCase {
         assertFalse(Utils.notEmpty((Object[]) null));
         assertTrue(Utils.notEmpty(new Object[] { new Object() }));
         assertTrue(Utils.notEmpty(new Object[] { null }));
+    }
+
+    public void testParseDate() {
+        assertNull(Utils.parseDate("unparsable"));
+        assertNull(Utils.parseDate(null));
+
+        Date date = Utils.parseDate("2014-07-07 15:22:32");
+        assertNotNull(date);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        assertEquals(2014, c.get(Calendar.YEAR));
+        assertEquals(Calendar.JULY, c.get(Calendar.MONTH));
+        assertEquals(7, c.get(Calendar.DAY_OF_MONTH));
+        assertEquals(0, c.get(Calendar.HOUR_OF_DAY));
+        assertEquals(0, c.get(Calendar.MINUTE));
+        assertEquals(0, c.get(Calendar.SECOND));
+    }
+
+    public void testParseDateTime() {
+        assertNull(Utils.parseDateTime("unparsable"));
+        assertNull(Utils.parseDateTime(null));
+
+        Date date = Utils.parseDateTime("2014-07-07 15:22:32");
+        assertNotNull(date);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        assertEquals(2014, c.get(Calendar.YEAR));
+        assertEquals(Calendar.JULY, c.get(Calendar.MONTH));
+        assertEquals(7, c.get(Calendar.DAY_OF_MONTH));
+        assertEquals(15, c.get(Calendar.HOUR_OF_DAY));
+        assertEquals(22, c.get(Calendar.MINUTE));
+        assertEquals(32, c.get(Calendar.SECOND));
+    }
+
+    public void testParseTime() {
+        assertNull(Utils.parseTime("unparsable"));
+        assertNull(Utils.parseTime(null));
+
+        Date date = Utils.parseTime("15:22:32");
+        assertNotNull(date);
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        assertEquals(1970, c.get(Calendar.YEAR));
+        assertEquals(Calendar.JANUARY, c.get(Calendar.MONTH));
+        assertEquals(1, c.get(Calendar.DAY_OF_MONTH));
+        assertEquals(15, c.get(Calendar.HOUR_OF_DAY));
+        assertEquals(22, c.get(Calendar.MINUTE));
+        assertEquals(32, c.get(Calendar.SECOND));
     }
 
     public void testStringIsAnyEmpty() {
