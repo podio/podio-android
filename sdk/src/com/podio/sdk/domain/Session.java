@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain;
 
+import java.util.concurrent.TimeUnit;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,66 +32,116 @@ import com.podio.sdk.internal.Utils;
 public class Session {
     public final String accessToken;
     public final String refreshToken;
-    public final long expiresMillis;
+    public final long expires;
 
     public Session(String jsonString) {
-        JSONObject jsonObject;
+        JSONObject jsonObject = null;
+        String accessToken = null;
+        String refreshToken = null;
+        long expires = 0;
 
         try {
             jsonObject = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            jsonObject = null;
-        } catch (NullPointerException e) {
-            jsonObject = null;
-        }
-
-        if (jsonObject != null) {
-            this.accessToken = jsonObject.optString("access_token", null);
-            this.refreshToken = jsonObject.optString("refresh_token", null);
+            accessToken = jsonObject.optString("access_token", null);
+            refreshToken = jsonObject.optString("refresh_token", null);
 
             if (jsonObject.has("expires")) {
-                this.expiresMillis = jsonObject.optLong("expires", 0L);
+                expires = jsonObject.optLong("expires", 0L);
             } else if (jsonObject.has("expires_in")) {
-                this.expiresMillis = System.currentTimeMillis() + jsonObject.optLong("expires_in", 0L) * 1000;
-            } else {
-                this.expiresMillis = 0L;
+                expires = currentTimeSeconds() + jsonObject.optLong("expires_in", 0L);
             }
-        } else {
-            this.accessToken = null;
-            this.refreshToken = null;
-            this.expiresMillis = 0L;
+        } catch (JSONException e) {
+            // Input JSON was most likely invalid. Fallback to defaults.
+            accessToken = refreshToken = null;
+            expires = 0;
+        } catch (NullPointerException e) {
+            // Input JSON was most likely a null pointer. Fallback to defaults.
+            accessToken = refreshToken = null;
+            expires = 0;
         }
+
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.expires = expires;
     }
 
     public Session(String accessToken, String refreshToken, long expiresIn) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.expiresMillis = System.currentTimeMillis() + expiresIn * 1000;
+        this.expires = currentTimeSeconds() + expiresIn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null) {
+            return false;
+        }
+
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+
+        Session other = (Session) o;
+        if (accessToken == null) {
+            if (other.accessToken != null) {
+                return false;
+            }
+        } else if (!accessToken.equals(other.accessToken)) {
+            return false;
+        }
+
+        if (refreshToken == null) {
+            if (other.refreshToken != null) {
+                return false;
+            }
+        } else if (!refreshToken.equals(other.refreshToken)) {
+            return false;
+        }
+
+        if (expires != other.expires) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 43;
+        int result = 1;
+
+        result = prime * result + (accessToken == null ? 0 : accessToken.hashCode());
+        result = prime * result + (refreshToken == null ? 0 : refreshToken.hashCode());
+        result = prime * result + Long.valueOf(expires).hashCode();
+
+        return result;
     }
 
     public boolean isAuthorized() {
-        return Utils.notAnyEmpty(accessToken, refreshToken) && expiresMillis > 0L;
+        return Utils.notAnyEmpty(accessToken, refreshToken) && expires > 0L;
     }
 
     public boolean shouldRefreshTokens() {
-        long currentTimeMillis = System.currentTimeMillis();
-        long timeLeft = expiresMillis - currentTimeMillis;
-
         // Recommend a refresh when there is 10 minutes or less left until the
         // auth token expires.
-        return timeLeft < 600000;
+        long timeLeft = expires - currentTimeSeconds();
+        return timeLeft < 600L;
     }
 
     public String toJson() {
         String result;
 
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("access_token", accessToken);
-            jsonObject.put("refresh_token", refreshToken);
-            jsonObject.put("expires", expiresMillis);
-
-            result = jsonObject.toString();
+            result = new JSONObject()
+                    .put("access_token", accessToken)
+                    .put("refresh_token", refreshToken)
+                    .put("expires", expires)
+                    .toString();
         } catch (JSONException e) {
             result = null;
         }
@@ -97,35 +149,7 @@ public class Session {
         return result;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        boolean isEqual = o instanceof Session;
-
-        if (isEqual) {
-            Session other = (Session) o;
-
-            boolean accessTokensEquals = accessToken == null && other.accessToken == null
-                    || accessToken.equals(other.accessToken);
-
-            boolean refreshTokensEquals = refreshToken == null && other.refreshToken == null
-                    || refreshToken.equals(other.refreshToken);
-
-            boolean timeStampsEquals = expiresMillis == other.expiresMillis;
-
-            isEqual = accessTokensEquals && refreshTokensEquals && timeStampsEquals;
-        }
-
-        return isEqual;
-    }
-
-    @Override
-    public int hashCode() {
-        int hashCode = 0;
-
-        hashCode += accessToken != null ? accessToken.hashCode() : 0;
-        hashCode += refreshToken != null ? refreshToken.hashCode() : 0;
-        hashCode += Long.valueOf(expiresMillis).hashCode();
-
-        return hashCode;
+    private long currentTimeSeconds() {
+        return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
     }
 }
