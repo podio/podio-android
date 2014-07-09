@@ -56,10 +56,8 @@ public class Item implements Pushable {
         }
 
         public void addConstraint(String key, Object value) {
-            if (value != null) {
+            if (Utils.notEmpty(key) && value != null) {
                 filters.put(key, value);
-            } else {
-                filters.remove(key);
             }
         }
 
@@ -260,44 +258,39 @@ public class Item implements Pushable {
      *        The external id of the field.
      * @param value
      *        The field type specific domain object describing the new value.
-     * @return Boolean true. Always.
      * @throws FieldTypeMismatchException
      *         If the passed value doesn't match the field with the given name.
      */
-    public boolean addValue(String field, Object value) throws FieldTypeMismatchException {
-        if (field != null && value != null && fields != null) {
-            Field f = findField(field, fields);
+    public void addValue(String field, Object value) throws FieldTypeMismatchException {
+        Field f = findField(field, fields);
 
-            if (f != null) {
-                f.addValue(value);
-            } else {
-                HashMap<String, Object> newValue = new HashMap<String, Object>();
-                newValue.put("value", value);
+        if (f != null) {
+            f.addValue(value);
+        } else {
+            HashMap<String, Object> newValue = new HashMap<String, Object>();
+            newValue.put("value", value);
 
-                List<Object> values = data.get(field);
+            List<Object> values = data.get(field);
 
-                if (values == null) {
-                    values = new ArrayList<Object>();
-                    data.put(field, values);
-                }
-
-                values.add(newValue);
+            if (values == null) {
+                values = new ArrayList<Object>();
+                data.put(field, values);
             }
-        }
 
-        return true;
+            values.add(newValue);
+        }
     }
 
     /**
      * The same as {@link Item#addValue(String, Object)} but with some
-     * convenience validation of the value (replaces empty string with null).
+     * convenience validation of the value (replaces null with empty string).
      * 
      * @throws FieldTypeMismatchException
      * @see {@link Item#addValue(String, Object)}
      */
-    public boolean addValue(String field, String value) throws FieldTypeMismatchException {
-        String actualData = Utils.isEmpty(value) ? null : value;
-        return addValue(field, (Object) actualData);
+    public void addValue(String field, String value) throws FieldTypeMismatchException {
+        String actualData = Utils.isEmpty(value) ? "" : value;
+        addValue(field, (Object) actualData);
     }
 
     public Application getApplication() {
@@ -392,14 +385,22 @@ public class Item implements Pushable {
      * @return A Object representation of the value for the field or null.
      */
     public Object getValue(String field, int index) {
-        if (field != null && fields != null) {
+        if (Utils.notEmpty(field)) {
             Field f = findField(field, fields);
 
             if (f != null) {
                 return f.getValue(index);
             } else {
                 List<Object> values = data.get(field);
-                return values != null ? values.get(index) : null;
+
+                if (values != null) {
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, Object> value = (HashMap<String, Object>) values.get(index);
+
+                    if (value != null) {
+                        return value.get("value");
+                    }
+                }
             }
         }
 
@@ -417,7 +418,7 @@ public class Item implements Pushable {
      * @return A Object representation of the value for the field or null.
      */
     public Object getVerifiedValue(String field, int index) {
-        if (field != null && fields != null) {
+        if (Utils.notEmpty(field)) {
             Field f = findField(field, fields);
 
             if (f != null) {
@@ -471,24 +472,28 @@ public class Item implements Pushable {
      *        The external id of the field.
      * @param value
      *        The field type specific domain object describing the new value.
-     * @return Boolean true. Always.
      * @throws FieldTypeMismatchException
      *         If the passed value doesn't match the field with the given name.
      */
-    public boolean removeValue(String field, Object value) throws FieldTypeMismatchException {
+    public void removeValue(String field, Object value) throws FieldTypeMismatchException {
         Field f = findField(field, fields);
 
         if (f != null) {
             f.removeValue(value);
         } else {
-            List<Object> d = data.get(field);
+            List<Object> values = data.get(field);
 
-            if (d != null) {
-                d.remove(value);
+            if (values != null) {
+                for (Object o : values) {
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, Object> v = (HashMap<String, Object>) o;
+
+                    if (v.get("value").equals(value)) {
+                        values.remove(o);
+                    }
+                }
             }
         }
-
-        return true;
     }
 
     /**
@@ -499,16 +504,15 @@ public class Item implements Pushable {
      * @return The field domain object if found, or null.
      */
     private Field findField(String externalId, List<Field> source) {
-        if (fields == null) {
-            throw new IllegalStateException("fields has not been loaded");
-        }
         if (Utils.isEmpty(externalId)) {
             throw new IllegalArgumentException("externalId cannot be empty");
         }
 
-        for (Field field : source) {
-            if (field != null && externalId.equals(field.getExternalId())) {
-                return field;
+        if (source != null) {
+            for (Field field : source) {
+                if (field != null && externalId.equals(field.getExternalId())) {
+                    return field;
+                }
             }
         }
 
