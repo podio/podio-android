@@ -76,31 +76,31 @@ public class Application {
         }
 
         public boolean allowsAttachments() {
-            return Utils.getNative(allow_attachments, true);
+            return Utils.getNative(allow_attachments, false);
         }
 
         public boolean allowsComments() {
-            return Utils.getNative(allow_comments, true);
+            return Utils.getNative(allow_comments, false);
         }
 
         public boolean allowsCreate() {
-            return Utils.getNative(allow_create, true);
+            return Utils.getNative(allow_create, false);
         }
 
         public boolean allowsEdit() {
-            return Utils.getNative(allow_edit, true);
+            return Utils.getNative(allow_edit, false);
         }
 
         public boolean allowsTags() {
-            return Utils.getNative(allow_tags, true);
+            return Utils.getNative(allow_tags, false);
         }
 
         public String getAppItemIdPrefix() {
             return app_item_id_prefix;
         }
 
-        public View getDefaultView() {
-            return default_view != null ? default_view : View.badge;
+        public View getDefaultViewType() {
+            return default_view != null ? default_view : View.undefined;
         }
 
         public String getDescription() {
@@ -140,7 +140,7 @@ public class Application {
         }
 
         public Type getType() {
-            return type != null ? type : Type.standard;
+            return type != null ? type : Type.undefined;
         }
 
         public String getUsageInfo() {
@@ -188,6 +188,10 @@ public class Application {
         }
     }
 
+    public static Application newInstance() {
+        return new Application();
+    }
+
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
     private final Configuration config = null;
@@ -209,6 +213,9 @@ public class Application {
     private final String url_add = null;
     private final String url_label = null;
     private final User owner = null;
+
+    private Application() {
+    }
 
     public boolean isPinned() {
         return Utils.getNative(pinned, false);
@@ -242,7 +249,7 @@ public class Application {
     }
 
     public int getCurrentRevisionId() {
-        return Utils.getNative(current_revision, 0);
+        return Utils.getNative(current_revision, -1);
     }
 
     public int getDefaultViewId() {
@@ -269,16 +276,12 @@ public class Application {
         return mailbox;
     }
 
-    public int getNumberOfPermissions() {
-        return rights != null ? rights.size() : 0;
-    }
-
     public int getOriginAppId() {
         return Utils.getNative(original, -1);
     }
 
     public int getOriginAppRevisionId() {
-        return Utils.getNative(original_revision, 0);
+        return Utils.getNative(original_revision, -1);
     }
 
     public User getOwner() {
