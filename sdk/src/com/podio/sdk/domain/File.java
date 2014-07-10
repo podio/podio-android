@@ -28,14 +28,12 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class File {
-
     private final Integer file_id;
     private final Integer size = null;
-
     private final String description = null;
     private final String hosted_by = null;
     private final String hosted_by_humanized_name = null;
-    private final String link;
+    private final String link = null;
     private final String link_target = null;
     private final String mimetype = null;
     private final String name = null;
@@ -43,7 +41,6 @@ public class File {
     private final String thumbnail_link = null;
 
     public File(int fileId) {
-        this.link = null;
         this.file_id = fileId;
     }
 
