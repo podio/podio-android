@@ -29,12 +29,12 @@ import com.podio.sdk.internal.Utils;
  * @author Tobias Lindberg
  */
 public class CalendarEvent {
+    private final Boolean busy = null;
     private final String start_utc = null;
     private final String end_utc = null;
     private final String title = null;
     private final String description = null;
     private final String location = null;
-    private final Boolean busy = null;
 
     /**
      * Gets the end date of the calendar event as a Java Date object.
@@ -74,7 +74,7 @@ public class CalendarEvent {
         return location;
     }
 
-    public boolean getIsBusy() {
+    public boolean isBusy() {
         return Utils.getNative(busy, false);
     }
 
