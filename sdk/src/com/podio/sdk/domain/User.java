@@ -185,6 +185,10 @@ public class User {
         }
     }
 
+    public static User newInstance() {
+        return new User();
+    }
+
     private final Integer user_id = null;
     private final List<Flag> flags = null;
     private final List<Email> mails = null;
@@ -194,6 +198,9 @@ public class User {
     private final String locale = null;
     private final String mail = null;
     private final String timezone = null;
+
+    private User() {
+    }
 
     /**
      * Gets the date when the user was activated.
