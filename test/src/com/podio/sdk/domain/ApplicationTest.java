@@ -39,7 +39,7 @@ public class ApplicationTest extends AndroidTestCase {
      * 
      * 1. Describe an Application domain object as a JSON string.
      * 
-     * 2. Create an instance from the JSON with the Gson parser.
+     * 2. Create an instance from the JSON string.
      * 
      * 3. Verify that the parsed object has the expected values for
      *      its members.
@@ -49,36 +49,7 @@ public class ApplicationTest extends AndroidTestCase {
     public void testApplicationCanBeCreatedFromJson() {
         String json = new StringBuilder("{")
                 .append("app_id:1,")
-                .append("config:{")
-                .append(" allow_attachments:true,")
-                .append(" allow_comments:true,")
-                .append(" allow_edit:true,")
-                .append(" allow_create:true,")
-                .append(" allow_tags:true,")
-                .append(" approved:true,")
-                .append(" disable_notifications:true,")
-                .append(" show_app_item_id:true,")
-                .append(" silent_creates:true,")
-                .append(" silent_edits:true,")
-                .append(" description:'DESCRIPTION',")
-                .append(" external_id:'EXTERNALID',")
-                .append(" fivestar:true,")
-                .append(" fivestar_label:'FIVESTARLABEL',")
-                .append(" icon:'ICON',")
-                .append(" item_name:'ITEMNAME',")
-                .append(" name:'NAME',")
-                .append(" rsvp:true,")
-                .append(" rsvp_label:'RSVPLABEL',")
-                .append(" thumbs:true,")
-                .append(" thumbs_label:'THUMBSLABEL',")
-                .append(" type:'meeting',")
-                .append(" yesno:true,")
-                .append(" yesno_label:'YESNOLABEL',")
-                .append(" app_item_id_padding:1,")
-                .append(" app_item_id_prefix:'PREFIX',")
-                .append(" usage:'USAGE',")
-                .append(" default_view:'badge'")
-                .append("},")
+                .append("config:{},")
                 .append("fields:[],")
                 .append("link:'LINK',")
                 .append("link_add:'LINKADD',")
@@ -108,34 +79,6 @@ public class ApplicationTest extends AndroidTestCase {
 
         Application.Configuration config = application.getConfiguration();
         assertNotNull(config);
-        assertEquals(true, config.allowsAttachments());
-        assertEquals(true, config.allowsComments());
-        assertEquals(true, config.allowsEdit());
-        assertEquals(true, config.isApproved());
-        assertEquals(true, config.hasFiveStarRating());
-        assertEquals(true, config.hasRsvpState());
-        assertEquals(true, config.hasThumbsVoting());
-        assertEquals(true, config.hasYesNoVoting());
-        assertEquals("DESCRIPTION", config.getDescription());
-        assertEquals("EXTERNALID", config.getExternalId());
-        assertEquals("FIVESTARLABEL", config.getFiveStarLabel());
-        assertEquals("ICON", config.getIconName());
-        assertEquals("ITEMNAME", config.getItemName());
-        assertEquals("NAME", config.getName());
-        assertEquals("RSVPLABEL", config.getRsvpLabel());
-        assertEquals("THUMBSLABEL", config.getThumbsLabel());
-        assertEquals("YESNOLABEL", config.getYesNoLabel());
-        assertEquals(Application.Type.meeting, config.getType());
-        assertEquals(true, config.allowsCreate());
-        assertEquals(true, config.allowsTags());
-        assertEquals(true, config.hasDisabledNotifications());
-        assertEquals(true, config.showAppItemId());
-        assertEquals(true, config.hasSilentCreates());
-        assertEquals(true, config.hasSilentEdits());
-        assertEquals(1, config.getAppItemIdPaddingCount());
-        assertEquals("PREFIX", config.getAppItemIdPrefix());
-        assertEquals("USAGE", config.getUsageInfo());
-        assertEquals(Application.View.badge, config.getDefaultViewType());
 
         List<Field> fields = application.getFields();
         assertNotNull(application.getFields());
@@ -181,34 +124,6 @@ public class ApplicationTest extends AndroidTestCase {
 
         Application.Configuration config = application.getConfiguration();
         assertNotNull(config);
-        assertEquals(false, config.allowsAttachments());
-        assertEquals(false, config.allowsComments());
-        assertEquals(false, config.allowsEdit());
-        assertEquals(false, config.isApproved());
-        assertEquals(false, config.hasFiveStarRating());
-        assertEquals(false, config.hasRsvpState());
-        assertEquals(false, config.hasThumbsVoting());
-        assertEquals(false, config.hasYesNoVoting());
-        assertEquals(null, config.getDescription());
-        assertEquals(null, config.getExternalId());
-        assertEquals(null, config.getFiveStarLabel());
-        assertEquals(null, config.getIconName());
-        assertEquals(null, config.getItemName());
-        assertEquals(null, config.getName());
-        assertEquals(null, config.getRsvpLabel());
-        assertEquals(null, config.getThumbsLabel());
-        assertEquals(null, config.getYesNoLabel());
-        assertEquals(Application.Type.undefined, config.getType());
-        assertEquals(false, config.allowsCreate());
-        assertEquals(false, config.allowsTags());
-        assertEquals(false, config.hasDisabledNotifications());
-        assertEquals(false, config.showAppItemId());
-        assertEquals(false, config.hasSilentCreates());
-        assertEquals(false, config.hasSilentEdits());
-        assertEquals(0, config.getAppItemIdPaddingCount());
-        assertEquals(null, config.getAppItemIdPrefix());
-        assertEquals(null, config.getUsageInfo());
-        assertEquals(Application.View.undefined, config.getDefaultViewType());
 
         List<Field> fields = application.getFields();
         assertNotNull(application.getFields());
