@@ -41,17 +41,8 @@ public class Space {
         regular, emp_network, demo, undefined
     }
 
-    public static class Owner {
-        private final Reference.Type type = null;
-        private final Integer id = null;
-
-        public Reference.Type getType() {
-            return type != null ? type : Reference.Type.undefined;
-        }
-
-        public int getId() {
-            return Utils.getNative(id, -1);
-        }
+    public static Space newInstance() {
+        return new Space();
     }
 
     private final Boolean auto_join = null;
@@ -74,16 +65,19 @@ public class Space {
     private final Type type = null;
     private final User created_by = null;
 
+    private Space() {
+    }
+
     public boolean doAutoJoin() {
         return Utils.getNative(auto_join, false);
     }
 
     public boolean doPostOnNewApp() {
-        return Utils.getNative(post_on_new_app, true);
+        return Utils.getNative(post_on_new_app, false);
     }
 
     public boolean doPostOnNewMember() {
-        return Utils.getNative(post_on_new_member, true);
+        return Utils.getNative(post_on_new_member, false);
     }
 
     public User getCreatedByUser() {
