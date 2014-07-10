@@ -86,7 +86,7 @@ public final class LinkValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return value != null && value.embed != null ? value.embed.getEmbedId() : -1;
+        return value != null && value.embed != null ? value.embed.getId() : -1;
     }
 
     public File getFile() {

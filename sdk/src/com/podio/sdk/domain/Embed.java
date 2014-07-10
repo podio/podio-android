@@ -36,7 +36,6 @@ public class Embed {
     private final Integer embed_height = null;
     private final Integer embed_id = null;
     private final Integer embed_width = null;
-
     private final String description = null;
     private final String embed_html = null;
     private final String hostname = null;
@@ -44,7 +43,6 @@ public class Embed {
     private final String resolved_url = null;
     private final String title = null;
     private final String url;
-
     private final Type type = null;
 
     public Embed(String url) {
@@ -55,19 +53,19 @@ public class Embed {
         return description;
     }
 
-    public int getEmbedHeight() {
+    public int getHeight() {
         return Utils.getNative(embed_height, 0);
     }
 
-    public String getEmbedHtml() {
+    public String getHtml() {
         return embed_html;
     }
 
-    public int getEmbedId() {
+    public int getId() {
         return Utils.getNative(embed_id, -1);
     }
 
-    public int getEmbedWidth() {
+    public int getWidth() {
         return Utils.getNative(embed_width, 0);
     }
 
