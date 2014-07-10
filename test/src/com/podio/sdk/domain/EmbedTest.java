@@ -84,7 +84,7 @@ public class EmbedTest extends AndroidTestCase {
      * 
      * 1. Create a new Embed object instance.
      * 
-     * 3. Verify that the members have the default values.
+     * 2. Verify that the members have the default values.
      * 
      * </pre>
      */
