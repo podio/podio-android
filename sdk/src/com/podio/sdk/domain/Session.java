@@ -32,12 +32,14 @@ import com.podio.sdk.internal.Utils;
 public class Session {
     public final String accessToken;
     public final String refreshToken;
+    public final long expiresIn;
     public final long expires;
 
     public Session(String jsonString) {
         JSONObject jsonObject = null;
         String accessToken = null;
         String refreshToken = null;
+        long expiresIn = 0;
         long expires = 0;
 
         try {
@@ -47,28 +49,32 @@ public class Session {
 
             if (jsonObject.has("expires")) {
                 expires = jsonObject.optLong("expires", 0L);
+                expiresIn = expires - currentTimeSeconds();
             } else if (jsonObject.has("expires_in")) {
-                expires = currentTimeSeconds() + jsonObject.optLong("expires_in", 0L);
+                expiresIn = jsonObject.optLong("expires_in", 0L);
+                expires = currentTimeSeconds() + expiresIn;
             }
         } catch (JSONException e) {
             // Input JSON was most likely invalid. Fallback to defaults.
             accessToken = refreshToken = null;
-            expires = 0;
+            expires = expiresIn = 0;
         } catch (NullPointerException e) {
             // Input JSON was most likely a null pointer. Fallback to defaults.
             accessToken = refreshToken = null;
-            expires = 0;
+            expires = expiresIn = 0;
         }
 
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.expiresIn = expiresIn;
         this.expires = expires;
     }
 
     public Session(String accessToken, String refreshToken, long expiresIn) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.expires = currentTimeSeconds() + expiresIn;
+        this.expiresIn = expiresIn;
+        this.expires = currentTimeSeconds() + this.expiresIn;
     }
 
     @Override
@@ -127,7 +133,7 @@ public class Session {
     }
 
     public boolean shouldRefreshTokens() {
-        // Recommend a refresh when there is 10 minutes or less left until the
+        // Recommend a refresh when there is less than 10 minutes left until the
         // auth token expires.
         long timeLeft = expires - currentTimeSeconds();
         return timeLeft < 600L;
