@@ -90,6 +90,23 @@ public final class Podio {
     }
 
     /**
+     * The same as {@link Podio#setup(Context, String, String, String)} with the
+     * default authority.
+     * 
+     * @param context
+     *        The context to initialize the cache database and network clients
+     *        in.
+     * @param clientId
+     *        The pre-shared Podio client id.
+     * @param clientSecret
+     *        The corresponding Podio client secret.
+     * @see Podio#setup(Context, String, String, String)
+     */
+    public static void setup(Context context, String clientId, String clientSecret) {
+        setup(context, AUTHORITY, clientId, clientSecret);
+    }
+
+    /**
      * Initializes the Podio SDK with the given client credentials. This method
      * MUST be called before any other request is made. The caller can then
      * either choose to revoke a previously stored session (the SDK doesn't
@@ -99,14 +116,16 @@ public final class Podio {
      * @param context
      *        The context to initialize the cache database and network clients
      *        in.
+     * @param authority
+     *        The host the SDK will target with its requests.
      * @param clientId
      *        The pre-shared Podio client id.
      * @param clientSecret
      *        The corresponding Podio client secret.
      */
-    public static void setup(Context context, String clientId, String clientSecret) {
-        sessionClient = new VolleySessionClient(context, AUTHORITY);
-        restClient = new VolleyHttpClient(context, AUTHORITY, sessionClient);
+    public static void setup(Context context, String authority, String clientId, String clientSecret) {
+        sessionClient = new VolleySessionClient(context, authority);
+        restClient = new VolleyHttpClient(context, authority, sessionClient);
 
         client.setup(clientId, clientSecret);
         client.setRestClient(sessionClient);
