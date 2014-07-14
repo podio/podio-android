@@ -14,11 +14,11 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="com.podio.sdk" />
+        android:targetPackage="com.podio.reference" />
 
     <instrumentation
         android:name="pl.polidea.instrumentation.PolideaInstrumentationTestRunner"
-        android:targetPackage="com.podio.sdk" />
+        android:targetPackage="com.podio.reference" />
 
     <application
         android:allowBackup="false"
