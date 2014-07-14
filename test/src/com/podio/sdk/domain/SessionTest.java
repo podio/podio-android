@@ -48,22 +48,25 @@ public class SessionTest extends AndroidTestCase {
      * </pre>
      */
     public void testCanCreateSessionWithCustomValuesFromKnownJsonString() {
-        String json = "{\"access_token\": \"ACCESSTOKEN\", \"refresh_token\": \"REFRESHTOKEN\", \"expires\": 3600}";
+        long now = currentTimeSeconds();
+        long time = now + 3600;
+        String json = "{\"access_token\": \"ACCESSTOKEN\", \"refresh_token\": \"REFRESHTOKEN\", \"expires\": " + time + "}";
         Session session = new Session(json);
 
         assertNotNull(session);
         assertEquals("ACCESSTOKEN", session.accessToken);
         assertEquals("REFRESHTOKEN", session.refreshToken);
-        assertEquals(3600L, session.expires);
+        assertEquals(time, session.expires);
+        assertEquals(3600, session.expiresIn);
 
         json = "{\"access_token\": \"ACCESSTOKEN\", \"refresh_token\": \"REFRESHTOKEN\", \"expires_in\": 3600}";
-        long time = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 3600;
         session = new Session(json);
 
         assertNotNull(session);
         assertEquals("ACCESSTOKEN", session.accessToken);
         assertEquals("REFRESHTOKEN", session.refreshToken);
         assertEquals(time, session.expires);
+        assertEquals(3600, session.expiresIn);
     }
 
     /**
@@ -89,6 +92,7 @@ public class SessionTest extends AndroidTestCase {
         assertEquals(null, session.accessToken);
         assertEquals(null, session.refreshToken);
         assertEquals(0L, session.expires);
+        assertEquals(0L, session.expiresIn);
     }
 
     /**
@@ -114,6 +118,7 @@ public class SessionTest extends AndroidTestCase {
         assertEquals(null, session.accessToken);
         assertEquals(null, session.refreshToken);
         assertEquals(0L, session.expires);
+        assertEquals(0L, session.expiresIn);
     }
 
     /**
@@ -141,6 +146,33 @@ public class SessionTest extends AndroidTestCase {
         assertEquals(null, session.accessToken);
         assertEquals(null, session.refreshToken);
         assertEquals(0L, session.expires);
+        assertEquals(0L, session.expiresIn);
+    }
+
+    /**
+     * Verifies that a {@link Session} object can be created from its
+     * constructor and that its initial values are not skewed.
+     * 
+     * <pre>
+     * 
+     * 1. Create a Session object with its constructor.
+     * 
+     * 2. Verify that the assigned values haven't changed.
+     * 
+     * 3. Verify that the calculated values are correct.
+     * 
+     * </pre>
+     */
+    public void testCanCreateSessionFromConstructor() {
+        long now = currentTimeSeconds();
+        long time = now + 3600;
+        Session session = new Session("ACCESSTOKEN", "REFRESHTOKEN", 3600);
+
+        assertNotNull(session);
+        assertEquals("ACCESSTOKEN", session.accessToken);
+        assertEquals("REFRESHTOKEN", session.refreshToken);
+        assertEquals(time, session.expires);
+        assertEquals(3600, session.expiresIn);
     }
 
     /**
@@ -159,7 +191,7 @@ public class SessionTest extends AndroidTestCase {
      * @throws JSONException
      */
     public void testCanSerializeToJsonString() throws JSONException {
-        long time = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 60;
+        long time = currentTimeSeconds() + 60;
         String source1 = "{\"access_token\":\"ACCESSTOKEN\",\"expires_in\":60,\"refresh_token\":\"REFRESHTOKEN\"}";
         Session session1 = new Session(source1);
         verifySessionJson(session1.toJson(), "ACCESSTOKEN", "REFRESHTOKEN", time);
@@ -292,7 +324,7 @@ public class SessionTest extends AndroidTestCase {
      * </pre>
      */
     public void testIsNotAuthorizedWithEmptyExpiresTimeStamp() {
-        long currentTimeStamp = System.currentTimeMillis() + 2;
+        long currentTimeStamp = currentTimeSeconds();
         Session session1 = new Session("ACCESSTOKEN", "REFRESHTOKEN", -currentTimeStamp);
         assertFalse(session1.isAuthorized());
 
@@ -472,6 +504,10 @@ public class SessionTest extends AndroidTestCase {
         assertEquals(expectedRefreshToken, jsonObject.getString("refresh_token"));
         assertEquals(true, jsonObject.has("expires"));
         assertEquals(expectedDeath, jsonObject.getLong("expires"));
+    }
+
+    private long currentTimeSeconds() {
+        return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
     }
 
 }
