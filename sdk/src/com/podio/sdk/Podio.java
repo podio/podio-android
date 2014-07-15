@@ -42,6 +42,9 @@ import com.podio.sdk.provider.UserProvider;
  */
 public final class Podio {
 
+    private static final String VERSION_NAME = "0.0.1";
+    private static final int VERSION_CODE = 1;
+
     private static final String AUTHORITY = "api.podio.com";
 
     private static VolleySessionClient sessionClient;
@@ -138,7 +141,7 @@ public final class Podio {
     }
 
     /**
-     * Revokes a previously created Podio session. Even though the access token
+     * Restores a previously created Podio session. Even though the access token
      * may have expired, the refresh token can be used to get a new access
      * token. The idea here is to enable the caller to persist the session and
      * avoid an unnecessary re-authentication. NOTE! The server may very well
@@ -152,4 +155,21 @@ public final class Podio {
         sessionClient.setSession(session);
     }
 
+    /**
+     * Returns the version name of this Podio SDK instance.
+     * 
+     * @return A string representation of the Podio SDK version.
+     */
+    public static String sdkVersionName() {
+        return VERSION_NAME;
+    }
+
+    /**
+     * Returns the version code of this Podio SDK instance.
+     * 
+     * @return An integer representation of the Podio SDK version.
+     */
+    public static int sdkVersionCode() {
+        return VERSION_CODE;
+    }
 }
