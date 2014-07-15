@@ -32,6 +32,7 @@ import com.podio.sdk.RestClient;
 import com.podio.sdk.SessionManager;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -98,12 +99,31 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
     @Override
     @SuppressWarnings("unchecked")
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
-        Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
         RestClient.Operation operation = restRequest.getOperation();
 
         switch (operation) {
         case POST:
-            VolleyRequest request = VolleyRequest.newAuthRequest(uri);
+            SessionFilter filter = (SessionFilter) restRequest.getFilter();
+            Uri dummyUri = filter.buildUri("null", "null");
+            String grantType = dummyUri.getQueryParameter("grant_type");
+            String preferredToken = dummyUri.getQueryParameter("refresh_token");
+            VolleyRequest request;
+
+            if ("refresh_token".equals(grantType)) {
+                String token = Utils.isEmpty(preferredToken) ?
+                        session.refreshToken :
+                        preferredToken;
+
+                Uri actualUri = filter
+                        .withRefreshToken(token)
+                        .buildUri(getScheme(), getAuthority());
+
+                request = VolleyRequest.newRefreshRequest(actualUri);
+            } else {
+                Uri actualUri = filter.buildUri(getScheme(), getAuthority());
+                request = VolleyRequest.newAuthRequest(actualUri);
+            }
+
             requestQueue.add(request);
 
             String resultJson = request.waitForIt();
@@ -114,5 +134,4 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
             return RestResult.failure(new PodioException("Unsupported operation: " + operation.name()));
         }
     }
-
 }

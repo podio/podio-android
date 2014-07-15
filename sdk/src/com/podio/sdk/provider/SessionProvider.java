@@ -54,6 +54,9 @@ public class SessionProvider extends BasicPodioProvider {
      * @param resultListener
      *        The callback implementation called when the items are fetched.
      *        Null is valid, but doesn't make any sense.
+     * @param errorListener
+     *        The callback implementation called when the SDK couldn't perform
+     *        the request due to an internal or server side error.
      * @return A ticket which the caller can use to identify this request with.
      */
     public Future<RestResult<Session>> authenticateWithUserCredentials(String username, String password, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
@@ -76,12 +79,41 @@ public class SessionProvider extends BasicPodioProvider {
      * @param resultListener
      *        The callback implementation called when the items are fetched.
      *        Null is valid, but doesn't make any sense.
+     * @param errorListener
+     *        The callback implementation called when the SDK couldn't perform
+     *        the request due to an internal or server side error.
      * @return A ticket which the caller can use to identify this request with.
      */
     public Future<RestResult<Session>> authenticateWithAppCredentials(String appId, String appToken, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
         PodioFilter filter = new SessionFilter()
                 .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken);
+
+        return request(RestClient.Operation.POST, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
+    }
+
+    /**
+     * Forces the Podio SDK to refresh its access token based on an external
+     * refresh token. If the external refresh token is empty, then the internal
+     * token will be used instead. You should normally never ever call this
+     * method as the SDK manages its own session, giving you "read-only" (except
+     * for this method) access to it. This method is here only for legacy apps
+     * to use.
+     * 
+     * @param refreshToken
+     *        An optional refresh token the caller wants to use.
+     * @param resultListener
+     *        The callback implementation called when the items are fetched.
+     *        Null is valid, but doesn't make any sense.
+     * @param errorListener
+     *        The callback implementation called when the SDK couldn't perform
+     *        the request due to an internal or server side error.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Future<RestResult<Session>> forceRefreshAccessToken(String refreshToken, ResultListener<? super Session> resultListener, ErrorListener errorListener) {
+        PodioFilter filter = new SessionFilter()
+                .withClientCredentials(clientId, clientSecret)
+                .withRefreshToken(refreshToken);
 
         return request(RestClient.Operation.POST, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
     }
