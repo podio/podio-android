@@ -31,11 +31,7 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 
-public final class Utils {
-
-    private Utils() {
-        // Hide constructor.
-    }
+public class Utils {
 
     @SuppressLint("SimpleDateFormat")
     public static String formatDateTime(Date dateTime) {
