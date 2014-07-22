@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk;
+package com.podio.sdk.parser;
 
 import java.lang.reflect.Type;
 
@@ -33,6 +33,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.podio.sdk.Parser;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.internal.Utils;
 
@@ -44,7 +45,7 @@ import com.podio.sdk.internal.Utils;
  *        The type of the domain model data structure.
  * @author László Urszuly
  */
-public class PodioParser<T> {
+public class JsonParser<T> implements Parser<T, String> {
 
     private static final class FieldDeserializer implements JsonDeserializer<Field> {
 
@@ -84,24 +85,26 @@ public class PodioParser<T> {
 
     private static final Gson GSON_PARSER = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .registerTypeAdapter(Field.class, new FieldDeserializer())
-            .disableHtmlEscaping().create();
+            .disableHtmlEscaping()
+            .create();
+
+    public static <T> JsonParser<T> fromClass(Class<T> classOfItem) {
+        return new JsonParser<T>(classOfItem);
+    }
 
     private final Class<T> classOfItem;
 
-    public PodioParser(Class<T> classOfItem) {
+    JsonParser(Class<T> classOfItem) {
         this.classOfItem = classOfItem;
     }
 
     /**
-     * Performs the parsing of the given json string to domain model
-     * representation.
-     * 
-     * @param json
-     *        The json string to parse.
-     * @return A domain model representation of the given json string.
+     * @see com.podio.sdk.Parser#read(java.lang.Object)
      */
-    public T parseToItem(String source) {
+    @Override
+    public T read(String source) {
         if (source == null || Utils.isEmpty(source.trim())) {
             return null;
         }
@@ -110,22 +113,15 @@ public class PodioParser<T> {
     }
 
     /**
-     * Performs the parsing of the given domain model object to a json string.
-     * 
-     * @param item
-     *        The item to parse.
-     * @return A json string representation of the given item.
+     * @see com.podio.sdk.Parser#write(java.lang.Object)
      */
-    public String parseToJson(Object item) {
-        if (item == null) {
+    @Override
+    public String write(Object target) {
+        if (target == null) {
             return null;
         }
 
-        return GSON_PARSER.toJson(item);
-    }
-
-    public static <T> PodioParser<T> fromClass(Class<T> classOfItem) {
-        return new PodioParser<T>(classOfItem);
+        return GSON_PARSER.toJson(target);
     }
 
 }

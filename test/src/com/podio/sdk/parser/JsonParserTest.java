@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk;
+package com.podio.sdk.parser;
 
 import java.util.List;
 
@@ -42,8 +42,9 @@ import com.podio.sdk.domain.field.NumberField;
 import com.podio.sdk.domain.field.ProgressField;
 import com.podio.sdk.domain.field.RelationshipField;
 import com.podio.sdk.domain.field.TextField;
+import com.podio.sdk.parser.JsonParser;
 
-public class PodioParserTest extends AndroidTestCase {
+public class JsonParserTest extends AndroidTestCase {
 
     /**
      * Verifies that the {@link PodioParser} doesn't crash when trying to parse
@@ -59,13 +60,13 @@ public class PodioParserTest extends AndroidTestCase {
      * </pre>
      */
     public void testParseEmptyDomainObjectToJsonStringDoesNotCrashParser() {
-        PodioParser<Object> parser = PodioParser.fromClass(Object.class);
+        JsonParser<Object> parser = JsonParser.fromClass(Object.class);
 
-        assertNull(parser.parseToJson(null));
+        assertNull(parser.write(null));
     }
 
     /**
-     * Verifies that the {@link PodioParser} doesn't crash when trying to parse
+     * Verifies that the {@link JsonParser} doesn't crash when trying to parse
      * an empty JSON string to a domain object, but rather returns a null
      * pointer result.
      * 
@@ -83,15 +84,15 @@ public class PodioParserTest extends AndroidTestCase {
      * </pre>
      */
     public void testParseEmptyJsonStringToDomainObjectDoesNotCrashParser() {
-        PodioParser<Object> parser = PodioParser.fromClass(Object.class);
+        JsonParser<Object> parser = JsonParser.fromClass(Object.class);
 
-        assertNull(parser.parseToItem(null));
-        assertNull(parser.parseToItem(""));
-        assertNull(parser.parseToItem(" "));
+        assertNull(parser.read(null));
+        assertNull(parser.read(""));
+        assertNull(parser.read(" "));
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -108,8 +109,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToApplicationReferenceField() {
         String json = "{fields:[{type:'app'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -124,7 +125,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -141,8 +142,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToCalculationField() {
         String json = "{fields:[{type:'calculation'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -157,7 +158,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -174,8 +175,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToCategoryField() {
         String json = "{fields:[{type:'category'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -190,7 +191,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -207,8 +208,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToContactField() {
         String json = "{fields:[{type:'contact'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -223,7 +224,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -240,8 +241,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToDateField() {
         String json = "{fields:[{type:'date'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -256,7 +257,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -273,8 +274,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToDurationField() {
         String json = "{fields:[{type:'duration'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -289,7 +290,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -306,8 +307,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToLinkField() {
         String json = "{fields:[{type:'embed'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -322,7 +323,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns a null pointer when no type is
      * defined.
      * 
@@ -338,8 +339,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmptyFieldWhenNullPointerType() {
         String json = "{fields:[{type:null}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -354,7 +355,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns a null pointer when no type is
      * defined.
      * 
@@ -371,8 +372,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmptyFieldWhenUndefinedType() {
         String json = "{fields:[{field_id:1}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -387,7 +388,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns a null pointer when an unknown
      * type is defined.
      * 
@@ -403,8 +404,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToEmptyFieldWhenUnknownType() {
         String json = "{fields:[{type:'bla'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -419,7 +420,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -436,8 +437,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToImageField() {
         String json = "{fields:[{type:'image'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -452,7 +453,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -469,8 +470,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToLocationField() {
         String json = "{fields:[{type:'location'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -485,7 +486,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -502,8 +503,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToMoneyField() {
         String json = "{fields:[{type:'money'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -518,7 +519,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -535,8 +536,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToNumberField() {
         String json = "{fields:[{type:'number'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -551,7 +552,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -568,8 +569,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToProgressField() {
         String json = "{fields:[{type:'progress'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 
@@ -584,7 +585,7 @@ public class PodioParserTest extends AndroidTestCase {
     }
 
     /**
-     * Verifies that the {@link PodioParser} performs a pre-validation of the
+     * Verifies that the {@link JsonParser} performs a pre-validation of the
      * "type" Field JSON attribute and returns the corresponding type of field.
      * 
      * <pre>
@@ -601,8 +602,8 @@ public class PodioParserTest extends AndroidTestCase {
      */
     public void testParseJsonStringToTextField() {
         String json = "{fields:[{type:'text'}]}";
-        PodioParser<Item> parser = PodioParser.fromClass(Item.class);
-        Item item = parser.parseToItem(json);
+        JsonParser<Item> parser = JsonParser.fromClass(Item.class);
+        Item item = parser.read(json);
 
         assertNotNull(item);
 

@@ -26,12 +26,12 @@ import java.util.concurrent.Future;
 
 import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.SessionFilter;
+import com.podio.sdk.parser.JsonParser;
 
 public class SessionProvider extends BasicPodioProvider {
 
@@ -64,7 +64,7 @@ public class SessionProvider extends BasicPodioProvider {
                 .withClientCredentials(clientId, clientSecret)
                 .withUserCredentials(username, password);
 
-        return request(RestClient.Operation.POST, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
+        return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class), resultListener, errorListener, null);
     }
 
     /**
@@ -89,7 +89,7 @@ public class SessionProvider extends BasicPodioProvider {
                 .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken);
 
-        return request(RestClient.Operation.POST, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
+        return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class), resultListener, errorListener, null);
     }
 
     /**
@@ -115,7 +115,7 @@ public class SessionProvider extends BasicPodioProvider {
                 .withClientCredentials(clientId, clientSecret)
                 .withRefreshToken(refreshToken);
 
-        return request(RestClient.Operation.POST, filter, null, PodioParser.fromClass(Session.class), resultListener, errorListener, null);
+        return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class), resultListener, errorListener, null);
     }
 
     /**

@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
@@ -165,7 +164,6 @@ public class VolleyRequest extends StringRequest {
             int statusCode = response.statusCode;
 
             String json = new String(errorData);
-            Log.d("MYTAG", "JSON: " + json);
             Gson gson = new Gson();
 
             PodioException exception = gson.fromJson(json, PodioException.class);

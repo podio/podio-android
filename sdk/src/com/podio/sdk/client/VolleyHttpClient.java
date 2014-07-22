@@ -32,10 +32,10 @@ import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.PodioException;
-import com.podio.sdk.PodioParser;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.SessionManager;
 import com.podio.sdk.domain.Session;
+import com.podio.sdk.parser.JsonParser;
 
 /**
  * This class manages the communication between the client application and the
@@ -97,8 +97,8 @@ public class VolleyHttpClient extends QueuedRestClient {
         }
     }
 
-    private <T> RestResult<T> request(int method, Uri uri, Object item, PodioParser<? extends T> parser, boolean tryRefresh) throws PodioException {
-        String body = parser.parseToJson(item);
+    private <T> RestResult<T> request(int method, Uri uri, Object item, JsonParser<? extends T> parser, boolean tryRefresh) throws PodioException {
+        String body = parser.write(item);
 
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + sessionManager.getAccessToken());
@@ -110,7 +110,7 @@ public class VolleyHttpClient extends QueuedRestClient {
             Session refreshedSession = sessionManager.checkSession();
 
             String output = request.waitForIt();
-            T content = parser.parseToItem(output);
+            T content = parser.read(output);
 
             return RestResult.success(content, refreshedSession);
         } catch (PodioException e) {
