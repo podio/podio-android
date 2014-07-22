@@ -40,7 +40,7 @@ import com.podio.sdk.provider.UserProvider;
  * 
  * @author László Urszuly
  */
-public final class Podio {
+public class Podio {
 
     private static final String VERSION_NAME = "0.0.1";
     private static final int VERSION_CODE = 1;
@@ -85,12 +85,6 @@ public final class Podio {
      * point.
      */
     public static final UserProvider user = new UserProvider();
-
-    /**
-     * Hidden constructor.
-     */
-    private Podio() {
-    }
 
     /**
      * The same as {@link Podio#setup(Context, String, String, String)} with the
