@@ -54,16 +54,7 @@ public class VolleyRequest extends StringRequest {
     }
 
     public static VolleyRequest newRefreshRequest(Uri uri) {
-        RequestFuture<String> future = RequestFuture.newFuture();
-        String refreshToken = uri.getQueryParameter("refresh_token");
-        String url = stripQueryParameters(uri);
-
-        VolleyRequest request = new VolleyRequest(Method.POST, url, future);
-        request.contentType = "application/json; charset=UTF-8";
-        request.params.put("grant_type", "refresh_token");
-        request.params.put("refresh_token", refreshToken);
-
-        return request;
+		return newAuthRequest(uri);
     }
 
     public static VolleyRequest newAuthRequest(Uri uri) {
