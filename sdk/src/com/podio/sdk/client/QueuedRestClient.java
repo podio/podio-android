@@ -204,8 +204,8 @@ public abstract class QueuedRestClient implements RestClient {
                 ErrorListener errorListener = request.getErrorListener();
 
                 if (errorListener != null) {
-                    PodioException error = result.getException();
-                    errorListener.onExceptionOccurred(error);
+                    Exception exception = result.getException();
+                    errorListener.onExceptionOccurred(exception);
                 }
             } else {
                 ResultListener<? super T> resultListener = request.getResultListener();

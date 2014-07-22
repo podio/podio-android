@@ -22,8 +22,9 @@
 
 package com.podio.sdk.client;
 
-import com.podio.sdk.PodioException;
 import com.podio.sdk.domain.Session;
+
+import java.lang.Exception;
 
 /**
  * Wraps the result of a performed {@link RestRequest}.
@@ -31,7 +32,7 @@ import com.podio.sdk.domain.Session;
  * @author László Urszuly
  */
 public class RestResult<T> {
-    private final PodioException exception;
+    private final Exception exception;
     private final Session session;
     private final T item;
 
@@ -46,7 +47,7 @@ public class RestResult<T> {
      *        The exception stack describing any error while performing the
      *        corresponding request.
      */
-    private RestResult(T item, Session session, PodioException exception) {
+    private RestResult(T item, Session session, Exception exception) {
         this.item = item;
         this.session = session;
         this.exception = exception;
@@ -85,7 +86,7 @@ public class RestResult<T> {
      * 
      * @return A custom exception object.
      */
-    public PodioException getException() {
+    public Exception getException() {
         return exception;
     }
 
@@ -113,7 +114,7 @@ public class RestResult<T> {
      * 
      * @return A failure result.
      */
-    public static <T> RestResult<T> failure(PodioException exception) {
+    public static <T> RestResult<T> failure(Exception exception) {
         return new RestResult<T>(null, null, exception);
     }
 
