@@ -79,19 +79,22 @@ public class VolleyHttpClient extends QueuedRestClient {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
-        Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
         RestClient.Operation operation = restRequest.getOperation();
+        Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
+        Object content = restRequest.getContent();
+        JsonParser<? extends T> parser = (JsonParser<? extends T>) restRequest.getParser();
 
         switch (operation) {
         case DELETE:
-            return request(Method.DELETE, uri, restRequest.getContent(), restRequest.getParser(), true);
+            return request(Method.DELETE, uri, content, parser, true);
         case GET:
-            return request(Method.GET, uri, restRequest.getContent(), restRequest.getParser(), true);
+            return request(Method.GET, uri, content, parser, true);
         case POST:
-            return request(Method.POST, uri, restRequest.getContent(), restRequest.getParser(), true);
+            return request(Method.POST, uri, content, parser, true);
         case PUT:
-            return request(Method.PUT, uri, restRequest.getContent(), restRequest.getParser(), true);
+            return request(Method.PUT, uri, content, parser, true);
         default:
             return RestResult.failure(new PodioException("Unknown operation: " + operation.name()));
         }

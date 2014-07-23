@@ -23,6 +23,7 @@
 package com.podio.sdk.client;
 
 import com.podio.sdk.ErrorListener;
+import com.podio.sdk.Parser;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
@@ -35,7 +36,7 @@ public final class RestRequest<T> {
     private Object content;
     private PodioFilter filter;
     private RestClient.Operation operation;
-    private JsonParser<? extends T> parser;
+    private Parser<? extends T, ?> parser;
 
     private ErrorListener errorListener;
     private ResultListener<? super T> resultListener;
@@ -162,7 +163,7 @@ public final class RestRequest<T> {
         return filter;
     }
 
-    public JsonParser<? extends T> getParser() {
+    public Parser<? extends T, ?> getParser() {
         return parser;
     }
 
