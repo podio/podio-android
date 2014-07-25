@@ -24,6 +24,6 @@ proguard/
 
 proguard-project.txt
 
-sdk/.classpath
-
-sdk/.project
+.classpath
+.project
+.settings/
