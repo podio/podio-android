@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -35,7 +36,13 @@ public class Utils {
 
     @SuppressLint("SimpleDateFormat")
     public static String formatDateTime(Date dateTime) {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
+        try {
+            return getSimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static boolean getNative(Boolean object, boolean fallback) {
@@ -119,10 +126,12 @@ public class Utils {
     @SuppressLint("SimpleDateFormat")
     public static Date parseDateTime(String dateTime) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
-        } catch (ParseException e) {
-            return null;
+            return getSimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
         } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (ParseException e) {
             return null;
         }
     }
@@ -130,10 +139,12 @@ public class Utils {
     @SuppressLint("SimpleDateFormat")
     public static Date parseDate(String date) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
-        } catch (ParseException e) {
-            return null;
+            return getSimpleDateFormat("yyyy-MM-dd").parse(date);
         } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (ParseException e) {
             return null;
         }
     }
@@ -141,11 +152,20 @@ public class Utils {
     @SuppressLint("SimpleDateFormat")
     public static Date parseTime(String time) {
         try {
-            return new SimpleDateFormat("HH:mm:ss").parse(time);
-        } catch (ParseException e) {
-            return null;
+            return getSimpleDateFormat("HH:mm:ss").parse(time);
         } catch (NullPointerException e) {
             return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (ParseException e) {
+            return null;
         }
+    }
+
+    private static SimpleDateFormat getSimpleDateFormat(String pattern) {
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        simpleDateFormat.setTimeZone(timeZone);
+        return simpleDateFormat;
     }
 }
