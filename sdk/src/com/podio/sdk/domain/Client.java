@@ -29,8 +29,8 @@ import com.podio.sdk.internal.Utils;
  */
 public class Client {
     private final Boolean display = null;
-    private final Integer auth_client_id = null;
-    private final Integer id = null;
+    private final Long auth_client_id = null;
+    private final Long id = null;
     private final String name = null;
     private final String url = null;
 
@@ -38,12 +38,12 @@ public class Client {
         return Utils.getNative(display, false);
     }
 
-    public int getAuthClientId() {
-        return Utils.getNative(auth_client_id, -1);
+    public long getAuthClientId() {
+        return Utils.getNative(auth_client_id, -1L);
     }
 
-    public int getId() {
-        return Utils.getNative(id, -1);
+    public long getId() {
+        return Utils.getNative(id, -1L);
     }
 
     public String getName() {

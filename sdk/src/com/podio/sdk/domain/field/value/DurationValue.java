@@ -24,14 +24,16 @@ package com.podio.sdk.domain.field.value;
 
 import java.util.HashMap;
 
+import com.podio.sdk.internal.Utils;
+
 /**
  * @author László Urszuly
  */
 public final class DurationValue extends AbstractValue {
-    private final Integer value;
+    private final Long value;
 
-    public DurationValue(int value) {
-        this.value = Integer.valueOf(value);
+    public DurationValue(long value) {
+        this.value = Long.valueOf(value);
     }
 
     @Override
@@ -40,7 +42,7 @@ public final class DurationValue extends AbstractValue {
             DurationValue other = (DurationValue) o;
 
             if (other != null && other.value != null && this.value != null) {
-                return other.value.intValue() == this.value.intValue();
+                return other.value.longValue() == this.value.longValue();
             }
         }
 
@@ -49,10 +51,10 @@ public final class DurationValue extends AbstractValue {
 
     @Override
     public Object getPushData() {
-        HashMap<String, Integer> data = null;
+        HashMap<String, Long> data = null;
 
         if (value != null) {
-            data = new HashMap<String, Integer>();
+            data = new HashMap<String, Long>();
             data.put("value", value);
         }
 
@@ -61,10 +63,10 @@ public final class DurationValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return this.value != null ? this.value.intValue() : 0;
+        return value != null ? value.hashCode() : 0;
     }
 
-    public int getDuration() {
-        return value != null ? value.intValue() : 0;
+    public long getDuration() {
+        return Utils.getNative(value, 0L);
     }
 }

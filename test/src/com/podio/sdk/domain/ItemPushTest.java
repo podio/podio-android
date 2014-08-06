@@ -73,8 +73,8 @@ public class ItemPushTest extends AndroidTestCase {
         Gson gson = new Gson();
         Item.PushResult pushResult = gson.fromJson(json, Item.PushResult.class);
 
-        assertEquals(1, pushResult.getItemId());
-        assertEquals(1, pushResult.getRevisionId());
+        assertEquals(1L, pushResult.getItemId());
+        assertEquals(1L, pushResult.getRevisionId());
         assertEquals("TITLE", pushResult.getTitle());
     }
 
@@ -93,8 +93,8 @@ public class ItemPushTest extends AndroidTestCase {
     public void testItemPushResultDefaults() {
         Item.PushResult pushResult = new Item.PushResult();
 
-        assertEquals(-1, pushResult.getItemId());
-        assertEquals(-1, pushResult.getRevisionId());
+        assertEquals(-1L, pushResult.getItemId());
+        assertEquals(-1L, pushResult.getRevisionId());
         assertEquals(null, pushResult.getTitle());
     }
 }

@@ -36,7 +36,7 @@ public final class ImageValue extends AbstractValue {
         this.value = file;
     }
 
-    public ImageValue(int fileId) {
+    public ImageValue(long fileId) {
         this.value = new File(fileId);
     }
 
@@ -55,13 +55,13 @@ public final class ImageValue extends AbstractValue {
 
     @Override
     public Object getPushData() {
-        HashMap<String, Integer> data = null;
+        HashMap<String, Long> data = null;
 
         if (value != null) {
-            int fileId = value.getId();
+            long fileId = value.getId();
 
-            if (fileId != -1) {
-                data = new HashMap<String, Integer>();
+            if (fileId > 0L) {
+                data = new HashMap<String, Long>();
                 data.put("value", fileId);
             }
         }
@@ -71,7 +71,7 @@ public final class ImageValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return this.value != null ? this.value.getId() : -1;
+        return value != null ? value.hashCode() : 0;
     }
 
 }

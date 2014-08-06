@@ -24,6 +24,8 @@ package com.podio.sdk.domain.field.value;
 
 import java.util.HashMap;
 
+import com.podio.sdk.internal.Utils;
+
 /**
  * @author László Urszuly
  */
@@ -46,11 +48,11 @@ public final class MapValue extends AbstractValue {
         }
 
         public double getLatitude() {
-            return lat != null ? lat.doubleValue() : 0D;
+            return Utils.getNative(lat, 0.0D);
         }
 
         public double getLongitude() {
-            return lng != null ? lng.doubleValue() : 0D;
+            return Utils.getNative(lng, 0.0D);
         }
 
         public String getCity() {
@@ -127,11 +129,11 @@ public final class MapValue extends AbstractValue {
     }
 
     public double getLatitude() {
-        return value != null ? value.getLatitude() : 0D;
+        return value != null ? value.getLatitude() : 0.0D;
     }
 
     public double getLongitude() {
-        return value != null ? value.getLongitude() : 0D;
+        return value != null ? value.getLongitude() : 0.0D;
     }
 
     public String getCity() {

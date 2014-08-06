@@ -51,22 +51,6 @@ public class UserProfileTest extends AndroidTestCase {
      * </pre>
      */
     public void testUserProfileCanBeCreatedFromJson() {
-        // private final File image = null;
-        // private final Integer avatar = null;
-        // private final Integer org_id = null;
-        // private final Integer profile_id = null;
-        // private final Integer space_id = null;
-        // private final Integer user_id = null;
-        // private final List<String> location = null;
-        // private final List<String> mail = null;
-        // private final List<String> phone = null;
-        // private final List<Right> rights = null;
-        // private final List<String> title = null;
-        // private final String about = null;
-        // private final String external_id = null;
-        // private final String link = null;
-        // private final String last_seen_on = null;
-        // private final String name = null;
         String json = new StringBuilder("{")
                 .append("image:{},")
                 .append("avatar:1,")
@@ -91,11 +75,11 @@ public class UserProfileTest extends AndroidTestCase {
 
         assertNotNull(profile);
         assertNotNull(profile.getImage());
-        assertEquals(1, profile.getAvatar());
-        assertEquals(1, profile.getOrganizationId());
-        assertEquals(1, profile.getId());
-        assertEquals(1, profile.getWorkspaceId());
-        assertEquals(1, profile.getUserId());
+        assertEquals(1L, profile.getAvatarId());
+        assertEquals(1L, profile.getOrganizationId());
+        assertEquals(1L, profile.getId());
+        assertEquals(1L, profile.getWorkspaceId());
+        assertEquals(1L, profile.getUserId());
 
         List<String> locations = profile.getLocations();
         assertNotNull(locations);

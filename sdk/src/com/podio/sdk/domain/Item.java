@@ -153,16 +153,16 @@ public class Item implements Pushable {
     }
 
     public static class PushResult {
-        private final Integer item_id = null;
-        private final Integer revision = null;
+        private final Long item_id = null;
+        private final Long revision = null;
         private final String title = null;
 
-        public int getItemId() {
-            return Utils.getNative(item_id, -1);
+        public long getItemId() {
+            return Utils.getNative(item_id, -1L);
         }
 
-        public int getRevisionId() {
-            return Utils.getNative(revision, -1);
+        public long getRevisionId() {
+            return Utils.getNative(revision, -1L);
         }
 
         public String getTitle() {
@@ -187,10 +187,10 @@ public class Item implements Pushable {
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
     private final Excerpt excerpt = null;
-    private final Integer item_id = null;
     private final Integer priority = null;
-    private final Integer revision = null;
     private final Integer subscribed_count = null;
+    private final Long item_id = null;
+    private final Long revision = null;
     private final List<Field> fields;
     private final List<Right> rights = null;
     private final List<String> tags = null;
@@ -328,8 +328,8 @@ public class Item implements Pushable {
                 new ArrayList<Field>();
     }
 
-    public int getId() {
-        return Utils.getNative(item_id, -1);
+    public long getId() {
+        return Utils.getNative(item_id, -1L);
     }
 
     /**
@@ -357,8 +357,8 @@ public class Item implements Pushable {
         return Utils.getNative(priority, 0);
     }
 
-    public int getRevisionId() {
-        return Utils.getNative(revision, -1);
+    public long getRevisionId() {
+        return Utils.getNative(revision, -1L);
     }
 
     public List<String> getTags() {

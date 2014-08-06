@@ -195,12 +195,12 @@ public class Application {
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
     private final Configuration config = null;
-    private final Integer app_id = null;
-    private final Integer current_revision = null;
-    private final Integer default_view_id = null;
-    private final Integer original = null;
-    private final Integer original_revision = null;
-    private final Integer space_id = null;
+    private final Long current_revision = null;
+    private final Long original_revision = null;
+    private final Long app_id = null;
+    private final Long default_view_id = null;
+    private final Long original = null;
+    private final Long space_id = null;
     // private final Integration integration = null;
     private final List<Field> fields = null;
     private final List<Right> rights = null;
@@ -233,8 +233,8 @@ public class Application {
         return url_add;
     }
 
-    public int getAppId() {
-        return Utils.getNative(app_id, -1);
+    public long getAppId() {
+        return Utils.getNative(app_id, -1L);
     }
 
     /**
@@ -248,12 +248,12 @@ public class Application {
         return config != null ? config : new Configuration();
     }
 
-    public int getCurrentRevisionId() {
-        return Utils.getNative(current_revision, -1);
+    public long getCurrentRevisionId() {
+        return Utils.getNative(current_revision, -1L);
     }
 
-    public int getDefaultViewId() {
-        return Utils.getNative(default_view_id, -1);
+    public long getDefaultViewId() {
+        return Utils.getNative(default_view_id, -1L);
     }
 
     /**
@@ -276,20 +276,20 @@ public class Application {
         return mailbox;
     }
 
-    public int getOriginAppId() {
-        return Utils.getNative(original, -1);
+    public long getOriginAppId() {
+        return Utils.getNative(original, -1L);
     }
 
-    public int getOriginAppRevisionId() {
-        return Utils.getNative(original_revision, -1);
+    public long getOriginAppRevisionId() {
+        return Utils.getNative(original_revision, -1L);
     }
 
     public User getOwner() {
         return owner;
     }
 
-    public int getSpaceId() {
-        return Utils.getNative(space_id, -1);
+    public long getSpaceId() {
+        return Utils.getNative(space_id, -1L);
     }
 
     public Status getStatus() {

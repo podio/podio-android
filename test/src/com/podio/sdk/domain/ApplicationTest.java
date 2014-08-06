@@ -89,17 +89,17 @@ public class ApplicationTest extends AndroidTestCase {
         assertNotNull(application.getOwner());
         assertEquals(true, application.hasRights(Right.view));
         assertEquals(false, application.hasRights(Right.delete));
-        assertEquals(1, application.getSpaceId());
+        assertEquals(1L, application.getSpaceId());
         assertEquals(Application.Status.inactive, application.getStatus());
         assertEquals("URL", application.getUrl());
         assertEquals("URLADD", application.getAddUrl());
         assertEquals("URLLABEL", application.getUrlLabel());
         assertEquals(true, application.isPinned());
         assertEquals(true, application.isSubscribed());
-        assertEquals(1, application.getCurrentRevisionId());
-        assertEquals(1, application.getDefaultViewId());
-        assertEquals(1, application.getOriginAppId());
-        assertEquals(1, application.getOriginAppRevisionId());
+        assertEquals(1L, application.getCurrentRevisionId());
+        assertEquals(1L, application.getDefaultViewId());
+        assertEquals(1L, application.getOriginAppId());
+        assertEquals(1L, application.getOriginAppRevisionId());
         assertEquals("MAILBOX", application.getMailbox());
         assertEquals("TOKEN", application.getToken());
     }
@@ -133,17 +133,17 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(null, application.getAddLink());
         assertEquals(null, application.getOwner());
         assertEquals(false, application.hasRights(Right.view));
-        assertEquals(-1, application.getSpaceId());
+        assertEquals(-1L, application.getSpaceId());
         assertEquals(Application.Status.undefined, application.getStatus());
         assertEquals(null, application.getUrl());
         assertEquals(null, application.getAddUrl());
         assertEquals(null, application.getUrlLabel());
         assertEquals(false, application.isPinned());
         assertEquals(false, application.isSubscribed());
-        assertEquals(-1, application.getCurrentRevisionId());
-        assertEquals(-1, application.getDefaultViewId());
-        assertEquals(-1, application.getOriginAppId());
-        assertEquals(-1, application.getOriginAppRevisionId());
+        assertEquals(-1L, application.getCurrentRevisionId());
+        assertEquals(-1L, application.getDefaultViewId());
+        assertEquals(-1L, application.getOriginAppId());
+        assertEquals(-1L, application.getOriginAppRevisionId());
         assertEquals(null, application.getMailbox());
         assertEquals(null, application.getToken());
     }

@@ -45,11 +45,11 @@ public class Organization {
         free, sponsored, premium, undefined
     }
 
-    private final Integer logo = null;
-    private final Integer org_id = null;
     private final Integer rank = null;
-    private final Integer sales_agent_id = null;
     private final Integer user_limit = null;
+    private final Long logo = null;
+    private final Long org_id = null;
+    private final Long sales_agent_id = null;
     private final List<String> domains = null;
     private final List<Right> rights = null;
     private final List<Space> spaces = null;
@@ -86,12 +86,12 @@ public class Organization {
                 new ArrayList<String>();
     }
 
-    public int getId() {
-        return Utils.getNative(org_id, -1);
+    public long getId() {
+        return Utils.getNative(org_id, -1L);
     }
 
-    public int getLogoId() {
-        return Utils.getNative(logo, -1);
+    public long getLogoId() {
+        return Utils.getNative(logo, -1L);
     }
 
     public String getName() {
@@ -106,8 +106,8 @@ public class Organization {
         return role != null ? role : Role.undefined;
     }
 
-    public int getSalesAgentId() {
-        return Utils.getNative(sales_agent_id, -1);
+    public long getSalesAgentId() {
+        return Utils.getNative(sales_agent_id, -1L);
     }
 
     public Segment getSegment() {

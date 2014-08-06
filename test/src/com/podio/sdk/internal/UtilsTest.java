@@ -60,7 +60,7 @@ public class UtilsTest extends AndroidTestCase {
     public void testGetNativeInteger() {
         Integer value = Integer.valueOf(1);
         assertEquals(1, Utils.getNative(value, 0));
-        assertEquals(1, Utils.getNative(null, 1));
+        assertEquals(1, Utils.getNative((Integer) null, 1));
     }
 
     public void testCollectionIsEmpty() {

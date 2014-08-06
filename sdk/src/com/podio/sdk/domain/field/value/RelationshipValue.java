@@ -23,6 +23,7 @@
 package com.podio.sdk.domain.field.value;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,9 +42,9 @@ public final class RelationshipValue extends AbstractValue {
     public static final class Data {
         private final Application app = null;
         private final Client created_via = null;
-        private final Integer app_item_id = null;
-        private final Integer item_id;
-        private final Integer revision = null;
+        private final Long app_item_id = null;
+        private final Long item_id;
+        private final Long revision = null;
         private final List<File> files = null;
         private final Space space = null;
         private final String created_on = null;
@@ -51,7 +52,7 @@ public final class RelationshipValue extends AbstractValue {
         private final String title = null;
         private final User created_by = null;
 
-        public Data(Integer itemId) {
+        public Data(Long itemId) {
             this.item_id = itemId;
         }
 
@@ -63,16 +64,16 @@ public final class RelationshipValue extends AbstractValue {
             return created_via;
         }
 
-        public int getAppItemId() {
-            return app_item_id != null ? app_item_id.intValue() : 0;
+        public long getAppItemId() {
+            return Utils.getNative(app_item_id, -1L);
         }
 
-        public int getItemId() {
-            return item_id != null ? item_id.intValue() : 0;
+        public long getItemId() {
+            return Utils.getNative(item_id, -1L);
         }
 
-        public int getRevisionId() {
-            return revision != null ? revision.intValue() : 0;
+        public long getRevisionId() {
+            return Utils.getNative(revision, -1L);
         }
 
         public List<File> getFiles() {
@@ -83,7 +84,7 @@ public final class RelationshipValue extends AbstractValue {
             return space;
         }
 
-        public java.util.Date getCreationDate() {
+        public Date getCreationDate() {
             return Utils.parseDateTime(created_on);
         }
 
@@ -106,7 +107,7 @@ public final class RelationshipValue extends AbstractValue {
         this.value = data;
     }
 
-    public RelationshipValue(int itemId) {
+    public RelationshipValue(long itemId) {
         this.value = new Data(itemId);
     }
 
@@ -125,10 +126,10 @@ public final class RelationshipValue extends AbstractValue {
 
     @Override
     public Object getPushData() {
-        HashMap<String, Integer> data = null;
+        HashMap<String, Long> data = null;
 
         if (value != null && value.app_item_id != null) {
-            data = new HashMap<String, Integer>();
+            data = new HashMap<String, Long>();
             data.put("value", value.app_item_id);
         }
 
@@ -137,7 +138,7 @@ public final class RelationshipValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return value != null && value.app_item_id != null ? value.app_item_id.intValue() : 0;
+        return value != null && value.app_item_id != null ? value.app_item_id.hashCode() : 0;
     }
 
     public Application getApplication() {
@@ -148,16 +149,16 @@ public final class RelationshipValue extends AbstractValue {
         return value != null ? value.getCreatingClient() : null;
     }
 
-    public int getAppItemId() {
-        return value != null ? value.getAppItemId() : null;
+    public long getAppItemId() {
+        return value != null ? value.getAppItemId() : -1L;
     }
 
-    public int getItemId() {
-        return value != null ? value.getItemId() : null;
+    public long getItemId() {
+        return value != null ? value.getItemId() : -1L;
     }
 
-    public int getRevisionId() {
-        return value != null ? value.getRevisionId() : null;
+    public long getRevisionId() {
+        return value != null ? value.getRevisionId() : -1L;
     }
 
     public List<File> getFiles() {
@@ -168,7 +169,7 @@ public final class RelationshipValue extends AbstractValue {
         return value != null ? value.getSpace() : null;
     }
 
-    public java.util.Date getCreationDate() {
+    public Date getCreationDate() {
         return value != null ? value.getCreationDate() : null;
     }
 

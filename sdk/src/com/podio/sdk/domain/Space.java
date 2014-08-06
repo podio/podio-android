@@ -51,7 +51,7 @@ public class Space {
     private final Boolean subscribed = null;
     private final Boolean premium = null;
     private final Integer rank = null;
-    private final Integer space_id = null;
+    private final Long space_id = null;
     private final List<Right> rights = null;
     private final Organization org = null;
     private final Privacy privacy = null;
@@ -101,8 +101,8 @@ public class Space {
         return description;
     }
 
-    public int getId() {
-        return Utils.getNative(space_id, -1);
+    public long getId() {
+        return Utils.getNative(space_id, -1L);
     }
 
     public String getName() {

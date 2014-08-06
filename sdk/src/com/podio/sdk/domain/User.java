@@ -66,11 +66,11 @@ public class User {
 
     public static class Profile {
         private final File image = null;
-        private final Integer avatar = null;
-        private final Integer org_id = null;
-        private final Integer profile_id = null;
-        private final Integer space_id = null;
-        private final Integer user_id = null;
+        private final Long avatar = null;
+        private final Long org_id = null;
+        private final Long profile_id = null;
+        private final Long space_id = null;
+        private final Long user_id = null;
         private final List<String> location = null;
         private final List<String> mail = null;
         private final List<String> phone = null;
@@ -88,8 +88,8 @@ public class User {
             return about;
         }
 
-        public int getAvatar() {
-            return Utils.getNative(avatar, -1);
+        public long getAvatarId() {
+            return Utils.getNative(avatar, -1L);
         }
 
         public List<String> getEmailAddresses() {
@@ -102,8 +102,8 @@ public class User {
             return external_id;
         }
 
-        public int getId() {
-            return Utils.getNative(profile_id, -1);
+        public long getId() {
+            return Utils.getNative(profile_id, -1L);
         }
 
         public File getImage() {
@@ -137,8 +137,8 @@ public class User {
             return name;
         }
 
-        public int getOrganizationId() {
-            return Utils.getNative(org_id, -1);
+        public long getOrganizationId() {
+            return Utils.getNative(org_id, -1L);
         }
 
         public List<String> getPhoneNumbers() {
@@ -153,12 +153,12 @@ public class User {
                     new ArrayList<String>();
         }
 
-        public int getUserId() {
-            return Utils.getNative(user_id, -1);
+        public long getUserId() {
+            return Utils.getNative(user_id, -1L);
         }
 
-        public int getWorkspaceId() {
-            return Utils.getNative(space_id, -1);
+        public long getWorkspaceId() {
+            return Utils.getNative(space_id, -1L);
         }
 
         /**
@@ -189,7 +189,7 @@ public class User {
         return new User();
     }
 
-    private final Integer user_id = null;
+    private final Long user_id = null;
     private final List<Flag> flags = null;
     private final List<Email> mails = null;
     private final Status status = null;
@@ -238,8 +238,8 @@ public class User {
                 new ArrayList<Email>();
     }
 
-    public int getId() {
-        return Utils.getNative(user_id, -1);
+    public long getId() {
+        return Utils.getNative(user_id, -1L);
     }
 
     public String getLocale() {

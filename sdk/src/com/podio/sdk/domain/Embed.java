@@ -34,8 +34,8 @@ public class Embed {
     }
 
     private final Integer embed_height = null;
-    private final Integer embed_id = null;
     private final Integer embed_width = null;
+    private final Long embed_id = null;
     private final String description = null;
     private final String embed_html = null;
     private final String hostname = null;
@@ -61,8 +61,8 @@ public class Embed {
         return embed_html;
     }
 
-    public int getId() {
-        return Utils.getNative(embed_id, -1);
+    public long getId() {
+        return Utils.getNative(embed_id, -1L);
     }
 
     public int getWidth() {

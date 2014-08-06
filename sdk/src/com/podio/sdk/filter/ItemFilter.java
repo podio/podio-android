@@ -30,19 +30,19 @@ public final class ItemFilter extends BasicPodioFilter {
 
     public ItemFilter withApplicationId(int applicationId) {
         addPathSegment("app");
-        addPathSegment(Integer.toString(applicationId, 10));
+        addPathSegment(Long.toString(applicationId, 10));
         return this;
     }
 
     public ItemFilter withApplicationIdFilter(int applicationId) {
         addPathSegment("app");
-        addPathSegment(Integer.toString(applicationId, 10));
+        addPathSegment(Long.toString(applicationId, 10));
         addPathSegment("filter");
         return this;
     }
 
     public ItemFilter withItemId(int itemId) {
-        addPathSegment(Integer.toString(itemId, 10));
+        addPathSegment(Long.toString(itemId, 10));
         return this;
     }
 }
