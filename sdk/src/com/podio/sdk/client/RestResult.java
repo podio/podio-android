@@ -32,16 +32,6 @@ import com.podio.sdk.domain.Session;
 public class RestResult<T> {
 
     /**
-     * Creates a new failure result object with a custom exception describing
-     * the cause of the failure.
-     * 
-     * @return A failure result.
-     */
-    public static <T> RestResult<T> failure(Exception exception) {
-        return new RestResult<T>(null, null, exception);
-    }
-
-    /**
      * Creates a new success result object with no further information.
      * 
      * @return A success result.
@@ -66,10 +56,9 @@ public class RestResult<T> {
      * @return A success result.
      */
     public static <T> RestResult<T> success(T item, Session session) {
-        return new RestResult<T>(item, session, null);
+        return new RestResult<T>(item, session);
     }
 
-    private final Exception exception;
     private final Session session;
     private final T item;
 
@@ -80,23 +69,10 @@ public class RestResult<T> {
      *        Optional content of this object.
      * @param session
      *        The new session variables, if changed. Otherwise null.
-     * @param exception
-     *        The exception stack describing any error while performing the
-     *        corresponding request.
      */
-    private RestResult(T item, Session session, Exception exception) {
+    private RestResult(T item, Session session) {
         this.item = item;
         this.session = session;
-        this.exception = exception;
-    }
-
-    /**
-     * Returns the error state flag.
-     * 
-     * @return Boolean true if this result object has any exception information.
-     */
-    public boolean hasException() {
-        return exception != null;
     }
 
     /**
@@ -116,15 +92,6 @@ public class RestResult<T> {
      */
     public boolean hasAuthorizedSession() {
         return hasSession() && session.isAuthorized();
-    }
-
-    /**
-     * Returns the error description object associated with this result.
-     * 
-     * @return A custom exception object.
-     */
-    public Exception getException() {
-        return exception;
     }
 
     /**

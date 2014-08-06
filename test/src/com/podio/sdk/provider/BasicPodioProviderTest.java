@@ -28,8 +28,6 @@ import org.mockito.MockitoAnnotations;
 
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.ErrorListener;
-import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
@@ -47,9 +45,6 @@ public class BasicPodioProviderTest extends AndroidTestCase {
 
     @Mock
     SessionListener sessionListener;
-
-    @Mock
-    ErrorListener errorListener;
 
     @Override
     protected void setUp() throws Exception {
@@ -195,42 +190,6 @@ public class BasicPodioProviderTest extends AndroidTestCase {
                 .setContent(item);
 
         Mockito.verify(client).enqueue(expectedRequest);
-    }
-
-    /**
-     * Verifies that the failure method on the {@link PodioresultListener}
-     * callback is called if the (mocked) {@link RestClient} fails to finish
-     * properly.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new instance of the ItemProvider class and assign a mock
-     *      RestClient to it, which basically has no logic but just shuffles
-     *      data around. Also assign a custom {@link PodioresultListener} to the
-     *      ItemProvider.
-     * 
-     * 2. Perform a request (any rest request) and simulate the mock RestClient
-     *      working on it and failing (the {@link DummyRestClient} holds the
-     *      details).
-     * 
-     * 3. Verify that the failure is propagated properly to your custom callback.
-     * 
-     * </pre>
-     */
-    public void testProviderCallbackFailureCalledProperly() {
-        PodioFilter itemFilter = new BasicPodioFilter();
-        Object itemObject = new Object();
-        PodioException exception = new PodioException("ohno");
-
-        MockRestClient client = new MockRestClient(RestResult.failure(exception));
-
-        BasicPodioProvider provider = new BasicPodioProvider();
-        provider.setRestClient(client);
-        provider.request(RestClient.Operation.PUT, itemFilter, itemObject, null)
-                .setErrorListener(errorListener);
-
-        Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(exception);
-        Mockito.verifyNoMoreInteractions(errorListener);
     }
 
     /**

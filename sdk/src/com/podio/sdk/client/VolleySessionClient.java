@@ -27,7 +27,6 @@ import android.net.Uri;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.SessionManager;
 import com.podio.sdk.domain.Session;
@@ -43,6 +42,8 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
 
     private RequestQueue requestQueue;
     private Session session;
+    private String clientId;
+    private String clientSecret;
 
     /**
      * @param scheme
@@ -51,18 +52,17 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
     public VolleySessionClient(Context context, String authority) {
         super(SCHEME, authority, 1);
         this.requestQueue = Volley.newRequestQueue(context);
+        clientId = clientSecret = null;
     }
 
     @Override
-    public Session checkSession() throws PodioException {
+    public Session checkSession() {
         if (session == null) {
-            Throwable cause = new IllegalStateException("No session is active");
-            throw new PodioException("Invalid session", cause);
+            throw new IllegalStateException("No session is active");
         }
 
         if (!session.isAuthorized()) {
-            Throwable cause = new IllegalStateException("Session is not authorized");
-            throw new PodioException("Invalid session", cause);
+            throw new IllegalStateException("Session is not authorized");
         }
 
         if (session.shouldRefreshTokens()) {
@@ -79,16 +79,17 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
     }
 
     @Override
-    public void refreshSession() throws PodioException {
+    public void refreshSession() {
         Uri uri = new SessionFilter()
+                .withClientCredentials(clientId, clientSecret)
                 .withRefreshToken(session.refreshToken)
                 .buildUri(getScheme(), getAuthority());
 
         VolleyRequest request = VolleyRequest.newRefreshRequest(uri);
         requestQueue.add(request);
 
-        String output = request.waitForIt();
-        session = new Session(output);
+        String output = request.waitForResult();
+        setSession(new Session(output));
     }
 
     @Override
@@ -98,40 +99,73 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
         RestClient.Operation operation = restRequest.getOperation();
 
         switch (operation) {
         case POST:
-            SessionFilter filter = (SessionFilter) restRequest.getFilter();
-            Uri dummyUri = filter.buildUri("null", "null");
-            String grantType = dummyUri.getQueryParameter("grant_type");
-            String preferredToken = dummyUri.getQueryParameter("refresh_token");
+            String grantType = getGrantType(restRequest);
+            String preferredToken = getRefreshToken(restRequest);
             VolleyRequest request;
 
             if ("refresh_token".equals(grantType)) {
-                String token = Utils.isEmpty(preferredToken) ?
-                        session.refreshToken :
-                        preferredToken;
-
-                Uri actualUri = filter
-                        .withRefreshToken(token)
-                        .buildUri(getScheme(), getAuthority());
-
-                request = VolleyRequest.newRefreshRequest(actualUri);
+                String token = Utils.isEmpty(preferredToken) ? session.refreshToken : preferredToken;
+                Uri uri = getUri(restRequest, token);
+                request = VolleyRequest.newRefreshRequest(uri);
             } else {
-                Uri actualUri = filter.buildUri(getScheme(), getAuthority());
-                request = VolleyRequest.newAuthRequest(actualUri);
+                Uri uri = getUri(restRequest, null);
+                request = VolleyRequest.newAuthRequest(uri);
             }
 
             requestQueue.add(request);
 
-            String resultJson = request.waitForIt();
-            session = new Session(resultJson);
-
+            String resultJson = request.waitForResult();
+            setSession(new Session(resultJson));
             return (RestResult<T>) RestResult.success(session);
+
         default:
-            return RestResult.failure(new PodioException("Unsupported operation: " + operation.name()));
+            throw new UnsupportedOperationException("Unsupported operation: " + operation.name());
         }
+    }
+
+    /**
+     * Initializes the provider with the given client id and secret.
+     * 
+     * @param clientId
+     *        The user client id.
+     * @param clientSecret
+     *        The user client secret.
+     */
+    public void setup(String clientId, String clientSecret) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+    }
+
+    private String getGrantType(RestRequest<?> restRequest) {
+        SessionFilter filter = (SessionFilter) restRequest.getFilter();
+        Uri dummyUri = filter.buildUri("null", "null");
+        String grantType = dummyUri.getQueryParameter("grant_type");
+
+        return grantType;
+    }
+
+    private String getRefreshToken(RestRequest<?> restRequest) {
+        SessionFilter filter = (SessionFilter) restRequest.getFilter();
+        Uri dummyUri = filter.buildUri("null", "null");
+        String refreshToken = dummyUri.getQueryParameter("refresh_token");
+
+        return refreshToken;
+    }
+
+    private Uri getUri(RestRequest<?> restRequest, String refreshToken) {
+        SessionFilter filter = ((SessionFilter) restRequest.getFilter())
+                .withClientCredentials(clientId, clientSecret);
+
+        String scheme = getScheme();
+        String authority = getAuthority();
+
+        return Utils.isEmpty(refreshToken) ?
+                filter.buildUri(scheme, authority) :
+                filter.withRefreshToken(refreshToken).buildUri(scheme, authority);
     }
 }

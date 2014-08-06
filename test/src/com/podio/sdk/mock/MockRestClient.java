@@ -50,7 +50,7 @@ public class MockRestClient extends QueuedRestClient {
     }
 
     public MockRestClient(RuntimeException exception) {
-        this(-1, RestResult.failure(exception));
+        this(-1, RestResult.success());
         this.causeOfFailure = exception;
     }
 
@@ -68,6 +68,7 @@ public class MockRestClient extends QueuedRestClient {
 
         this.uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
         this.data = restRequest.getContent();
+
         return (RestResult<T>) result;
     }
 

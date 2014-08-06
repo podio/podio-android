@@ -23,7 +23,6 @@
 package com.podio.sdk.client;
 
 import com.podio.sdk.Parser;
-import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.parser.JsonParser;
@@ -106,18 +105,6 @@ public final class RestRequest<T> {
         }
 
         return true;
-    }
-
-    public void validate() throws PodioException {
-        if (filter == null) {
-            Throwable cause = new NullPointerException("filter cannot be null");
-            throw new PodioException("RestRequest invalid", cause);
-        }
-
-        if (operation == null) {
-            Throwable cause = new NullPointerException("operation cannot be null");
-            throw new PodioException("RestRequest invalid", cause);
-        }
     }
 
     public Object getContent() {

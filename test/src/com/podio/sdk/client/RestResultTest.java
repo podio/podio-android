@@ -24,7 +24,6 @@ package com.podio.sdk.client;
 
 import android.test.AndroidTestCase;
 
-import com.podio.sdk.PodioException;
 import com.podio.sdk.domain.Session;
 
 public class RestResultTest extends AndroidTestCase {
@@ -50,9 +49,7 @@ public class RestResultTest extends AndroidTestCase {
         assertNotNull(target);
         assertFalse(target.hasSession());
         assertFalse(target.hasAuthorizedSession());
-        assertFalse(target.hasException());
         assertNull(target.getSession());
-        assertNull(target.getException());
         assertEquals(item, target.getItem());
     }
 
@@ -79,36 +76,8 @@ public class RestResultTest extends AndroidTestCase {
         assertNotNull(target);
         assertTrue(target.hasSession());
         assertTrue(target.hasAuthorizedSession());
-        assertFalse(target.hasException());
         assertNotNull(target.getSession());
         assertEquals(item, target.getItem());
-    }
-
-    /**
-     * Verifies that a {@link RestResult} created with a unsuccessful status, an
-     * empty message and an empty list of items, keeps the initial values and
-     * returns them correctly when requested.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new RestResult item with known, negative values.
-     * 
-     * 2. Verify that the values don't get distorted until they are
-     *      requested again.
-     * 
-     * </pre>
-     */
-    public void testCreateFailureRestResultWithNoSessionAndNoItem() {
-        PodioException exception = new PodioException("Ohno");
-
-        RestResult<Object> target = RestResult.failure(exception);
-        assertNotNull(target);
-        assertFalse(target.hasSession());
-        assertFalse(target.hasAuthorizedSession());
-        assertNull(target.getSession());
-        assertTrue(target.hasException());
-        assertEquals(exception, target.getException());
-        assertNull(target.getItem());
     }
 
 }

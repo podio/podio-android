@@ -22,7 +22,6 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
 import com.podio.sdk.client.RequestFuture;
