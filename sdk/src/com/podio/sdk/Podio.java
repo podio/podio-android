@@ -139,6 +139,7 @@ public class Podio {
         item.setRestClient(restClient);
         organization.setRestClient(restClient);
         user.setRestClient(restClient);
+        rating.setRestClient(restClient);
     }
 
     /**
