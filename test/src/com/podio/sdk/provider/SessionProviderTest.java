@@ -66,7 +66,7 @@ public class SessionProviderTest extends AndroidTestCase {
 
         provider
                 .authenticateWithUserCredentials("USERNAME", "PASSWORD")
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -98,7 +98,7 @@ public class SessionProviderTest extends AndroidTestCase {
 
         provider
                 .authenticateWithAppCredentials("APPID", "APPTOKEN")
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);

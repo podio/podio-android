@@ -66,7 +66,7 @@ public class OrganizationProviderTest extends AndroidTestCase {
 
         provider
                 .getAll()
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);

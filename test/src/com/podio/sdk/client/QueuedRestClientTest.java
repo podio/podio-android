@@ -200,13 +200,13 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter("first"))
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         testTarget
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter("second"))
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(300).times(2)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -301,14 +301,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter())
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         // One is being processed, so room for one more in the queue
         testTarget
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter())
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         // Now we are out of room
         try {
@@ -316,7 +316,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                     .enqueue(new RestRequest<Object>()
                             .setFilter(new BasicPodioFilter())
                             .setOperation(RestClient.Operation.GET))
-                    .setResultListener(resultListener);
+                    .withResultListener(resultListener);
 
             fail("Didn't reject request");
         } catch (RejectedExecutionException e) {
@@ -418,7 +418,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter("first"))
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener)
+                .withResultListener(resultListener)
                 .get(100, TimeUnit.MILLISECONDS);
 
         assertEquals(0, testTarget.size());
@@ -427,7 +427,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter("second"))
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener)
+                .withResultListener(resultListener)
                 .get(100, TimeUnit.MILLISECONDS);
 
         Mockito.verify(resultListener, Mockito.timeout(200).times(2)).onRequestPerformed(null);
@@ -463,7 +463,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter())
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(threadListener)
+                .withResultListener(threadListener)
                 .get(100, TimeUnit.MILLISECONDS);
 
         Mockito.verify(threadListener, Mockito.timeout(200)).onRequestPerformed(null);
@@ -499,8 +499,8 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter())
                         .setOperation(RestClient.Operation.GET))
-                .setSessionListener(sessionListener)
-                .setResultListener(resultListener)
+                .withSessionListener(sessionListener)
+                .withResultListener(resultListener)
                 .get(100, TimeUnit.MILLISECONDS);
 
         Mockito.verify(sessionListener, Mockito.timeout(100)).onSessionChanged(session);
@@ -535,7 +535,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
                 .enqueue(new RestRequest<Object>()
                         .setFilter(new BasicPodioFilter())
                         .setOperation(RestClient.Operation.GET))
-                .setResultListener(resultListener)
+                .withResultListener(resultListener)
                 .get(100, TimeUnit.MILLISECONDS);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);

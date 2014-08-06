@@ -65,7 +65,7 @@ public class UserProviderTest extends AndroidTestCase {
 
         provider
                 .getData()
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -95,7 +95,7 @@ public class UserProviderTest extends AndroidTestCase {
 
         provider
                 .getProfile()
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);

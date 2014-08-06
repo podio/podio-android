@@ -222,8 +222,8 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         provider.setRestClient(client);
 
         provider.request(RestClient.Operation.PUT, itemFilter, itemObject, null)
-                .setResultListener(resultListener)
-                .setSessionListener(sessionListener);
+                .withResultListener(resultListener)
+                .withSessionListener(sessionListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(itemObject);
         Mockito.verify(sessionListener, Mockito.timeout(100)).onSessionChanged(session);
@@ -260,7 +260,7 @@ public class BasicPodioProviderTest extends AndroidTestCase {
         provider.setRestClient(client);
 
         provider.request(RestClient.Operation.PUT, itemFilter, itemObject, null)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(itemObject);
         Mockito.verifyNoMoreInteractions(resultListener);
