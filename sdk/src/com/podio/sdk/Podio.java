@@ -33,6 +33,7 @@ import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.SessionProvider;
 import com.podio.sdk.provider.UserProvider;
+import com.podio.sdk.provider.RatingProvider;
 
 /**
  * Enables easy access to the Podio API with a basic configuration which should
@@ -85,6 +86,12 @@ public class Podio {
      * point.
      */
     public static final UserProvider user = new UserProvider();
+
+    /**
+     * Enables means of easy operating on the {@link RatingProvider} API end
+     * point.
+     */
+    public static final RatingProvider rating = new RatingProvider();
 
     /**
      * The same as {@link Podio#setup(Context, String, String, String)} with the
