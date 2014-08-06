@@ -22,7 +22,7 @@ Podio.item
                     // other information on the filter result.
                 }
 
-            })
+        })
         .withSessionListener(new SessionListener() {
 
                 @Override
