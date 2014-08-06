@@ -131,7 +131,6 @@ public class Utils {
         return !isEmpty(string);
     }
 
-    @SuppressLint("SimpleDateFormat")
     public static Date parseDateTime(String dateTime) {
         try {
             return getSimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
@@ -144,7 +143,6 @@ public class Utils {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     public static Date parseDate(String date) {
         try {
             return getSimpleDateFormat("yyyy-MM-dd").parse(date);
@@ -157,7 +155,6 @@ public class Utils {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     public static Date parseTime(String time) {
         try {
             return getSimpleDateFormat("HH:mm:ss").parse(time);
@@ -170,6 +167,7 @@ public class Utils {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private static SimpleDateFormat getSimpleDateFormat(String pattern) {
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
