@@ -20,7 +20,7 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.client.mock;
+package com.podio.sdk.mock;
 
 import java.util.HashMap;
 import java.util.Map;

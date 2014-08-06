@@ -31,6 +31,7 @@ import android.net.Uri;
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.podio.sdk.Parser;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.SessionManager;
@@ -79,29 +80,34 @@ public class VolleyHttpClient extends QueuedRestClient {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
         RestClient.Operation operation = restRequest.getOperation();
         Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
-        Object content = restRequest.getContent();
-        JsonParser<? extends T> parser = (JsonParser<? extends T>) restRequest.getParser();
 
         switch (operation) {
         case DELETE:
-            return request(Method.DELETE, uri, content, parser, true);
+            return request(Method.DELETE, uri, restRequest.getContent(), restRequest.getParser(), true);
         case GET:
-            return request(Method.GET, uri, content, parser, true);
+            return request(Method.GET, uri, restRequest.getContent(), restRequest.getParser(), true);
         case POST:
-            return request(Method.POST, uri, content, parser, true);
+            return request(Method.POST, uri, restRequest.getContent(), restRequest.getParser(), true);
         case PUT:
-            return request(Method.PUT, uri, content, parser, true);
+            return request(Method.PUT, uri, restRequest.getContent(), restRequest.getParser(), true);
         default:
             return RestResult.failure(new PodioException("Unknown operation: " + operation.name()));
         }
     }
 
-    private <T> RestResult<T> request(int method, Uri uri, Object item, JsonParser<? extends T> parser, boolean tryRefresh) throws PodioException {
-        String body = parser.write(item);
+    private <T> RestResult<T> request(int method, Uri uri, Object item, Parser<? extends T, ?> parser, boolean tryRefresh) throws PodioException {
+        if (!(parser instanceof JsonParser)) {
+            throw new PodioException("Invalid parser type: " + parser.getClass().getName() +
+                    " Expected: " + JsonParser.class.getName());
+        }
+
+        @SuppressWarnings("unchecked")
+        JsonParser<? extends T> jsonParser = (JsonParser<? extends T>) parser;
+
+        String body = jsonParser.write(item);
 
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("Authorization", "Bearer " + sessionManager.getAccessToken());
@@ -113,7 +119,7 @@ public class VolleyHttpClient extends QueuedRestClient {
             Session refreshedSession = sessionManager.checkSession();
 
             String output = request.waitForIt();
-            T content = parser.read(output);
+            T content = jsonParser.read(output);
 
             return RestResult.success(content, refreshedSession);
         } catch (PodioException e) {
@@ -125,5 +131,4 @@ public class VolleyHttpClient extends QueuedRestClient {
             }
         }
     }
-
 }

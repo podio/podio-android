@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
@@ -36,12 +37,15 @@ public class UtilsTest extends AndroidTestCase {
 
     public void testFormatDateTime() throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Date date = dateFormat.parse("2014-07-07");
         String dateString = Utils.formatDateTime(date);
         assertEquals("2014-07-07 00:00:00", dateString);
 
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         Date time = timeFormat.parse("21:14:59");
         String timeString = Utils.formatDateTime(time);
         assertEquals("1970-01-01 21:14:59", timeString);
@@ -169,6 +173,7 @@ public class UtilsTest extends AndroidTestCase {
         assertNotNull(date);
 
         Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("UTC"));
         c.setTime(date);
 
         assertEquals(2014, c.get(Calendar.YEAR));
@@ -187,6 +192,7 @@ public class UtilsTest extends AndroidTestCase {
         assertNotNull(date);
 
         Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("UTC"));
         c.setTime(date);
 
         assertEquals(2014, c.get(Calendar.YEAR));
@@ -205,6 +211,7 @@ public class UtilsTest extends AndroidTestCase {
         assertNotNull(date);
 
         Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getTimeZone("UTC"));
         c.setTime(date);
 
         assertEquals(1970, c.get(Calendar.YEAR));

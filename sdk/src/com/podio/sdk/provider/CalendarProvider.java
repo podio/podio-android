@@ -23,12 +23,8 @@
 package com.podio.sdk.provider;
 
 import java.util.Date;
-import java.util.concurrent.Future;
 
-import com.podio.sdk.ErrorListener;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.filter.CalendarFilter;
 
@@ -48,16 +44,13 @@ public class CalendarProvider extends BasicPodioProvider {
      *        The Date from which the result should end at.
      * @param priority
      *        The priority level of the results.
-     * @param resultListener
-     *        The callback implementation called when the calendar events are
-     *        fetched. Null is valid, but doesn't make any sense.
      * @return
      */
-    public Future<RestResult<CalendarEvent[]>> getGlobal(Date from, Date to, int priority, ResultListener<? super CalendarEvent[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<CalendarEvent[]> getGlobal(Date from, Date to, int priority) {
         CalendarFilter filter = new CalendarFilter()
                 .withDateFromTo(from, to)
                 .withPriority(priority);
 
-        return get(filter, CalendarEvent[].class, resultListener, errorListener, sessionListener);
+        return get(filter, CalendarEvent[].class);
     }
 }

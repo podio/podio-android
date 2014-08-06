@@ -23,7 +23,7 @@
 package com.podio.sdk.domain;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.TimeZone;
 
 import android.test.AndroidTestCase;
 
@@ -90,10 +90,10 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(Space.Role.light, space.getRole());
         assertEquals("2014-07-10 10:27:37", space.getCreatedDateString());
 
-        Date createdDate = space.getCreatedDate();
         Calendar createdCalendar = Calendar.getInstance();
-        createdCalendar.setTime(createdDate);
-        assertNotNull(createdDate);
+        createdCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        createdCalendar.setTime(space.getCreatedDate());
+
         assertEquals(2014, createdCalendar.get(Calendar.YEAR));
         assertEquals(Calendar.JULY, createdCalendar.get(Calendar.MONTH));
         assertEquals(10, createdCalendar.get(Calendar.DAY_OF_MONTH));

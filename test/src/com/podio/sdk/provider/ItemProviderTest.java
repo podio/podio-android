@@ -22,7 +22,11 @@
 
 package com.podio.sdk.provider;
 
+import java.util.concurrent.ExecutionException;
+
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
@@ -30,10 +34,19 @@ import android.test.AndroidTestCase;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Item;
+import com.podio.sdk.mock.MockRestClient;
 import com.podio.sdk.provider.ItemProvider.ItemFilterProvider;
-import com.podio.sdk.provider.mock.DummyRestClient;
 
 public class ItemProviderTest extends AndroidTestCase {
+
+    @Mock
+    ResultListener<Object> resultListener;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Verifies that the {@link ItemProvider} calls through to the (mock) rest
@@ -51,19 +64,18 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testCreateItem() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.create(2, new Item(), mockListener, null, null);
+        provider
+                .create(2, new Item())
+                .setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/item/app/2"), uri);
+        assertEquals(Uri.parse("test://podio.test/item/app/2"), mockClient.uri);
     }
 
     /**
@@ -81,12 +93,12 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testCreateItemWithNullPointer() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.failure(null));
+        MockRestClient mockClient = new MockRestClient();
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
         try {
-            provider.create(7, null, null, null, null);
+            provider.create(7, null);
             fail("Should have thrown NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -107,37 +119,37 @@ public class ItemProviderTest extends AndroidTestCase {
      *      contains the expected parameters.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
      */
-    public void testFilterItems() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+    public void testFilterItems() throws InterruptedException, ExecutionException {
+        MockRestClient mockClient = new MockRestClient();
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<Item.FilterResult> mockListener = Mockito.mock(ResultListener.class);
         provider.filter()
                 .onConstraint("test-key", "test-value")
-                .onDoRemember(false)
-                .onSortOrder("test-column", false)
+                .onDoRemember(true)
+                .onSortOrder("test-column", true)
                 .onSpan(100, 1000)
-                .get(4, mockListener, null, null);
+                .get(4)
+                .setResultListener(resultListener)
+                .get();
 
-        Object data = mockClient.mock_getRequestData();
-        assertTrue(data instanceof Item.FilterData);
-        Item.FilterData f = (Item.FilterData) data;
+        Item.FilterData f = (Item.FilterData) mockClient.data;
         assertTrue(f.hasConstraint("test-key"));
         assertEquals("test-value", f.getConstraint("test-key").toString());
-        assertEquals(false, f.getDoRemember());
+        assertEquals(true, f.getDoRemember());
         assertEquals("test-column", f.getSortKey());
-        assertEquals(false, f.getDoSortDescending());
+        assertEquals(true, f.getDoSortDescending());
         assertEquals(100, f.getLimit());
         assertEquals(1000, f.getOffset());
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/item/app/4/filter"), uri);
+        assertEquals(Uri.parse("test://podio.test/item/app/4/filter"), mockClient.uri);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
     }
 
     /**
@@ -156,19 +168,16 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testGetItem() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<Item> mockListener = Mockito.mock(ResultListener.class);
-        provider.get(3, mockListener, null, null);
+        provider.get(3).setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/item/3"), uri);
+        assertEquals(Uri.parse("test://podio.test/item/3"), mockClient.uri);
     }
 
     /**
@@ -210,19 +219,18 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testUpdateItem() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<Item.PushResult> mockListener = Mockito.mock(ResultListener.class);
-        provider.update(5, new Item(), mockListener, null, null);
+        provider
+                .update(5, new Item())
+                .setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/item/5"), uri);
+        assertEquals(Uri.parse("test://podio.test/item/5"), mockClient.uri);
     }
 
     /**
@@ -240,12 +248,12 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testUpdateItemWithNullPointer() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.failure(null));
+        MockRestClient mockClient = new MockRestClient(RestResult.failure(null));
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
         try {
-            provider.update(7, null, null, null, null);
+            provider.update(7, null);
             fail("Should have thrown NullPointerException");
         } catch (NullPointerException e) {
         }

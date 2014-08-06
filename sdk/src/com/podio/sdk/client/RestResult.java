@@ -24,14 +24,51 @@ package com.podio.sdk.client;
 
 import com.podio.sdk.domain.Session;
 
-import java.lang.Exception;
-
 /**
  * Wraps the result of a performed {@link RestRequest}.
  * 
  * @author László Urszuly
  */
 public class RestResult<T> {
+
+    /**
+     * Creates a new failure result object with a custom exception describing
+     * the cause of the failure.
+     * 
+     * @return A failure result.
+     */
+    public static <T> RestResult<T> failure(Exception exception) {
+        return new RestResult<T>(null, null, exception);
+    }
+
+    /**
+     * Creates a new success result object with no further information.
+     * 
+     * @return A success result.
+     */
+    public static <T> RestResult<T> success() {
+        return success(null);
+    }
+
+    /**
+     * Creates a new success result object, containing the requested data.
+     * 
+     * @return A success result.
+     */
+    public static <T> RestResult<T> success(T item) {
+        return success(item, null);
+    }
+
+    /**
+     * Creates a new success result object, containing the requested data and
+     * the new session information.
+     * 
+     * @return A success result.
+     */
+    public static <T> RestResult<T> success(T item, Session session) {
+        return new RestResult<T>(item, session, null);
+    }
+
     private final Exception exception;
     private final Session session;
     private final T item;
@@ -108,41 +145,4 @@ public class RestResult<T> {
         return item;
     }
 
-    /**
-     * Creates a new failure result object with a custom exception describing
-     * the cause of the failure.
-     * 
-     * @return A failure result.
-     */
-    public static <T> RestResult<T> failure(Exception exception) {
-        return new RestResult<T>(null, null, exception);
-    }
-
-    /**
-     * Creates a new success result object with no further information.
-     * 
-     * @return A success result.
-     */
-    public static <T> RestResult<T> success() {
-        return success(null);
-    }
-
-    /**
-     * Creates a new success result object, containing the requested data.
-     * 
-     * @return A success result.
-     */
-    public static <T> RestResult<T> success(T item) {
-        return success(item, null);
-    }
-
-    /**
-     * Creates a new success result object, containing the requested data and
-     * the new session information.
-     * 
-     * @return A success result.
-     */
-    public static <T> RestResult<T> success(T item, Session session) {
-        return new RestResult<T>(item, session, null);
-    }
 }

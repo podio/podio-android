@@ -23,20 +23,29 @@
 package com.podio.sdk.provider;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.ResultListener;
-import com.podio.sdk.client.RestResult;
-import com.podio.sdk.domain.CalendarEvent;
-import com.podio.sdk.provider.mock.DummyRestClient;
+import com.podio.sdk.internal.Utils;
+import com.podio.sdk.mock.MockRestClient;
 
 public class CalendarProviderTest extends AndroidTestCase {
+
+    @Mock
+    ResultListener<Object> resultListener;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Verifies that the {@link CalendarProvider} calls through to the (mock)
@@ -57,23 +66,21 @@ public class CalendarProviderTest extends AndroidTestCase {
      * @throws ParseException
      */
     public void testGetGlobalCalendar() throws ParseException {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         CalendarProvider provider = new CalendarProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<CalendarEvent[]> mockListener = Mockito.mock(ResultListener.class);
+        Date fromDate = Utils.parseDate("1970-01-01");
+        Date toDate = Utils.parseDate("1970-01-02");
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDate = dateFormat.parse("1970-01-01");
-        Date toDate = dateFormat.parse("1970-01-02");
-        provider.getGlobal(fromDate, toDate, 1, mockListener, null, null);
+        provider
+                .getGlobal(fromDate, toDate, 1)
+                .setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/calendar?date_from=1970-01-01&date_to=1970-01-02&priority=1"), uri);
+        assertEquals(Uri.parse("test://podio.test/calendar?date_from=1970-01-01&date_to=1970-01-02&priority=1"), mockClient.uri);
     }
 
 }

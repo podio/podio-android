@@ -22,12 +22,10 @@
 
 package com.podio.sdk.provider;
 
-import java.util.concurrent.Future;
-
 import com.podio.sdk.ErrorListener;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.filter.ItemFilter;
 
@@ -133,9 +131,6 @@ public class ItemProvider extends BasicPodioProvider {
          * 
          * @param applicationId
          *        The id of the parent application.
-         * @param resultListener
-         *        The callback implementation called when the items are fetched.
-         *        Null is valid, but doesn't make any sense.
          * @return A ticket which the caller can use to identify this request
          *         with.
          * @see {@link ItemFilterProvider#onConstraint(String, Object)}
@@ -143,9 +138,9 @@ public class ItemProvider extends BasicPodioProvider {
          * @see {@link ItemFilterProvider#onSpan(int)}
          * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
          */
-        public Future<RestResult<Item.FilterResult>> get(int applicationId, ResultListener<? super Item.FilterResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        public RequestFuture<Item.FilterResult> get(int applicationId) {
             ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
-            return post(filter, filterData, Item.FilterResult.class, resultListener, errorListener, sessionListener);
+            return post(filter, filterData, Item.FilterResult.class);
         }
     }
 
@@ -160,18 +155,15 @@ public class ItemProvider extends BasicPodioProvider {
      * 
      * @param applicationId
      *        The id of the application to which this item is to be added.
-     * @param data
+     * @param item
      *        The data describing the new item to create.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Item.PushResult>> create(int applicationId, Item item, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Item.PushResult> create(int applicationId, Item item) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         Item.PushData data = item.getPushData();
 
-        return post(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
+        return post(filter, data, Item.PushResult.class);
     }
 
     /**
@@ -189,15 +181,12 @@ public class ItemProvider extends BasicPodioProvider {
      * 
      * @param itemId
      *        The id of the item to fetch.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Item>> get(int itemId, ResultListener<? super Item> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Item> get(int itemId) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
-        return get(filter, Item.class, resultListener, errorListener, sessionListener);
+        return get(filter, Item.class);
     }
 
     /**
@@ -205,18 +194,15 @@ public class ItemProvider extends BasicPodioProvider {
      * 
      * @param itemId
      *        The id of the item to update.
-     * @param data
+     * @param item
      *        The changed data bundle.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Item.PushResult>> update(int itemId, Item item, ResultListener<? super Item.PushResult> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Item.PushResult> update(int itemId, Item item) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
         Item.PushData data = item.getPushData();
 
-        return put(filter, data, Item.PushResult.class, resultListener, errorListener, sessionListener);
+        return put(filter, data, Item.PushResult.class);
     }
 
 }

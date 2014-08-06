@@ -22,12 +22,7 @@
 
 package com.podio.sdk.provider;
 
-import java.util.concurrent.Future;
-
-import com.podio.sdk.ErrorListener;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.filter.ApplicationFilter;
 
@@ -38,17 +33,14 @@ public class ApplicationProvider extends BasicPodioProvider {
      * 
      * @param applicationId
      *        The id of the application to fetch.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Application>> get(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Application> get(long applicationId) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("full");
 
-        return get(filter, Application.class, resultListener, errorListener, sessionListener);
+        return get(filter, Application.class);
     }
 
     /**
@@ -56,17 +48,14 @@ public class ApplicationProvider extends BasicPodioProvider {
      * 
      * @param applicationId
      *        The id of the application to fetch.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Application>> getShort(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Application> getShort(long applicationId) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("short");
 
-        return get(filter, Application.class, resultListener, errorListener, sessionListener);
+        return get(filter, Application.class);
     }
 
     /**
@@ -74,17 +63,14 @@ public class ApplicationProvider extends BasicPodioProvider {
      * 
      * @param applicationId
      *        The id of the application to fetch.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Application>> getMini(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Application> getMini(long applicationId) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("mini");
 
-        return get(filter, Application.class, resultListener, errorListener, sessionListener);
+        return get(filter, Application.class);
     }
 
     /**
@@ -92,17 +78,14 @@ public class ApplicationProvider extends BasicPodioProvider {
      * 
      * @param applicationId
      *        The id of the application to fetch.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Application>> getMicro(long applicationId, ResultListener<? super Application> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Application> getMicro(long applicationId) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withApplicationId(applicationId)
                 .withType("micro");
 
-        return get(filter, Application.class, resultListener, errorListener, sessionListener);
+        return get(filter, Application.class);
     }
 
     /**
@@ -110,17 +93,14 @@ public class ApplicationProvider extends BasicPodioProvider {
      * 
      * @param spaceId
      *        The id of the parent workspace.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Application[]>> getAllActive(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Application[]> getAllActive(long spaceId) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withSpaceId(spaceId)
                 .withInactivesIncluded(false);
 
-        return get(filter, Application[].class, resultListener, errorListener, sessionListener);
+        return get(filter, Application[].class);
     }
 
     /**
@@ -129,17 +109,14 @@ public class ApplicationProvider extends BasicPodioProvider {
      * 
      * @param spaceId
      *        The id of the parent workspace.
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Application[]>> getAll(long spaceId, ResultListener<? super Application[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Application[]> getAll(long spaceId) {
         ApplicationFilter filter = new ApplicationFilter()
                 .withSpaceId(spaceId)
                 .withInactivesIncluded(true);
 
-        return get(filter, Application[].class, resultListener, errorListener, sessionListener);
+        return get(filter, Application[].class);
     }
 
 }

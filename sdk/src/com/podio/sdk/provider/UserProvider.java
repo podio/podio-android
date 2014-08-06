@@ -22,12 +22,7 @@
 
 package com.podio.sdk.provider;
 
-import java.util.concurrent.Future;
-
-import com.podio.sdk.ErrorListener;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.User;
 import com.podio.sdk.filter.UserFilter;
 
@@ -39,22 +34,22 @@ import com.podio.sdk.filter.UserFilter;
 public class UserProvider extends BasicPodioProvider {
 
     /**
-     * Fetches the currently logged in user.
+     * Fetches the currently logged in user data.
      * 
-     * @return
+     * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<User>> get(ResultListener<? super User> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<User> getData() {
         UserFilter filter = new UserFilter();
-        return get(filter, User.class, resultListener, errorListener, sessionListener);
+        return get(filter, User.class);
     }
 
     /**
      * Fetches the currently logged in user profile.
      * 
-     * @return
+     * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<User.Profile>> getProfile(ResultListener<? super User.Profile> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<User.Profile> getProfile() {
         UserFilter filter = new UserFilter().withProfile();
-        return get(filter, User.Profile.class, resultListener, errorListener, sessionListener);
+        return get(filter, User.Profile.class);
     }
 }

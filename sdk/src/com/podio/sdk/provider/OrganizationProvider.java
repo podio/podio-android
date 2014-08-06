@@ -22,13 +22,8 @@
 
 package com.podio.sdk.provider;
 
-import java.util.concurrent.Future;
-
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.Organization;
 import com.podio.sdk.filter.OrganizationFilter;
 
@@ -43,15 +38,12 @@ public class OrganizationProvider extends BasicPodioProvider {
      * Fetches all organizations - including a minimal set of information on the
      * contained workspaces - that are available to the user.
      * 
-     * @param resultListener
-     *        The callback implementation called when the items are fetched.
-     *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Organization[]>> getAll(ResultListener<? super Organization[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Organization[]> getAll() {
         OrganizationFilter filter = new OrganizationFilter();
 
-        return get(filter, Organization[].class, resultListener, errorListener, sessionListener);
+        return get(filter, Organization[].class);
     }
 
 }

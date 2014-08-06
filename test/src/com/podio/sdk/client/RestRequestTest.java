@@ -22,13 +22,10 @@
 
 package com.podio.sdk.client;
 
-import org.mockito.Mockito;
-
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.ResultListener;
 import com.podio.sdk.filter.BasicPodioFilter;
 
 public class RestRequestTest extends AndroidTestCase {
@@ -51,9 +48,6 @@ public class RestRequestTest extends AndroidTestCase {
         assertEquals(target, target.setContent(null));
         assertEquals(target, target.setFilter(null));
         assertEquals(target, target.setOperation(null));
-        assertEquals(target, target.setErrorListener(null));
-        assertEquals(target, target.setResultListener(null));
-        assertEquals(target, target.setSessionListener(null));
     }
 
     /**
@@ -80,17 +74,12 @@ public class RestRequestTest extends AndroidTestCase {
                 .addQueryParameter("id", "1")
                 .addQueryParameter("id", "2");
 
-        @SuppressWarnings("unchecked")
-        ResultListener<Object> resultListener = Mockito.mock(ResultListener.class);
-
         target.setContent(item)
                 .setFilter(filter)
-                .setOperation(operation)
-                .setResultListener(resultListener);
+                .setOperation(operation);
 
         assertEquals(item, target.getContent());
         assertEquals(filter, target.getFilter());
         assertEquals(operation, target.getOperation());
-        assertEquals(resultListener, target.getResultListener());
     }
 }
