@@ -22,13 +22,10 @@
 
 package com.podio.sdk.client;
 
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.Parser;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
 import com.podio.sdk.parser.JsonParser;
 
 public final class RestRequest<T> {
@@ -38,15 +35,10 @@ public final class RestRequest<T> {
     private RestClient.Operation operation;
     private Parser<? extends T, ?> parser;
 
-    private ErrorListener errorListener;
-    private ResultListener<? super T> resultListener;
-    private SessionListener sessionListener;
-
     @Override
     public String toString() {
         return "RestRequest [content=" + content + ", filter=" + filter
                 + ", parser=" + parser + ", operation=" + operation
-                + ", resultListener=" + resultListener
                 + "]";
     }
 
@@ -62,9 +54,6 @@ public final class RestRequest<T> {
         result = prime * result + (filter == null ? 0 : filter.hashCode());
         result = prime * result + (operation == null ? 0 : operation.hashCode());
         result = prime * result + (parser == null ? 0 : parser.hashCode());
-        result = prime * result + (errorListener == null ? 0 : errorListener.hashCode());
-        result = prime * result + (resultListener == null ? 0 : resultListener.hashCode());
-        result = prime * result + (sessionListener == null ? 0 : sessionListener.hashCode());
 
         return result;
     }
@@ -116,30 +105,6 @@ public final class RestRequest<T> {
             return false;
         }
 
-        if (errorListener == null) {
-            if (other.errorListener != null) {
-                return false;
-            }
-        } else if (!errorListener.equals(other.errorListener)) {
-            return false;
-        }
-
-        if (resultListener == null) {
-            if (other.resultListener != null) {
-                return false;
-            }
-        } else if (!resultListener.equals(other.resultListener)) {
-            return false;
-        }
-
-        if (sessionListener == null) {
-            if (other.sessionListener != null) {
-                return false;
-            }
-        } else if (!sessionListener.equals(other.sessionListener)) {
-            return false;
-        }
-
         return true;
     }
 
@@ -171,18 +136,6 @@ public final class RestRequest<T> {
         return operation;
     }
 
-    public ErrorListener getErrorListener() {
-        return errorListener;
-    }
-
-    public ResultListener<? super T> getResultListener() {
-        return resultListener;
-    }
-
-    public SessionListener getSessionListener() {
-        return sessionListener;
-    }
-
     public RestRequest<T> setContent(Object item) {
         this.content = item;
         return this;
@@ -203,18 +156,4 @@ public final class RestRequest<T> {
         return this;
     }
 
-    public RestRequest<T> setErrorListener(ErrorListener errorListener) {
-        this.errorListener = errorListener;
-        return this;
-    }
-
-    public RestRequest<T> setResultListener(ResultListener<? super T> resultListener) {
-        this.resultListener = resultListener;
-        return this;
-    }
-
-    public RestRequest<T> setSessionListener(SessionListener sessionListener) {
-        this.sessionListener = sessionListener;
-        return this;
-    }
 }

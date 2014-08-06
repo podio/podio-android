@@ -23,7 +23,7 @@
 package com.podio.sdk.domain;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.TimeZone;
 
 import android.test.AndroidTestCase;
 
@@ -66,10 +66,10 @@ public class CalendarEventTest extends AndroidTestCase {
         assertEquals(true, event.isBusy());
         assertEquals("2014-07-10 15:57:57", event.getStartDateString());
 
-        Date startDate = event.getStartDate();
         Calendar startCalendar = Calendar.getInstance();
-        startCalendar.setTime(startDate);
-        assertNotNull(startDate);
+        startCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        startCalendar.setTime(event.getStartDate());
+
         assertEquals(2014, startCalendar.get(Calendar.YEAR));
         assertEquals(Calendar.JULY, startCalendar.get(Calendar.MONTH));
         assertEquals(10, startCalendar.get(Calendar.DAY_OF_MONTH));
@@ -79,10 +79,10 @@ public class CalendarEventTest extends AndroidTestCase {
 
         assertEquals("2014-07-10 15:58:12", event.getEndDateString());
 
-        Date endDate = event.getEndDate();
         Calendar endCalendar = Calendar.getInstance();
-        endCalendar.setTime(endDate);
-        assertNotNull(endDate);
+        endCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        endCalendar.setTime(event.getEndDate());
+
         assertEquals(2014, endCalendar.get(Calendar.YEAR));
         assertEquals(Calendar.JULY, endCalendar.get(Calendar.MONTH));
         assertEquals(10, endCalendar.get(Calendar.DAY_OF_MONTH));

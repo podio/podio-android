@@ -22,17 +22,26 @@
 
 package com.podio.sdk.provider;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.ResultListener;
-import com.podio.sdk.client.RestResult;
-import com.podio.sdk.domain.Organization;
-import com.podio.sdk.provider.mock.DummyRestClient;
+import com.podio.sdk.mock.MockRestClient;
 
 public class OrganizationProviderTest extends AndroidTestCase {
+
+    @Mock
+    ResultListener<Object> resultListener;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Verifies that the {@link OrganizationProvider} calls through to the
@@ -51,19 +60,18 @@ public class OrganizationProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testGetAllOrganizations() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         OrganizationProvider provider = new OrganizationProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<Organization[]> mockListener = Mockito.mock(ResultListener.class);
-        provider.getAll(mockListener, null, null);
+        provider
+                .getAll()
+                .setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/org"), uri);
+        assertEquals(Uri.parse("test://podio.test/org"), mockClient.uri);
     }
 
 }

@@ -23,8 +23,8 @@
 package com.podio.sdk.domain;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import android.test.AndroidTestCase;
 
@@ -125,10 +125,10 @@ public class UserProfileTest extends AndroidTestCase {
         assertEquals("LINK", profile.getLink());
         assertEquals("2014-07-10 14:13:39", profile.getLastSeenDateString());
 
-        Date lastSeenDate = profile.getLastSeenDate();
         Calendar lastSeenCalendar = Calendar.getInstance();
-        lastSeenCalendar.setTime(lastSeenDate);
-        assertNotNull(lastSeenDate);
+        lastSeenCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        lastSeenCalendar.setTime(profile.getLastSeenDate());
+
         assertEquals(2014, lastSeenCalendar.get(Calendar.YEAR));
         assertEquals(Calendar.JULY, lastSeenCalendar.get(Calendar.MONTH));
         assertEquals(10, lastSeenCalendar.get(Calendar.DAY_OF_MONTH));

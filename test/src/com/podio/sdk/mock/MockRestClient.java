@@ -20,53 +20,55 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.client;
+package com.podio.sdk.mock;
+
+import android.net.Uri;
+
+import com.podio.sdk.client.QueuedRestClient;
+import com.podio.sdk.client.RestRequest;
+import com.podio.sdk.client.RestResult;
 
 /**
  * @author Christian Holm
  */
 public class MockRestClient extends QueuedRestClient {
-    private RestResult<?> result = RestResult.success();
-    private boolean async = false;
+    public RuntimeException causeOfFailure;
+    public RestResult<?> result;
+    public Object data;
+    public Uri uri;
 
     public MockRestClient() {
         this(-1);
     }
 
     public MockRestClient(int capacity) {
-        this("test://", "podio.test", capacity);
+        this(capacity, RestResult.success());
     }
 
-    public MockRestClient(String scheme, String authority) {
-        this(scheme, authority, -1);
+    public MockRestClient(RestResult<?> result) {
+        this(-1, result);
     }
 
-    public MockRestClient(String scheme, String authority, int capacity) {
-        super(scheme, authority, capacity);
+    public MockRestClient(RuntimeException exception) {
+        this(-1, RestResult.failure(exception));
+        this.causeOfFailure = exception;
     }
 
-    public void setResult(RestResult<?> result) {
+    public MockRestClient(int capacity, RestResult<?> result) {
+        super("test", "podio.test", capacity);
         this.result = result;
     }
 
-    public void setAsync(boolean async) {
-        this.async = async;
-    }
-
+    @Override
     @SuppressWarnings("unchecked")
-    @Override
     protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-        return (RestResult<T>) result;
-    }
-
-    @Override
-    protected <T> void reportResult(RestRequest<T> request, RestResult<T> result) {
-        if (async) {
-            super.reportResult(request, result);
-        } else {
-            // This makes sure the listeners are called on the worker thread
-            super.callListener(request, result);
+        if (causeOfFailure != null) {
+            throw causeOfFailure;
         }
+
+        this.uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
+        this.data = restRequest.getContent();
+        return (RestResult<T>) result;
     }
 
 }

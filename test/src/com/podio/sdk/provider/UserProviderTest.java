@@ -22,17 +22,26 @@
 
 package com.podio.sdk.provider;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.ResultListener;
-import com.podio.sdk.client.RestResult;
-import com.podio.sdk.domain.User;
-import com.podio.sdk.provider.mock.DummyRestClient;
+import com.podio.sdk.mock.MockRestClient;
 
 public class UserProviderTest extends AndroidTestCase {
+
+    @Mock
+    ResultListener<Object> resultListener;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Verifies that the {@link UserProvider} calls through to the (mock) rest
@@ -50,19 +59,18 @@ public class UserProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testGetUserData() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         UserProvider provider = new UserProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<User> mockListener = Mockito.mock(ResultListener.class);
-        provider.get(mockListener, null, null);
+        provider
+                .getData()
+                .setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/user"), uri);
+        assertEquals(Uri.parse("test://podio.test/user"), mockClient.uri);
     }
 
     /**
@@ -81,18 +89,17 @@ public class UserProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testGetUserProfile() {
-        DummyRestClient mockClient = new DummyRestClient(RestResult.success());
+        MockRestClient mockClient = new MockRestClient();
         UserProvider provider = new UserProvider();
         provider.setRestClient(mockClient);
 
-        @SuppressWarnings("unchecked")
-        ResultListener<User.Profile> mockListener = Mockito.mock(ResultListener.class);
-        provider.getProfile(mockListener, null, null);
+        provider
+                .getProfile()
+                .setResultListener(resultListener);
 
-        Mockito.verify(mockListener).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(mockListener);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verifyNoMoreInteractions(resultListener);
 
-        Uri uri = mockClient.mock_getUri();
-        assertEquals(Uri.parse("content://test.uri/user/profile"), uri);
+        assertEquals(Uri.parse("test://podio.test/user/profile"), mockClient.uri);
     }
 }

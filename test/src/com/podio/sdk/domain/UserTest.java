@@ -23,8 +23,8 @@
 package com.podio.sdk.domain;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import android.test.AndroidTestCase;
 
@@ -77,10 +77,11 @@ public class UserTest extends AndroidTestCase {
         assertEquals(User.Status.active, user.getStatus());
 
         assertEquals("2014-07-10 13:45:16", user.getActivatedDateString());
-        Date activatedDate = user.getActivatedDate();
+
         Calendar activatedCalendar = Calendar.getInstance();
-        activatedCalendar.setTime(activatedDate);
-        assertNotNull(activatedDate);
+        activatedCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        activatedCalendar.setTime(user.getActivatedDate());
+
         assertEquals(2014, activatedCalendar.get(Calendar.YEAR));
         assertEquals(Calendar.JULY, activatedCalendar.get(Calendar.MONTH));
         assertEquals(10, activatedCalendar.get(Calendar.DAY_OF_MONTH));
@@ -90,10 +91,10 @@ public class UserTest extends AndroidTestCase {
 
         assertEquals("2014-07-10 13:45:57", user.getCreatedDateString());
 
-        Date createdDate = user.getCreatedDate();
         Calendar createdCalendar = Calendar.getInstance();
-        createdCalendar.setTime(createdDate);
-        assertNotNull(createdDate);
+        createdCalendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+        createdCalendar.setTime(user.getCreatedDate());
+
         assertEquals(2014, createdCalendar.get(Calendar.YEAR));
         assertEquals(Calendar.JULY, createdCalendar.get(Calendar.MONTH));
         assertEquals(10, createdCalendar.get(Calendar.DAY_OF_MONTH));

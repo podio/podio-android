@@ -26,20 +26,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import android.os.Handler;
-
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.domain.Session;
 
 /**
  * Facilitates default means of queuing up requests, flirting with the classical
@@ -64,14 +57,12 @@ public abstract class QueuedRestClient implements RestClient {
 
     private final BlockingQueue<Runnable> queue;
     private final ExecutorService executorService;
-    private final Handler callerHandler;
 
     /**
      * @author László Urszuly
      * @param <T>
      */
-    private final class RequestCallable<T> implements Callable<RestResult<T>> {
-
+    public final class RequestCallable<T> implements Callable<RestResult<T>> {
         private final RestRequest<T> request;
 
         private RequestCallable(RestRequest<T> request) {
@@ -92,8 +83,8 @@ public abstract class QueuedRestClient implements RestClient {
                 }
             } catch (PodioException e) {
                 result = RestResult.failure(e);
-            } finally {
-                reportResult(request, result);
+            } catch (Exception e) {
+                result = RestResult.failure(e);
             }
 
             return result;
@@ -120,7 +111,6 @@ public abstract class QueuedRestClient implements RestClient {
 
         this.queue = new LinkedBlockingQueue<Runnable>(capacity);
         this.executorService = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, queue, threadFactory);
-        this.callerHandler = new Handler();
     }
 
     @Override
@@ -134,13 +124,16 @@ public abstract class QueuedRestClient implements RestClient {
     }
 
     @Override
-    public <T> Future<RestResult<T>> enqueue(RestRequest<T> request) throws NullPointerException {
+    public <T> RequestFuture<T> enqueue(RestRequest<T> request) throws NullPointerException {
         if (request == null) {
             throw new NullPointerException("request cannot be null");
         }
 
         RequestCallable<T> callable = new RequestCallable<T>(request);
-        return executorService.submit(callable);
+        RequestFuture<T> future = new RequestFuture<T>(callable);
+        executorService.submit(future);
+
+        return future;
     }
 
     /**
@@ -155,67 +148,12 @@ public abstract class QueuedRestClient implements RestClient {
     protected abstract <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException;
 
     /**
-     * Reports a result using the callerHandler.
-     * 
-     * @param request
-     *        The request that we are reporting the result of.
-     * @param result
-     *        The result of the request.
-     */
-    protected <T> void reportResult(final RestRequest<T> request, final RestResult<T> result) {
-        callerHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                callListener(request, result);
-            }
-        });
-    }
-
-    /**
      * Returns the number of requests in the executor queue.
      * 
      * @return
      */
     public int size() {
         return queue.size();
-    }
-
-    /**
-     * Reports a result back to any listeners implementation.
-     * 
-     * @param request
-     *        The request that we are reporting the result of.
-     * @param result
-     *        The result of the request.
-     */
-    protected <T> void callListener(final RestRequest<T> request, final RestResult<T> result) {
-        if (result != null) {
-
-            if (result.hasSession()) {
-                SessionListener sessionListener = request.getSessionListener();
-
-                if (sessionListener != null) {
-                    Session session = result.getSession();
-                    sessionListener.onSessionChanged(session);
-                }
-            }
-
-            if (result.hasException()) {
-                ErrorListener errorListener = request.getErrorListener();
-
-                if (errorListener != null) {
-                    Exception exception = result.getException();
-                    errorListener.onExceptionOccurred(exception);
-                }
-            } else {
-                ResultListener<? super T> resultListener = request.getResultListener();
-
-                if (resultListener != null) {
-                    T item = result.getItem();
-                    resultListener.onRequestPerformed(item);
-                }
-            }
-        }
     }
 
 }

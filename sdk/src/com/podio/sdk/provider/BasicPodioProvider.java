@@ -22,15 +22,10 @@
 
 package com.podio.sdk.provider;
 
-import java.util.concurrent.Future;
-
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.client.RestRequest;
-import com.podio.sdk.client.RestResult;
 import com.podio.sdk.parser.JsonParser;
 
 public class BasicPodioProvider {
@@ -41,37 +36,25 @@ public class BasicPodioProvider {
         this.client = client;
     }
 
-    /**
-     * Constructor.
-     * 
-     * @param client
-     *        The rest client that will access the data.
-     */
-    public BasicPodioProvider() {
+    protected <T> RequestFuture<T> get(PodioFilter filter, Class<T> classOfItem) {
+        return request(RestClient.Operation.GET, filter, null, JsonParser.fromClass(classOfItem));
     }
 
-    protected <T> Future<RestResult<T>> get(PodioFilter filter, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestClient.Operation.GET, filter, null, JsonParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
+    protected <T> RequestFuture<T> post(PodioFilter filter, Object content, Class<T> classOfItem) {
+        return request(RestClient.Operation.POST, filter, content, JsonParser.fromClass(classOfItem));
     }
 
-    protected <T> Future<RestResult<T>> post(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestClient.Operation.POST, filter, content, JsonParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
+    protected <T> RequestFuture<T> put(PodioFilter filter, Object content, Class<T> classOfItem) {
+        return request(RestClient.Operation.PUT, filter, content, JsonParser.fromClass(classOfItem));
     }
 
-    protected <T> Future<RestResult<T>> put(PodioFilter filter, Object content, Class<T> classOfItem, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        return request(RestClient.Operation.PUT, filter, content, JsonParser.fromClass(classOfItem), resultListener, errorListener, sessionListener);
-    }
-
-    protected <T> Future<RestResult<T>> request(RestClient.Operation operation, PodioFilter filter, Object content, JsonParser<? extends T> parser, ResultListener<? super T> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    protected <T> RequestFuture<T> request(RestClient.Operation operation, PodioFilter filter, Object content, JsonParser<? extends T> parser) {
 
         RestRequest<T> restRequest = new RestRequest<T>()
                 .setContent(content)
                 .setFilter(filter)
                 .setParser(parser)
-                .setOperation(operation)
-                .setResultListener(resultListener)
-                .setErrorListener(errorListener)
-                .setSessionListener(sessionListener);
+                .setOperation(operation);
 
         return client.enqueue(restRequest);
     }

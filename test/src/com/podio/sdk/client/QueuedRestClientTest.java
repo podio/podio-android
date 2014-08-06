@@ -22,15 +22,15 @@
 
 package com.podio.sdk.client;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.ErrorListener;
@@ -41,7 +41,7 @@ import com.podio.sdk.SessionListener;
 import com.podio.sdk.ThreadCaptureResultListener;
 import com.podio.sdk.domain.Session;
 import com.podio.sdk.filter.BasicPodioFilter;
-import com.podio.sdk.provider.mock.DummyRestClient;
+import com.podio.sdk.mock.MockRestClient;
 
 public class QueuedRestClientTest extends InstrumentationTestCase {
 
@@ -54,13 +54,11 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
     @Mock
     ErrorListener errorListener;
 
-    @Mock
-    Session mockSession;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
+        // Required by Mockito.spy()
         System.setProperty("dexmaker.dexcache", getInstrumentation()
                 .getTargetContext().getCacheDir().getPath());
 
@@ -81,11 +79,14 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetSchemeReturnsCorrectScheme() {
-        String expectedScheme = "test://";
-        MockRestClient testTarget = new MockRestClient(expectedScheme, null);
-        String actualScheme = testTarget.getScheme();
+        assertEquals("test://", (new QueuedRestClient("test://", null, 1) {
 
-        assertEquals(expectedScheme, actualScheme);
+            @Override
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
+                return RestResult.success();
+            }
+
+        }).getScheme());
     }
 
     /**
@@ -102,11 +103,84 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      */
     public void testGetAuthorityReturnsCorrectAuthority() {
-        String expectedAuthority = "a.b.c";
-        MockRestClient testTarget = new MockRestClient(null, expectedAuthority);
-        String actualAuthority = testTarget.getAuthority();
+        assertEquals("a.b.c", (new QueuedRestClient(null, "a.b.c", 1) {
 
-        assertEquals(expectedAuthority, actualAuthority);
+            @Override
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
+                return RestResult.success();
+            }
+
+        }).getAuthority());
+    }
+
+    /**
+     * Verifies that any internally thrown {@link PodioException}'s are caught
+     * and reported as failures.
+     * 
+     * <pre>
+     * 
+     *  1. Set up a mocked QueuedRestClient which will throw a PodioException
+     *      on the worker thread.
+     *  
+     *  2. Enqueue an arbitrary request in the client and register an
+     *      {@link ErrorListener} on the returned {@link RequestFuture}.
+     * 
+     *  3. Verify that the ErrorListener has been called with the expected
+     *      PodioException.
+     * 
+     * </pre>
+     * 
+     * @throws TimeoutException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     */
+    public void testPodioExceptionIsReportedAsFailure() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        PodioException podioException = new PodioException("test-exception");
+        new MockRestClient(podioException)
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .setErrorListener(errorListener)
+                .get(100, TimeUnit.MILLISECONDS);
+
+        Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(podioException);
+        Mockito.verifyNoMoreInteractions(errorListener);
+    }
+
+    /**
+     * Verifies that any internally thrown {@link Exception}'s are caught and
+     * reported as failures.
+     * 
+     * <pre>
+     * 
+     *  1. Set up a mocked QueuedRestClient which will throw a random
+     *      Exception on the worker thread.
+     *  
+     *  2. Enqueue an arbitrary request in the client and register an
+     *      {@link ErrorListener} on the returned {@link RequestFuture}.
+     * 
+     *  3. Verify that the ErrorListener has been called with the expected
+     *      Exception.
+     * 
+     * </pre>
+     * 
+     * @throws TimeoutException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     */
+    public void testRandomExceptionIsReportedAsFailure() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        RuntimeException runtimeException = new RuntimeException("test-exception");
+        new MockRestClient(runtimeException)
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .setErrorListener(errorListener)
+                .get(100, TimeUnit.MILLISECONDS);
+
+        Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(runtimeException);
+        Mockito.verifyNoMoreInteractions(errorListener);
     }
 
     /**
@@ -122,15 +196,18 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  3. Verify that the client still can take at least one request.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testRequestQueueCapacityValid() {
-        MockRestClient testTarget = new MockRestClient();
-        RestRequest<Object> request = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter())
-                .setOperation(RestClient.Operation.GET);
-
-        Future<RestResult<Object>> future = testTarget.enqueue(request);
-        assertNotNull(future);
+    public void testRequestQueueCapacityValid() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        new MockRestClient(-1)
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .get(100, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -146,28 +223,29 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  3. Verify that both requests are processed.
      * 
      * </pre>
+     * 
+     * @throws TimeoutException
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws Exception
+     * @throws NullPointerException
      */
-    public void testRequestQueueDrainedEventually() {
-        MockRestClient testTarget = new MockRestClient();
+    public void testRequestQueueDrainedEventually() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        final QueuedRestClient testTarget = new MockRestClient(2);
 
-        RestRequest<Object> firstRequest = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter("first"))
-                .setOperation(RestClient.Operation.GET)
+        testTarget
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter("first"))
+                        .setOperation(RestClient.Operation.GET))
                 .setResultListener(resultListener);
 
-        RestRequest<Object> secondRequest = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter("second"))
-                .setOperation(RestClient.Operation.GET)
+        testTarget
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter("second"))
+                        .setOperation(RestClient.Operation.GET))
                 .setResultListener(resultListener);
 
-        Future<RestResult<Object>> future = testTarget.enqueue(firstRequest);
-        assertNotNull(future);
-
-        future = null;
-        future = testTarget.enqueue(secondRequest);
-        assertNotNull(future);
-
-        Mockito.verify(resultListener, Mockito.timeout(100).times(2)).onRequestPerformed(null);
+        Mockito.verify(resultListener, Mockito.timeout(300).times(2)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
     }
 
@@ -187,28 +265,31 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  5. Verify that the two process names are not the same.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testRequestQueueProcessedOnWorkerThread() {
-        final String[] handlerThreadName = new String[1];
+    public void testRequestQueueProcessedOnWorkerThread() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        final String[] handlerThreadNames = { Thread.currentThread().getName(), null };
 
-        MockRestClient testTarget = new MockRestClient() {
+        (new QueuedRestClient(null, null, 1) {
             @Override
             protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
-                handlerThreadName[0] = Thread.currentThread().getName();
+                handlerThreadNames[1] = Thread.currentThread().getName();
 
-                return super.handleRequest(restRequest);
+                return RestResult.success();
             }
-        };
+        })
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .get(100, TimeUnit.MILLISECONDS);
 
-        RestRequest<Object> request = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter()).setResultListener(resultListener)
-                .setOperation(RestClient.Operation.GET);
-        testTarget.enqueue(request);
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-
-        assertFalse(Thread.currentThread().getName()
-                .equals(handlerThreadName[0]));
+        assertNotNull(handlerThreadNames[0]);
+        assertNotNull(handlerThreadNames[1]);
+        assertFalse(handlerThreadNames[0].equals(handlerThreadNames[1]));
     }
 
     /**
@@ -218,46 +299,66 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * <pre>
      * 
      *  1. Set up a local QueuedRestClient implementation which has a capacity
-     *      of two requests.
+     *      of 1 request.
      *  
      *  2. Push a request to the client.
      *  
-     *  3. Push a second request to the client.
+     *  3. Push a second request to the client. This should be accepted as the
+     *      first request is being processed, hence, doesn't occupy the only
+     *      place in the queue.
      *  
      *  4. Push a third request to the client.
      *  
-     *  5. Verify that the first request was accepted.
+     *  5. Verify that the first and second requests were accepted.
      *  
-     *  6. Verify that the second or third request was rejected.
+     *  6. Verify that the third request was rejected.
      * 
      * </pre>
+     * 
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws NullPointerException
      */
-    public void testRequestQueuePushFailureOnCapacityReached()
-            throws InterruptedException {
-        MockRestClient testTarget = new MockRestClient(1);
+    public void testRequestQueuePushFailureOnCapacityReached() throws NullPointerException, InterruptedException, ExecutionException {
+        QueuedRestClient testTarget = new QueuedRestClient(null, null, 1) {
 
-        RestRequest<Object> request = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter())
-                .setResultListener(resultListener)
-                .setOperation(RestClient.Operation.GET);
+            @Override
+            protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                }
 
-        assertNotNull(testTarget.enqueue(request));
+                return RestResult.success();
+            }
+
+        };
+
+        testTarget
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .setResultListener(resultListener);
 
         // One is being processed, so room for one more in the queue
-        assertNotNull(testTarget.enqueue(request));
+        testTarget
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .setResultListener(resultListener);
 
         // Now we are out of room
         try {
-            testTarget.enqueue(request);
+            testTarget
+                    .enqueue(new RestRequest<Object>()
+                            .setFilter(new BasicPodioFilter())
+                            .setOperation(RestClient.Operation.GET))
+                    .setResultListener(resultListener);
+
             fail("Didn't reject request");
         } catch (RejectedExecutionException e) {
             // The request should be rejected.
         }
-
-        Mockito.verify(resultListener, Mockito.timeout(100).times(2)).onRequestPerformed(null);
-
-        // Now it can be processed
-        assertNotNull(testTarget.enqueue(request));
     }
 
     /**
@@ -273,12 +374,16 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  3. Verify that the request is not accepted.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws TimeoutException
      */
-    public void testRequestQueuePushFailureOnNullRequest() {
-        MockRestClient testTarget = new MockRestClient();
-
+    public void testRequestQueuePushFailureOnNullRequest() throws InterruptedException, ExecutionException, TimeoutException {
         try {
-            testTarget.enqueue(null);
+            new MockRestClient(1, RestResult.failure(new NullPointerException()))
+                    .enqueue(null)
+                    .get(100, TimeUnit.MILLISECONDS);
             fail("Should have thrown exception");
         } catch (NullPointerException e) {
         }
@@ -299,18 +404,24 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  4. Verify the ticket of the processing request.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testRequestQueuePushPopSuccess() {
+    public void testRequestQueuePushPopSuccess() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
         QueuedRestClient testTarget = Mockito.spy(new MockRestClient());
 
         RestRequest<Object> request = new RestRequest<Object>()
                 .setFilter(new BasicPodioFilter("expected"))
                 .setOperation(RestClient.Operation.GET);
 
-        testTarget.enqueue(request);
+        testTarget
+                .enqueue(request)
+                .get(100, TimeUnit.MILLISECONDS);
 
-        Mockito.verify(testTarget, Mockito.timeout(100))
-                .handleRequest(request);
+        Mockito.verify(testTarget).handleRequest(request);
     }
 
     /**
@@ -333,34 +444,35 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * </pre>
      * 
      * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testRequestQueueResumedOnNewRequest() throws InterruptedException {
-        QueuedRestClient testTarget = new MockRestClient();
+    public void testRequestQueueResumedOnNewRequest() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        QueuedRestClient testTarget = new MockRestClient(2);
 
-        RestRequest<Object> firstRequest = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter("first"))
+        testTarget
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter("first"))
+                        .setOperation(RestClient.Operation.GET))
                 .setResultListener(resultListener)
-                .setOperation(RestClient.Operation.GET);
+                .get(100, TimeUnit.MILLISECONDS);
 
-        assertNotNull(testTarget.enqueue(firstRequest));
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         assertEquals(0, testTarget.size());
 
-        RestRequest<Object> secondRequest = new RestRequest<Object>()
-                .setFilter(new BasicPodioFilter("second"))
+        testTarget
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter("second"))
+                        .setOperation(RestClient.Operation.GET))
                 .setResultListener(resultListener)
-                .setOperation(RestClient.Operation.GET);
+                .get(100, TimeUnit.MILLISECONDS);
 
-        assertNotNull(testTarget.enqueue(secondRequest));
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Thread.sleep(100);
+        Mockito.verify(resultListener, Mockito.timeout(200).times(2)).onRequestPerformed(null);
         assertEquals(0, testTarget.size());
     }
 
     /**
-     * Verifies that the result of a request is reported on the calling thread.
+     * Verifies that the result of a request is reported on the main thread.
      * 
      * <pre>
      * 
@@ -375,31 +487,24 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  5. Verify that the two process names are the same.
      * 
      * </pre>
+     * 
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testRequestResultReportedOnCallingThread() {
-        ThreadCaptureResultListener threadListener = Mockito
-                .spy(new ThreadCaptureResultListener());
+    public void testRequestResultReportedOnMainThread() throws InterruptedException, NullPointerException, ExecutionException, TimeoutException {
+        final ThreadCaptureResultListener threadListener = Mockito.spy(new ThreadCaptureResultListener());
 
-        final RestRequest<Object> request = new RestRequest<Object>()
+        new MockRestClient()
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
                 .setResultListener(threadListener)
-                .setFilter(new BasicPodioFilter())
-                .setOperation(RestClient.Operation.GET);
+                .get(100, TimeUnit.MILLISECONDS);
 
-        HandlerThread handlerThread = new HandlerThread("UIThread");
-        handlerThread.start();
-
-        Handler handler = new Handler(handlerThread.getLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                MockRestClient testTarget = new MockRestClient();
-                testTarget.setAsync(true);
-                testTarget.enqueue(request);
-            }
-        });
-
-        Mockito.verify(threadListener, Mockito.timeout(100)).onRequestPerformed(null);
-        assertEquals(threadListener.getThreadName(), "UIThread");
+        Mockito.verify(threadListener, Mockito.timeout(200)).onRequestPerformed(null);
+        assertEquals("main", threadListener.getThreadName());
     }
 
     /**
@@ -417,21 +522,22 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  4. Verify that the correct callback method is called.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
      */
-    public void testResultListenerReportsFailureProperly() {
-        final PodioException exception = new PodioException("error message");
+    public void testResultListenerReportsFailureProperly() throws NullPointerException, InterruptedException, ExecutionException {
+        PodioException exception = new PodioException("ohno");
 
-        MockRestClient testTarget = new MockRestClient();
-        testTarget.setResult(RestResult.failure(exception));
-
-        RestRequest<Object> request = new RestRequest<Object>()
-                .setErrorListener(errorListener)
-                .setFilter(new BasicPodioFilter())
-                .setOperation(RestClient.Operation.GET);
-
-        testTarget.enqueue(request);
+        new MockRestClient(1, RestResult.failure(exception))
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
+                .setErrorListener(errorListener);
 
         Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(exception);
+        Mockito.verifyNoMoreInteractions(errorListener);
     }
 
     /**
@@ -450,21 +556,27 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  4. Verify that the correct callback methods are called.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testResultListenerReportsSessionChangeProperly() {
-        MockRestClient testTarget = new MockRestClient();
-        testTarget.setResult(RestResult.success(null, mockSession));
+    public void testResultListenerReportsSessionChangeProperly() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        Session session = Mockito.mock(Session.class);
 
-        RestRequest<Object> request = new RestRequest<Object>()
+        new MockRestClient(1, RestResult.success(null, session))
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
                 .setSessionListener(sessionListener)
                 .setResultListener(resultListener)
-                .setFilter(new BasicPodioFilter())
-                .setOperation(RestClient.Operation.GET);
+                .get(100, TimeUnit.MILLISECONDS);
 
-        testTarget.enqueue(request);
-
-        Mockito.verify(sessionListener, Mockito.timeout(100)).onSessionChanged(mockSession);
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
+        Mockito.verify(sessionListener, Mockito.timeout(100)).onSessionChanged(session);
+        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(Mockito.anyObject());
+        Mockito.verifyNoMoreInteractions(sessionListener);
+        Mockito.verifyNoMoreInteractions(resultListener);
     }
 
     /**
@@ -482,16 +594,19 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      *  4. Verify that the correct callback method is called.
      * 
      * </pre>
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NullPointerException
+     * @throws TimeoutException
      */
-    public void testResultListenerReportsSuccessProperly() {
-        RestClient testTarget = new DummyRestClient(RestResult.success());
-
-        RestRequest<Object> request = new RestRequest<Object>()
+    public void testResultListenerReportsSuccessProperly() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+        new MockRestClient()
+                .enqueue(new RestRequest<Object>()
+                        .setFilter(new BasicPodioFilter())
+                        .setOperation(RestClient.Operation.GET))
                 .setResultListener(resultListener)
-                .setFilter(new BasicPodioFilter())
-                .setOperation(RestClient.Operation.GET);
-
-        testTarget.enqueue(request);
+                .get(100, TimeUnit.MILLISECONDS);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
