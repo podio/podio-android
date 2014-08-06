@@ -50,8 +50,8 @@ public class RatingProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Rating>> get(String refType, int refId, ResultListener<? super Rating> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        RatingFilter filter = new RatingFilter().withTypeAndId(refType, refId);
+    public Future<RestResult<Rating>> get(String ref_type, int ref_id, ResultListener<? super Rating> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+        RatingFilter filter = new RatingFilter().withTypeAndId(ref_type, ref_id);
 
         return get(filter, Rating.class, resultListener, errorListener, sessionListener);
     }

@@ -29,9 +29,9 @@ public class RatingFilter extends BasicPodioFilter {
         super(PATH);
     }
 
-    public RatingFilter withTypeAndId(String refType, int refId) {
-        addPathSegment(refType);
-        addPathSegment(refId);
+    public RatingFilter withTypeAndId(String ref_type, int ref_id) {
+        addPathSegment(ref_type);
+        addPathSegment(Integer.toString(ref_id, 10));
         return this;
     }
 }

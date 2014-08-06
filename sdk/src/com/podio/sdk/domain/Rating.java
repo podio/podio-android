@@ -28,21 +28,21 @@ import com.podio.sdk.internal.Utils;
  * @author Daniel Franch
  */
 public class Rating {
-    private final Integer refId;
-    private final String refType;
+    private final Integer ref_id;
+    private final String ref_type;
     private final Integer like_count = null;
 
-    public Rating(int ref_id, String ref_type) {
-        this.refId = ref_id;
-        this.refType = ref_type;
+    public Rating(String ref_type, int ref_id) {
+        this.ref_type = ref_type;
+        this.ref_id = ref_id;
     }
 
     public String getRefType() {
-        return refType;
+        return ref_type;
     }
 
     public int getRefId() {
-        return refId;
+        return ref_id;
     }
 
     public int getLikeCount() { return like_count; }
