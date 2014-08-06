@@ -53,7 +53,7 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
         reportResult(resultListener);
     }
 
-    public RequestFuture<T> setResultListener(ResultListener<? super T> resultListener) {
+    public RequestFuture<T> withResultListener(ResultListener<? super T> resultListener) {
         this.resultListener = resultListener;
 
         if (isDone()) {
@@ -63,7 +63,7 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
         return this;
     }
 
-    public RequestFuture<T> setSessionListener(SessionListener sessionListener) {
+    public RequestFuture<T> withSessionListener(SessionListener sessionListener) {
         this.sessionListener = sessionListener;
 
         if (isDone()) {

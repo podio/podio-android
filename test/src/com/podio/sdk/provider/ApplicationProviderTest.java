@@ -65,7 +65,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         provider
                 .get(2L)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -95,7 +95,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         provider
                 .getMicro(2L)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -125,7 +125,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         provider
                 .getMini(2L)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -155,7 +155,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         provider
                 .getAllActive(1L)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -185,7 +185,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
 
         provider
                 .getAll(2L)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -213,7 +213,7 @@ public class ApplicationProviderTest extends AndroidTestCase {
         ApplicationProvider provider = new ApplicationProvider();
         provider.setRestClient(mockClient);
 
-        provider.getShort(2L).setResultListener(resultListener);
+        provider.getShort(2L).withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);

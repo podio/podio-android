@@ -75,7 +75,7 @@ public class CalendarProviderTest extends AndroidTestCase {
 
         provider
                 .getGlobal(fromDate, toDate, 1)
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);

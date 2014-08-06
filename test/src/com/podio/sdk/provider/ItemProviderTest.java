@@ -69,7 +69,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         provider
                 .create(2, new Item())
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -133,7 +133,7 @@ public class ItemProviderTest extends AndroidTestCase {
                 .onSortOrder("test-column", true)
                 .onSpan(100, 1000)
                 .get(4)
-                .setResultListener(resultListener)
+                .withResultListener(resultListener)
                 .get();
 
         Item.FilterData f = (Item.FilterData) mockClient.data;
@@ -171,7 +171,7 @@ public class ItemProviderTest extends AndroidTestCase {
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 
-        provider.get(3).setResultListener(resultListener);
+        provider.get(3).withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
@@ -224,7 +224,7 @@ public class ItemProviderTest extends AndroidTestCase {
 
         provider
                 .update(5, new Item())
-                .setResultListener(resultListener);
+                .withResultListener(resultListener);
 
         Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
         Mockito.verifyNoMoreInteractions(resultListener);
