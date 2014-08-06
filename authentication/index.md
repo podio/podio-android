@@ -26,20 +26,13 @@ This is how you authenticate as a user:
 String username = userTextView.getText().toString();
 String password = passTextView.getText().toString();
 
-Podio.client.authenticateWithUserCredentials(username, password,
-        new ResultListener<Session>() {
+Podio.client
+        .authenticateWithUserCredentials(username, password)
+        .withResultListener(new ResultListener<Session>() {
 
             @Override
             public void onRequestPerformed(Session session) {
                 // Yeay!
-            }
-
-        },
-        new ErrorListener() {
-
-            @Override
-            public void onExceptionOccurred(Exception exception) {
-                // Oh no!
             }
 
         });
@@ -56,20 +49,13 @@ This is how you authenticate as an app:
 public static final String MY_APP_ID = "my-app-id";
 public static final String MY_APP_TOKEN = "my-app-token";
 
-Podio.client.authenticateWithAppCredentials(MY_APP_ID, MY_APP_TOKEN,
-        new ResultListener<Session>() {
+Podio.client
+        .authenticateWithAppCredentials(MY_APP_ID, MY_APP_TOKEN)
+        .withResultListener(new ResultListener<Session>() {
 
             @Override
             public void onRequestPerformed(Session session) {
                 // Yeay!
-            }
-
-        },
-        new ErrorListener() {
-
-            @Override
-            public void onExceptionOccurred(Exception exception) {
-                // Oh no!
             }
 
         });
