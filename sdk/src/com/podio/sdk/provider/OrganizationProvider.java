@@ -49,7 +49,7 @@ public class OrganizationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public Future<RestResult<Organization[]>> getAll(ResultListener<? super Organization[]> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
-        PodioFilter filter = new OrganizationFilter();
+        OrganizationFilter filter = new OrganizationFilter();
 
         return get(filter, Organization[].class, resultListener, errorListener, sessionListener);
     }
