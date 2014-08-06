@@ -93,7 +93,9 @@ public final class RelationshipField extends Field {
         } else if (value instanceof RelationshipValue.Data) {
             return new RelationshipValue((RelationshipValue.Data) value);
         } else if (value instanceof Integer) {
-            return new RelationshipValue(((Integer) value).intValue());
+            return new RelationshipValue(((Integer) value).longValue());
+        } else if (value instanceof Long) {
+            return new RelationshipValue(((Long) value).longValue());
         } else {
             throw new FieldTypeMismatchException();
         }

@@ -49,8 +49,16 @@ public class Utils {
         return object != null ? object.booleanValue() : fallback;
     }
 
+    public static double getNative(Double object, double fallback) {
+        return object != null ? object.doubleValue() : fallback;
+    }
+
     public static int getNative(Integer object, int fallback) {
         return object != null ? object.intValue() : fallback;
+    }
+
+    public static long getNative(Long object, long fallback) {
+        return object != null ? object.longValue() : fallback;
     }
 
     public static boolean isAnyEmpty(String... strings) {

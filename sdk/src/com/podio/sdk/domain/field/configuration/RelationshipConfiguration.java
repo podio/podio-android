@@ -35,14 +35,14 @@ public final class RelationshipConfiguration extends AbstractConfiguration {
 
     public final class RelationshipSettings {
         private List<Application> apps = null;
-        private List<Integer> referencable_types = null;
+        private List<Long> referencable_types = null;
 
         public List<Application> getApps() {
             return new ArrayList<Application>(apps);
         }
 
-        public List<Integer> getReferencableTypes() {
-            return new ArrayList<Integer>(referencable_types);
+        public List<Long> getReferencableTypes() {
+            return new ArrayList<Long>(referencable_types);
         }
 
     }

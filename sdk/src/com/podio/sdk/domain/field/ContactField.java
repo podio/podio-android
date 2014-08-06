@@ -101,7 +101,9 @@ public final class ContactField extends Field {
         } else if (value instanceof ContactValue.Data) {
             return new ContactValue((ContactValue.Data) value);
         } else if (value instanceof Integer) {
-            return new ContactValue(((Integer) value).intValue());
+            return new ContactValue(((Integer) value).longValue());
+        } else if (value instanceof Long) {
+            return new ContactValue(((Long) value).longValue());
         } else {
             throw new FieldTypeMismatchException();
         }

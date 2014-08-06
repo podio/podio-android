@@ -105,7 +105,9 @@ public final class CategoryField extends Field {
         } else if (value instanceof CategoryValue.Data) {
             return new CategoryValue((CategoryValue.Data) value);
         } else if (value instanceof Integer) {
-            return new CategoryValue(((Integer) value).intValue());
+            return new CategoryValue(((Integer) value).longValue());
+        } else if (value instanceof Long) {
+            return new CategoryValue(((Long) value).longValue());
         } else {
             throw new FieldTypeMismatchException();
         }

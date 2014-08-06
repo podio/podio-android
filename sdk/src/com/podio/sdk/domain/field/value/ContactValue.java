@@ -23,6 +23,7 @@
 package com.podio.sdk.domain.field.value;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,10 +39,10 @@ public final class ContactValue extends AbstractValue {
 
     public static final class Data {
         private final File image = null;
-        private final Integer org_id = null;
-        private final Integer profile_id = null;
-        private final Integer space_id = null;
-        private final Integer user_id;
+        private final Long org_id = null;
+        private final Long profile_id = null;
+        private final Long space_id = null;
+        private final Long user_id;
         private final List<String> mail = null;
         private final List<Rights> rights = null;
         private final String external_id = null;
@@ -50,7 +51,7 @@ public final class ContactValue extends AbstractValue {
         private final String name = null;
         private final Type type = null;
 
-        public Data(int contactId) {
+        public Data(long contactId) {
             this.user_id = contactId;
         }
 
@@ -58,20 +59,20 @@ public final class ContactValue extends AbstractValue {
             return image;
         }
 
-        public int getOrganizationId() {
-            return org_id != null ? org_id.intValue() : 0;
+        public long getOrganizationId() {
+            return Utils.getNative(org_id, -1L);
         }
 
-        public int getProfileId() {
-            return profile_id != null ? profile_id.intValue() : 0;
+        public long getProfileId() {
+            return Utils.getNative(profile_id, -1L);
         }
 
-        public int getSpaceId() {
-            return space_id != null ? space_id.intValue() : 0;
+        public long getSpaceId() {
+            return Utils.getNative(space_id, -1L);
         }
 
-        public int getUserId() {
-            return user_id != null ? user_id.intValue() : 0;
+        public long getUserId() {
+            return Utils.getNative(user_id, -1L);
         }
 
         public List<String> getEmailAddresses() {
@@ -86,7 +87,7 @@ public final class ContactValue extends AbstractValue {
             return external_id;
         }
 
-        public java.util.Date getLastSeenDate() {
+        public Date getLastSeenDate() {
             return Utils.parseDateTime(last_seen_on);
         }
 
@@ -109,7 +110,7 @@ public final class ContactValue extends AbstractValue {
         this.value = contact;
     }
 
-    public ContactValue(int contactId) {
+    public ContactValue(long contactId) {
         this.value = new Data(contactId);
     }
 
@@ -128,11 +129,11 @@ public final class ContactValue extends AbstractValue {
 
     @Override
     public Object getPushData() {
-        HashMap<String, Integer> data = null;
-        int userId = getUserId();
+        HashMap<String, Long> data = null;
+        long userId = getUserId();
 
-        if (userId > 0) {
-            data = new HashMap<String, Integer>();
+        if (userId > 0L) {
+            data = new HashMap<String, Long>();
             data.put("value", userId);
         }
 
@@ -148,20 +149,20 @@ public final class ContactValue extends AbstractValue {
         return value != null ? value.getImageData() : null;
     }
 
-    public int getOrganizationId() {
-        return value != null ? value.getOrganizationId() : 0;
+    public long getOrganizationId() {
+        return value != null ? value.getOrganizationId() : -1L;
     }
 
-    public int getProfileId() {
-        return value != null ? value.getProfileId() : 0;
+    public long getProfileId() {
+        return value != null ? value.getProfileId() : -1L;
     }
 
-    public int getSpaceId() {
-        return value != null ? value.getSpaceId() : 0;
+    public long getSpaceId() {
+        return value != null ? value.getSpaceId() : -1L;
     }
 
-    public int getUserId() {
-        return value != null ? value.getUserId() : 0;
+    public long getUserId() {
+        return value != null ? value.getUserId() : -1L;
     }
 
     public List<String> getEmailAddresses() {
@@ -176,7 +177,7 @@ public final class ContactValue extends AbstractValue {
         return value != null ? value.getExternalId() : null;
     }
 
-    public java.util.Date getLastSeenDate() {
+    public Date getLastSeenDate() {
         return value != null ? value.getLastSeenDate() : null;
     }
 

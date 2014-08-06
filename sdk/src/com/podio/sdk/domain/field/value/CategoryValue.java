@@ -24,6 +24,8 @@ package com.podio.sdk.domain.field.value;
 
 import java.util.HashMap;
 
+import com.podio.sdk.internal.Utils;
+
 /**
  * @author László Urszuly
  */
@@ -38,9 +40,9 @@ public class CategoryValue extends AbstractValue {
         private final String status = null;
         private final String text = null;
         private final String color = null;
-        private final Integer id;
+        private final Long id;
 
-        private Data(int id) {
+        private Data(long id) {
             this.id = id;
         }
 
@@ -76,8 +78,8 @@ public class CategoryValue extends AbstractValue {
          * 
          * @return The numeric id.
          */
-        public int getId() {
-            return id != null ? id.intValue() : 0;
+        public long getId() {
+            return Utils.getNative(id, -1L);
         }
     }
 
@@ -87,7 +89,7 @@ public class CategoryValue extends AbstractValue {
         this.value = option;
     }
 
-    public CategoryValue(int optionId) {
+    public CategoryValue(long optionId) {
         this.value = new Data(optionId);
     }
 
@@ -106,16 +108,16 @@ public class CategoryValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return value != null ? value.getId() : 0;
+        return value != null ? value.hashCode() : 0;
     }
 
     @Override
     public Object getPushData() {
-        HashMap<String, Integer> data = null;
-        int id = getId();
+        HashMap<String, Long> data = null;
+        long id = getId();
 
-        if (id > 0) {
-            data = new HashMap<String, Integer>();
+        if (id > 0L) {
+            data = new HashMap<String, Long>();
             data.put("value", id);
         }
 
@@ -136,8 +138,8 @@ public class CategoryValue extends AbstractValue {
     /**
      * {@inheritDoc Data#getId()}
      */
-    public int getId() {
-        return value != null ? value.getId() : 0;
+    public long getId() {
+        return value != null ? value.getId() : -1L;
     }
 
     /**

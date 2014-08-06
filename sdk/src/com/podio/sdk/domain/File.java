@@ -28,7 +28,7 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class File {
-    private final Integer file_id;
+    private final Long file_id;
     private final Integer size = null;
     private final String description = null;
     private final String hosted_by = null;
@@ -40,7 +40,7 @@ public class File {
     private final String perma_link = null;
     private final String thumbnail_link = null;
 
-    public File(int fileId) {
+    public File(long fileId) {
         this.file_id = fileId;
     }
 
@@ -48,8 +48,8 @@ public class File {
         return description;
     }
 
-    public int getId() {
-        return Utils.getNative(file_id, -1);
+    public long getId() {
+        return Utils.getNative(file_id, -1L);
     }
 
     public String getHostName() {

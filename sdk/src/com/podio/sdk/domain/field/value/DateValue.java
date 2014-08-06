@@ -22,6 +22,7 @@
 
 package com.podio.sdk.domain.field.value;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import com.podio.sdk.internal.Utils;
@@ -43,11 +44,11 @@ public final class DateValue extends AbstractValue {
     private final String start_time_utc = null;
     private final String start_utc = null;
 
-    public DateValue(java.util.Date start) {
+    public DateValue(Date start) {
         this(start, null);
     }
 
-    public DateValue(java.util.Date start, java.util.Date end) {
+    public DateValue(Date start, Date end) {
         this.start = start != null ? Utils.formatDateTime(start) : null;
         this.end = end != null ? Utils.formatDateTime(end) : null;
     }
@@ -95,51 +96,51 @@ public final class DateValue extends AbstractValue {
         return (s1 + s2).hashCode();
     }
 
-    public java.util.Date getEndDateTime() {
+    public Date getEndDateTime() {
         return Utils.parseDateTime(end);
     }
 
-    public java.util.Date getEndDate() {
+    public Date getEndDate() {
         return Utils.parseDate(end_date);
     }
 
-    public java.util.Date getEndDateUtc() {
+    public Date getEndDateUtc() {
         return Utils.parseDate(end_date_utc);
     }
 
-    public java.util.Date getEndTime() {
+    public Date getEndTime() {
         return Utils.parseTime(end_time);
     }
 
-    public java.util.Date getEndTimeUtc() {
+    public Date getEndTimeUtc() {
         return Utils.parseTime(end_time_utc);
     }
 
-    public java.util.Date getEndUtc() {
+    public Date getEndUtc() {
         return Utils.parseDateTime(end_utc);
     }
 
-    public java.util.Date getStartDateTime() {
+    public Date getStartDateTime() {
         return Utils.parseDateTime(start);
     }
 
-    public java.util.Date getStartDate() {
+    public Date getStartDate() {
         return Utils.parseDate(start_date);
     }
 
-    public java.util.Date getStartDateUtc() {
+    public Date getStartDateUtc() {
         return Utils.parseDate(start_date_utc);
     }
 
-    public java.util.Date getStartTime() {
+    public Date getStartTime() {
         return Utils.parseTime(start_time);
     }
 
-    public java.util.Date getStartTimeUtc() {
+    public Date getStartTimeUtc() {
         return Utils.parseTime(start_time_utc);
     }
 
-    public java.util.Date getStartUtc() {
+    public Date getStartUtc() {
         return Utils.parseDateTime(start_utc);
     }
 

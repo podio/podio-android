@@ -30,8 +30,8 @@ import java.util.HashMap;
 public final class NumberValue extends AbstractValue {
     private final String value;
 
-    public NumberValue(float value) {
-        this.value = Float.toString(value);
+    public NumberValue(double value) {
+        this.value = Double.toString(value);
     }
 
     @Override

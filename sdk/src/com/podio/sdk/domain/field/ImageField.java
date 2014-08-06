@@ -94,7 +94,9 @@ public final class ImageField extends Field {
         } else if (value instanceof File) {
             return new ImageValue((File) value);
         } else if (value instanceof Integer) {
-            return new ImageValue(((Integer) value).intValue());
+            return new ImageValue(((Integer) value).longValue());
+        } else if (value instanceof Long) {
+            return new ImageValue(((Long) value).longValue());
         } else {
             throw new FieldTypeMismatchException();
         }

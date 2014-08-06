@@ -25,6 +25,8 @@ package com.podio.sdk.domain.field;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.podio.sdk.internal.Utils;
+
 /**
  * @author László Urszuly
  */
@@ -73,7 +75,7 @@ public abstract class Field implements Pushable {
         }
     }
 
-    private final Integer field_id = null;
+    private final Long field_id = null;
     private final String external_id;
     private final String label = null;
     private final Status status = null;
@@ -136,8 +138,8 @@ public abstract class Field implements Pushable {
      * 
      * @return A numeric id.
      */
-    public int getFieldId() {
-        return field_id != null ? field_id.intValue() : 0;
+    public long getFieldId() {
+        return Utils.getNative(field_id, -1L);
     }
 
     /**

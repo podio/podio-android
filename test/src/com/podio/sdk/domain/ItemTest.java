@@ -447,11 +447,11 @@ public class ItemTest extends AndroidTestCase {
         assertNotNull(fields);
         assertEquals(0, fields.size());
 
-        assertEquals(1, item.getId());
+        assertEquals(1L, item.getId());
         assertEquals("LINK", item.getLink());
         assertEquals(true, item.isPinned());
         assertEquals(1, item.getPriority());
-        assertEquals(1, item.getRevisionId());
+        assertEquals(1L, item.getRevisionId());
         assertTrue(item.hasRights(Right.view));
         assertFalse(item.hasRights(Right.add_file));
         assertNotNull(item.getWorkspace());
@@ -504,11 +504,11 @@ public class ItemTest extends AndroidTestCase {
         assertNotNull(fields);
         assertEquals(0, fields.size());
 
-        assertEquals(-1, item.getId());
+        assertEquals(-1L, item.getId());
         assertEquals(null, item.getLink());
         assertEquals(false, item.isPinned());
         assertEquals(0, item.getPriority());
-        assertEquals(-1, item.getRevisionId());
+        assertEquals(-1L, item.getRevisionId());
         assertEquals(false, item.hasRights(Right.view));
         assertEquals(null, item.getWorkspace());
         assertEquals(false, item.isSubscribed());

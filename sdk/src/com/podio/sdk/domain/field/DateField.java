@@ -23,6 +23,7 @@
 package com.podio.sdk.domain.field;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.podio.sdk.domain.field.configuration.DateConfiguration;
@@ -95,10 +96,11 @@ public final class DateField extends Field {
     private DateValue validateValue(Object value) throws FieldTypeMismatchException {
         if (value instanceof DateValue) {
             return (DateValue) value;
-        } else if (value instanceof java.util.Date) {
-            return new DateValue((java.util.Date) value);
-        } else if (value instanceof java.util.Date[]) {
-            java.util.Date[] v = (java.util.Date[]) value;
+        } else if (value instanceof Date) {
+            return new DateValue((Date) value);
+        } else if (value instanceof Date[]) {
+            Date[] v = (Date[]) value;
+
             if (v.length == 2) {
                 return new DateValue(v[0], v[1]);
             } else {
