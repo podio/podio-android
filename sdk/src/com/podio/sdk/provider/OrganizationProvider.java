@@ -22,7 +22,6 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.Organization;
 import com.podio.sdk.filter.OrganizationFilter;
