@@ -80,7 +80,7 @@ public class VolleyHttpClient extends QueuedRestClient {
     }
 
     @Override
-    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) throws PodioException {
+    protected <T> RestResult<T> handleRequest(RestRequest<T> restRequest) {
         RestClient.Operation operation = restRequest.getOperation();
         Uri uri = restRequest.getFilter().buildUri(getScheme(), getAuthority());
 
@@ -94,13 +94,13 @@ public class VolleyHttpClient extends QueuedRestClient {
         case PUT:
             return request(Method.PUT, uri, restRequest.getContent(), restRequest.getParser(), true);
         default:
-            return RestResult.failure(new PodioException("Unknown operation: " + operation.name()));
+            throw new UnsupportedOperationException("Unknown operation: " + operation.name());
         }
     }
 
-    private <T> RestResult<T> request(int method, Uri uri, Object item, Parser<? extends T, ?> parser, boolean tryRefresh) throws PodioException {
+    private <T> RestResult<T> request(int method, Uri uri, Object item, Parser<? extends T, ?> parser, boolean tryRefresh) {
         if (!(parser instanceof JsonParser)) {
-            throw new PodioException("Invalid parser type: " + parser.getClass().getName() +
+            throw new IllegalArgumentException("Invalid parser type: " + parser.getClass().getName() +
                     " Expected: " + JsonParser.class.getName());
         }
 
@@ -117,8 +117,7 @@ public class VolleyHttpClient extends QueuedRestClient {
 
         try {
             Session refreshedSession = sessionManager.checkSession();
-
-            String output = request.waitForIt();
+            String output = request.waitForResult();
             T content = jsonParser.read(output);
 
             return RestResult.success(content, refreshedSession);

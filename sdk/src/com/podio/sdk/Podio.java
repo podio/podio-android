@@ -129,11 +129,11 @@ public class Podio {
      */
     public static void setup(Context context, String authority, String clientId, String clientSecret) {
         sessionClient = new VolleySessionClient(context, authority);
+        sessionClient.setup(clientId, clientSecret);
+
         restClient = new VolleyHttpClient(context, authority, sessionClient);
 
-        client.setup(clientId, clientSecret);
         client.setRestClient(sessionClient);
-
         application.setRestClient(restClient);
         calendar.setRestClient(restClient);
         item.setRestClient(restClient);

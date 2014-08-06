@@ -32,11 +32,8 @@ import java.util.concurrent.TimeoutException;
 import android.net.Uri;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
 import com.podio.sdk.PodioException;
 
 public class VolleyRequest extends StringRequest {
@@ -54,7 +51,7 @@ public class VolleyRequest extends StringRequest {
     }
 
     public static VolleyRequest newRefreshRequest(Uri uri) {
-		return newAuthRequest(uri);
+        return newAuthRequest(uri);
     }
 
     public static VolleyRequest newAuthRequest(Uri uri) {
@@ -123,48 +120,20 @@ public class VolleyRequest extends StringRequest {
         return params;
     }
 
-    public String waitForIt() throws PodioException {
+    public String waitForResult() {
         String json;
 
         try {
             json = future.get(10, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            PodioException podioException = getPodioException(e);
-            throw podioException;
+            throw PodioException.fromThrowable(e);
         } catch (ExecutionException e) {
-            PodioException podioException = getPodioException(e);
-            throw podioException;
+            throw PodioException.fromThrowable(e);
         } catch (TimeoutException e) {
-            PodioException podioException = getPodioException(e);
-            throw podioException;
+            throw PodioException.fromThrowable(e);
         }
 
         return json;
-    }
-
-    private PodioException getPodioException(Exception cause) {
-        if (cause instanceof ExecutionException) {
-            VolleyError error = (VolleyError) cause.getCause();
-
-            if (error == null || error.networkResponse == null || error.networkResponse.data == null) {
-                return new PodioException(cause);
-            }
-
-            NetworkResponse response = error.networkResponse;
-            byte[] errorData = response.data;
-            int statusCode = response.statusCode;
-
-            String json = new String(errorData);
-            Gson gson = new Gson();
-
-            PodioException exception = gson.fromJson(json, PodioException.class);
-            exception.initCause(cause);
-            exception.initStatusCode(statusCode);
-
-            return exception;
-        } else {
-            return new PodioException(cause);
-        }
     }
 
 }

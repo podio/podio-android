@@ -29,7 +29,6 @@ import java.util.concurrent.FutureTask;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.SessionListener;
@@ -43,7 +42,6 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
 
     private ResultListener<? super T> resultListener;
     private SessionListener sessionListener;
-    private ErrorListener errorListener;
 
     public RequestFuture(Callable<RestResult<T>> callable) {
         super(callable);
@@ -51,29 +49,15 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
 
     @Override
     protected void done() {
-        RestResult<T> result = getResultNow("Couldn't fetch result on completion");
-        reportResult(sessionListener, result);
-        reportResult(errorListener, result);
-        reportResult(resultListener, result);
-    }
-
-    public RequestFuture<T> setErrorListener(ErrorListener errorListener) {
-        this.errorListener = errorListener;
-
-        if (isDone()) {
-            RestResult<T> result = getResultNow("Couldn't report error");
-            reportResult(errorListener, result);
-        }
-
-        return this;
+        reportResult(sessionListener);
+        reportResult(resultListener);
     }
 
     public RequestFuture<T> setResultListener(ResultListener<? super T> resultListener) {
         this.resultListener = resultListener;
 
         if (isDone()) {
-            RestResult<T> result = getResultNow("Couldn't report result");
-            reportResult(resultListener, result);
+            reportResult(resultListener);
         }
 
         return this;
@@ -83,43 +67,30 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
         this.sessionListener = sessionListener;
 
         if (isDone()) {
-            RestResult<T> result = getResultNow("Couldn't report session change");
-            reportResult(sessionListener, result);
+            reportResult(sessionListener);
         }
 
         return this;
     }
 
-    private RestResult<T> getResultNow(String messageIfFailed) {
+    private RestResult<T> getResultNow() {
         try {
             return get();
         } catch (InterruptedException e) {
-            throw new PodioException(messageIfFailed, e);
+            throw PodioException.fromThrowable(e);
         } catch (ExecutionException e) {
-            throw new PodioException(messageIfFailed, e);
+            throw PodioException.fromThrowable(e);
         }
     }
 
-    private void reportResult(final ErrorListener errorListener, final RestResult<T> result) {
-        if (errorListener != null && result != null && result.hasException()) {
+    private void reportResult(final ResultListener<? super T> resultListener) {
+        if (resultListener != null) {
             HANDLER.post(new Runnable() {
 
                 @Override
                 public void run() {
-                    Exception exception = result.getException();
-                    errorListener.onExceptionOccurred(exception);
-                }
+                    RestResult<T> result = getResultNow();
 
-            });
-        }
-    }
-
-    private void reportResult(final ResultListener<? super T> resultListener, final RestResult<T> result) {
-        if (resultListener != null && result != null) {
-            HANDLER.post(new Runnable() {
-
-                @Override
-                public void run() {
                     T item = result.getItem();
                     resultListener.onRequestPerformed(item);
                 }
@@ -128,14 +99,18 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
         }
     }
 
-    private void reportResult(final SessionListener sessionListener, final RestResult<T> result) {
-        if (sessionListener != null && result != null && result.hasSession()) {
+    private void reportResult(final SessionListener sessionListener) {
+        if (sessionListener != null) {
             HANDLER.post(new Runnable() {
 
                 @Override
                 public void run() {
-                    Session session = result.getSession();
-                    sessionListener.onSessionChanged(session);
+                    RestResult<T> result = getResultNow();
+
+                    if (result != null && result.hasSession()) {
+                        Session session = result.getSession();
+                        sessionListener.onSessionChanged(session);
+                    }
                 }
 
             });

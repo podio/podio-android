@@ -35,13 +35,6 @@ import com.podio.sdk.parser.JsonParser;
 
 public class SessionProvider extends BasicPodioProvider {
 
-    private String clientId;
-    private String clientSecret;
-
-    public SessionProvider() {
-        clientId = clientSecret = null;
-    }
-
     /**
      * Authenticates the caller with the given user credentials. On success a
      * new session object with the access and refresh tokens will be delivered
@@ -55,7 +48,6 @@ public class SessionProvider extends BasicPodioProvider {
      */
     public RequestFuture<Session> authenticateWithUserCredentials(String username, String password) {
         PodioFilter filter = new SessionFilter()
-                .withClientCredentials(clientId, clientSecret)
                 .withUserCredentials(username, password);
 
         return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class));
@@ -74,7 +66,6 @@ public class SessionProvider extends BasicPodioProvider {
      */
     public RequestFuture<Session> authenticateWithAppCredentials(String appId, String appToken) {
         PodioFilter filter = new SessionFilter()
-                .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken);
 
         return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class));
@@ -97,22 +88,8 @@ public class SessionProvider extends BasicPodioProvider {
     @Deprecated
     public Future<RestResult<Session>> forceRefreshAccessToken(String refreshToken) {
         PodioFilter filter = new SessionFilter()
-                .withClientCredentials(clientId, clientSecret)
                 .withRefreshToken(refreshToken);
 
         return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class));
-    }
-
-    /**
-     * Initializes the provider with the given client id and secret.
-     * 
-     * @param clientId
-     *        The user client id.
-     * @param clientSecret
-     *        The user client secret.
-     */
-    public void setup(String clientId, String clientSecret) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
     }
 }

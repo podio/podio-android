@@ -64,7 +64,6 @@ public class SessionProviderTest extends AndroidTestCase {
         SessionProvider provider = new SessionProvider();
         provider.setRestClient(mockClient);
 
-        provider.setup("CLIENTID", "CLIENTSECRET");
         provider
                 .authenticateWithUserCredentials("USERNAME", "PASSWORD")
                 .setResultListener(resultListener);
@@ -73,8 +72,7 @@ public class SessionProviderTest extends AndroidTestCase {
         Mockito.verifyNoMoreInteractions(resultListener);
 
         assertEquals(Uri.parse("test://podio.test/oauth/token"
-                + "?client_id=CLIENTID&client_secret=CLIENTSECRET"
-                + "&grant_type=password&username=USERNAME&password=PASSWORD"), mockClient.uri);
+                + "?grant_type=password&username=USERNAME&password=PASSWORD"), mockClient.uri);
     }
 
     /**
@@ -98,7 +96,6 @@ public class SessionProviderTest extends AndroidTestCase {
         SessionProvider provider = new SessionProvider();
         provider.setRestClient(mockClient);
 
-        provider.setup("CLIENTID", "CLIENTSECRET");
         provider
                 .authenticateWithAppCredentials("APPID", "APPTOKEN")
                 .setResultListener(resultListener);
@@ -107,8 +104,7 @@ public class SessionProviderTest extends AndroidTestCase {
         Mockito.verifyNoMoreInteractions(resultListener);
 
         assertEquals(Uri.parse("test://podio.test/oauth/token"
-                + "?client_id=CLIENTID&client_secret=CLIENTSECRET"
-                + "&grant_type=app&app_id=APPID&app_token=APPTOKEN"), mockClient.uri);
+                + "?grant_type=app&app_id=APPID&app_token=APPTOKEN"), mockClient.uri);
     }
 
 }

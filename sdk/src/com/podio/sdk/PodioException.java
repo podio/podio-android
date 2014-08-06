@@ -23,6 +23,11 @@
 package com.podio.sdk;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+
+import com.android.volley.NetworkResponse;
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 
 /**
  * @author László Urszuly
@@ -36,6 +41,61 @@ public class PodioException extends RuntimeException {
         private final String method = null;
     }
 
+    public static PodioException fromThrowable(Throwable throwable) {
+        return fromThrowable(throwable, null);
+    }
+
+    /**
+     * Wraps the given {@link Throwable} with a new PodioException instance.
+     * 
+     * @param throwable
+     *        The cause for this PodioException.
+     * @param detailMessage
+     *        (Optional) detail message to show in the stack trace.
+     * @return A new PodioException instance.
+     */
+    public static PodioException fromThrowable(Throwable throwable, String detailMessage) {
+        if (throwable instanceof ExecutionException && throwable.getCause() instanceof VolleyError) {
+            VolleyError volleyError = (VolleyError) throwable.getCause();
+
+            if (volleyError.networkResponse == null || volleyError.networkResponse.data == null) {
+                return new PodioException(detailMessage, throwable);
+            }
+
+            NetworkResponse response = volleyError.networkResponse;
+            byte[] errorData = response.data;
+            int statusCode = response.statusCode;
+
+            String json = new String(errorData);
+            PodioException podioException = fromJson(json, statusCode, throwable);
+
+            return podioException;
+        }
+
+        return new PodioException(detailMessage, throwable);
+    }
+
+    /**
+     * Constructs a new PodioException instance from the given data.
+     * 
+     * @param json
+     *        The API provided error JSON.
+     * @param statusCode
+     *        The HTTP status code that describes the error.
+     * @param cause
+     *        (Optional) cause from the error. This is only used for maintaining
+     *        the stack trace hierarchy.
+     * @return A new PodioException instance.
+     */
+    public static PodioException fromJson(String json, int statusCode, Throwable cause) {
+        Gson gson = new Gson();
+        PodioException podioException = gson.fromJson(json, PodioException.class);
+        podioException.initCause(cause);
+        podioException.initStatusCode(statusCode);
+
+        return podioException;
+    }
+
     private final HashMap<String, String> error_parameters = null;
     private final String error_detail = null;
     private final Boolean error_propagate = null;
@@ -43,33 +103,15 @@ public class PodioException extends RuntimeException {
     private final String error_description = null;
     private final String error = null;
 
-    private Integer statusCode = null;
+    private transient Integer statusCode = null;
 
     /**
      * Constructor.
      * 
      * @see RuntimeException#RuntimeException()
      */
-    public PodioException() {
+    private PodioException() {
         super();
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @see RuntimeException#RuntimeException(String))
-     */
-    public PodioException(String detailMessage) {
-        super(detailMessage);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @see RuntimeException#RuntimeException(Throwable)
-     */
-    public PodioException(Throwable throwable) {
-        super(throwable);
     }
 
     /**
@@ -77,7 +119,7 @@ public class PodioException extends RuntimeException {
      * 
      * @see RuntimeException#RuntimeException(String, Throwable))
      */
-    public PodioException(String detailMessage, Throwable throwable) {
+    private PodioException(String detailMessage, Throwable throwable) {
         super(detailMessage, throwable);
     }
 

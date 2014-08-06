@@ -32,7 +32,6 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 import com.podio.sdk.ResultListener;
-import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.mock.MockRestClient;
 import com.podio.sdk.provider.ItemProvider.ItemFilterProvider;
@@ -248,7 +247,7 @@ public class ItemProviderTest extends AndroidTestCase {
      * </pre>
      */
     public void testUpdateItemWithNullPointer() {
-        MockRestClient mockClient = new MockRestClient(RestResult.failure(null));
+        MockRestClient mockClient = new MockRestClient();
         ItemProvider provider = new ItemProvider();
         provider.setRestClient(mockClient);
 

@@ -33,7 +33,6 @@ import org.mockito.MockitoAnnotations;
 
 import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.ErrorListener;
 import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
@@ -50,9 +49,6 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
     @Mock
     SessionListener sessionListener;
-
-    @Mock
-    ErrorListener errorListener;
 
     @Override
     protected void setUp() throws Exception {
@@ -114,19 +110,17 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
     }
 
     /**
-     * Verifies that any internally thrown {@link PodioException}'s are caught
-     * and reported as failures.
+     * Verifies that any internally thrown {@link PodioException}'s are bubbling
+     * up to the future and re-thrown there.
      * 
      * <pre>
      * 
-     *  1. Set up a mocked QueuedRestClient which will throw a PodioException
+     *  1. Set up a mocked QueuedRestClient which will throw a RuntimeException
      *      on the worker thread.
      *  
-     *  2. Enqueue an arbitrary request in the client and register an
-     *      {@link ErrorListener} on the returned {@link RequestFuture}.
+     *  2. Enqueue an arbitrary request in the client.
      * 
-     *  3. Verify that the ErrorListener has been called with the expected
-     *      PodioException.
+     *  3. Verify that the RuntimeException is delivered to the calling thread.
      * 
      * </pre>
      * 
@@ -135,52 +129,21 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      * @throws InterruptedException
      * @throws NullPointerException
      */
-    public void testPodioExceptionIsReportedAsFailure() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
-        PodioException podioException = new PodioException("test-exception");
-        new MockRestClient(podioException)
-                .enqueue(new RestRequest<Object>()
-                        .setFilter(new BasicPodioFilter())
-                        .setOperation(RestClient.Operation.GET))
-                .setErrorListener(errorListener)
-                .get(100, TimeUnit.MILLISECONDS);
-
-        Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(podioException);
-        Mockito.verifyNoMoreInteractions(errorListener);
-    }
-
-    /**
-     * Verifies that any internally thrown {@link Exception}'s are caught and
-     * reported as failures.
-     * 
-     * <pre>
-     * 
-     *  1. Set up a mocked QueuedRestClient which will throw a random
-     *      Exception on the worker thread.
-     *  
-     *  2. Enqueue an arbitrary request in the client and register an
-     *      {@link ErrorListener} on the returned {@link RequestFuture}.
-     * 
-     *  3. Verify that the ErrorListener has been called with the expected
-     *      Exception.
-     * 
-     * </pre>
-     * 
-     * @throws TimeoutException
-     * @throws ExecutionException
-     * @throws InterruptedException
-     * @throws NullPointerException
-     */
-    public void testRandomExceptionIsReportedAsFailure() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
+    public void testExceptionsArePropagatedToMainThread() throws NullPointerException, InterruptedException, ExecutionException, TimeoutException {
         RuntimeException runtimeException = new RuntimeException("test-exception");
-        new MockRestClient(runtimeException)
-                .enqueue(new RestRequest<Object>()
-                        .setFilter(new BasicPodioFilter())
-                        .setOperation(RestClient.Operation.GET))
-                .setErrorListener(errorListener)
-                .get(100, TimeUnit.MILLISECONDS);
 
-        Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(runtimeException);
-        Mockito.verifyNoMoreInteractions(errorListener);
+        try {
+            new MockRestClient(runtimeException)
+                    .enqueue(new RestRequest<Object>()
+                            .setFilter(new BasicPodioFilter())
+                            .setOperation(RestClient.Operation.GET))
+                    .get(100, TimeUnit.MILLISECONDS);
+
+            fail("Should have propaget exception by now");
+        } catch (ExecutionException e) {
+            Throwable t = e.getCause();
+            assertEquals("test-exception", t.getMessage());
+        }
     }
 
     /**
@@ -381,7 +344,7 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
      */
     public void testRequestQueuePushFailureOnNullRequest() throws InterruptedException, ExecutionException, TimeoutException {
         try {
-            new MockRestClient(1, RestResult.failure(new NullPointerException()))
+            new MockRestClient()
                     .enqueue(null)
                     .get(100, TimeUnit.MILLISECONDS);
             fail("Should have thrown exception");
@@ -505,39 +468,6 @@ public class QueuedRestClientTest extends InstrumentationTestCase {
 
         Mockito.verify(threadListener, Mockito.timeout(200)).onRequestPerformed(null);
         assertEquals("main", threadListener.getThreadName());
-    }
-
-    /**
-     * Verifies that the onFailure callback is called when the request couldn't
-     * be processed properly.
-     * 
-     * <pre>
-     * 
-     *  1. Set up a local QueuedRestClient implementation.
-     *  
-     *  2. Push a request to the client.
-     *  
-     *  3. Simulate a failure during processing of the request.
-     *  
-     *  4. Verify that the correct callback method is called.
-     * 
-     * </pre>
-     * 
-     * @throws ExecutionException
-     * @throws InterruptedException
-     * @throws NullPointerException
-     */
-    public void testResultListenerReportsFailureProperly() throws NullPointerException, InterruptedException, ExecutionException {
-        PodioException exception = new PodioException("ohno");
-
-        new MockRestClient(1, RestResult.failure(exception))
-                .enqueue(new RestRequest<Object>()
-                        .setFilter(new BasicPodioFilter())
-                        .setOperation(RestClient.Operation.GET))
-                .setErrorListener(errorListener);
-
-        Mockito.verify(errorListener, Mockito.timeout(100)).onExceptionOccurred(exception);
-        Mockito.verifyNoMoreInteractions(errorListener);
     }
 
     /**
