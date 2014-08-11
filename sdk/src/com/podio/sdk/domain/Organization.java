@@ -47,6 +47,7 @@ public class Organization {
 
     private final Integer rank = null;
     private final Integer user_limit = null;
+    private final Integer grants_count = null;
     private final Long logo = null;
     private final Long org_id = null;
     private final Long sales_agent_id = null;
@@ -81,9 +82,7 @@ public class Organization {
     }
 
     public List<String> getDomains() {
-        return domains != null ?
-                new ArrayList<String>(domains) :
-                new ArrayList<String>();
+        return domains != null ? new ArrayList<String>(domains) : new ArrayList<String>();
     }
 
     public long getId() {
@@ -102,6 +101,10 @@ public class Organization {
         return Utils.getNative(rank, 0);
     }
 
+    public int getGrantCount() {
+        return Utils.getNative(grants_count, 0);
+    }
+
     public Role getRole() {
         return role != null ? role : Role.undefined;
     }
@@ -115,9 +118,7 @@ public class Organization {
     }
 
     public List<Space> getSpaces() {
-        return spaces != null ?
-                new ArrayList<Space>(spaces) :
-                new ArrayList<Space>();
+        return spaces != null ? new ArrayList<Space>(spaces) : new ArrayList<Space>();
     }
 
     public Status getStatus() {
