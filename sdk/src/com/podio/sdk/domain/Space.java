@@ -50,6 +50,7 @@ public class Space {
     private final Boolean post_on_new_member = null;
     private final Boolean subscribed = null;
     private final Boolean premium = null;
+    private final Boolean top = null;
     private final Integer rank = null;
     private final Long space_id = null;
     private final List<Right> rights = null;
@@ -170,5 +171,9 @@ public class Space {
 
     public boolean isPremium() {
         return Utils.getNative(premium, false);
+    }
+
+    public boolean isTop() {
+        return Utils.getNative(top, false);
     }
 }
