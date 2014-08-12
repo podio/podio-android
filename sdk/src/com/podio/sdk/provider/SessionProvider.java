@@ -24,7 +24,6 @@ package com.podio.sdk.provider;
 
 import java.util.concurrent.Future;
 
-import com.podio.sdk.PodioFilter;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.ResultListener;
 import com.podio.sdk.client.RequestFuture;
