@@ -25,6 +25,8 @@ package com.podio.sdk.client;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -51,6 +53,32 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
     protected void done() {
         reportResult(sessionListener);
         reportResult(resultListener);
+    }
+
+    @Override
+    public RestResult<T> get() throws InterruptedException, ExecutionException {
+        try {
+            return super.get();
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof PodioException) {
+                throw (PodioException) e.getCause();
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    @Override
+    public RestResult<T> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        try {
+            return super.get(timeout, unit);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof PodioException) {
+                throw (PodioException) e.getCause();
+            } else {
+                throw e;
+            }
+        }
     }
 
     public RequestFuture<T> withResultListener(ResultListener<? super T> resultListener) {
