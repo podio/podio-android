@@ -79,6 +79,10 @@ public class Utils {
         return uri == null || uri.equals(Uri.EMPTY);
     }
 
+    public static boolean isEmpty(byte[] array) {
+        return array == null || array.length == 0;
+    }
+
     public static boolean isEmpty(int[] array) {
         return array == null || array.length == 0;
     }
@@ -109,6 +113,10 @@ public class Utils {
 
     public static boolean notEmpty(Uri uri) {
         return !isEmpty(uri);
+    }
+
+    public static boolean notEmpty(byte[] array) {
+        return !isEmpty(array);
     }
 
     public static boolean notEmpty(int[] array) {
