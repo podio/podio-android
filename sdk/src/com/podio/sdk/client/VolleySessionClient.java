@@ -40,8 +40,8 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
 
     private static final String SCHEME = "https";
 
-    private RequestQueue requestQueue;
-    private Session session;
+    protected RequestQueue requestQueue;
+    protected Session session;
     private String clientId;
     private String clientSecret;
 
@@ -141,7 +141,7 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
         this.clientSecret = clientSecret;
     }
 
-    private String getGrantType(RestRequest<?> restRequest) {
+    protected String getGrantType(RestRequest<?> restRequest) {
         SessionFilter filter = (SessionFilter) restRequest.getFilter();
         Uri dummyUri = filter.buildUri("null", "null");
         String grantType = dummyUri.getQueryParameter("grant_type");
@@ -149,7 +149,7 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
         return grantType;
     }
 
-    private String getRefreshToken(RestRequest<?> restRequest) {
+    protected String getRefreshToken(RestRequest<?> restRequest) {
         SessionFilter filter = (SessionFilter) restRequest.getFilter();
         Uri dummyUri = filter.buildUri("null", "null");
         String refreshToken = dummyUri.getQueryParameter("refresh_token");
@@ -157,7 +157,7 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
         return refreshToken;
     }
 
-    private Uri getUri(RestRequest<?> restRequest, String refreshToken) {
+    protected Uri getUri(RestRequest<?> restRequest, String refreshToken) {
         SessionFilter filter = ((SessionFilter) restRequest.getFilter())
                 .withClientCredentials(clientId, clientSecret);
 
