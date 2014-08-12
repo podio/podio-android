@@ -128,7 +128,11 @@ public class VolleyRequest extends StringRequest {
         } catch (InterruptedException e) {
             throw PodioException.fromThrowable(e);
         } catch (ExecutionException e) {
-            throw PodioException.fromThrowable(e);
+            if (e.getCause() instanceof PodioException) {
+                throw (PodioException) e.getCause();
+            } else {
+                throw PodioException.fromThrowable(e);
+            }
         } catch (TimeoutException e) {
             throw PodioException.fromThrowable(e);
         }
