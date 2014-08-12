@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -58,7 +59,7 @@ public class PodioException extends RuntimeException {
         if (throwable instanceof ExecutionException && throwable.getCause() instanceof VolleyError) {
             VolleyError volleyError = (VolleyError) throwable.getCause();
 
-            if (volleyError.networkResponse == null || volleyError.networkResponse.data == null) {
+            if (volleyError.networkResponse == null || Utils.isEmpty(volleyError.networkResponse.data)) {
                 return new PodioException(detailMessage, throwable);
             }
 
@@ -91,6 +92,7 @@ public class PodioException extends RuntimeException {
         Gson gson = new Gson();
         PodioException podioException = gson.fromJson(json, PodioException.class);
         podioException.initCause(cause);
+        podioException.initSource(json);
         podioException.initStatusCode(statusCode);
 
         return podioException;
@@ -104,6 +106,7 @@ public class PodioException extends RuntimeException {
     private final String error = null;
 
     private transient Integer statusCode = null;
+    private transient String source = null;
 
     /**
      * Constructor.
@@ -121,6 +124,17 @@ public class PodioException extends RuntimeException {
      */
     private PodioException(String detailMessage, Throwable throwable) {
         super(detailMessage, throwable);
+    }
+
+    @Override
+    public String getMessage() {
+        String message = super.getMessage();
+
+        if (Utils.isEmpty(message)) {
+            return source;
+        } else {
+            return message;
+        }
     }
 
     /**
@@ -214,6 +228,15 @@ public class PodioException extends RuntimeException {
     }
 
     /**
+     * Returns the source JSON string for this PodioException.
+     * 
+     * @return String or null;
+     */
+    public String getSourceJson() {
+        return source;
+    }
+
+    /**
      * Returns the HTTP status code of the request that caused this API error to
      * be thrown.
      * 
@@ -245,16 +268,32 @@ public class PodioException extends RuntimeException {
     }
 
     /**
+     * Initializes the source JSON of this exception. This method can only be
+     * called once.
+     * 
+     * @param json
+     *        The source JSON string for this exception.
+     */
+    public void initSource(String json) throws IllegalStateException {
+        if (this.source == null) {
+            this.source = json;
+        } else {
+            throw new IllegalStateException("Source already initialized: " + source);
+        }
+    }
+
+    /**
      * Initializes the status code of this exception. This method can only be
      * called once.
      * 
      * @param statusCode
+     *        The desired (HTTP?) status code for this exception.
      */
     public void initStatusCode(int statusCode) throws IllegalStateException {
         if (this.statusCode == null) {
             this.statusCode = Integer.valueOf(statusCode);
         } else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Status code already initialized: " + this.statusCode);
         }
     }
 
