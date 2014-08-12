@@ -47,7 +47,7 @@ public class SessionProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Session> authenticateWithUserCredentials(String username, String password) {
-        PodioFilter filter = new SessionFilter()
+        SessionFilter filter = new SessionFilter()
                 .withUserCredentials(username, password);
 
         return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class));
@@ -65,7 +65,7 @@ public class SessionProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Session> authenticateWithAppCredentials(String appId, String appToken) {
-        PodioFilter filter = new SessionFilter()
+        SessionFilter filter = new SessionFilter()
                 .withAppCredentials(appId, appToken);
 
         return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class));
@@ -87,7 +87,7 @@ public class SessionProvider extends BasicPodioProvider {
      */
     @Deprecated
     public Future<RestResult<Session>> forceRefreshAccessToken(String refreshToken) {
-        PodioFilter filter = new SessionFilter()
+        SessionFilter filter = new SessionFilter()
                 .withRefreshToken(refreshToken);
 
         return request(RestClient.Operation.POST, filter, null, JsonParser.fromClass(Session.class));
