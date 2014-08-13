@@ -37,11 +37,10 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class VolleySessionClient extends QueuedRestClient implements SessionManager {
-
     private static final String SCHEME = "https";
 
-    protected RequestQueue requestQueue;
-    protected Session session;
+    private RequestQueue requestQueue;
+    private Session session;
     private String clientId;
     private String clientSecret;
 
@@ -104,16 +103,16 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
 
         switch (operation) {
         case POST:
-            String grantType = getGrantType(restRequest);
-            String preferredToken = getRefreshToken(restRequest);
+            String grantType = extractGrantTypeFromRequest(restRequest);
+            String preferredToken = extractRefreshTokenFromRequest(restRequest);
             VolleyRequest request;
 
             if ("refresh_token".equals(grantType)) {
                 String token = Utils.isEmpty(preferredToken) ? session.refreshToken : preferredToken;
-                Uri uri = getUri(restRequest, token);
+                Uri uri = buildRequestUri(restRequest, token);
                 request = VolleyRequest.newRefreshRequest(uri);
             } else {
-                Uri uri = getUri(restRequest, null);
+                Uri uri = buildRequestUri(restRequest, null);
                 request = VolleyRequest.newAuthRequest(uri);
             }
 
@@ -141,7 +140,27 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
         this.clientSecret = clientSecret;
     }
 
-    protected String getGrantType(RestRequest<?> restRequest) {
+    RestResult<Session> executeVolleyRequest(VolleyRequest request) {
+        requestQueue.add(request);
+        String resultJson = request.waitForResult();
+        Session session = new Session(resultJson);
+        setSession(session);
+
+        return RestResult.success(session);
+    }
+
+    Uri buildRequestUri(RestRequest<?> restRequest, String refreshToken) {
+        SessionFilter filter = ((SessionFilter) restRequest.getFilter()).withClientCredentials(
+                clientId, clientSecret);
+
+        String scheme = getScheme();
+        String authority = getAuthority();
+
+        return Utils.isEmpty(refreshToken) ? filter.buildUri(scheme, authority) : filter
+                .withRefreshToken(refreshToken).buildUri(scheme, authority);
+    }
+
+    String extractGrantTypeFromRequest(RestRequest<?> restRequest) {
         SessionFilter filter = (SessionFilter) restRequest.getFilter();
         Uri dummyUri = filter.buildUri("null", "null");
         String grantType = dummyUri.getQueryParameter("grant_type");
@@ -149,7 +168,7 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
         return grantType;
     }
 
-    protected String getRefreshToken(RestRequest<?> restRequest) {
+    String extractRefreshTokenFromRequest(RestRequest<?> restRequest) {
         SessionFilter filter = (SessionFilter) restRequest.getFilter();
         Uri dummyUri = filter.buildUri("null", "null");
         String refreshToken = dummyUri.getQueryParameter("refresh_token");
@@ -157,15 +176,4 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
         return refreshToken;
     }
 
-    protected Uri getUri(RestRequest<?> restRequest, String refreshToken) {
-        SessionFilter filter = ((SessionFilter) restRequest.getFilter())
-                .withClientCredentials(clientId, clientSecret);
-
-        String scheme = getScheme();
-        String authority = getAuthority();
-
-        return Utils.isEmpty(refreshToken) ?
-                filter.buildUri(scheme, authority) :
-                filter.withRefreshToken(refreshToken).buildUri(scheme, authority);
-    }
 }

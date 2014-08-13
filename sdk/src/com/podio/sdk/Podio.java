@@ -47,8 +47,8 @@ public class Podio {
     private static final String VERSION_NAME = "0.0.1";
     private static final int VERSION_CODE = 1;
 
-    private static VolleySessionClient sessionClient;
-    private static VolleyHttpClient restClient;
+    protected static VolleySessionClient sessionClient;
+    protected static VolleyHttpClient restClient;
 
     /**
      * Enables means of easy operating on the {@link ApplicationProvider} API
