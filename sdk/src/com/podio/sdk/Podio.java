@@ -22,6 +22,8 @@
 
 package com.podio.sdk;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import android.content.Context;
 
 import com.podio.sdk.client.VolleyHttpClient;
@@ -99,7 +101,7 @@ public class Podio {
      * @see Podio#setup(Context, String, String, String)
      */
     public static void setup(Context context, String clientId, String clientSecret) {
-        setup(context, AUTHORITY, clientId, clientSecret);
+        setup(context, AUTHORITY, clientId, clientSecret, null);
     }
 
     /**
@@ -118,12 +120,14 @@ public class Podio {
      *        The pre-shared Podio client id.
      * @param clientSecret
      *        The corresponding Podio client secret.
+     * @param sslSocketFactory
+     *        Optional custom SSL socket factory to use in the HTTP requests.
      */
-    public static void setup(Context context, String authority, String clientId, String clientSecret) {
-        sessionClient = new VolleySessionClient(context, authority);
+    public static void setup(Context context, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
+        sessionClient = new VolleySessionClient(context, authority, sslSocketFactory);
         sessionClient.setup(clientId, clientSecret);
 
-        restClient = new VolleyHttpClient(context, authority, sessionClient);
+        restClient = new VolleyHttpClient(context, authority, Integer.MAX_VALUE, sessionClient, sslSocketFactory);
 
         client.setRestClient(sessionClient);
         application.setRestClient(restClient);
