@@ -25,11 +25,14 @@ package com.podio.sdk.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import android.content.Context;
 import android.net.Uri;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.Parser;
 import com.podio.sdk.PodioException;
@@ -56,11 +59,12 @@ public class VolleyHttpClient extends QueuedRestClient {
      *        The context to execute the database operations in.
      * @param authority
      *        The authority to use in URIs by this client.
-     * @see QueuedRestClient
-     * @see RestClient
+     * @param sessionManager
+     *        The session manager client that this REST client will use for
+     *        authorization.
      */
     public VolleyHttpClient(Context context, String authority, SessionManager sessionManager) {
-        this(context, authority, Integer.MAX_VALUE, sessionManager);
+        this(context, authority, Integer.MAX_VALUE, sessionManager, null);
     }
 
     /**
@@ -70,13 +74,22 @@ public class VolleyHttpClient extends QueuedRestClient {
      *        The authority to use in URIs by this client.
      * @param capacity
      *        The desired request queue capacity.
-     * @see QueuedRestClient
-     * @see RestClient
+     * @param sessionManager
+     *        The session manager client that this REST client will use for
+     *        authorization.
+     * @param sslSocketFactory
+     *        Optional custom SSL socket factory to use in the HTTP requests.
      */
-    public VolleyHttpClient(Context context, String authority, int capacity, SessionManager sessionManager) {
+    public VolleyHttpClient(Context context, String authority, int capacity, SessionManager sessionManager, SSLSocketFactory sslSocketFactory) {
         super(SCHEME, authority, capacity);
         this.sessionManager = sessionManager;
-        this.requestQueue = Volley.newRequestQueue(context);
+
+        if (sslSocketFactory == null) {
+            this.requestQueue = Volley.newRequestQueue(context);
+        } else {
+            HurlStack stack = new HurlStack(null, sslSocketFactory);
+            this.requestQueue = Volley.newRequestQueue(context, stack);
+        }
     }
 
     @Override

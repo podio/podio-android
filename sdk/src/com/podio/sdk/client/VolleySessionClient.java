@@ -22,10 +22,13 @@
 
 package com.podio.sdk.client;
 
+import javax.net.ssl.SSLSocketFactory;
+
 import android.content.Context;
 import android.net.Uri;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.RestClient;
 import com.podio.sdk.SessionManager;
@@ -45,13 +48,30 @@ public class VolleySessionClient extends QueuedRestClient implements SessionMana
     private String clientSecret;
 
     /**
-     * @param scheme
+     * @param context
      * @param authority
      */
     public VolleySessionClient(Context context, String authority) {
+        this(context, authority, null);
+    }
+
+    /**
+     * @param context
+     * @param authority
+     * @param sslSocketFactory
+     */
+    public VolleySessionClient(Context context, String authority, SSLSocketFactory sslSocketFactory) {
         super(SCHEME, authority, 1);
-        this.requestQueue = Volley.newRequestQueue(context);
-        clientId = clientSecret = null;
+
+        this.clientId = null;
+        this.clientSecret = null;
+
+        if (sslSocketFactory == null) {
+            this.requestQueue = Volley.newRequestQueue(context);
+        } else {
+            HurlStack stack = new HurlStack(null, sslSocketFactory);
+            this.requestQueue = Volley.newRequestQueue(context, stack);
+        }
     }
 
     @Override
