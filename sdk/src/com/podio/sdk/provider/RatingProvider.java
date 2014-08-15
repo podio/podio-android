@@ -22,17 +22,9 @@
 
 package com.podio.sdk.provider;
 
-import android.util.Log;
-
-import com.podio.sdk.ErrorListener;
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RestResult;
 import com.podio.sdk.domain.Rating;
 import com.podio.sdk.filter.RatingFilter;
-import com.podio.sdk.PodioFilter;
-
-import java.util.concurrent.Future;
+import com.podio.sdk.client.RequestFuture;
 
 /**
  * Enables access to the organization API end point.
@@ -50,10 +42,10 @@ public class RatingProvider extends BasicPodioProvider {
      *        Null is valid, but doesn't make any sense.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Future<RestResult<Rating>> get(String ref_type, int ref_id, ResultListener<? super Rating> resultListener, ErrorListener errorListener, SessionListener sessionListener) {
+    public RequestFuture<Rating> get(String ref_type, long ref_id) {
         RatingFilter filter = new RatingFilter().withTypeAndId(ref_type, ref_id);
 
-        return get(filter, Rating.class, resultListener, errorListener, sessionListener);
+        return get(filter, Rating.class);
     }
 
 }
