@@ -33,23 +33,29 @@ import com.podio.sdk.filter.UserFilter;
  */
 public class UserProvider extends BasicPodioProvider {
 
-	/**
-	 * Fetches the currently logged in user data.
-	 * 
-	 * @return A ticket which the caller can use to identify this request with.
-	 */
-	public RequestFuture<User> getData() {
-		UserFilter filter = new UserFilter();
-		return get(filter, User.class);
-	}
+    /**
+     * Fetches the currently logged in user data.
+     * 
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public RequestFuture<User> getData() {
+        UserFilter filter = new UserFilter();
+        return get(filter, User.class);
+    }
 
-	/**
-	 * Fetches the currently logged in user profile.
-	 * 
-	 * @return A ticket which the caller can use to identify this request with.
-	 */
-	public RequestFuture<User.Profile> getProfile() {
-		UserFilter filter = new UserFilter().withProfile();
-		return get(filter, User.Profile.class);
-	}
+    /**
+     * Fetches the currently logged in user profile.
+     * 
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public RequestFuture<User.Profile> getProfile() {
+        UserFilter filter = new UserFilter().withProfile();
+        return get(filter, User.Profile.class);
+    }
+
+    public RequestFuture<User> getUserStatus() {
+        UserFilter filter = new UserFilter().withStatus();
+        return get(filter, User.class);
+    }
+
 }

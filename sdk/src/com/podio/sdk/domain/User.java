@@ -41,6 +41,52 @@ public class User {
         inactive, active, deleted, blocked, blacklisted, undefined
     }
 
+    public static class Presence {
+        private final String ref_type = null;
+        private final Long ref_id = null;
+        private final Long user_id = null;
+        private final String signature = null;
+
+        public String getRef_type() {
+            return ref_type;
+        }
+
+        public long getRefId() {
+            return Utils.getNative(ref_id, -1L);
+        }
+
+        public long getUserId() {
+            return Utils.getNative(user_id, -1L);
+        }
+
+        public String getSignature() {
+            return signature;
+        }
+    }
+
+    public static class Push {
+        private final Long timestamp = null;
+        private final Integer expires_in = null;
+        private final String channel = null;
+        private final String signature = null;
+
+        public long getTimestamp() {
+            return Utils.getNative(timestamp, -1L);
+        }
+
+        public int getExpiresIn() {
+            return Utils.getNative(expires_in, -1);
+        }
+
+        public String getChannel() {
+            return channel;
+        }
+
+        public String getSignature() {
+            return signature;
+        }
+    }
+
     public static class Email {
         private final Boolean disabled = null;
         private final Boolean primary = null;
@@ -198,8 +244,33 @@ public class User {
     private final String locale = null;
     private final String mail = null;
     private final String timezone = null;
+    private final Integer inbox_new = null;
+    private final Integer message_unread_count = null;
+    private final Push push = null;
+    private final Profile profile = null;
+    private final Presence presence = null;
 
     private User() {
+    }
+
+    public Presence getPresence() {
+        return presence;
+    }
+
+    public Push getPush() {
+        return push;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public int getInboxNew() {
+        return Utils.getNative(inbox_new, -1);
+    }
+
+    public int getMessageUnreadCount() {
+        return Utils.getNative(message_unread_count, -1);
     }
 
     /**

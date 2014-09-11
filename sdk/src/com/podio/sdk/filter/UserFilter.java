@@ -33,4 +33,10 @@ public final class UserFilter extends BasicPodioFilter {
         addPathSegment("profile");
         return this;
     }
+
+    public UserFilter withStatus() {
+        addPathSegment("status");
+        return this;
+    }
+
 }
