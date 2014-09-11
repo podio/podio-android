@@ -26,11 +26,20 @@ import java.util.Date;
 
 import android.text.format.DateFormat;
 
+import com.podio.sdk.domain.CalendarEvent;
+
 public final class CalendarFilter extends BasicPodioFilter {
     public static final String PATH = "calendar";
 
     public CalendarFilter() {
         super(PATH);
+    }
+
+    public CalendarFilter withWorkspaceId(int spaceId) {
+        addPathSegment("space");
+        addPathSegment(Long.toString(spaceId, 10));
+        return this;
+
     }
 
     public CalendarFilter withDateFromTo(Date from, Date to) {
@@ -44,6 +53,23 @@ public final class CalendarFilter extends BasicPodioFilter {
 
     public CalendarFilter withPriority(int priority) {
         addQueryParameter("priority", Integer.toString(priority));
+        return this;
+    }
+
+    /**
+     * This method will ensure that the request will return
+     * {@link CalendarEvent} objects with a workspace name (if the requester has
+     * access to the workspace that this CalendarEvent is associated with)
+     * 
+     * @return
+     */
+    public CalendarFilter withWorkspaceNameField() {
+        addQueryParameter("fields", "app.fields(space)");
+        return this;
+    }
+
+    public CalendarFilter withTasks(boolean includeTasks) {
+        addQueryParameter("tasks", Boolean.toString(includeTasks));
         return this;
     }
 }

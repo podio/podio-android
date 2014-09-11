@@ -35,6 +35,26 @@ public class CalendarEvent {
 	private final String title = null;
 	private final String description = null;
 	private final String location = null;
+	private final App app = null;
+
+	public static class App {
+
+		private final Space space = null;
+
+		public static class Space {
+			private final String name = null;
+		}
+
+		/**
+		 * 
+		 * @return returns null if the user don't have access permission to the
+		 *         space
+		 */
+		public String getWorkspaceName() {
+			return space.name;
+		}
+
+	}
 
 	/**
 	 * Gets the end date of the calendar event as a Java Date object.
@@ -72,6 +92,17 @@ public class CalendarEvent {
 
 	public String getLocation() {
 		return location;
+	}
+
+	/**
+	 * Warning! Use this method with caution.
+	 * 
+	 * @return returns the name of the workspace or null if the user doesn't
+	 *         have access permission to the workspace which this calendar event
+	 *         is part of.
+	 */
+	public String getWorkspaceName() {
+		return app.getWorkspaceName();
 	}
 
 	public boolean isBusy() {

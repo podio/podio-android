@@ -35,21 +35,48 @@ import com.podio.sdk.filter.CalendarFilter;
  */
 public class CalendarProvider extends BasicPodioProvider {
 
-	/**
-	 * Fetches all global calendar events.
-	 * 
-	 * @param from
-	 *            The Date from which the result should start from.
-	 * @param to
-	 *            The Date from which the result should end at.
-	 * @param priority
-	 *            The priority level of the results.
-	 * @return
-	 */
-	public RequestFuture<CalendarEvent[]> getGlobal(Date from, Date to, int priority) {
-		CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
-				.withPriority(priority);
+    /**
+     * Fetches all global calendar events.
+     * 
+     * @param from
+     *        The Date from which the result should start from.
+     * @param to
+     *        The Date from which the result should end at.
+     * @param priority
+     *        The priority level of the results.
+     * @param includeTasks
+     *        set to true if tasks should be included in the calendar, false
+     *        otherwise.
+     * @return
+     */
+    public RequestFuture<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority,
+            boolean includeTasks) {
 
-		return get(filter, CalendarEvent[].class);
-	}
+        CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
+                .withPriority(priority).withTasks(includeTasks).withWorkspaceNameField();
+
+        return get(filter, CalendarEvent[].class);
+    }
+
+    /**
+     * Fetches all space calendar events.
+     * 
+     * @param spaceId
+     * @param from
+     * @param to
+     * @param priority
+     * @param includeTasks
+     *        set to true if tasks should be included in the calendar, false
+     *        otherwise.
+     * @return
+     */
+    public RequestFuture<CalendarEvent[]> getSpaceCalendar(int spaceId, Date from, Date to,
+            int priority, boolean includeTasks) {
+
+        CalendarFilter filter = new CalendarFilter().withWorkspaceId(spaceId)
+                .withDateFromTo(from, to).withPriority(priority).withTasks(includeTasks)
+                .withWorkspaceNameField();
+
+        return get(filter, CalendarEvent[].class);
+    }
 }
