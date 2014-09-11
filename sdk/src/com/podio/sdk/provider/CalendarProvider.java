@@ -35,22 +35,21 @@ import com.podio.sdk.filter.CalendarFilter;
  */
 public class CalendarProvider extends BasicPodioProvider {
 
-    /**
-     * Fetches all global calendar events.
-     * 
-     * @param from
-     *        The Date from which the result should start from.
-     * @param to
-     *        The Date from which the result should end at.
-     * @param priority
-     *        The priority level of the results.
-     * @return
-     */
-    public RequestFuture<CalendarEvent[]> getGlobal(Date from, Date to, int priority) {
-        CalendarFilter filter = new CalendarFilter()
-                .withDateFromTo(from, to)
-                .withPriority(priority);
+	/**
+	 * Fetches all global calendar events.
+	 * 
+	 * @param from
+	 *            The Date from which the result should start from.
+	 * @param to
+	 *            The Date from which the result should end at.
+	 * @param priority
+	 *            The priority level of the results.
+	 * @return
+	 */
+	public RequestFuture<CalendarEvent[]> getGlobal(Date from, Date to, int priority) {
+		CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
+				.withPriority(priority);
 
-        return get(filter, CalendarEvent[].class);
-    }
+		return get(filter, CalendarEvent[].class);
+	}
 }
