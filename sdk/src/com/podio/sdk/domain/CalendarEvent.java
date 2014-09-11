@@ -29,53 +29,53 @@ import com.podio.sdk.internal.Utils;
  * @author Tobias Lindberg
  */
 public class CalendarEvent {
-    private final Boolean busy = null;
-    private final String start_utc = null;
-    private final String end_utc = null;
-    private final String title = null;
-    private final String description = null;
-    private final String location = null;
+	private final Boolean busy = null;
+	private final String start_utc = null;
+	private final String end_utc = null;
+	private final String title = null;
+	private final String description = null;
+	private final String location = null;
 
-    /**
-     * Gets the end date of the calendar event as a Java Date object.
-     * 
-     * @return A date object, or null if the date couldn't be parsed.
-     */
-    public Date getEndDate() {
-        return Utils.parseDateTime(end_utc);
-    }
+	/**
+	 * Gets the end date of the calendar event as a Java Date object.
+	 * 
+	 * @return A date object, or null if the date couldn't be parsed.
+	 */
+	public Date getEndDate() {
+		return Utils.parseDateTime(end_utc);
+	}
 
-    public String getEndDateString() {
-        return end_utc;
-    }
+	public String getEndDateString() {
+		return end_utc;
+	}
 
-    /**
-     * Gets the start date of the calendar event as a Java Date object.
-     * 
-     * @return A date object, or null if the date couldn't be parsed.
-     */
-    public Date getStartDate() {
-        return Utils.parseDateTime(start_utc);
-    }
+	/**
+	 * Gets the start date of the calendar event as a Java Date object.
+	 * 
+	 * @return A date object, or null if the date couldn't be parsed.
+	 */
+	public Date getStartDate() {
+		return Utils.parseDateTime(start_utc);
+	}
 
-    public String getStartDateString() {
-        return start_utc;
-    }
+	public String getStartDateString() {
+		return start_utc;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getLocation() {
-        return location;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    public boolean isBusy() {
-        return Utils.getNative(busy, false);
-    }
+	public boolean isBusy() {
+		return Utils.getNative(busy, false);
+	}
 
 }
