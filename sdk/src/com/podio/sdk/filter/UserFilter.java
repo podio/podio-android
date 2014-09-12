@@ -22,7 +22,7 @@
 
 package com.podio.sdk.filter;
 
-public final class UserFilter extends BasicPodioFilter {
+public class UserFilter extends BasicPodioFilter {
     public static final String PATH = "user";
 
     public UserFilter() {
@@ -39,4 +39,8 @@ public final class UserFilter extends BasicPodioFilter {
         return this;
     }
 
+    public UserFilter withPropertyName(String propertyName) {
+        addQueryParameter("name", propertyName);
+        return this;
+    }
 }
