@@ -102,16 +102,21 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
     }
 
     private RestResult<T> getResultNow() {
+        // TODO: Catching the exceptions and returning null is a temporary,
+        // quick-n-dirty fix to resolve immediate blocking issues in QA. A more
+        // solid solution is being designed as we speak.
         try {
             return get();
         } catch (InterruptedException e) {
-            throw PodioException.fromThrowable(e);
+            return null;
+            // throw PodioException.fromThrowable(e);
         } catch (ExecutionException e) {
-            if (e.getCause() instanceof PodioException) {
-                throw (PodioException) e.getCause();
-            } else {
-                throw PodioException.fromThrowable(e);
-            }
+            return null;
+            // if (e.getCause() instanceof PodioException) {
+            // throw (PodioException) e.getCause();
+            // } else {
+            // throw PodioException.fromThrowable(e);
+            // }
         }
     }
 
