@@ -29,6 +29,17 @@ import com.podio.sdk.domain.Session;
  */
 public interface SessionListener {
 
-    public void onSessionChanged(Session session);
+    /**
+     * Callback interface for session change events. The implementation must
+     * return boolean true if the event is to be consumed (no subsequent
+     * listeners in the chain will be called) or boolean false to allow bubbling
+     * of the event.
+     * 
+     * @param session
+     *        The new session object.
+     * @return Boolean flag whether the event is to be consumed or not by this
+     *         implementation.
+     */
+    public boolean onSessionChanged(Session session);
 
 }

@@ -19,26 +19,24 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  *  SOFTWARE.
  */
-
 package com.podio.sdk;
 
 /**
  * @author László Urszuly
- * @param <T>
  */
-public interface ResultListener<T> {
+public interface ErrorListener {
 
     /**
-     * Callback interface for successfully executed request events. The
-     * implementation must return boolean true if the event is to be consumed
-     * (no subsequent listeners in the chain will be called) or boolean false to
-     * allow bubbling of the event.
+     * Callback interface for error events. The implementation must return
+     * boolean true if the event is to be consumed (no subsequent listeners in
+     * the chain will be called) or boolean false to allow bubbling of the
+     * event.
      * 
-     * @param content
-     *        The content that was requested.
+     * @param cause
+     *        The cause of the error.
      * @return Boolean flag whether the event is to be consumed or not by this
      *         implementation.
      */
-    public boolean onRequestPerformed(T content);
+    public boolean onErrorOccured(Throwable cause);
 
 }
