@@ -26,6 +26,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 import android.content.Context;
 
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.client.VolleyHttpClient;
 import com.podio.sdk.client.VolleySessionClient;
 import com.podio.sdk.domain.Session;
@@ -86,6 +87,54 @@ public class Podio {
      * point.
      */
     public static final UserProvider user = new UserProvider();
+
+    /**
+     * Registers a global error listener with the SDK. Any future, failing,
+     * requests will try to report an error event to this listener as well. Note
+     * that the error listener interface offers a mechanism to consume events,
+     * which actually may prevent any events from reaching this callback.
+     * 
+     * @param errorListener
+     *        The global error listener to register.
+     */
+    public static void addGlobalErrorListener(ErrorListener errorListener) {
+        RequestFuture.addErrorListener(errorListener);
+    }
+
+    /**
+     * Registers a global session listener with the SDK. Any future requests
+     * will try to report any session changes to this listener as well. Note
+     * that the session listener interface offers a mechanism to consume events,
+     * which may prevent any events from reaching this callback.
+     * 
+     * @param sessionListener
+     *        The global session listener to register.
+     */
+    public static void addGlobalSessionListener(SessionListener sessionListener) {
+        RequestFuture.addSessionListener(sessionListener);
+    }
+
+    /**
+     * Unregisters a previously registered global error listener. No error
+     * events will be reported to the removed callback after this call.
+     * 
+     * @param errorListener
+     *        The global error listener to remove.
+     */
+    public static void removeGlobalErrorListener(ErrorListener errorListener) {
+        RequestFuture.removeErrorListener(errorListener);
+    }
+
+    /**
+     * Unregisters a previously registered global session listener. No session
+     * change events will be reported to the removed callback after this call.
+     * 
+     * @param sessionListener
+     *        The global session listener to remove.
+     */
+    public static void removeGlobalSessionListener(SessionListener sessionListener) {
+        RequestFuture.removeSessionListener(sessionListener);
+    }
 
     /**
      * The same as {@link Podio#setup(Context, String, String, String)} with the
