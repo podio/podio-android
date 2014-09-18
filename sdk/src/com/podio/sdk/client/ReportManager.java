@@ -25,7 +25,7 @@ abstract class ReportManager<T> {
                     boolean didConsumeEvent = false;
 
                     // Report to the custom listener first...
-                    if (customListener != null) {
+                    if (customListener != null && customListener.get() != null) {
                         didConsumeEvent = executeReport(customListener);
                     }
 
