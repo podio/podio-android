@@ -137,7 +137,7 @@ public class ItemProvider extends BasicPodioProvider {
          * @see {@link ItemFilterProvider#onSpan(int)}
          * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
          */
-        public RequestFuture<Item.FilterResult> get(int applicationId) {
+        public RequestFuture<Item.FilterResult> get(long applicationId) {
             ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
             return post(filter, filterData, Item.FilterResult.class);
         }
@@ -158,7 +158,7 @@ public class ItemProvider extends BasicPodioProvider {
      *        The data describing the new item to create.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Item.PushResult> create(int applicationId, Item item) {
+    public RequestFuture<Item.PushResult> create(long applicationId, Item item) {
         ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
         Item.PushData data = item.getPushData();
 
@@ -182,7 +182,7 @@ public class ItemProvider extends BasicPodioProvider {
      *        The id of the item to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Item> get(int itemId) {
+    public RequestFuture<Item> get(long itemId) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
 
         return get(filter, Item.class);
@@ -197,7 +197,7 @@ public class ItemProvider extends BasicPodioProvider {
      *        The changed data bundle.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Item.PushResult> update(int itemId, Item item) {
+    public RequestFuture<Item.PushResult> update(long itemId, Item item) {
         ItemFilter filter = new ItemFilter().withItemId(itemId);
         Item.PushData data = item.getPushData();
 
