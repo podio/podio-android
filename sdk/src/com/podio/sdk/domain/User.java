@@ -236,6 +236,8 @@ public class User {
     }
 
     private final Long user_id = null;
+    private final String name = null;
+    private final Long avatar = null;
     private final List<Flag> flags = null;
     private final List<Email> mails = null;
     private final Status status = null;
@@ -311,6 +313,14 @@ public class User {
 
     public long getId() {
         return Utils.getNative(user_id, -1L);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getAvatar() {
+        return Utils.getNative(avatar, -1L);
     }
 
     public String getLocale() {
