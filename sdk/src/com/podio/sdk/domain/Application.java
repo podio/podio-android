@@ -201,6 +201,7 @@ public class Application {
     private final Long default_view_id = null;
     private final Long original = null;
     private final Long space_id = null;
+    private final Space space = null;
     // private final Integration integration = null;
     private final List<Field> fields = null;
     private final List<Right> rights = null;
@@ -263,9 +264,7 @@ public class Application {
      * @return A list of fields. Never null.
      */
     public List<Field> getFields() {
-        return fields != null ?
-                new ArrayList<Field>(fields) :
-                new ArrayList<Field>();
+        return fields != null ? new ArrayList<Field>(fields) : new ArrayList<Field>();
     }
 
     public String getLink() {
@@ -290,6 +289,10 @@ public class Application {
 
     public long getSpaceId() {
         return Utils.getNative(space_id, -1L);
+    }
+
+    public Space getSpace() {
+        return space;
     }
 
     public Status getStatus() {

@@ -48,4 +48,17 @@ public final class ApplicationFilter extends BasicPodioFilter {
         addQueryParameter("type", type);
         return this;
     }
+
+    /**
+     * This method will ensure that the request will return {@link Application}
+     * object with a {@link Space} in it (if the requester has access to the
+     * workspace that this app is associated with)
+     * 
+     * @return
+     */
+    public ApplicationFilter withWorkspaceField() {
+        addQueryParameter("fields", "space");
+
+        return this;
+    }
 }

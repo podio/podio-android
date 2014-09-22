@@ -36,9 +36,8 @@ public class ApplicationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Application> get(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter()
-                .withApplicationId(applicationId)
-                .withType("full");
+        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
+                .withType("full").withWorkspaceField();
 
         return get(filter, Application.class);
     }
@@ -51,8 +50,7 @@ public class ApplicationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Application> getShort(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter()
-                .withApplicationId(applicationId)
+        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
                 .withType("short");
 
         return get(filter, Application.class);
@@ -66,8 +64,7 @@ public class ApplicationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Application> getMini(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter()
-                .withApplicationId(applicationId)
+        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
                 .withType("mini");
 
         return get(filter, Application.class);
@@ -81,8 +78,7 @@ public class ApplicationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Application> getMicro(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter()
-                .withApplicationId(applicationId)
+        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
                 .withType("micro");
 
         return get(filter, Application.class);
@@ -96,8 +92,7 @@ public class ApplicationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Application[]> getAllActive(long spaceId) {
-        ApplicationFilter filter = new ApplicationFilter()
-                .withSpaceId(spaceId)
+        ApplicationFilter filter = new ApplicationFilter().withSpaceId(spaceId)
                 .withInactivesIncluded(false);
 
         return get(filter, Application[].class);
@@ -112,8 +107,7 @@ public class ApplicationProvider extends BasicPodioProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public RequestFuture<Application[]> getAll(long spaceId) {
-        ApplicationFilter filter = new ApplicationFilter()
-                .withSpaceId(spaceId)
+        ApplicationFilter filter = new ApplicationFilter().withSpaceId(spaceId)
                 .withInactivesIncluded(true);
 
         return get(filter, Application[].class);
