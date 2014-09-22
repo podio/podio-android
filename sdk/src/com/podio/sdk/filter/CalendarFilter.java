@@ -35,7 +35,7 @@ public final class CalendarFilter extends BasicPodioFilter {
         super(PATH);
     }
 
-    public CalendarFilter withWorkspaceId(int spaceId) {
+    public CalendarFilter withWorkspaceId(long spaceId) {
         addPathSegment("space");
         addPathSegment(Long.toString(spaceId, 10));
         return this;

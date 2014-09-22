@@ -70,7 +70,7 @@ public class CalendarProvider extends BasicPodioProvider {
      *        otherwise.
      * @return
      */
-    public RequestFuture<CalendarEvent[]> getSpaceCalendar(int spaceId, Date from, Date to,
+    public RequestFuture<CalendarEvent[]> getSpaceCalendar(long spaceId, Date from, Date to,
             int priority, boolean includeTasks) {
 
         CalendarFilter filter = new CalendarFilter().withWorkspaceId(spaceId)
