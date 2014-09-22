@@ -31,6 +31,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.podio.sdk.PodioException;
 import com.podio.sdk.RestClient;
 
 /**
@@ -72,12 +73,17 @@ public abstract class QueuedRestClient implements RestClient {
         public RestResult<T> call() throws Exception {
             RestResult<T> result = null;
 
-            result = handleRequest(request);
+            try {
+                result = handleRequest(request);
+            } catch (PodioException e) {
+                if (e.isExpiredError()) {
+                    // The user is no longer authorized. Remove any pending
+                    // requests (though, allowing any running requests to
+                    // finish).
+                    queue.clear();
+                }
 
-            if (result.hasSession() && !result.getSession().isAuthorized()) {
-                // The user is no longer authorized. Remove any pending
-                // requests (allowing any running requests to finish).
-                queue.clear();
+                throw e;
             }
 
             return result;
