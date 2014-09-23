@@ -109,11 +109,7 @@ public final class TextField extends Field {
         }
     }
 
-    /**
-     * Returns the number of values for this field.
-     * 
-     * @return The size of the values list.
-     */
+    @Override
     public int valuesCount() {
         return values != null ? values.size() : 0;
     }

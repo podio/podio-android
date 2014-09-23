@@ -49,20 +49,11 @@ public abstract class Field implements Pushable {
      * @author Christian Holm
      */
     public static enum Type {
-        app(RelationshipField.class),
-        calculation(CalculationField.class),
-        category(CategoryField.class),
-        contact(ContactField.class),
-        date(DateField.class),
-        duration(DurationField.class),
-        embed(LinkField.class),
-        image(ImageField.class),
-        location(MapField.class),
-        money(MoneyField.class),
-        number(NumberField.class),
-        progress(ProgressField.class),
-        text(TextField.class),
-        undefined(EmptyField.class);
+        app(RelationshipField.class), calculation(CalculationField.class), category(
+                CategoryField.class), contact(ContactField.class), date(DateField.class), duration(
+                DurationField.class), embed(LinkField.class), image(ImageField.class), location(
+                MapField.class), money(MoneyField.class), number(NumberField.class), progress(
+                ProgressField.class), text(TextField.class), undefined(EmptyField.class);
 
         private final Class<? extends Field> fieldClass;
 
@@ -175,6 +166,15 @@ public abstract class Field implements Pushable {
      * @return A value object specific for this field type.
      */
     public Object getValue(int index) {
+        throw new FieldTypeMismatchException();
+    }
+
+    /**
+     * Returns the number of values for this field.
+     * 
+     * @return The size of the values list.
+     */
+    public int valuesCount() {
         throw new FieldTypeMismatchException();
     }
 
