@@ -60,3 +60,44 @@ Podio.client
 
         });
 {% endhighlight %}
+
+## Session management
+The SDK is, in some sense, quite smart as it automatically tries to refresh an expired user session for you (if it fails it will deliver an error through any of the previously mentioned error infrastructures). If you wish to get notified on these automatic and silent session changes, you need to provide a `SessionListener` callback implementation. This is done the same way, regardless of which, synchronous or asynchronous, approach you chose.
+
+Just as with all other Podio SDK callbacks, you can inject your `SessionListener` like in the below example where we're trying to fetch a Podio app:
+
+{% highlight java %}
+Podio.application
+    .get(123)
+    .withResultListener(new ResultListener<Application>() {
+
+            @Override
+            public void onRequestPerformed(Session session) {
+                // Yeay!
+            }
+
+    })
+    .withSessionListener(new SessionListener() {
+
+        @Override
+        public boolean onSessionChanged(Session session) {
+            // Persist the session data.
+            // SharedPreferences? SQLite? Your choice!
+            return false;
+        }
+
+    });
+{% endhighlight %}
+
+There is a narrow but, from a usability perspective, still very important use case for this:
+
+The Podio SDK can be initialized with a previously stored `Session` object. This basically allows you to "continue where you left of" in terms of session validity, without requiring your user to re-authenticate that frequently.
+
+You don't necessarily need this feature if you chose to [authenticate as an app](https://developers.podio.com/authentication/app_auth), as you can silently re-authenticate with your app credentials in the background. However if your Android app requires [user authentication](https://developers.podio.com/authentication/username_password), you can't do that silently in the background as you need to ask for the users email and password.
+
+This is how you restore a previously persisted Session object in the Podio SDK:
+
+{% highlight java %}
+Session persistedSession = getMyPersistedSession();
+Podio.restoreSession(persistedSession);
+{% endhighlight %}
