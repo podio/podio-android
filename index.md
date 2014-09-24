@@ -25,10 +25,126 @@ Before you can communicate with the Podio API, you need to generate a set of API
 Once you have a key and corresponding secret, you need to setup the Podio SDK to use them.
 
 {% highlight java %}
-Podio.setup(context, "my_api_key", "my_secret");
+
+    Podio.setup(context, "my_api_key", "my_secret");
+
 {% endhighlight %}
 
 and by that you're ready to start using the Podio SDK.
+
+## How to use the SDK
+Requesting data from the SDK can be done in two ways, both will deliver the same result, but in different ways.
+
+Regardless of which approach you chose, the SDK will give you a `Future` object upon performing a request. You then have the option of providing a set of (optional) callback interfaces that will be called by the SDK when something is ready. You can also chose to block the current thread while the SDK executes and get the result back directly from the request method.
+
+A very simple example to request an app could look something like this (it, of course, requires you to already be logged in with the SDK):
+
+{% highlight java %}
+
+    RequestFuture<Application> future = Podio.application.get(123);
+
+{% endhighlight %}
+
+### Using the SDK in an asynchronous manner
+The returned `Future` object offers ways of providing callback interfaces that will be called (on the UI thread) at any point in the future when there is something to notify.
+
+There are mainly two callback interfaces that will be used quite a lot; a `ResultListener` interface to be called once the result has been produced for you and an `ErrorListener` interface to notify you on any SDK or API provided errors.
+
+Receiving a requested app asynchronously from the Podio SDK could, hence, look something like this:
+
+{% highlight java %}
+
+    future.withResultListener(new ResultListener<Application>() {
+
+        @Override
+        public boolean onRequestPerformed(Application content) {
+            // Do something with the result.
+            return false;
+        }
+
+    });
+
+{% endhighlight %}
+
+In the same manner you can provide an `ErrorListener`:
+
+{% highlight java %}
+
+    future.withErrorListener(new ErrorListener() {
+
+        @Override
+        public boolean onErrorOccured(Throwable cause) {
+            // Check for PodioException
+            return false;
+        }
+
+    });
+
+{% endhighlight %}
+
+Note the different injection methods (`withResultListener` vs. `withErrorListener`).
+
+### Using the SDK in a synchronous manner
+Now, you may want to block the current thread while the SDK is executing. This is not recommended on the UI thread, though. However, you might be executing on a worker thread already, like with an `IntentService`, which you may want to keep alive during the entire Podio SDK execution flow. You can then take advantage of the Java `Future` aspects of the returned `RequestFuture` object and block the current thread until the SDK delivers.
+
+You'll still perform the request itself in the same way as with the asynchronous approach, but you'll also need to call the `get()` method on the returned future, something like below:
+
+{% highlight java %}
+
+    try {
+        Application application = future.get(20, TimeUnit.SECONDS);
+    } catch (ExecutionException e) {
+        // Check cause for PodioException.
+    } catch (TimeoutException e) {
+        // No network error???
+    } catch (InterruptedException e) {
+        // Unexpected error.
+    }
+
+{% endhighlight %}
+
+The timing arguments to the `get()` method are optional, which, when omitted, will render the `TimeoutException` trap superfluous.
+
+The actual result of the request will be delivered as a return value of the `get()` method. This behaviour is coming with the Java `Future` heritage and is replacing the `ResultListener<T>` callback.
+
+Also note how the native `Future` implementation declares some checked exceptions which you need to handle in order to get past compiling. These exceptions are also replacing the `ErrorListener` callback.
+
+Interesting to know is that the Podio SDK will still spawn a worker thread of its own and perform the request on that thread. You are, however, blocking any further execution of "your current thread" with the `future.get()` method, which will return first when the request is fully performed by the SDK (or an error occurs in the SDK or the server side).
+
+## Session management
+The SDK is, in some sense, quite smart as it automatically tries to refresh an expired user session for you (if it fails it will deliver an error through any of the above mentioned error infrastructures). If you wish to get notified on these automatic and silent session changes, you need to provide a `SessionListener` callback implementation. This is done the same way, regardless of which, synchronous or asynchronous, approach you chose.
+
+Just as with all other Podio SDK callbacks, you can inject your `SessionListener` like this:
+
+{% highlight java %}
+
+    future.withSessionListener(new SessionListener() {
+
+        @Override
+        public boolean onSessionChanged(Session session) {
+            // Persist the session data.
+            return false;
+        }
+
+    });
+
+{% endhighlight %}
+
+There is a narrow but, from a usability perspective, still very important use case for this:
+
+The Podio SDK can be initialized with a previously stored `Session` object. This basically allows you to "continue where you left of" without requiring your user to re-authenticate that frequently.
+
+You don't necessarily need this feature if you chose to [authenticate as an app](https://developers.podio.com/authentication/app_auth), as you can silently re-authenticate with your app credentials in the background. However if your Android app requires [user authentication](https://developers.podio.com/authentication/username_password), you can't do that silently in the background as you need to ask for the users email and password.
+
+This is how you restore a previously persisted Session object in the Podio SDK:
+
+{% highlight java %}
+
+    Session persistedSession = getMyPersistedSession();
+    Podio.restoreSession(persistedSession);
+
+{% endhighlight %}
+
 
 ## The test suite
 To run the test suite locally on your machine you need to have the latest Android SDK available and the $ANDROID_HOME environment variable configured properly.
