@@ -76,9 +76,9 @@ Podio.client
 {% endhighlight %}
 
 ## Session management
-The SDK is, in some sense, quite smart as it automatically tries to refresh an expired user session for you (if it fails it will deliver an error through any of the previously mentioned error infrastructures). If you wish to get notified on these automatic and silent session changes, you need to provide a `SessionListener` callback implementation. This is done the same way, regardless of which, synchronous or asynchronous, approach you chose.
+The SDK is, in some sense, quite smart as it automatically tries to refresh an expired user session for you (if it fails it will deliver an error). If you wish to get notified on these automatic and silent session changes, you need to provide a `SessionListener` callback implementation. This is done the same way, regardless of which, synchronous or asynchronous, approach you choose.
 
-Just as with all other Podio SDK callbacks, you can inject your `SessionListener` like in the below example where we're trying to fetch a Podio app:
+Just as with all other Podio SDK callbacks, you can inject your `SessionListener` like in the below example where we're trying to fetch a Podio app. Besides that, the session listener also coheres to the same global listener pattern as does the error listener callback.
 
 {% highlight java %}
 Podio.application
@@ -125,3 +125,5 @@ This is how you restore a previously persisted Session object in the Podio SDK:
 Session persistedSession = getMyPersistedSession();
 Podio.restoreSession(persistedSession);
 {% endhighlight %}
+
+Generally (but not necessarily) you'd run this code right after the `Podio.setup()` call.
