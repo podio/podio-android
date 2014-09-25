@@ -19,7 +19,7 @@ Your options of integration from here on are as wide as the Android framework en
 
 The provided Ant build script gives you the option of building a JAR file by executing the `ant clean jar` command from the SDK root. You can then add the `podio-sdk.jar` file to your existing Android projects `libs` folder.
 
-### Setup your API keys
+## Setup your API keys
 Before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details [here](https://developers.podio.com/api-key).
 
 Once you have a key and corresponding secret, you need to setup the Podio SDK to use them.
@@ -44,9 +44,9 @@ RequestFuture<Application> future = Podio.application.get(123);
 {% endhighlight %}
 
 ### Using the SDK in an asynchronous manner
-The returned `Future` object offers ways of providing callback interfaces that will be called (on the UI thread) at any point in the future when there is something to notify.
+The returned `Future` object offers ways of providing callback interfaces which will be called (on the UI thread) at any point in the future when there is something to notify.
 
-There are mainly two callback interfaces you should familiarize yourself with; the `ResultListener` interface to be called once the result has been produced for you and the `ErrorListener` interface to notify you on any SDK or API provided errors.
+There are mainly two callback interfaces you should familiarize yourself with; the `ResultListener` which will be called once the *result* has been produced for you and the `ErrorListener` which will notify you on any SDK or API provided *errors*.
 
 Receiving a requested app asynchronously from the Podio SDK could, hence, look something like this:
 
@@ -77,6 +77,26 @@ future.withErrorListener(new ErrorListener() {
 {% endhighlight %}
 
 Note the different injection methods (`withResultListener` vs. `withErrorListener`).
+
+If you don't want to provide an explicit error listener for each call you make, but rather prefer to have the same error management for all your requests, you can register a *global error listener* directly on the `Podio` facade:
+
+{% highlight java %}
+ErrorListener globalErrorListener = new ErrorListener() {
+
+    @Override
+    public boolean onErrorOccured(Throwable cause) {
+        // Handle the error once and for all.
+    }
+
+};
+
+Podio.addGlobalErrorListener(globalErrorListener);
+
+// You remove a global listener like this:
+// Podio.removeGlobalErrorListener(globalErrorListener);
+{% endhighlight %}
+
+An error event will now not only be given to your custom error listener, which you provide on the actual request future, but will also bubble up to the global error listeners (if any). However, if the callback method returns boolean `true`, any further bubbling of the event will be prevented. This enables you to make specific error handling for specific calls, while having a general fallback for the others.
 
 ### Using the SDK in a synchronous manner
 Now, you may want to block the current thread while the SDK is executing. This is not recommended on the UI thread, though. However, you might be executing on a worker thread already, like with an `IntentService`, which you may want to keep alive during the entire Podio SDK execution flow. You can then take advantage of the Java `Future` aspects of the returned `RequestFuture` object and block the current thread until the SDK delivers.
