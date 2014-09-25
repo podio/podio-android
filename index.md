@@ -1,10 +1,10 @@
 ---
 layout: default
 ---
-# Podio Android  SDK #
+# The Podio Android  SDK #
 The Podio SDK for Android is a client library for communicating with the [Podio API](https://developers.podio.com). It provides an easy and convenient way of integrating your Android app with Podio.
 
-The SDK requires Android API level 11 as a minimum and it also requires  `android.permission.INTERNET` permissions being requested in your `AndroidManifest.xml` file.
+The SDK requires Android API level 11 and  `android.permission.INTERNET` permissions being requested in your `AndroidManifest.xml` file.
 
 Apart from above Android requirements, the SDK also uses the [Android Volley](https://android.googlesource.com/platform/frameworks/volley/) framework for the network traffic and the [Google Gson](https://code.google.com/p/google-gson/) library for parsing JSON. Both dependencies are included as pre-built jar files in the Podio SDK project sources.
 
@@ -15,38 +15,38 @@ The Podio SDK for Android is currently in a early development stage where the en
 ## Integrate with your Android project
 The project is currently made available as raw source code. You can get the source by cloning the git repository: `git clone git@github.com:podio/podio-android.git`.
 
-Your options of integration from here on are as wide as the Android framework enables. You can e.g. choose to import the cloned source as an Android Library Project or build a JAR file out of it (don't forget to also manually copy the Volley and Gson JARs to your `libs` directory as they are not included in the podio-sdk JAR).
+Your options of integration from here on are as wide as the Android framework enables. You can e.g. choose to import the cloned source as an Android Library Project or build a JAR file out of it.
 
-The provided Ant build script gives you the option of building a JAR file by executing the `ant clean jar` command from the SDK root. You can then add the `podio-sdk.jar` file to your existing Android projects `libs` folder.
+The provided Ant build script gives you the option of building a JAR file by executing the `ant clean jar` command from the SDK root. You can then add the `podio-sdk.jar` file to your existing Android projects `libs` folder (don't forget to also manually copy the Volley and Gson JARs to your `libs` directory as they are not included in the podio-sdk JAR).
 
 ## Setup your API keys
 Before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details [here](https://developers.podio.com/api-key).
 
-Once you have a key and corresponding secret, you need to setup the Podio SDK to use them.
+Once you have a key and a corresponding secret, you need to setup the Podio SDK to use them:
 
 {% highlight java %}
 Podio.setup(context, "my_api_key", "my_secret");
 {% endhighlight %}
 
-and by that you're ready to start using the Podio SDK.
+And by that you're ready to start using the Podio SDK.
 
 ## How to use the SDK
-Requesting data from the SDK can be done in two ways, both will deliver the same result, but in different ways.
+Requesting data from the SDK can be done in of two different ways, both will deliver the same result, but in different ways.
 
-Regardless of which approach you chose, the SDK will give you a `Future` object upon performing a request. You then have the option of providing a set of (optional) callback interfaces that will be called by the SDK when something is ready.
+Regardless of which approach you choose, the SDK will give you a `Future` object upon performing a request. You then have the option of providing a set of (optional) callback interfaces that will be called by the SDK when something is ready.
 
-You can also chose to block the current thread while the SDK executes and get the result back directly from the request method.
+You can also choose to block the current thread while the SDK executes and get the result back directly from the request method.
 
-A very simple example to request an app could look something like this (it, of course, requires you to already be logged in with the SDK):
+A very simple example of how to request an app could look something like this (it, of course, requires you to already be authenticated through the SDK):
 
 {% highlight java %}
 RequestFuture<Application> future = Podio.application.get(123);
 {% endhighlight %}
 
 ### Using the SDK in an asynchronous manner
-The returned `Future` object offers ways of providing callback interfaces which will be called (on the UI thread) at any point in the future when there is something to notify.
+The returned `Future` object offers ways of providing callback interfaces which will be called (on the main thread) at any point in the future when there is something to notify.
 
-There are mainly two callback interfaces you should familiarize yourself with; the `ResultListener` which will be called once the *result* has been produced for you and the `ErrorListener` which will notify you on any SDK or API provided *errors*.
+There are mainly two callback interfaces you should familiarize yourself with; the `ResultListener`, which will be called once the result of your request has been produced for you, and the `ErrorListener` which will notify you on any SDK or API provided errors.
 
 Receiving a requested app asynchronously from the Podio SDK could, hence, look something like this:
 
@@ -78,6 +78,7 @@ future.withErrorListener(new ErrorListener() {
 
 Note the different injection methods (`withResultListener` vs. `withErrorListener`).
 
+#### Global error listeners
 If you don't want to provide an explicit error listener for each call you make, but rather prefer to have the same error management for all your requests, you can register any number of *global* error listeners directly on the `Podio` facade:
 
 {% highlight java %}
