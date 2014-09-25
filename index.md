@@ -103,7 +103,7 @@ An error event will now not only be given to your custom error listener (the one
 Important to know is that the SDK will only hold a weak reference to the global error listeners. In practice it means that if you don't hold a reference of your own to the listener, the Java garbage collector will reclaim it. This can efficiently be avoided by letting an Android `Activity` or a custom Android `Application` object implement the `ErrorListener` interface. 
 
 ### Using the SDK in a synchronous manner
-Now, you may want to block the current thread while the SDK is executing. This is not recommended on the UI thread, though. However, you might be executing on a worker thread already, like with an `IntentService`, which you may want to keep alive during the entire Podio SDK execution flow. You can then take advantage of the Java `Future` aspects of the returned `RequestFuture` object and block the current thread until the SDK delivers.
+Now, you may want to block the current thread while the SDK is executing. This is not recommended on the UI thread, though. However, you might be executing on a worker thread already, like with an `IntentService`, which you may want to keep alive during the entire Podio SDK execution flow. You can then take advantage of the Java `Future` aspects of the returned future object and block the current thread until the SDK delivers.
 
 You'll still perform the request itself in the same way as with the asynchronous approach, but you'll also need to call the `get()` method on the returned future, something like below:
 
@@ -111,7 +111,7 @@ You'll still perform the request itself in the same way as with the asynchronous
 try {
     Application application = future.get(20, TimeUnit.SECONDS);
 } catch (ExecutionException e) {
-    // Check cause for PodioException.
+    // Check the cause of e for PodioException.
 } catch (TimeoutException e) {
     // No network error???
 } catch (InterruptedException e) {
@@ -121,11 +121,11 @@ try {
 
 The timing arguments to the `get()` method are optional, which, when omitted, will render the `TimeoutException` trap superfluous.
 
-The actual result of the request will be delivered as a return value of the `get()` method. This behaviour is coming with the Java `Future` heritage and is replacing the `ResultListener<T>` callback.
+The actual result of the request will be delivered as a return value of the `get()` method. This behaviour is coming with the Java `Future` heritage and is replacing the `ResultListener` callback.
 
 Also note how the native `Future` implementation declares some checked exceptions which you need to handle in order to get past compiling. These exceptions are also replacing the `ErrorListener` callback.
 
-Interesting to know is that the Podio SDK will internally still spawn a worker thread of its own and perform the request on that thread. You are, however, blocking any further execution of "your current thread" with the `future.get()` method, which will return first when the request is fully performed by the SDK (or an error occurs in the SDK or on the server side).
+Interesting to know is that the Podio SDK will internally still spawn a worker thread of its own and perform the request on that thread. You are, however, blocking any further execution of "your current thread" with the `get()` method of your request future, which will return first when the request is fully performed by the SDK (or an error occurs).
 
 ## The test suite
 To run the test suite locally on your machine you need to have the latest Android SDK available and the $ANDROID_HOME environment variable configured properly.
