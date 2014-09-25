@@ -78,7 +78,7 @@ future.withErrorListener(new ErrorListener() {
 
 Note the different injection methods (`withResultListener` vs. `withErrorListener`).
 
-If you don't want to provide an explicit error listener for each call you make, but rather prefer to have the same error management for all your requests, you can register a *global error listener* directly on the `Podio` facade:
+If you don't want to provide an explicit error listener for each call you make, but rather prefer to have the same error management for all your requests, you can register any number of *global* error listeners directly on the `Podio` facade:
 
 {% highlight java %}
 ErrorListener globalErrorListener = new ErrorListener() {
@@ -97,7 +97,9 @@ Podio.addGlobalErrorListener(globalErrorListener);
 // Podio.removeGlobalErrorListener(globalErrorListener);
 {% endhighlight %}
 
-An error event will now not only be given to your custom error listener, which you provide on the actual request future, but will also bubble up to the global error listeners (if any). However, if the callback method returns boolean `true`, any further bubbling of the event will be prevented. This enables you to make specific error handling for specific calls, while having a general fallback for the others.
+An error event will now not only be given to your custom error listener (the one you provide to the request future), but will also bubble up to your global error listeners. However, if the callback method returns boolean `true`, any further bubbling of the event will be prevented. This enables you to make specific error handling for specific calls, while having a general fallback for the others.
+
+Important to know is that the SDK will only hold a weak reference to the global error listeners. In practice it means that if you don't hold a reference of your own to the listener, the Java garbage collector will reclaim it. This can efficiently be avoided by letting an Android `Activity` or a custom Android `Application` object implement the `ErrorListener` interface. 
 
 ### Using the SDK in a synchronous manner
 Now, you may want to block the current thread while the SDK is executing. This is not recommended on the UI thread, though. However, you might be executing on a worker thread already, like with an `IntentService`, which you may want to keep alive during the entire Podio SDK execution flow. You can then take advantage of the Java `Future` aspects of the returned `RequestFuture` object and block the current thread until the SDK delivers.
