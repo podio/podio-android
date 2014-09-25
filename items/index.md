@@ -60,10 +60,10 @@ Podio.item
         });
 {% endhighlight %}
 
-Note how both the `ResultListener` and the `SessionListener` is optional to provide (even though a get-request wouldn't make sense without a result listener).
+Note how all callback interfaces are optional to provide (even though a get-request wouldn't make sense without a result listener).
 
 ### Create items ###
-You need to know the names for the fields you want to populate in your new items. These names are not necessarily the same names you see in the web-browser, though. You should instead go to the same page where you found the app id and token (the wrench icon and the "Developer" option, remember?) to find the programmatic names for them.
+You need to know the names for the fields you want to populate in your new items. These names are not necessarily the same names you see in your browser, though. You should instead go to the app view of interest, click the little wrench icon in the top right of the view, and pick the "Developer" option in the pop-up menu. The view that will be presented to you now will hold the programmatic names of your fields.
 
 Once you know the field names you should create a new `Item` object, add the values to it and send it to the Podio API. Like this:
 
@@ -75,10 +75,10 @@ item.addValue("my-number-field", 12);
 Podio.item.create(appId, item);
 {% endhighlight %}
 
-Would you be interested in the result, then you'd have to register a result listener or an error listener, as shown above.
+Would you be interested in the result, you'd have to provide a result listener and/or an error listener as usual.
 
 ### Update items ###
-The update flow follows the same principles as the create flow; You create an item, add the field values you wish to update and send the item to the Podio API:
+The update flow follows the exact same principles as the create flow; You create an item, add the field values you wish to update and send the item to the Podio API:
 
 {% highlight java %}
 Item item = new Item();
