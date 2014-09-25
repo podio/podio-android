@@ -7,15 +7,7 @@ The Podio API supports multiple ways of authenticating a client. The Podio SDK f
 * Authenticate with username/password.
 * Authenticate with specific app tokens.
 
-Both options are described below.
-
-Any changes to the authentication state during a call to the Podio API is reported back to the caller through the `SessionListener.onSessionChanged(Sessoin session)` callback method. It can be useful to listen to this callback if you wish to persist your authentication tokens in any way you'd find convenient. You can then later on restore a previously stored authentication session by calling:
-
-{% highlight java %}
-Podio.restoreSession(myPersistedSession);
-{% endhighlight %}
-
-You can find more information on authentication and the Podio API [here](https://developers.podio.com/authentication).
+Both options are described below and you can find more information on authentication and the Podio API [here](https://developers.podio.com/authentication).
 
 ## Authenticate as a user
 This option is great when you want to have every user of your client app logging in using their own Podio account and thereby give them access to the content of their entire Podio account.
@@ -27,15 +19,27 @@ String username = userTextView.getText().toString();
 String password = passTextView.getText().toString();
 
 Podio.client
-        .authenticateWithUserCredentials(username, password)
-        .withResultListener(new ResultListener<Session>() {
+    .authenticateWithUserCredentials(username, password)
+    .withResultListener(new ResultListener<Session>() {
 
-            @Override
-            public void onRequestPerformed(Session session) {
-                // Yeay!
-            }
+        @Override
+        public boolean onRequestPerformed(Session session) {
+            // Yeay! My initial session is here!
+            return false;
+        }
 
-        });
+    })
+    .withErrorListener(new ErrorListener() {
+
+        @Override
+        public boolean onErrorOccured(Throwable cause) {
+            // Oh no! I couldn't log in.
+            // Maybe the 'cause' could tell me why?!
+            // I sure hope it's a PodioException!
+            return false;
+        }
+
+    });
 {% endhighlight %}
 
 ## Authenticate as an app
@@ -50,15 +54,25 @@ public static final String MY_APP_ID = "my-app-id";
 public static final String MY_APP_TOKEN = "my-app-token";
 
 Podio.client
-        .authenticateWithAppCredentials(MY_APP_ID, MY_APP_TOKEN)
-        .withResultListener(new ResultListener<Session>() {
+    .authenticateWithAppCredentials(MY_APP_ID, MY_APP_TOKEN)
+    .withResultListener(new ResultListener<Session>() {
 
-            @Override
-            public void onRequestPerformed(Session session) {
-                // Yeay!
-            }
+        @Override
+        public boolean onRequestPerformed(Session session) {
+            // Yeay!
+            return false;
+        }
 
-        });
+    })
+    .withErrorListener(new ErrorListener() {
+
+        @Override
+        public boolean onErrorOccured(Throwable cause) {
+            // Oh no! I couldn't log in...
+            return false;
+        }
+
+    });
 {% endhighlight %}
 
 ## Session management
@@ -72,9 +86,19 @@ Podio.application
     .withResultListener(new ResultListener<Application>() {
 
             @Override
-            public void onRequestPerformed(Application content) {
-                // Yeay!
+            public boolean onRequestPerformed(Application content) {
+                // Yeay! I'm so gonna use this content!
+                return false;
             }
+
+    })
+    .withErrorListener(new ErrorListener() {
+
+        @Override
+        public boolean onErrorOccured(Throwable cause) {
+            // No content for me :-(
+            return false;
+        }
 
     })
     .withSessionListener(new SessionListener() {
