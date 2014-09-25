@@ -72,7 +72,7 @@ Podio.application
     .withResultListener(new ResultListener<Application>() {
 
             @Override
-            public void onRequestPerformed(Session session) {
+            public void onRequestPerformed(Application content) {
                 // Yeay!
             }
 
