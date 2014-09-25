@@ -85,11 +85,11 @@ Podio.application
     .get(123)
     .withResultListener(new ResultListener<Application>() {
 
-            @Override
-            public boolean onRequestPerformed(Application content) {
-                // Yeay! I'm so gonna use this content!
-                return false;
-            }
+        @Override
+        public boolean onRequestPerformed(Application content) {
+            // Yeay! I'm so gonna use this content!
+            return false;
+        }
 
     })
     .withErrorListener(new ErrorListener() {
