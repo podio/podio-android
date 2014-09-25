@@ -86,6 +86,7 @@ ErrorListener globalErrorListener = new ErrorListener() {
     @Override
     public boolean onErrorOccured(Throwable cause) {
         // Handle the error once and for all.
+        return false;
     }
 
 };
