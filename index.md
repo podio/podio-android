@@ -103,37 +103,6 @@ Also note how the native `Future` implementation declares some checked exception
 
 Interesting to know is that the Podio SDK will internally still spawn a worker thread of its own and perform the request on that thread. You are, however, blocking any further execution of "your current thread" with the `future.get()` method, which will return first when the request is fully performed by the SDK (or an error occurs in the SDK or on the server side).
 
-## Session management
-The SDK is, in some sense, quite smart as it automatically tries to refresh an expired user session for you (if it fails it will deliver an error through any of the above mentioned error infrastructures). If you wish to get notified on these automatic and silent session changes, you need to provide a `SessionListener` callback implementation. This is done the same way, regardless of which, synchronous or asynchronous, approach you chose.
-
-Just as with all other Podio SDK callbacks, you can inject your `SessionListener` like this:
-
-{% highlight java %}
-future.withSessionListener(new SessionListener() {
-
-    @Override
-    public boolean onSessionChanged(Session session) {
-        // Persist the session data.
-        return false;
-    }
-
-});
-{% endhighlight %}
-
-There is a narrow but, from a usability perspective, still very important use case for this:
-
-The Podio SDK can be initialized with a previously stored `Session` object. This basically allows you to "continue where you left of" in terms of session validity, without requiring your user to re-authenticate that frequently.
-
-You don't necessarily need this feature if you chose to [authenticate as an app](https://developers.podio.com/authentication/app_auth), as you can silently re-authenticate with your app credentials in the background. However if your Android app requires [user authentication](https://developers.podio.com/authentication/username_password), you can't do that silently in the background as you need to ask for the users email and password.
-
-This is how you restore a previously persisted Session object in the Podio SDK:
-
-{% highlight java %}
-Session persistedSession = getMyPersistedSession();
-Podio.restoreSession(persistedSession);
-{% endhighlight %}
-
-
 ## The test suite
 To run the test suite locally on your machine you need to have the latest Android SDK available and the $ANDROID_HOME environment variable configured properly.
 
