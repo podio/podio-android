@@ -16,18 +16,30 @@ Podio.item
         .get(appId)
         .withResultListener(new ResultListener<Item.FilterResult>() {
 
-                @Override
-                public void onRequestPerformed(Item.FilterResult result) {
-                    // The result will contain your items and some
-                    // other information on the filter result.
-                }
+            @Override
+            public boolean onRequestPerformed(Item.FilterResult result) {
+                // The result will contain your items and some
+                // other information on the filter result.
+                return false;
+            }
 
+        })
+        .withErrorListener(new ErrorListener() {
+
+            @Override
+            public boolean onErrorOccured(Throwable cause) {
+                // Check if cause is a PodioException.
+                // Handle error accordingly.
+                return false;
+            }
         })
         .withSessionListener(new SessionListener() {
 
-                @Override
-                public void onSessionChanged(Session session) {
-                }
+            @Override
+            public boolean onSessionChanged(Session session) {
+                // Persist the Session object.
+                return false;
+            }
 
         });
 {% endhighlight %}
@@ -40,7 +52,9 @@ Podio.item
         .withResultListener(new ResultListener<Item>() {
 
             @Override
-            public void onRequestPerformed(Item result) {
+            public boolean onRequestPerformed(Item result) {
+                // Do something with the result.
+                return false;
             }
 
         });
@@ -61,7 +75,7 @@ item.addValue("my-number-field", 12);
 Podio.item.create(appId, item);
 {% endhighlight %}
 
-Would you be interested in the result, then you'd have to register a result listener.
+Would you be interested in the result, then you'd have to register a result listener or an error listener, as shown above.
 
 ### Update items ###
 The update flow follows the same principles as the create flow; You create an item, add the field values you wish to update and send the item to the Podio API:
