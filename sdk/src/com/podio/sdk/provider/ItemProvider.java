@@ -141,6 +141,33 @@ public class ItemProvider extends BasicPodioProvider {
             ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
             return post(filter, filterData, Item.FilterResult.class);
         }
+
+        /**
+         * Fetches a set of filtered items for the application with the given id
+         * and a given view_id.
+         * <p>
+         * If no filter data has been configured, then the default filter will
+         * be used, with a behavior as the API sees fit.
+         * <p>
+         * Note that, while the other methods in this class are optional, this
+         * method must be called in order for the filtered request to take place
+         * 
+         * @param applicationId
+         *        The id of the parent application.
+         * @param viewId
+         *        The id of the view.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         * @see {@link ItemFilterProvider#onConstraint(String, Object)}
+         * @see {@link ItemFilterProvider#onRemember(boolean)}
+         * @see {@link ItemFilterProvider#onSpan(int)}
+         * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
+         */
+        public RequestFuture<Item.FilterResult> get(long applicationId, long viewId) {
+            ItemFilter filter = new ItemFilter().withApplicationAndViewIdFilter(applicationId,
+                    viewId);
+            return post(filter, filterData, Item.FilterResult.class);
+        }
     }
 
     /**
