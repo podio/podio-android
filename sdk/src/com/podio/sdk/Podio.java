@@ -36,6 +36,7 @@ import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.SessionProvider;
 import com.podio.sdk.provider.UserProvider;
+import com.podio.sdk.provider.ViewProvider;
 
 /**
  * Enables easy access to the Podio API with a basic configuration which should
@@ -69,6 +70,12 @@ public class Podio {
      * point.
      */
     public static final ItemProvider item = new ItemProvider();
+
+    /**
+     * Enables means of easy operating on the {@link ViewProvider} API end
+     * point.
+     */
+    public static final ViewProvider view = new ViewProvider();
 
     /**
      * Enables means of easy operating on the {@link OrganizationProvider} API
@@ -182,6 +189,7 @@ public class Podio {
         application.setRestClient(restClient);
         calendar.setRestClient(restClient);
         item.setRestClient(restClient);
+        view.setRestClient(restClient);
         organization.setRestClient(restClient);
         user.setRestClient(restClient);
     }
