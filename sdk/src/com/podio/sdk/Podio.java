@@ -105,7 +105,7 @@ public class Podio {
      *        The global error listener to register.
      */
     public static void addGlobalErrorListener(ErrorListener errorListener) {
-        RequestFuture.addErrorListener(errorListener);
+        RequestFuture.addGlobalErrorListener(errorListener);
     }
 
     /**
@@ -118,7 +118,7 @@ public class Podio {
      *        The global session listener to register.
      */
     public static void addGlobalSessionListener(SessionListener sessionListener) {
-        RequestFuture.addSessionListener(sessionListener);
+        RequestFuture.addGlobalSessionListener(sessionListener);
     }
 
     /**
@@ -129,7 +129,7 @@ public class Podio {
      *        The global error listener to remove.
      */
     public static void removeGlobalErrorListener(ErrorListener errorListener) {
-        RequestFuture.removeErrorListener(errorListener);
+        RequestFuture.removeGlobalErrorListener(errorListener);
     }
 
     /**
@@ -140,7 +140,7 @@ public class Podio {
      *        The global session listener to remove.
      */
     public static void removeGlobalSessionListener(SessionListener sessionListener) {
-        RequestFuture.removeSessionListener(sessionListener);
+        RequestFuture.removeGlobalSessionListener(sessionListener);
     }
 
     /**

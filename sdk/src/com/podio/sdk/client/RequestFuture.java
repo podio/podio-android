@@ -22,7 +22,6 @@
 
 package com.podio.sdk.client;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -41,50 +40,32 @@ import com.podio.sdk.domain.Session;
  */
 public class RequestFuture<T> extends FutureTask<RestResult<T>> {
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
-    private static final ArrayList<WeakReference<ErrorListener>> ERROR_LISTENERS = new ArrayList<WeakReference<ErrorListener>>();
-    private static final ArrayList<WeakReference<SessionListener>> SESSION_LISTENERS = new ArrayList<WeakReference<SessionListener>>();
+    private static final ArrayList<ErrorListener> GLOBAL_ERROR_LISTENERS = new ArrayList<ErrorListener>();
+    private static final ArrayList<SessionListener> GLOBAL_SESSION_LISTENERS = new ArrayList<SessionListener>();
 
-    public static void addErrorListener(ErrorListener errorListener) {
+    public static void addGlobalErrorListener(ErrorListener errorListener) {
         if (errorListener != null) {
-            ERROR_LISTENERS.add(new WeakReference<ErrorListener>(errorListener));
+            GLOBAL_ERROR_LISTENERS.add(errorListener);
         }
     }
 
-    public static void addSessionListener(SessionListener sessionListener) {
+    public static void addGlobalSessionListener(SessionListener sessionListener) {
         if (sessionListener != null) {
-            SESSION_LISTENERS.add(new WeakReference<SessionListener>(sessionListener));
+            GLOBAL_SESSION_LISTENERS.add(sessionListener);
         }
     }
 
-    public static void removeErrorListener(ErrorListener errorListener) {
-        for (WeakReference<ErrorListener> reference : ERROR_LISTENERS) {
-            if (reference != null) {
-                ErrorListener listener = reference.get();
-
-                if (listener == errorListener || listener == null) {
-                    reference.clear();
-                    ERROR_LISTENERS.remove(reference);
-                }
-            }
-        }
+    public static void removeGlobalErrorListener(ErrorListener errorListener) {
+        GLOBAL_ERROR_LISTENERS.remove(errorListener);
     }
 
-    public static void removeSessionListener(SessionListener sessionListener) {
-        for (WeakReference<SessionListener> reference : SESSION_LISTENERS) {
-            if (reference != null) {
-                SessionListener listener = reference.get();
-
-                if (listener == sessionListener || listener == null) {
-                    reference.clear();
-                    SESSION_LISTENERS.remove(reference);
-                }
-            }
-        }
+    public static void removeGlobalSessionListener(SessionListener sessionListener) {
+        GLOBAL_SESSION_LISTENERS.remove(sessionListener);
     }
 
-    private WeakReference<ErrorListener> errorListener;
-    private WeakReference<ResultListener<? super T>> resultListener;
-    private WeakReference<SessionListener> sessionListener;
+    private ErrorListener errorListener;
+    private ResultListener<? super T> resultListener;
+    private SessionListener sessionListener;
     private Throwable error;
 
     public RequestFuture(Callable<RestResult<T>> callable) {
@@ -99,7 +80,7 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
     }
 
     public RequestFuture<T> withErrorListener(ErrorListener errorListener) {
-        this.errorListener = new WeakReference<ErrorListener>(errorListener);
+        this.errorListener = errorListener;
 
         if (isDone()) {
             reportError();
@@ -109,7 +90,7 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
     }
 
     public RequestFuture<T> withResultListener(ResultListener<? super T> resultListener) {
-        this.resultListener = new WeakReference<ResultListener<? super T>>(resultListener);
+        this.resultListener = resultListener;
 
         if (isDone()) {
             reportResult();
@@ -119,7 +100,7 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
     }
 
     public RequestFuture<T> withSessionListener(SessionListener sessionListener) {
-        this.sessionListener = new WeakReference<SessionListener>(sessionListener);
+        this.sessionListener = sessionListener;
 
         if (isDone()) {
             reportSessionChange();
@@ -156,17 +137,17 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
 
         final boolean hasError = error != null;
         final boolean hasCustomListener = errorListener != null;
-        final boolean hasGlobalListeners = !ERROR_LISTENERS.isEmpty();
+        final boolean hasGlobalListeners = !GLOBAL_ERROR_LISTENERS.isEmpty();
 
         if (hasError && (hasCustomListener || hasGlobalListeners)) {
             new ReportManager<ErrorListener>() {
 
                 @Override
-                protected boolean executeReport(WeakReference<ErrorListener> reference) {
-                    return reference.get().onErrorOccured(error);
+                protected boolean executeReport(ErrorListener reference) {
+                    return reference.onErrorOccured(error);
                 }
 
-            }.reportToListeners(HANDLER, errorListener, ERROR_LISTENERS);
+            }.reportToListeners(HANDLER, errorListener, GLOBAL_ERROR_LISTENERS);
         }
     }
 
@@ -179,8 +160,8 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
             new ReportManager<ResultListener<? super T>>() {
 
                 @Override
-                protected boolean executeReport(WeakReference<ResultListener<? super T>> reference) {
-                    return reference.get().onRequestPerformed(item);
+                protected boolean executeReport(ResultListener<? super T> reference) {
+                    return reference.onRequestPerformed(item);
                 }
 
             }.reportToListeners(HANDLER, resultListener, null);
@@ -192,7 +173,7 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
 
         final boolean hasNewSession = result != null && result.hasSession();
         final boolean hasCustomListener = errorListener != null;
-        final boolean hasGlobalListeners = !ERROR_LISTENERS.isEmpty();
+        final boolean hasGlobalListeners = !GLOBAL_ERROR_LISTENERS.isEmpty();
 
         if (hasNewSession && (hasCustomListener || hasGlobalListeners)) {
             final Session session = result.getSession();
@@ -200,11 +181,11 @@ public class RequestFuture<T> extends FutureTask<RestResult<T>> {
             new ReportManager<SessionListener>() {
 
                 @Override
-                protected boolean executeReport(WeakReference<SessionListener> reference) {
-                    return reference.get().onSessionChanged(session);
+                protected boolean executeReport(SessionListener reference) {
+                    return reference.onSessionChanged(session);
                 }
 
-            }.reportToListeners(HANDLER, sessionListener, SESSION_LISTENERS);
+            }.reportToListeners(HANDLER, sessionListener, GLOBAL_SESSION_LISTENERS);
         }
     }
 
