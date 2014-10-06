@@ -26,7 +26,7 @@ import android.net.Uri;
 
 import com.podio.sdk.internal.Utils;
 
-class Filter {
+public class Filter {
     private final Uri.Builder uriBuilder;
 
     protected Filter() {

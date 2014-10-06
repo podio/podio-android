@@ -22,18 +22,42 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.ResultListener;
-import com.podio.sdk.SessionListener;
-import com.podio.sdk.client.RequestFuture;
+import com.podio.sdk.Filter;
+import com.podio.sdk.PodioRequest;
 import com.podio.sdk.domain.Item;
-import com.podio.sdk.filter.ItemFilter;
 
 /**
  * Enables access to the item API end point.
  * 
  * @author László Urszuly
  */
-public class ItemProvider extends BasicPodioProvider {
+public class ItemProvider extends VolleyProvider {
+
+    static class Path extends Filter {
+
+        private Path() {
+            super("item");
+        }
+
+        private Path withApplicationId(long applicationId) {
+            addPathSegment("app");
+            addPathSegment(Long.toString(applicationId, 10));
+            return this;
+        }
+
+        private Path withApplicationIdFilter(long applicationId) {
+            addPathSegment("app");
+            addPathSegment(Long.toString(applicationId, 10));
+            addPathSegment("filter");
+            return this;
+        }
+
+        private Path withItemId(long itemId) {
+            addPathSegment(Long.toString(itemId, 10));
+            return this;
+        }
+
+    }
 
     /**
      * Enables a forced set of methods to be called in order to be able to
@@ -137,43 +161,10 @@ public class ItemProvider extends BasicPodioProvider {
          * @see {@link ItemFilterProvider#onSpan(int)}
          * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
          */
-        public RequestFuture<Item.FilterResult> get(long applicationId) {
-            ItemFilter filter = new ItemFilter().withApplicationIdFilter(applicationId);
+        public PodioRequest<Item.FilterResult> get(long applicationId) {
+            Path filter = new Path().withApplicationIdFilter(applicationId);
             return post(filter, filterData, Item.FilterResult.class);
         }
-
-        /**
-         * Fetches a set of filtered items for the application with the given id
-         * and a given view_id.
-         * <p>
-         * If no filter data has been configured, then the default filter will
-         * be used, with a behavior as the API sees fit.
-         * <p>
-         * Note that, while the other methods in this class are optional, this
-         * method must be called in order for the filtered request to take place
-         * 
-         * @param applicationId
-         *        The id of the parent application.
-         * @param viewId
-         *        The id of the view.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
-         * @see {@link ItemFilterProvider#onConstraint(String, Object)}
-         * @see {@link ItemFilterProvider#onRemember(boolean)}
-         * @see {@link ItemFilterProvider#onSpan(int)}
-         * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
-         */
-        public RequestFuture<Item.FilterResult> get(long applicationId, long viewId) {
-            ItemFilter filter = new ItemFilter().withApplicationAndViewIdFilter(applicationId,
-                    viewId);
-            return post(filter, filterData, Item.FilterResult.class);
-        }
-    }
-
-    /**
-     * Constructor.
-     */
-    public ItemProvider() {
     }
 
     /**
@@ -185,10 +176,9 @@ public class ItemProvider extends BasicPodioProvider {
      *        The data describing the new item to create.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Item.PushResult> create(long applicationId, Item item) {
-        ItemFilter filter = new ItemFilter().withApplicationId(applicationId);
+    public PodioRequest<Item.PushResult> create(long applicationId, Item item) {
+        Path filter = new Path().withApplicationId(applicationId);
         Item.PushData data = item.getPushData();
-
         return post(filter, data, Item.PushResult.class);
     }
 
@@ -209,9 +199,8 @@ public class ItemProvider extends BasicPodioProvider {
      *        The id of the item to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Item> get(long itemId) {
-        ItemFilter filter = new ItemFilter().withItemId(itemId);
-
+    public PodioRequest<Item> get(long itemId) {
+        Path filter = new Path().withItemId(itemId);
         return get(filter, Item.class);
     }
 
@@ -224,10 +213,9 @@ public class ItemProvider extends BasicPodioProvider {
      *        The changed data bundle.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Item.PushResult> update(long itemId, Item item) {
-        ItemFilter filter = new ItemFilter().withItemId(itemId);
+    public PodioRequest<Item.PushResult> update(long itemId, Item item) {
+        Path filter = new Path().withItemId(itemId);
         Item.PushData data = item.getPushData();
-
         return put(filter, data, Item.PushResult.class);
     }
 

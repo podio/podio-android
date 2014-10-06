@@ -22,11 +22,39 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.client.RequestFuture;
+import com.podio.sdk.Filter;
+import com.podio.sdk.PodioRequest;
 import com.podio.sdk.domain.Application;
-import com.podio.sdk.filter.ApplicationFilter;
 
-public class ApplicationProvider extends BasicPodioProvider {
+public class ApplicationProvider extends VolleyProvider {
+
+    static class Path extends Filter {
+
+        private Path() {
+            super("app");
+        }
+
+        private Path withApplicationId(long applicationId) {
+            addPathSegment(Long.toString(applicationId, 10));
+            return this;
+        }
+
+        private Path withInactivesIncluded(boolean doInclude) {
+            addQueryParameter("include_inactive", doInclude ? "true" : "false");
+            return this;
+        }
+
+        private Path withSpaceId(long spaceId) {
+            addPathSegment("space");
+            addPathSegment(Long.toString(spaceId, 10));
+            return this;
+        }
+
+        private Path withType(String type) {
+            addQueryParameter("type", type);
+            return this;
+        }
+    }
 
     /**
      * Fetches the full content set of the application with the given id.
@@ -35,9 +63,10 @@ public class ApplicationProvider extends BasicPodioProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Application> get(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
-                .withType("full").withWorkspaceField();
+    public PodioRequest<Application> get(long applicationId) {
+        Path filter = new Path()
+                .withApplicationId(applicationId)
+                .withType("full");
 
         return get(filter, Application.class);
     }
@@ -49,8 +78,9 @@ public class ApplicationProvider extends BasicPodioProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Application> getShort(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
+    public PodioRequest<Application> getShort(long applicationId) {
+        Path filter = new Path()
+                .withApplicationId(applicationId)
                 .withType("short");
 
         return get(filter, Application.class);
@@ -63,8 +93,9 @@ public class ApplicationProvider extends BasicPodioProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Application> getMini(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
+    public PodioRequest<Application> getMini(long applicationId) {
+        Path filter = new Path()
+                .withApplicationId(applicationId)
                 .withType("mini");
 
         return get(filter, Application.class);
@@ -77,8 +108,9 @@ public class ApplicationProvider extends BasicPodioProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Application> getMicro(long applicationId) {
-        ApplicationFilter filter = new ApplicationFilter().withApplicationId(applicationId)
+    public PodioRequest<Application> getMicro(long applicationId) {
+        Path filter = new Path()
+                .withApplicationId(applicationId)
                 .withType("micro");
 
         return get(filter, Application.class);
@@ -91,8 +123,9 @@ public class ApplicationProvider extends BasicPodioProvider {
      *        The id of the parent workspace.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Application[]> getAllActive(long spaceId) {
-        ApplicationFilter filter = new ApplicationFilter().withSpaceId(spaceId)
+    public PodioRequest<Application[]> getAllActive(long spaceId) {
+        Path filter = new Path()
+                .withSpaceId(spaceId)
                 .withInactivesIncluded(false);
 
         return get(filter, Application[].class);
@@ -106,8 +139,9 @@ public class ApplicationProvider extends BasicPodioProvider {
      *        The id of the parent workspace.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<Application[]> getAll(long spaceId) {
-        ApplicationFilter filter = new ApplicationFilter().withSpaceId(spaceId)
+    public PodioRequest<Application[]> getAll(long spaceId) {
+        Path filter = new Path()
+                .withSpaceId(spaceId)
                 .withInactivesIncluded(true);
 
         return get(filter, Application[].class);

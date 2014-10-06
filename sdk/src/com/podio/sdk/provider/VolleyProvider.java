@@ -20,12 +20,35 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.filter;
+package com.podio.sdk.provider;
 
-public class OrganizationFilter extends BasicPodioFilter {
-    public static final String PATH = "org";
+import com.podio.sdk.Client;
+import com.podio.sdk.Filter;
+import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Provider;
 
-    public OrganizationFilter() {
-        super(PATH);
+class VolleyProvider extends Provider {
+
+    protected Client client;
+
+    void setClient(Client client) {
+        this.client = client;
     }
+
+    protected <T> PodioRequest<T> delete(Filter filter) {
+        return client.request(PodioRequest.Method.DELETE, filter, null, null);
+    }
+
+    protected <T> PodioRequest<T> get(Filter filter, Class<T> classOfResult) {
+        return client.request(PodioRequest.Method.GET, filter, null, classOfResult);
+    }
+
+    protected <T> PodioRequest<T> post(Filter filter, Object item, Class<T> classOfItem) {
+        return client.request(PodioRequest.Method.POST, filter, item, classOfItem);
+    }
+
+    protected <T> PodioRequest<T> put(Filter filter, Object item, Class<T> classOfItem) {
+        return client.request(PodioRequest.Method.PUT, filter, item, classOfItem);
+    }
+
 }

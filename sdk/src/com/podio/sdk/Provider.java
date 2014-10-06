@@ -19,21 +19,16 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  *  SOFTWARE.
  */
+package com.podio.sdk;
 
-package com.podio.sdk.filter;
+public abstract class Provider {
 
-public class ViewFilter extends BasicPodioFilter {
-    public static final String PATH = "view";
+    protected abstract <T> PodioRequest<T> delete(Filter filter);
 
-    public ViewFilter() {
-        super(PATH);
-    }
+    protected abstract <T> PodioRequest<T> get(Filter filter, Class<T> classOfResult);
 
-    public ViewFilter withApplicationId(long applicationId) {
-        addPathSegment("app");
-        addPathSegment(Long.toString(applicationId, 10));
+    protected abstract <T> PodioRequest<T> post(Filter filter, Object item, Class<T> classOfItem);
 
-        return this;
-    }
+    protected abstract <T> PodioRequest<T> put(Filter filter, Object item, Class<T> classOfItem);
 
 }

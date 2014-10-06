@@ -22,16 +22,31 @@
 
 package com.podio.sdk.provider;
 
-import com.podio.sdk.client.RequestFuture;
+import com.podio.sdk.Filter;
+import com.podio.sdk.PodioRequest;
 import com.podio.sdk.domain.View;
-import com.podio.sdk.filter.ViewFilter;
 
 /**
  * Enables access to the view API end point.
  * 
  * @author Tobias Lindberg
  */
-public class ViewProvider extends BasicPodioProvider {
+public class ViewProvider extends VolleyProvider {
+
+    static class Path extends Filter {
+
+        public Path() {
+            super("view");
+        }
+
+        public Path withApplicationId(long applicationId) {
+            addPathSegment("app");
+            addPathSegment(Long.toString(applicationId, 10));
+
+            return this;
+        }
+
+    }
 
     /**
      * Fetches views for a given application that can be used to filter items
@@ -41,9 +56,8 @@ public class ViewProvider extends BasicPodioProvider {
      *        The id of the parent application.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<View[]> getAllViews(long applicationId) {
-        ViewFilter filter = new ViewFilter().withApplicationId(applicationId);
-
+    public PodioRequest<View[]> getAllViews(long applicationId) {
+        Path filter = new Path().withApplicationId(applicationId);
         return get(filter, View[].class);
     }
 

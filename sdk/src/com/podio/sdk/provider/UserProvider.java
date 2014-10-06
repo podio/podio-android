@@ -19,27 +19,49 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  *  SOFTWARE.
  */
-
 package com.podio.sdk.provider;
 
-import com.podio.sdk.client.RequestFuture;
+import com.podio.sdk.Filter;
+import com.podio.sdk.PodioRequest;
 import com.podio.sdk.domain.User;
-import com.podio.sdk.filter.UserFilter;
 
 /**
  * Enables access to the User API end point.
  * 
  * @author László Urszuly
  */
-public class UserProvider extends BasicPodioProvider {
+public class UserProvider extends VolleyProvider {
+
+    static class Path extends Filter {
+
+        private Path() {
+            super("user");
+        }
+
+        private Path withProfile() {
+            addPathSegment("profile");
+            return this;
+        }
+
+        private Path withStatus() {
+            addPathSegment("status");
+            return this;
+        }
+
+        private Path withProperty(String property) {
+            addQueryParameter("name", property);
+            return this;
+        }
+
+    }
 
     /**
      * Fetches the currently logged in user data.
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<User> getData() {
-        UserFilter filter = new UserFilter();
+    public PodioRequest<User> getData() {
+        Path filter = new Path();
         return get(filter, User.class);
     }
 
@@ -48,13 +70,18 @@ public class UserProvider extends BasicPodioProvider {
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public RequestFuture<User.Profile> getProfile() {
-        UserFilter filter = new UserFilter().withProfile();
+    public PodioRequest<User.Profile> getProfile() {
+        Path filter = new Path().withProfile();
         return get(filter, User.Profile.class);
     }
 
-    public RequestFuture<User> getUserStatus() {
-        UserFilter filter = new UserFilter().withStatus();
+    /**
+     * Fetches the currently logged in user status.
+     * 
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public PodioRequest<User> getUserStatus() {
+        Path filter = new Path().withStatus();
         return get(filter, User.class);
     }
 
