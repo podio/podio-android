@@ -43,7 +43,7 @@ public class CalendarProvider extends VolleyProvider {
             super("calendar");
         }
 
-        Path withWorkspaceId(int spaceId) {
+        Path withWorkspaceId(long spaceId) {
             addPathSegment("space");
             addPathSegment(Long.toString(spaceId, 10));
             return this;
@@ -121,7 +121,7 @@ public class CalendarProvider extends VolleyProvider {
      *        otherwise.
      * @return
      */
-    public Request<CalendarEvent[]> getSpaceCalendar(int spaceId, Date from, Date to, int priority, boolean includeTasks) {
+    public Request<CalendarEvent[]> getSpaceCalendar(long spaceId, Date from, Date to, int priority, boolean includeTasks) {
         Path filter = new Path()
                 .withWorkspaceId(spaceId)
                 .withDate(from, to)
