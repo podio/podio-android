@@ -28,13 +28,27 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
 
 public class Utils {
 
-    @SuppressLint("SimpleDateFormat")
+    public static long currentTimeSeconds() {
+        return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+    }
+
+    public static String formatDate(Date date) {
+        try {
+            return getSimpleDateFormat("yyyy-MM-dd").format(date);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     public static String formatDateTime(Date dateTime) {
         try {
             return getSimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
