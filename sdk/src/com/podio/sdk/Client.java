@@ -23,10 +23,10 @@ package com.podio.sdk;
 
 public interface Client {
 
-    public <T> PodioRequest<T> request(PodioRequest.Method method, Filter filter, Object item, Class<T> classOfItem);
+    public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfItem);
 
-    public PodioRequest<Void> authenticateWithUserCredentials(String username, String password);
+    public Request<Void> authenticateWithUserCredentials(String username, String password);
 
-    public PodioRequest<Void> authenticateWithAppCredentials(String appId, String appToken);
+    public Request<Void> authenticateWithAppCredentials(String appId, String appToken);
 
 }

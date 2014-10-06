@@ -26,8 +26,8 @@ import javax.net.ssl.SSLSocketFactory;
 
 import android.content.Context;
 
-import com.podio.sdk.PodioRequest.ErrorListener;
-import com.podio.sdk.PodioRequest.SessionListener;
+import com.podio.sdk.Request.ErrorListener;
+import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ItemProvider;
@@ -76,7 +76,7 @@ public class Podio {
          * @return A request future, enabling the caller to hook in optional
          *         callback implementations.
          */
-        public PodioRequest<Void> authenticateWithUserCredentials(String username, String password) {
+        public Request<Void> authenticateWithUserCredentials(String username, String password) {
             return client.authenticateWithUserCredentials(username, password);
         }
 
@@ -91,7 +91,7 @@ public class Podio {
          * @return A request future, enabling the caller to hook in optional
          *         callback implementations.
          */
-        public PodioRequest<Void> authenticateWithAppCredentials(String appId, String appToken) {
+        public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
             return client.authenticateWithAppCredentials(appId, appToken);
         }
 

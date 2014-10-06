@@ -23,7 +23,7 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -64,7 +64,7 @@ public class ApplicationProvider extends VolleyProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Application> get(long applicationId) {
+    public Request<Application> get(long applicationId) {
         Path filter = new Path()
                 .withApplicationId(applicationId)
                 .withType("full");
@@ -79,7 +79,7 @@ public class ApplicationProvider extends VolleyProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Application> getShort(long applicationId) {
+    public Request<Application> getShort(long applicationId) {
         Path filter = new Path()
                 .withApplicationId(applicationId)
                 .withType("short");
@@ -94,7 +94,7 @@ public class ApplicationProvider extends VolleyProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Application> getMini(long applicationId) {
+    public Request<Application> getMini(long applicationId) {
         Path filter = new Path()
                 .withApplicationId(applicationId)
                 .withType("mini");
@@ -109,7 +109,7 @@ public class ApplicationProvider extends VolleyProvider {
      *        The id of the application to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Application> getMicro(long applicationId) {
+    public Request<Application> getMicro(long applicationId) {
         Path filter = new Path()
                 .withApplicationId(applicationId)
                 .withType("micro");
@@ -124,7 +124,7 @@ public class ApplicationProvider extends VolleyProvider {
      *        The id of the parent workspace.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Application[]> getAllActive(long spaceId) {
+    public Request<Application[]> getAllActive(long spaceId) {
         Path filter = new Path()
                 .withSpaceId(spaceId)
                 .withInactivesIncluded(false);
@@ -140,7 +140,7 @@ public class ApplicationProvider extends VolleyProvider {
      *        The id of the parent workspace.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Application[]> getAll(long spaceId) {
+    public Request<Application[]> getAll(long spaceId) {
         Path filter = new Path()
                 .withSpaceId(spaceId)
                 .withInactivesIncluded(true);

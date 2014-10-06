@@ -23,12 +23,12 @@ package com.podio.sdk;
 
 public abstract class Provider {
 
-    protected abstract <T> PodioRequest<T> delete(Filter filter);
+    protected abstract <T> Request<T> delete(Filter filter);
 
-    protected abstract <T> PodioRequest<T> get(Filter filter, Class<T> classOfResult);
+    protected abstract <T> Request<T> get(Filter filter, Class<T> classOfResult);
 
-    protected abstract <T> PodioRequest<T> post(Filter filter, Object item, Class<T> classOfItem);
+    protected abstract <T> Request<T> post(Filter filter, Object item, Class<T> classOfItem);
 
-    protected abstract <T> PodioRequest<T> put(Filter filter, Object item, Class<T> classOfItem);
+    protected abstract <T> Request<T> put(Filter filter, Object item, Class<T> classOfItem);
 
 }

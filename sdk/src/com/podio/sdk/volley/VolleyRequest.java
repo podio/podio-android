@@ -40,10 +40,9 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.RequestFuture;
 import com.podio.sdk.JsonParser;
 import com.podio.sdk.PodioError;
-import com.podio.sdk.PodioRequest;
 import com.podio.sdk.Session;
 
-public class VolleyRequest<T> extends Request<T> implements PodioRequest<T> {
+public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
 
     private static final ArrayList<ErrorListener> GLOBAL_ERROR_LISTENERS = new ArrayList<ErrorListener>();
     private static final ArrayList<SessionListener> GLOBAL_SESSION_LISTENERS = new ArrayList<SessionListener>();
@@ -76,7 +75,7 @@ public class VolleyRequest<T> extends Request<T> implements PodioRequest<T> {
                 null;
     }
 
-    static <E> VolleyRequest<E> newRequest(PodioRequest.Method method, String url, String body, Class<E> classOfResult) {
+    static <E> VolleyRequest<E> newRequest(com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
         RequestFuture<E> volleyRequestFuture = RequestFuture.newFuture();
         int volleyMethod = parseMethod(method);
 
@@ -91,7 +90,7 @@ public class VolleyRequest<T> extends Request<T> implements PodioRequest<T> {
 
     static VolleyRequest<Void> newAuthRequest(String url, Map<String, String> params) {
         RequestFuture<Void> volleyRequestFuture = RequestFuture.newFuture();
-        int volleyMethod = parseMethod(PodioRequest.Method.POST);
+        int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
 
         VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, volleyRequestFuture);
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
@@ -101,7 +100,7 @@ public class VolleyRequest<T> extends Request<T> implements PodioRequest<T> {
         return request;
     }
 
-    private static int parseMethod(PodioRequest.Method method) {
+    private static int parseMethod(com.podio.sdk.Request.Method method) {
         switch (method) {
         case DELETE:
             return com.android.volley.Request.Method.DELETE;
@@ -177,7 +176,7 @@ public class VolleyRequest<T> extends Request<T> implements PodioRequest<T> {
     }
 
     @Override
-    public VolleyRequest<T> withContentListener(ResultListener<T> contentListener) {
+    public VolleyRequest<T> withResultListener(ResultListener<T> contentListener) {
         if (contentListener != null) {
             contentListeners.add(contentListener);
 

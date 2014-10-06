@@ -22,7 +22,7 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.domain.User;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -61,7 +61,7 @@ public class UserProvider extends VolleyProvider {
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<User> getData() {
+    public Request<User> getData() {
         Path filter = new Path();
         return get(filter, User.class);
     }
@@ -71,7 +71,7 @@ public class UserProvider extends VolleyProvider {
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<User.Profile> getProfile() {
+    public Request<User.Profile> getProfile() {
         Path filter = new Path().withProfile();
         return get(filter, User.Profile.class);
     }
@@ -81,7 +81,7 @@ public class UserProvider extends VolleyProvider {
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<User> getUserStatus() {
+    public Request<User> getUserStatus() {
         Path filter = new Path().withStatus();
         return get(filter, User.class);
     }

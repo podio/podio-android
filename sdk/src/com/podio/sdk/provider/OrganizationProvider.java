@@ -22,7 +22,7 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.domain.Organization;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -47,7 +47,7 @@ public class OrganizationProvider extends VolleyProvider {
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Organization[]> getAll() {
+    public Request<Organization[]> getAll() {
         Path filter = new Path();
 
         return get(filter, Organization[].class);

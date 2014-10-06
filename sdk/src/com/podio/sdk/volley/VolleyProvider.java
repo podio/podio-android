@@ -24,7 +24,7 @@ package com.podio.sdk.volley;
 
 import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.Provider;
 
 public class VolleyProvider extends Provider {
@@ -35,20 +35,20 @@ public class VolleyProvider extends Provider {
         this.client = client;
     }
 
-    protected <T> PodioRequest<T> delete(Filter filter) {
-        return client.request(PodioRequest.Method.DELETE, filter, null, null);
+    protected <T> Request<T> delete(Filter filter) {
+        return client.request(Request.Method.DELETE, filter, null, null);
     }
 
-    protected <T> PodioRequest<T> get(Filter filter, Class<T> classOfResult) {
-        return client.request(PodioRequest.Method.GET, filter, null, classOfResult);
+    protected <T> Request<T> get(Filter filter, Class<T> classOfResult) {
+        return client.request(Request.Method.GET, filter, null, classOfResult);
     }
 
-    protected <T> PodioRequest<T> post(Filter filter, Object item, Class<T> classOfItem) {
-        return client.request(PodioRequest.Method.POST, filter, item, classOfItem);
+    protected <T> Request<T> post(Filter filter, Object item, Class<T> classOfItem) {
+        return client.request(Request.Method.POST, filter, item, classOfItem);
     }
 
-    protected <T> PodioRequest<T> put(Filter filter, Object item, Class<T> classOfItem) {
-        return client.request(PodioRequest.Method.PUT, filter, item, classOfItem);
+    protected <T> Request<T> put(Filter filter, Object item, Class<T> classOfItem) {
+        return client.request(Request.Method.PUT, filter, item, classOfItem);
     }
 
 }

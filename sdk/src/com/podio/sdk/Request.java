@@ -23,7 +23,7 @@ package com.podio.sdk;
 
 import java.util.concurrent.Future;
 
-public interface PodioRequest<T> extends Future<T> {
+public interface Request<T> extends Future<T> {
 
     public static enum Method {
         DELETE, GET, POST, PUT
@@ -95,10 +95,10 @@ public interface PodioRequest<T> extends Future<T> {
 
     }
 
-    public PodioRequest<T> withContentListener(ResultListener<T> contentListener);
+    public Request<T> withResultListener(ResultListener<T> contentListener);
 
-    public PodioRequest<T> withErrorListener(ErrorListener errorListener);
+    public Request<T> withErrorListener(ErrorListener errorListener);
 
-    public PodioRequest<T> withSessionListener(SessionListener sessionListener);
+    public Request<T> withSessionListener(SessionListener sessionListener);
 
 }

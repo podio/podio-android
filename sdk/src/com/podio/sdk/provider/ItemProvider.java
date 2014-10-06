@@ -23,7 +23,7 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -162,7 +162,7 @@ public class ItemProvider extends VolleyProvider {
          * @see {@link ItemFilterProvider#onSpan(int)}
          * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
          */
-        public PodioRequest<Item.FilterResult> get(long applicationId) {
+        public Request<Item.FilterResult> get(long applicationId) {
             Path filter = new Path().withApplicationIdFilter(applicationId);
             return post(filter, filterData, Item.FilterResult.class);
         }
@@ -177,7 +177,7 @@ public class ItemProvider extends VolleyProvider {
      *        The data describing the new item to create.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Item.PushResult> create(long applicationId, Item item) {
+    public Request<Item.PushResult> create(long applicationId, Item item) {
         Path filter = new Path().withApplicationId(applicationId);
         Item.PushData data = item.getPushData();
         return post(filter, data, Item.PushResult.class);
@@ -200,7 +200,7 @@ public class ItemProvider extends VolleyProvider {
      *        The id of the item to fetch.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Item> get(long itemId) {
+    public Request<Item> get(long itemId) {
         Path filter = new Path().withItemId(itemId);
         return get(filter, Item.class);
     }
@@ -214,7 +214,7 @@ public class ItemProvider extends VolleyProvider {
      *        The changed data bundle.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public PodioRequest<Item.PushResult> update(long itemId, Item item) {
+    public Request<Item.PushResult> update(long itemId, Item item) {
         Path filter = new Path().withItemId(itemId);
         Item.PushData data = item.getPushData();
         return put(filter, data, Item.PushResult.class);

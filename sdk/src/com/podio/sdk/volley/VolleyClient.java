@@ -37,11 +37,11 @@ import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
 import com.podio.sdk.JsonParser;
 import com.podio.sdk.PodioError;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.Session;
 import com.podio.sdk.internal.Utils;
 
-public class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRequest.ResultListener<Void> {
+public class VolleyClient implements Client, Request.ErrorListener, Request.ResultListener<Void> {
 
     private static class AuthPath extends Filter {
 
@@ -87,7 +87,7 @@ public class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRe
     private VolleyRequest<?> currentRequest;
 
     @Override
-    public PodioRequest<Void> authenticateWithUserCredentials(String username, String password) {
+    public Request<Void> authenticateWithUserCredentials(String username, String password) {
         Uri uri = new AuthPath()
                 .withClientCredentials(clientId, clientSecret)
                 .withUserCredentials(username, password)
@@ -102,7 +102,7 @@ public class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRe
     }
 
     @Override
-    public PodioRequest<Void> authenticateWithAppCredentials(String appId, String appToken) {
+    public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
         Uri uri = new AuthPath()
                 .withClientCredentials(clientId, clientSecret)
                 .withAppCredentials(appId, appToken)
@@ -161,7 +161,7 @@ public class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRe
             HashMap<String, String> params = parseParams(uri);
             VolleyRequest<Void> request = VolleyRequest
                     .newAuthRequest(url, params)
-                    .withContentListener(this)
+                    .withResultListener(this)
                     .withErrorListener(this);
             volleySessionQueue.add(request);
 
@@ -172,7 +172,7 @@ public class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRe
     }
 
     @Override
-    public <T> PodioRequest<T> request(PodioRequest.Method method, Filter filter, Object item, Class<T> classOfItem) {
+    public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfItem) {
         Uri uri = filter.buildUri(scheme, authority);
         String url = parseUrl(uri);
         String body = item != null ? JsonParser.toJson(item) : null;

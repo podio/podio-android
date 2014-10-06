@@ -25,7 +25,7 @@ package com.podio.sdk.provider;
 import java.util.Date;
 
 import com.podio.sdk.Filter;
-import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Request;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.volley.VolleyProvider;
@@ -95,7 +95,7 @@ public class CalendarProvider extends VolleyProvider {
      *        otherwise.
      * @return
      */
-    public PodioRequest<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority, boolean includeTasks) {
+    public Request<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority, boolean includeTasks) {
         Path filter = new Path()
                 .withDate(from, to)
                 .withPriority(priority)
@@ -121,7 +121,7 @@ public class CalendarProvider extends VolleyProvider {
      *        otherwise.
      * @return
      */
-    public PodioRequest<CalendarEvent[]> getSpaceCalendar(int spaceId, Date from, Date to, int priority, boolean includeTasks) {
+    public Request<CalendarEvent[]> getSpaceCalendar(int spaceId, Date from, Date to, int priority, boolean includeTasks) {
         Path filter = new Path()
                 .withWorkspaceId(spaceId)
                 .withDate(from, to)
