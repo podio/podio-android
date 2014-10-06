@@ -19,7 +19,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  *  SOFTWARE.
  */
-package com.podio.sdk;
+package com.podio.sdk.volley;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -38,6 +38,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.RequestFuture;
+import com.podio.sdk.JsonParser;
+import com.podio.sdk.PodioError;
+import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Session;
 
 public class VolleyRequest<T> extends Request<T> implements PodioRequest<T> {
 

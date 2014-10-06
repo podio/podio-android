@@ -19,7 +19,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
  *  SOFTWARE.
  */
-package com.podio.sdk;
+package com.podio.sdk.volley;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -33,9 +33,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
+import com.podio.sdk.Client;
+import com.podio.sdk.Filter;
+import com.podio.sdk.JsonParser;
+import com.podio.sdk.PodioError;
+import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Session;
 import com.podio.sdk.internal.Utils;
 
-class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRequest.ResultListener<Void> {
+public class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRequest.ResultListener<Void> {
 
     private static class AuthPath extends Filter {
 
@@ -178,7 +184,7 @@ class VolleyClient implements Client, PodioRequest.ErrorListener, PodioRequest.R
         return request;
     }
 
-    void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
+    public void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         this.scheme = scheme;
         this.authority = authority;
         this.clientId = clientId;

@@ -23,8 +23,8 @@ package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.PodioRequest;
-import com.podio.sdk.VolleyProvider;
 import com.podio.sdk.domain.User;
+import com.podio.sdk.volley.VolleyProvider;
 
 /**
  * Enables access to the User API end point.

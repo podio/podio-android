@@ -51,7 +51,7 @@ public class Filter {
         return this;
     }
 
-    protected Uri buildUri(String scheme, String authority) {
+    public Uri buildUri(String scheme, String authority) {
         return uriBuilder
                 .scheme(scheme)
                 .authority(authority)

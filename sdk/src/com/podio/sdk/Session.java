@@ -27,24 +27,24 @@ import org.json.JSONObject;
 
 import com.podio.sdk.internal.Utils;
 
-class Session {
+public class Session {
     private static String accessToken;
     private static String refreshToken;
     private static long expires;
 
-    static String accessToken() {
+    public static String accessToken() {
         return accessToken;
     }
 
-    static long expires() {
+    public static long expires() {
         return expires;
     }
 
-    static String refreshToken() {
+    public static String refreshToken() {
         return refreshToken;
     }
 
-    static void set(String jsonString) {
+    public static void set(String jsonString) {
         JSONObject jsonObject = null;
 
         try {
@@ -69,7 +69,7 @@ class Session {
         }
     }
 
-    static void set(String accessToken, String refreshToken, long expires) {
+    public static void set(String accessToken, String refreshToken, long expires) {
         Session.accessToken = accessToken;
         Session.refreshToken = refreshToken;
         Session.expires = expires;

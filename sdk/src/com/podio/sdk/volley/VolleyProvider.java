@@ -20,7 +20,12 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk;
+package com.podio.sdk.volley;
+
+import com.podio.sdk.Client;
+import com.podio.sdk.Filter;
+import com.podio.sdk.PodioRequest;
+import com.podio.sdk.Provider;
 
 public class VolleyProvider extends Provider {
 

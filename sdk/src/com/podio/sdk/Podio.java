@@ -33,6 +33,8 @@ import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.UserProvider;
+import com.podio.sdk.volley.VolleyClient;
+import com.podio.sdk.volley.VolleyRequest;
 
 /**
  * Enables easy access to the Podio API with a basic configuration which should

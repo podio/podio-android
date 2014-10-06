@@ -34,7 +34,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.podio.sdk.domain.field.Field;
 
-class JsonParser {
+public class JsonParser {
 
     private static final class FieldDeserializer implements JsonDeserializer<Field> {
 
@@ -79,11 +79,11 @@ class JsonParser {
             .disableHtmlEscaping()
             .create();
 
-    static <T> T fromJson(String json, Class<T> classOfResult) {
+    public static <T> T fromJson(String json, Class<T> classOfResult) {
         return GSON.fromJson(json, classOfResult);
     }
 
-    static <T> String toJson(T item) {
+    public static <T> String toJson(T item) {
         return GSON.toJson(item);
     }
 }
