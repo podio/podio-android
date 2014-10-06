@@ -31,27 +31,27 @@ public class ApplicationProvider extends VolleyProvider {
 
     static class Path extends Filter {
 
-        private Path() {
+        Path() {
             super("app");
         }
 
-        private Path withApplicationId(long applicationId) {
+        Path withApplicationId(long applicationId) {
             addPathSegment(Long.toString(applicationId, 10));
             return this;
         }
 
-        private Path withInactivesIncluded(boolean doInclude) {
+        Path withInactivesIncluded(boolean doInclude) {
             addQueryParameter("include_inactive", doInclude ? "true" : "false");
             return this;
         }
 
-        private Path withSpaceId(long spaceId) {
+        Path withSpaceId(long spaceId) {
             addPathSegment("space");
             addPathSegment(Long.toString(spaceId, 10));
             return this;
         }
 
-        private Path withType(String type) {
+        Path withType(String type) {
             addQueryParameter("type", type);
             return this;
         }

@@ -39,43 +39,43 @@ public class CalendarProvider extends VolleyProvider {
 
     static class Path extends Filter {
 
-        private Path() {
+        Path() {
             super("calendar");
         }
 
-        private Path withWorkspaceId(int spaceId) {
+        Path withWorkspaceId(int spaceId) {
             addPathSegment("space");
             addPathSegment(Long.toString(spaceId, 10));
             return this;
 
         }
 
-        private Path withDate(Date from, Date to) {
+        Path withDate(Date from, Date to) {
             if (from != null) {
                 String dateFrom = Utils.formatDate(from);
                 addQueryParameter("date_from", dateFrom);
-            }
 
-            if (to != null) {
-                String dateTo = Utils.formatDate(to);
-                addQueryParameter("date_to", dateTo);
+                if (to != null) {
+                    String dateTo = Utils.formatDate(to);
+                    addQueryParameter("date_to", dateTo);
+                }
             }
 
             return this;
         }
 
-        private Path withPriority(int priority) {
+        Path withPriority(int priority) {
             addQueryParameter("priority", Integer.toString(priority));
             return this;
         }
 
-        private Path withWorkspaceNameField() {
+        Path withWorkspaceNameField() {
             // Return CalendarEvents with a workspace name (if accessible)
             addQueryParameter("fields", "app.fields(space)");
             return this;
         }
 
-        private Path withTasks(boolean includeTasks) {
+        Path withTasks(boolean includeTasks) {
             addQueryParameter("tasks", includeTasks ? "true" : "false");
             return this;
         }

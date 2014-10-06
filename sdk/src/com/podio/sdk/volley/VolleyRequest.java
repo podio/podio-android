@@ -341,6 +341,10 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
                 null;
     }
 
+    public void setIsAuthRequest(boolean isAuthRequest) {
+        this.isAuthRequest = isAuthRequest;
+    }
+
     public void setSessionChanged(boolean hasChanged) {
         this.hasSessionChanged = hasChanged;
     }

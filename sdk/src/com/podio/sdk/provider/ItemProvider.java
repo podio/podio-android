@@ -24,6 +24,8 @@ package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
+import com.podio.sdk.Request.ResultListener;
+import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.domain.Item;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -36,24 +38,24 @@ public class ItemProvider extends VolleyProvider {
 
     static class Path extends Filter {
 
-        private Path() {
+        Path() {
             super("item");
         }
 
-        private Path withApplicationId(long applicationId) {
+        Path withApplicationId(long applicationId) {
             addPathSegment("app");
             addPathSegment(Long.toString(applicationId, 10));
             return this;
         }
 
-        private Path withApplicationIdFilter(long applicationId) {
+        Path withApplicationIdFilter(long applicationId) {
             addPathSegment("app");
             addPathSegment(Long.toString(applicationId, 10));
             addPathSegment("filter");
             return this;
         }
 
-        private Path withItemId(long itemId) {
+        Path withItemId(long itemId) {
             addPathSegment(Long.toString(itemId, 10));
             return this;
         }

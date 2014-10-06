@@ -35,7 +35,7 @@ public class OrganizationProvider extends VolleyProvider {
 
     static class Path extends Filter {
 
-        private Path() {
+        Path() {
             super("org");
         }
 

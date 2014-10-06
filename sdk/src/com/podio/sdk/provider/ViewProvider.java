@@ -36,11 +36,11 @@ public class ViewProvider extends VolleyProvider {
 
     static class Path extends Filter {
 
-        public Path() {
+        Path() {
             super("view");
         }
 
-        public Path withApplicationId(long applicationId) {
+        Path withApplicationId(long applicationId) {
             addPathSegment("app");
             addPathSegment(Long.toString(applicationId, 10));
 

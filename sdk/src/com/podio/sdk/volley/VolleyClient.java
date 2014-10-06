@@ -43,33 +43,33 @@ import com.podio.sdk.internal.Utils;
 
 public class VolleyClient implements Client, Request.ErrorListener, Request.ResultListener<Void> {
 
-    private static class AuthPath extends Filter {
+    static class AuthPath extends Filter {
 
-        private AuthPath() {
+        protected AuthPath() {
             super("oauth/token");
         }
 
-        private AuthPath withClientCredentials(String clientId, String clientSecret) {
+        AuthPath withClientCredentials(String clientId, String clientSecret) {
             addQueryParameter("client_id", clientId);
             addQueryParameter("client_secret", clientSecret);
             return this;
         }
 
-        private AuthPath withUserCredentials(String username, String password) {
+        AuthPath withUserCredentials(String username, String password) {
             addQueryParameter("grant_type", "password");
             addQueryParameter("username", username);
             addQueryParameter("password", password);
             return this;
         }
 
-        private AuthPath withAppCredentials(String appId, String appToken) {
+        AuthPath withAppCredentials(String appId, String appToken) {
             addQueryParameter("grant_type", "app");
             addQueryParameter("app_id", appId);
             addQueryParameter("app_token", appToken);
             return this;
         }
 
-        private AuthPath withRefreshToken(String refreshToken) {
+        AuthPath withRefreshToken(String refreshToken) {
             addQueryParameter("grant_type", "refresh_token");
             addQueryParameter("refresh_token", refreshToken);
             return this;
@@ -200,7 +200,7 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
         }
     }
 
-    private HashMap<String, String> parseParams(Uri uri) {
+    protected HashMap<String, String> parseParams(Uri uri) {
         Set<String> keys = uri.getQueryParameterNames();
         HashMap<String, String> params = new HashMap<String, String>();
 
@@ -212,7 +212,7 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
         return params;
     }
 
-    private String parseUrl(Uri uri) {
+    protected String parseUrl(Uri uri) {
         if (Utils.isEmpty(uri)) {
             return null;
         }

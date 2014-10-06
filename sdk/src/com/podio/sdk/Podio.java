@@ -51,19 +51,6 @@ public class Podio {
      * @author László Urszuly
      */
     public static class ClientProvider {
-        private Client client;
-
-        /**
-         * Enables injection of the <code>Client</code> implementation, but only
-         * from the parent class.
-         * 
-         * @param client
-         *        The <code>Client</code> to use when executing authentication
-         *        requests.
-         */
-        private void setClient(Client client) {
-            this.client = client;
-        }
 
         /**
          * Enables means of user authentication, where the caller authenticates
@@ -77,7 +64,7 @@ public class Podio {
          *         callback implementations.
          */
         public Request<Void> authenticateWithUserCredentials(String username, String password) {
-            return client.authenticateWithUserCredentials(username, password);
+            return restClient.authenticateWithUserCredentials(username, password);
         }
 
         /**
@@ -92,7 +79,7 @@ public class Podio {
          *         callback implementations.
          */
         public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
-            return client.authenticateWithAppCredentials(appId, appToken);
+            return restClient.authenticateWithAppCredentials(appId, appToken);
         }
 
     }
@@ -237,7 +224,6 @@ public class Podio {
 
         application.setClient(restClient);
         calendar.setClient(restClient);
-        client.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
         user.setClient(restClient);

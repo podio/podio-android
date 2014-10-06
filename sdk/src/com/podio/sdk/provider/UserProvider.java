@@ -35,21 +35,21 @@ public class UserProvider extends VolleyProvider {
 
     static class Path extends Filter {
 
-        private Path() {
+        protected Path() {
             super("user");
         }
 
-        private Path withProfile() {
+        Path withProfile() {
             addPathSegment("profile");
             return this;
         }
 
-        private Path withStatus() {
+        Path withStatus() {
             addPathSegment("status");
             return this;
         }
 
-        private Path withProperty(String property) {
+        Path withProperty(String property) {
             addQueryParameter("name", property);
             return this;
         }
