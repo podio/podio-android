@@ -29,4 +29,6 @@ public interface Client {
 
     public Request<Void> authenticateWithAppCredentials(String appId, String appToken);
 
+    @Deprecated
+    public Request<Void> forceRefreshTokens();
 }

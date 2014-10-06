@@ -117,7 +117,14 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
     }
 
     @Override
+    @Deprecated
+    public Request<Void> forceRefreshTokens() {
+        return refreshAuth();
+    }
+
+    @Override
     public boolean onRequestPerformed(Void nothing) {
+        currentRequest.removeErrorListener(this);
         currentRequest.setSessionChanged(true);
         volleySessionQueue.add(currentRequest);
         volleyRequestQueue.start();
@@ -128,43 +135,24 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
     public boolean onErrorOccured(Throwable cause) {
         if (isRefreshing) {
             // An attempt to refresh the session has been made, but it failed.
-            // Clear the request queue as all pending requests will fail without
-            // a valid session.
+            // Give up hope on this patient.
             volleyRequestQueue.stop();
-
-            VolleyError error;
+            currentRequest.removeErrorListener(this);
 
             if (cause instanceof VolleyError) {
-                error = (VolleyError) cause;
+                currentRequest.deliverError((VolleyError) cause);
             } else if (cause.getCause() instanceof VolleyError) {
-                error = (VolleyError) cause.getCause();
+                currentRequest.deliverError((VolleyError) cause.getCause());
             } else {
-                error = new VolleyError(cause);
+                currentRequest.deliverError(new VolleyError(cause));
             }
 
-            currentRequest.removeErrorListener(this);
-            currentRequest.deliverError(error);
-
-            return true;
+            return false;
         } else if (cause instanceof PodioError && ((PodioError) cause).getStatusCode() == 401) {
             // The request has failed due to a 401 server response, try to
-            // resolve the issue by refreshing the session.
-            isRefreshing = true;
-            volleyRequestQueue.stop();
-
-            Uri uri = new AuthPath()
-                    .withClientCredentials(clientId, clientSecret)
-                    .withRefreshToken(Session.refreshToken())
-                    .buildUri(scheme, authority);
-
-            String url = parseUrl(uri);
-            HashMap<String, String> params = parseParams(uri);
-            VolleyRequest<Void> request = VolleyRequest
-                    .newAuthRequest(url, params)
-                    .withResultListener(this)
-                    .withErrorListener(this);
-            volleySessionQueue.add(request);
-
+            // resolve the issue by refreshing the session. Make sure this
+            // "stays between us", i.e. consume the event.
+            refreshAuth();
             return true;
         }
 
@@ -225,6 +213,27 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
         }
 
         return url;
+    }
+
+    private VolleyRequest<Void> refreshAuth() {
+        isRefreshing = true;
+        volleyRequestQueue.stop();
+
+        Uri uri = new AuthPath()
+                .withClientCredentials(clientId, clientSecret)
+                .withRefreshToken(Session.refreshToken())
+                .buildUri(scheme, authority);
+
+        String url = parseUrl(uri);
+        HashMap<String, String> params = parseParams(uri);
+        VolleyRequest<Void> request = VolleyRequest
+                .newAuthRequest(url, params)
+                .withResultListener(this)
+                .withErrorListener(this);
+
+        volleySessionQueue.add(request);
+
+        return request;
     }
 
 }

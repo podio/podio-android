@@ -83,6 +83,15 @@ public class Podio {
             return restClient.authenticateWithAppCredentials(appId, appToken);
         }
 
+        /**
+         * Enables means of forcing a refresh of auth tokens. *DEPRECATED* This
+         * call may interfere with the internal execution flow of the SDK and
+         * should be avoided at all cost.
+         */
+        @Deprecated
+        public Request<Void> forceRefreshTokens() {
+            return restClient.forceRefreshTokens();
+        }
     }
 
     private static final String SCHEME = "https";
