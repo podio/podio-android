@@ -26,6 +26,7 @@ import java.util.Date;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.PodioRequest;
+import com.podio.sdk.VolleyProvider;
 import com.podio.sdk.domain.CalendarEvent;
 import com.podio.sdk.internal.Utils;
 

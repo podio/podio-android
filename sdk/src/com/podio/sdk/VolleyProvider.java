@@ -22,47 +22,28 @@
 
 package com.podio.sdk;
 
-import android.net.Uri;
+public class VolleyProvider extends Provider {
 
-/**
- * Defines the filter interface that describes which data set any given rest
- * operation is to address. This interface is primarily used with the
- * {@link PodioProvider}.
- * 
- * @author László Urszuly
- */
-public interface PodioFilter {
+    protected Client client;
 
-    /**
-     * Adds a new query parameter with the given name and value.
-     * 
-     * @param key
-     *        The name of the parameter.
-     * @param value
-     *        The corresponding parameter value.
-     * @return This filter object for further chaining.
-     */
-    public PodioFilter addQueryParameter(String key, String value);
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
-    /**
-     * Adds a new path segment to the filter.
-     * 
-     * @param segment
-     *        The new segment.
-     * @return This filter object for further chaining.
-     */
-    public PodioFilter addPathSegment(String segment);
+    protected <T> PodioRequest<T> delete(Filter filter) {
+        return client.request(PodioRequest.Method.DELETE, filter, null, null);
+    }
 
-    /**
-     * Builds a Uri based on the given parameters and the information contained
-     * in the filter.
-     * 
-     * @param scheme
-     *        The Uri scheme.
-     * @param authority
-     *        The Uri authority
-     * @return The Uri.
-     */
-    public Uri buildUri(String scheme, String authority);
+    protected <T> PodioRequest<T> get(Filter filter, Class<T> classOfResult) {
+        return client.request(PodioRequest.Method.GET, filter, null, classOfResult);
+    }
+
+    protected <T> PodioRequest<T> post(Filter filter, Object item, Class<T> classOfItem) {
+        return client.request(PodioRequest.Method.POST, filter, item, classOfItem);
+    }
+
+    protected <T> PodioRequest<T> put(Filter filter, Object item, Class<T> classOfItem) {
+        return client.request(PodioRequest.Method.PUT, filter, item, classOfItem);
+    }
 
 }

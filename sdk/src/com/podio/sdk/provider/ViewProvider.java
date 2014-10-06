@@ -24,6 +24,7 @@ package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.PodioRequest;
+import com.podio.sdk.VolleyProvider;
 import com.podio.sdk.domain.View;
 
 /**
