@@ -55,6 +55,14 @@ public class ItemProvider extends VolleyProvider {
             return this;
         }
 
+        Path withApplicationAndViewIdFilter(long applicationId, long viewId) {
+            addPathSegment("app");
+            addPathSegment(Long.toString(applicationId, 10));
+            addPathSegment("filter");
+            addPathSegment(Long.toString(viewId, 10));
+            return this;
+        }
+
         Path withItemId(long itemId) {
             addPathSegment(Long.toString(itemId, 10));
             return this;
@@ -166,6 +174,32 @@ public class ItemProvider extends VolleyProvider {
          */
         public Request<Item.FilterResult> get(long applicationId) {
             Path filter = new Path().withApplicationIdFilter(applicationId);
+            return post(filter, filterData, Item.FilterResult.class);
+        }
+
+        /**
+         * Fetches a set of filtered items for the application with the given id
+         * and a given view_id.
+         * <p>
+         * If no filter data has been configured, then the default filter will
+         * be used, with a behavior as the API sees fit.
+         * <p>
+         * Note that, while the other methods in this class are optional, this
+         * method must be called in order for the filtered request to take place
+         * 
+         * @param applicationId
+         *        The id of the parent application.
+         * @param viewId
+         *        The id of the view.
+         * @return A ticket which the caller can use to identify this request
+         *         with.
+         * @see {@link ItemFilterProvider#onConstraint(String, Object)}
+         * @see {@link ItemFilterProvider#onRemember(boolean)}
+         * @see {@link ItemFilterProvider#onSpan(int)}
+         * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
+         */
+        public Request<Item.FilterResult> get(long applicationId, long viewId) {
+            Path filter = new Path().withApplicationAndViewIdFilter(applicationId, viewId);
             return post(filter, filterData, Item.FilterResult.class);
         }
     }
