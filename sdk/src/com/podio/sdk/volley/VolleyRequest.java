@@ -115,7 +115,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
     }
 
-    private final ArrayList<ResultListener<T>> contentListeners;
+    private final ArrayList<ResultListener<T>> resultListeners;
     private final ArrayList<SessionListener> sessionListeners;
     private final ArrayList<ErrorListener> errorListeners;
 
@@ -135,7 +135,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private VolleyRequest(int method, String url, Class<T> resultType, RequestFuture<T> volleyRequestFuture) {
         super(method, url, volleyRequestFuture);
 
-        this.contentListeners = new ArrayList<ResultListener<T>>();
+        this.resultListeners = new ArrayList<ResultListener<T>>();
         this.sessionListeners = new ArrayList<SessionListener>();
         this.errorListeners = new ArrayList<ErrorListener>();
 
@@ -176,12 +176,12 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     }
 
     @Override
-    public VolleyRequest<T> withResultListener(ResultListener<T> contentListener) {
-        if (contentListener != null) {
-            contentListeners.add(contentListener);
+    public VolleyRequest<T> withResultListener(ResultListener<T> resultListener) {
+        if (resultListener != null) {
+            resultListeners.add(resultListener);
 
             if (isDone() && result != null) {
-                contentListener.onRequestPerformed(result);
+                resultListener.onRequestPerformed(result);
             }
         }
 
@@ -264,8 +264,8 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
             deliverSession();
         }
 
-        for (ResultListener<T> contentListener : contentListeners) {
-            if (contentListener.onRequestPerformed(result)) {
+        for (ResultListener<T> resultListener : resultListeners) {
+            if (resultListener.onRequestPerformed(result)) {
                 // The callback consumed the event, stop the bubbling.
                 break;
             }
@@ -317,11 +317,11 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
     }
 
-    public ResultListener<T> removeContentListener(ResultListener<T> contentListener) {
-        int index = contentListeners.indexOf(contentListener);
+    public ResultListener<T> removeResultListener(ResultListener<T> resultListener) {
+        int index = resultListeners.indexOf(resultListener);
 
-        return contentListeners.contains(contentListener) ?
-                contentListeners.remove(index) :
+        return resultListeners.contains(resultListener) ?
+                resultListeners.remove(index) :
                 null;
     }
 
