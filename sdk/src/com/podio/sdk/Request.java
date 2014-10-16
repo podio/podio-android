@@ -30,24 +30,24 @@ public interface Request<T> extends Future<T> {
     }
 
     /**
-     * Callback interface for successfully executed request events.
+     * A special-case error listener, targeting authorization errors. This
+     * interface is intended to be used internally by the SDK only and enables
+     * the auth managers to detect and act on auth errors.
      * 
      * @author László Urszuly
      */
-    public interface ResultListener<E> {
+    interface AuthErrorListener<E> {
 
         /**
-         * Delivers the result of a successfully performed request. The
-         * implementation must return boolean true if the event is to be
-         * consumed (no subsequent listeners in the chain will be called) or
-         * boolean false to allow bubbling of the event.
+         * Delivers the request that caught an authorization error to the
+         * implementing receiver. This method should NOT - never ever - be
+         * called by the client as it may heavily interfere with the internal
+         * execution flow.
          * 
-         * @param content
-         *        The content that was requested.
-         * @return Boolean flag whether the event is to be consumed or not by
-         *         this implementation.
+         * @param request
+         *        The request that caught the authorization error.
          */
-        public boolean onRequestPerformed(E content);
+        public boolean onAuthErrorOccured(Request<E> request);
 
     }
 
@@ -70,6 +70,28 @@ public interface Request<T> extends Future<T> {
          *         this implementation.
          */
         public boolean onErrorOccured(Throwable cause);
+
+    }
+
+    /**
+     * Callback interface for successfully executed request events.
+     * 
+     * @author László Urszuly
+     */
+    public interface ResultListener<E> {
+
+        /**
+         * Delivers the result of a successfully performed request. The
+         * implementation must return boolean true if the event is to be
+         * consumed (no subsequent listeners in the chain will be called) or
+         * boolean false to allow bubbling of the event.
+         * 
+         * @param content
+         *        The content that was requested.
+         * @return Boolean flag whether the event is to be consumed or not by
+         *         this implementation.
+         */
+        public boolean onRequestPerformed(E content);
 
     }
 

@@ -22,7 +22,6 @@
 package com.podio.sdk;
 
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
@@ -58,7 +57,7 @@ public class PodioError extends RuntimeException {
 
         if (throwable instanceof VolleyError) {
             volleyError = (VolleyError) throwable;
-        } else if (throwable instanceof ExecutionException && throwable.getCause() instanceof VolleyError) {
+        } else if (throwable.getCause() instanceof VolleyError) {
             volleyError = (VolleyError) throwable.getCause();
         } else {
             return new PodioError(detailMessage, throwable);
@@ -89,12 +88,19 @@ public class PodioError extends RuntimeException {
      * @return A new PodioException instance.
      */
     public static PodioError fromJson(String json, int statusCode, Throwable cause) {
-        PodioError podioException = JsonParser.fromJson(json, PodioError.class);
-        podioException.initCause(cause);
-        podioException.initSource(json);
-        podioException.initStatusCode(statusCode);
+        PodioError podioError;
 
-        return podioException;
+        if (Utils.notEmpty(json)) {
+            podioError = JsonParser.fromJson(json, PodioError.class);
+        } else {
+            podioError = new PodioError();
+        }
+
+        podioError.initCause(cause);
+        podioError.initSource(json);
+        podioError.initStatusCode(statusCode);
+
+        return podioError;
     }
 
     private final HashMap<String, String> error_parameters = null;

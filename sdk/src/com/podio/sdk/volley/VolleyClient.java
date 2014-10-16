@@ -30,18 +30,20 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
+import com.android.volley.RequestQueue.RequestFilter;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
 import com.podio.sdk.JsonParser;
-import com.podio.sdk.PodioError;
 import com.podio.sdk.Request;
+import com.podio.sdk.Request.AuthErrorListener;
+import com.podio.sdk.Request.ErrorListener;
+import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.Session;
 import com.podio.sdk.internal.Utils;
 
-public class VolleyClient implements Client, Request.ErrorListener, Request.ResultListener<Void> {
+public class VolleyClient implements Client {
 
     static class AuthPath extends Filter {
 
@@ -77,14 +79,13 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
 
     }
 
-    private String scheme;
-    private String authority;
+    protected String clientId;
+    protected String clientSecret;
+    protected String scheme;
+    protected String authority;
+
     private RequestQueue volleyRequestQueue;
     private RequestQueue volleySessionQueue;
-    private String clientId;
-    private String clientSecret;
-    private boolean isRefreshing;
-    private VolleyRequest<?> currentRequest;
 
     @Override
     public Request<Void> authenticateWithUserCredentials(String username, String password) {
@@ -119,54 +120,103 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
     @Override
     @Deprecated
     public Request<Void> forceRefreshTokens() {
-        return refreshAuth();
-    }
+        volleyRequestQueue.stop();
 
-    @Override
-    public boolean onRequestPerformed(Void nothing) {
-        currentRequest.removeErrorListener(this);
-        currentRequest.setSessionChanged(true);
-        volleySessionQueue.add(currentRequest);
-        volleyRequestQueue.start();
-        return true;
-    }
+        // Prepare to re-authenticate...
+        Uri uri = buildAuthUri();
+        String url = parseUrl(uri);
+        HashMap<String, String> params = parseParams(uri);
+        VolleyRequest<Void> authRequest = VolleyRequest
+                .newAuthRequest(url, params)
+                .withSessionListener(new SessionListener() {
 
-    @Override
-    public boolean onErrorOccured(Throwable cause) {
-        if (isRefreshing) {
-            // An attempt to refresh the session has been made, but it failed.
-            // Give up hope on this patient.
-            volleyRequestQueue.stop();
-            currentRequest.removeErrorListener(this);
+                    @Override
+                    public boolean onSessionChanged(String authToken, String refreshToken, long expires) {
+                        volleyRequestQueue.start();
+                        return false;
+                    }
 
-            if (cause instanceof VolleyError) {
-                currentRequest.deliverError((VolleyError) cause);
-            } else if (cause.getCause() instanceof VolleyError) {
-                currentRequest.deliverError((VolleyError) cause.getCause());
-            } else {
-                currentRequest.deliverError(new VolleyError(cause));
-            }
+                })
+                .withErrorListener(new ErrorListener() {
 
-            return false;
-        } else if (cause instanceof PodioError && ((PodioError) cause).getStatusCode() == 401) {
-            // The request has failed due to a 401 server response, try to
-            // resolve the issue by refreshing the session. Make sure this
-            // "stays between us", i.e. consume the event.
-            refreshAuth();
-            return true;
-        }
+                    @Override
+                    public boolean onErrorOccured(Throwable cause) {
+                        volleyRequestQueue.start();
+                        return false;
+                    }
 
-        return false;
+                });
+
+        // ...and add it to the prioritized session request queue.
+        volleySessionQueue.add(authRequest);
+
+        return authRequest;
     }
 
     @Override
     public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfItem) {
-        Uri uri = filter.buildUri(scheme, authority);
-        String url = parseUrl(uri);
+        // Prepare the request.
+        String url = filter.buildUri(scheme, authority).toString();
         String body = item != null ? JsonParser.toJson(item) : null;
-
         VolleyRequest<T> request = VolleyRequest.newRequest(method, url, body, classOfItem);
-        request.withErrorListener(this);
+
+        // Make us aware of any authentication errors.
+        request.withAuthErrorListener(new AuthErrorListener<T>() {
+
+            @Override
+            public boolean onAuthErrorOccured(final Request<T> originalRequest) {
+                // The original request failed due to an authentication error.
+                // Stop executing the default HTTP queue as we currently don't
+                // have valid auth tokens.
+                volleyRequestQueue.stop();
+
+                // Prepare to re-authenticate...
+                Uri uri = buildAuthUri();
+                String url = parseUrl(uri);
+                HashMap<String, String> params = parseParams(uri);
+                VolleyRequest<Void> reAuthRequest = VolleyRequest
+                        .newAuthRequest(url, params)
+                        .withSessionListener(new SessionListener() {
+
+                            @Override
+                            @SuppressWarnings("unchecked")
+                            public boolean onSessionChanged(String authToken, String refreshToken, long expires) {
+                                // The authentication has succeeded and the new
+                                // session tokens are now available.
+                                addToRequestQueue((com.android.volley.Request<T>) originalRequest);
+                                volleyRequestQueue.start();
+                                return false;
+                            }
+
+                        })
+                        .withErrorListener(new ErrorListener() {
+
+                            @Override
+                            public boolean onErrorOccured(Throwable cause) {
+                                // Re-authentication has failed utterly.
+                                volleyRequestQueue.cancelAll(new RequestFilter() {
+
+                                    @Override
+                                    public boolean apply(com.android.volley.Request<?> request) {
+                                        return true;
+                                    }
+
+                                });
+                                volleyRequestQueue.start();
+
+                                return false;
+                            }
+
+                        });
+
+                // ...and add it to the prioritized session request queue.
+                addToRequestQueue(reAuthRequest);
+
+                return false;
+            }
+
+        });
+
         volleyRequestQueue.add(request);
 
         return request;
@@ -185,6 +235,12 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
             HurlStack stack = new HurlStack(null, sslSocketFactory);
             this.volleyRequestQueue = Volley.newRequestQueue(context, stack);
             this.volleySessionQueue = Volley.newRequestQueue(context, stack);
+        }
+    }
+
+    protected <T> void addToRequestQueue(com.android.volley.Request<T> request) {
+        if (request != null) {
+            volleyRequestQueue.add(request);
         }
     }
 
@@ -215,25 +271,11 @@ public class VolleyClient implements Client, Request.ErrorListener, Request.Resu
         return url;
     }
 
-    private VolleyRequest<Void> refreshAuth() {
-        isRefreshing = true;
-        volleyRequestQueue.stop();
-
-        Uri uri = new AuthPath()
+    private Uri buildAuthUri() {
+        return new AuthPath()
                 .withClientCredentials(clientId, clientSecret)
                 .withRefreshToken(Session.refreshToken())
                 .buildUri(scheme, authority);
-
-        String url = parseUrl(uri);
-        HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> request = VolleyRequest
-                .newAuthRequest(url, params)
-                .withResultListener(this)
-                .withErrorListener(this);
-
-        volleySessionQueue.add(request);
-
-        return request;
     }
 
 }

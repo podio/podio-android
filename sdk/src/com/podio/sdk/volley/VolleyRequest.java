@@ -41,6 +41,7 @@ import com.android.volley.toolbox.RequestFuture;
 import com.podio.sdk.JsonParser;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;
+import com.podio.sdk.internal.Utils;
 
 public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
 
@@ -81,7 +82,11 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, volleyRequestFuture);
         request.contentType = "application/json; charset=UTF-8";
-        request.headers.put("Authorization", "Bearer " + Session.accessToken());
+
+        if (Utils.notEmpty(Session.accessToken())) {
+            request.headers.put("Authorization", "Bearer " + Session.accessToken());
+        }
+
         request.body = body;
         request.isAuthRequest = false;
 
@@ -115,6 +120,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
     }
 
+    private final ArrayList<AuthErrorListener<T>> authErrorListeners;
     private final ArrayList<ResultListener<T>> resultListeners;
     private final ArrayList<SessionListener> sessionListeners;
     private final ArrayList<ErrorListener> errorListeners;
@@ -135,6 +141,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private VolleyRequest(int method, String url, Class<T> resultType, RequestFuture<T> volleyRequestFuture) {
         super(method, url, volleyRequestFuture);
 
+        this.authErrorListeners = new ArrayList<AuthErrorListener<T>>();
         this.resultListeners = new ArrayList<ResultListener<T>>();
         this.sessionListeners = new ArrayList<SessionListener>();
         this.errorListeners = new ArrayList<ErrorListener>();
@@ -205,10 +212,10 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     public VolleyRequest<T> withSessionListener(SessionListener sessionListener) {
         if (sessionListener != null) {
             sessionListeners.add(sessionListener);
-        }
 
-        if (isDone() && (isAuthRequest || hasSessionChanged)) {
-            sessionListener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
+            if (isDone() && (isAuthRequest || hasSessionChanged)) {
+                sessionListener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
+            }
         }
 
         return this;
@@ -239,17 +246,25 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
 
-        for (ErrorListener errorListener : errorListeners) {
-            if (errorListener.onErrorOccured(this.error)) {
-                // The callback consumed the event, stop the bubbling.
-                return;
+        if (isAuthError(this.error)) {
+            for (AuthErrorListener<T> authErrorListener : authErrorListeners) {
+                if (authErrorListener.onAuthErrorOccured(this)) {
+                    return;
+                }
             }
-        }
+        } else {
+            for (ErrorListener errorListener : errorListeners) {
+                if (errorListener.onErrorOccured(this.error)) {
+                    // The callback consumed the event, stop the bubbling.
+                    return;
+                }
+            }
 
-        for (ErrorListener errorListener : GLOBAL_ERROR_LISTENERS) {
-            if (errorListener.onErrorOccured(this.error)) {
-                // The callback consumed the event, stop the bubbling.
-                return;
+            for (ErrorListener errorListener : GLOBAL_ERROR_LISTENERS) {
+                if (errorListener.onErrorOccured(this.error)) {
+                    // The callback consumed the event, stop the bubbling.
+                    return;
+                }
             }
         }
     }
@@ -258,6 +273,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     protected void deliverResponse(T result) {
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
+
         this.result = result;
 
         if (isAuthRequest || hasSessionChanged) {
@@ -349,6 +365,18 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         this.hasSessionChanged = hasChanged;
     }
 
+    VolleyRequest<T> withAuthErrorListener(AuthErrorListener<T> authErrorListener) {
+        if (authErrorListener != null) {
+            authErrorListeners.add(authErrorListener);
+
+            if (isDone() && isAuthError(error)) {
+                authErrorListener.onAuthErrorOccured(this);
+            }
+        }
+
+        return this;
+    }
+
     private void deliverSession() {
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
@@ -368,6 +396,18 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
                 // The callback consumed the event, stop the bubbling.
                 return;
             }
+        }
+    }
+
+    private boolean isAuthError(Throwable error) {
+        if (error instanceof PodioError) {
+            PodioError e = (PodioError) error;
+            return e.getStatusCode() == 401;
+        } else if (error instanceof VolleyError) {
+            VolleyError e = (VolleyError) error;
+            return e.networkResponse != null && e.networkResponse.statusCode == 401;
+        } else {
+            return false;
         }
     }
 }
