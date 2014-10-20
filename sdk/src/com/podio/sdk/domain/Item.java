@@ -187,7 +187,7 @@ public class Item implements Pushable {
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
     private final Excerpt excerpt = null;
-    private final Integer priority = null;
+    private final Double priority = null;
     private final Integer subscribed_count = null;
     private final Long item_id = null;
     private final Long revision = null;
@@ -353,8 +353,8 @@ public class Item implements Pushable {
         return Utils.getNative(subscribed_count, 0);
     }
 
-    public int getPriority() {
-        return Utils.getNative(priority, 0);
+    public double getPriority() {
+        return Utils.getNative(priority, 0.0d);
     }
 
     public long getRevisionId() {
