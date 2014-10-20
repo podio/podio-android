@@ -31,7 +31,7 @@ Podio.setup(context, "my_api_key", "my_secret");
 And by that you're ready to start using the Podio SDK.
 
 ## How to use the SDK
-Requesting data from the SDK can be done in of two different ways, both will deliver the same result, but in different ways.
+Requesting data from the SDK can be done with two different approaches, both will deliver the same result, but in different ways.
 
 Regardless of which approach you choose, the SDK will give you a `Future` object upon performing a request. You then have the option of providing a set of (optional) callback interfaces that will be called by the SDK when something is ready.
 
@@ -69,7 +69,7 @@ future.withErrorListener(new ErrorListener() {
 
     @Override
     public boolean onErrorOccured(Throwable cause) {
-        // Check for PodioException
+        // Check for PodioError
         return false;
     }
 
@@ -98,9 +98,7 @@ Podio.addGlobalErrorListener(globalErrorListener);
 // Podio.removeGlobalErrorListener(globalErrorListener);
 {% endhighlight %}
 
-An error event will now not only be given to your custom error listener (the one you provide to the request future), but will also bubble up to your global error listeners. However, if the callback method returns boolean `true`, any further bubbling of the event will be prevented. This enables you to make specific error handling for specific calls, while having a general fallback for the others.
-
-Important to know is that the SDK will only hold a weak reference to the global error listeners. In practice it means that if you don't hold a reference of your own to the listener, the Java garbage collector will reclaim it. This can efficiently be avoided by letting an Android `Activity` or a custom Android `Application` object implement the `ErrorListener` interface. 
+An error event will now not only be given to your custom error listener on the request, would you provide one, but will also bubble up to your global error listeners. The custom callback can, however, choose to consume the event (by returning boolean `true`) and thereby prevent any further bubbling of it. This enables you to make specific error handling for specific calls, while having a general fallback for the others. 
 
 ### Using the SDK in a synchronous manner
 Now, you may want to block the current thread while the SDK is executing. This is not recommended on the UI thread, though. However, you might be executing on a worker thread already, like with an `IntentService`, which you may want to keep alive during the entire Podio SDK execution flow. You can then take advantage of the Java `Future` aspects of the returned future object and block the current thread until the SDK delivers.
@@ -111,7 +109,7 @@ You'll still perform the request itself in the same way as with the asynchronous
 try {
     Application application = future.get(20, TimeUnit.SECONDS);
 } catch (ExecutionException e) {
-    // Check the cause of e for PodioException.
+    // Check the cause of e for PodioError.
 } catch (TimeoutException e) {
     // No network error???
 } catch (InterruptedException e) {
