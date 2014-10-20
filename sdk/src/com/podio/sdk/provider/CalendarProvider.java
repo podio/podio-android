@@ -24,62 +24,16 @@ package com.podio.sdk.provider;
 
 import java.util.Date;
 
-import com.podio.sdk.Filter;
-import com.podio.sdk.Request;
+import com.podio.sdk.client.RequestFuture;
 import com.podio.sdk.domain.CalendarEvent;
-import com.podio.sdk.internal.Utils;
-import com.podio.sdk.volley.VolleyProvider;
+import com.podio.sdk.filter.CalendarFilter;
 
 /**
  * Enables access to the Calendar API end point.
  * 
  * @author Tobias Lindberg
  */
-public class CalendarProvider extends VolleyProvider {
-
-    static class Path extends Filter {
-
-        Path() {
-            super("calendar");
-        }
-
-        Path withWorkspaceId(long spaceId) {
-            addPathSegment("space");
-            addPathSegment(Long.toString(spaceId, 10));
-            return this;
-
-        }
-
-        Path withDate(Date from, Date to) {
-            if (from != null) {
-                String dateFrom = Utils.formatDate(from);
-                addQueryParameter("date_from", dateFrom);
-
-                if (to != null) {
-                    String dateTo = Utils.formatDate(to);
-                    addQueryParameter("date_to", dateTo);
-                }
-            }
-
-            return this;
-        }
-
-        Path withPriority(int priority) {
-            addQueryParameter("priority", Integer.toString(priority));
-            return this;
-        }
-
-        Path withWorkspaceNameField() {
-            // Return CalendarEvents with a workspace name (if accessible)
-            addQueryParameter("fields", "app.fields(space)");
-            return this;
-        }
-
-        Path withTasks(boolean includeTasks) {
-            addQueryParameter("tasks", includeTasks ? "true" : "false");
-            return this;
-        }
-    }
+public class CalendarProvider extends BasicPodioProvider {
 
     /**
      * Fetches all global calendar events.
@@ -91,16 +45,15 @@ public class CalendarProvider extends VolleyProvider {
      * @param priority
      *        The priority level of the results.
      * @param includeTasks
-     *        Boolean true to include tasks in the calendar. Boolean false
+     *        set to true if tasks should be included in the calendar, false
      *        otherwise.
      * @return
      */
-    public Request<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority, boolean includeTasks) {
-        Path filter = new Path()
-                .withDate(from, to)
-                .withPriority(priority)
-                .withTasks(includeTasks)
-                .withWorkspaceNameField();
+    public RequestFuture<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority,
+            boolean includeTasks) {
+
+        CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
+                .withPriority(priority).withTasks(includeTasks).withWorkspaceNameField();
 
         return get(filter, CalendarEvent[].class);
     }
@@ -109,25 +62,19 @@ public class CalendarProvider extends VolleyProvider {
      * Fetches all space calendar events.
      * 
      * @param spaceId
-     *        The id of the workspace from which to fetch the calendar events.
      * @param from
-     *        The Date from which the result should start from.
      * @param to
-     *        The Date from which the result should end at.
      * @param priority
-     *        The priority level of the results.
      * @param includeTasks
-     *        Boolean true to include tasks in the calendar. Boolean false
+     *        set to true if tasks should be included in the calendar, false
      *        otherwise.
      * @return
      */
-    public Request<CalendarEvent[]> getSpaceCalendar(long spaceId, Date from, Date to, int priority, boolean includeTasks) {
-        Path filter = new Path()
-                .withWorkspaceId(spaceId)
-                .withDate(from, to)
-                .withPriority(priority)
-                .withTasks(includeTasks)
-                .withWorkspaceNameField();
+    public RequestFuture<CalendarEvent[]> getSpaceCalendar(long spaceId, Date from, Date to,
+            int priority, boolean includeTasks) {
+
+        CalendarFilter filter = new CalendarFilter().withWorkspaceId(spaceId)
+                .withDateFromTo(from, to).withPriority(priority).withTasks(includeTasks);
 
         return get(filter, CalendarEvent[].class);
     }
