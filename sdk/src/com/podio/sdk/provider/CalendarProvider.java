@@ -24,16 +24,67 @@ package com.podio.sdk.provider;
 
 import java.util.Date;
 
-import com.podio.sdk.client.RequestFuture;
+import android.text.format.DateFormat;
+
+import com.podio.sdk.Filter;
+import com.podio.sdk.Request;
 import com.podio.sdk.domain.CalendarEvent;
-import com.podio.sdk.filter.CalendarFilter;
+import com.podio.sdk.volley.VolleyProvider;
 
 /**
  * Enables access to the Calendar API end point.
  * 
  * @author Tobias Lindberg
  */
-public class CalendarProvider extends BasicPodioProvider {
+public class CalendarProvider extends VolleyProvider {
+
+    private static class CalendarFilter extends Filter {
+        public static final String PATH = "calendar";
+
+        public CalendarFilter() {
+            super(PATH);
+        }
+
+        public CalendarFilter withWorkspaceId(long spaceId) {
+            addPathSegment("space");
+            addQueryParameter("space_id", Long.toString(spaceId, 10));
+            addPathSegment(Long.toString(spaceId, 10));
+            return this;
+
+        }
+
+        public CalendarFilter withDateFromTo(Date from, Date to) {
+
+            String dateFrom = DateFormat.format("yyyy-MM-dd", from).toString();
+            String dateTo = DateFormat.format("yyyy-MM-dd", to).toString();
+            addQueryParameter("date_from", dateFrom);
+            addQueryParameter("date_to", dateTo);
+            return this;
+        }
+
+        public CalendarFilter withPriority(int priority) {
+            addQueryParameter("priority", Integer.toString(priority));
+            return this;
+        }
+
+        /**
+         * This method will ensure that the request will return
+         * {@link CalendarEvent} objects with a workspace name (if the requester
+         * has access to the workspace that this CalendarEvent is associated
+         * with)
+         * 
+         * @return
+         */
+        public CalendarFilter withWorkspaceNameField() {
+            addQueryParameter("fields", "app.fields(space)");
+            return this;
+        }
+
+        public CalendarFilter withTasks(boolean includeTasks) {
+            addQueryParameter("tasks", Boolean.toString(includeTasks));
+            return this;
+        }
+    }
 
     /**
      * Fetches all global calendar events.
@@ -49,7 +100,7 @@ public class CalendarProvider extends BasicPodioProvider {
      *        otherwise.
      * @return
      */
-    public RequestFuture<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority,
+    public Request<CalendarEvent[]> getGlobalCalendar(Date from, Date to, int priority,
             boolean includeTasks) {
 
         CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
@@ -70,7 +121,7 @@ public class CalendarProvider extends BasicPodioProvider {
      *        otherwise.
      * @return
      */
-    public RequestFuture<CalendarEvent[]> getSpaceCalendar(long spaceId, Date from, Date to,
+    public Request<CalendarEvent[]> getSpaceCalendar(long spaceId, Date from, Date to,
             int priority, boolean includeTasks) {
 
         CalendarFilter filter = new CalendarFilter().withWorkspaceId(spaceId)
