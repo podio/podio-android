@@ -90,8 +90,6 @@ public final class MoneyField extends Field {
     private MoneyValue validateValue(Object value) throws FieldTypeMismatchException {
         if (value instanceof MoneyValue) {
             return (MoneyValue) value;
-        } else if (value instanceof MoneyValue.Data) {
-            return new MoneyValue((MoneyValue.Data) value);
         } else if (value instanceof String[]) {
             String[] v = (String[]) value;
 

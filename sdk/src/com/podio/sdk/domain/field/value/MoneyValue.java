@@ -29,32 +29,20 @@ import java.util.HashMap;
  */
 public final class MoneyValue extends AbstractValue {
 
-    public static final class Data {
-        private final String currency;
-        private final String value;
+    private final String currency;
+    private final String value;
 
-        public Data(String currency, String value) {
-            this.currency = currency;
-            this.value = value;
-        }
-
-        public String getCurrency() {
-            return currency;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-    private final MoneyValue.Data value;
-
-    public MoneyValue(MoneyValue.Data value) {
+    public MoneyValue(String currency, String value) {
+        this.currency = currency;
         this.value = value;
     }
 
-    public MoneyValue(String currency, String value) {
-        this.value = new MoneyValue.Data(currency, value);
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -62,8 +50,8 @@ public final class MoneyValue extends AbstractValue {
         if (o instanceof MoneyValue) {
             MoneyValue other = (MoneyValue) o;
 
-            if (other.value != null && other.value.currency != null && other.value.value != null && this.value != null) {
-                return other.value.currency.equals(this.value.currency) && other.value.value.equals(this.value.value);
+            if (other.value != null && other.currency != null && other.value != null && this.value != null) {
+                return other.currency.equals(this.currency) && other.value.equals(this.value);
             }
         }
 
@@ -74,10 +62,10 @@ public final class MoneyValue extends AbstractValue {
     public Object getPushData() {
         HashMap<String, String> data = null;
 
-        if (value != null && value.currency != null && value.value != null) {
+        if (value != null && currency != null && value != null) {
             data = new HashMap<String, String>();
-            data.put("currency", value.currency);
-            data.put("value", value.value);
+            data.put("currency", currency);
+            data.put("value", value);
         }
 
         return data;
@@ -85,17 +73,9 @@ public final class MoneyValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        String c = this.value.currency;
-        String v = this.value.value;
+        String c = currency;
+        String v = value;
         return c != null && v != null ? (c + v).hashCode() : 0;
-    }
-
-    public String getCurrency() {
-        return value != null ? value.getCurrency() : null;
-    }
-
-    public String getValue() {
-        return value != null ? value.getValue() : null;
     }
 
 }

@@ -57,7 +57,7 @@ public class JsonParser {
 
             if (fieldType != null && !fieldType.isJsonNull()) {
                 try {
-                    typeEnum = Enum.valueOf(Field.Type.class, fieldType.getAsString());
+                    typeEnum = Field.Type.valueOf(fieldType.getAsString());
                 } catch (IllegalArgumentException e) {
                 }
             }

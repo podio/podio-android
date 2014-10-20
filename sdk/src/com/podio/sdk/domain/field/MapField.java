@@ -90,8 +90,6 @@ public final class MapField extends Field {
     private MapValue validateValue(Object value) throws FieldTypeMismatchException {
         if (value instanceof MapValue) {
             return (MapValue) value;
-        } else if (value instanceof MapValue.Data) {
-            return new MapValue((MapValue.Data) value);
         } else if (value instanceof String) {
             return new MapValue(value.toString());
         } else {

@@ -30,72 +30,59 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public final class MapValue extends AbstractValue {
+    private final Double lat = null;
+    private final Double lng = null;
+    private final String city = null;
+    private final String country = null;
+    private final String formatted = null;
+    private final String postal_code = null;
+    private final String state = null;
+    private final String street_name = null;
+    private final String street_number = null;
+    private final String value;
 
-    public static final class Data {
-        private final Double lat = null;
-        private final Double lng = null;
-        private final String city = null;
-        private final String country = null;
-        private final String formatted = null;
-        private final String postal_code = null;
-        private final String state = null;
-        private final String street_name = null;
-        private final String street_number = null;
-        private final String value;
-
-        public Data(String value) {
-            this.value = value;
-        }
-
-        public double getLatitude() {
-            return Utils.getNative(lat, 0.0D);
-        }
-
-        public double getLongitude() {
-            return Utils.getNative(lng, 0.0D);
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public String getCountry() {
-            return country;
-        }
-
-        public String getFormattedLocation() {
-            return formatted;
-        }
-
-        public String getPostalCode() {
-            return postal_code;
-        }
-
-        public String getState() {
-            return state;
-        }
-
-        public String getStreetName() {
-            return street_name;
-        }
-
-        public String getStreetNumber() {
-            return street_number;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-    private final Data value;
-
-    public MapValue(Data value) {
+    public MapValue(String value) {
         this.value = value;
     }
 
-    public MapValue(String value) {
-        this.value = new Data(value);
+    public double getLatitude() {
+        return Utils.getNative(lat, 0.0D);
+    }
+
+    public double getLongitude() {
+        return Utils.getNative(lng, 0.0D);
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getFormattedLocation() {
+        return formatted;
+    }
+
+    public String getPostalCode() {
+        return postal_code;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getStreetName() {
+        return street_name;
+    }
+
+    public String getStreetNumber() {
+        return street_number;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -103,8 +90,8 @@ public final class MapValue extends AbstractValue {
         if (o instanceof MapValue) {
             MapValue other = (MapValue) o;
 
-            if (other.value != null && other.value.value != null && this.value != null) {
-                return other.value.equals(this.value.value);
+            if (other.value != null && other.value != null && this.value != null) {
+                return other.value.equals(this.value);
             }
         }
 
@@ -115,9 +102,9 @@ public final class MapValue extends AbstractValue {
     public Object getPushData() {
         HashMap<String, String> data = null;
 
-        if (value != null && value.value != null) {
+        if (value != null && value != null) {
             data = new HashMap<String, String>();
-            data.put("value", value.value);
+            data.put("value", value);
         }
 
         return data;
@@ -125,47 +112,7 @@ public final class MapValue extends AbstractValue {
 
     @Override
     public int hashCode() {
-        return this.value != null && this.value.value != null ? this.value.value.hashCode() : 0;
-    }
-
-    public double getLatitude() {
-        return value != null ? value.getLatitude() : 0.0D;
-    }
-
-    public double getLongitude() {
-        return value != null ? value.getLongitude() : 0.0D;
-    }
-
-    public String getCity() {
-        return value != null ? value.getCity() : null;
-    }
-
-    public String getCountry() {
-        return value != null ? value.getCountry() : null;
-    }
-
-    public String getFormattedLocation() {
-        return value != null ? value.getFormattedLocation() : null;
-    }
-
-    public String getPostalCode() {
-        return value != null ? value.getPostalCode() : null;
-    }
-
-    public String getState() {
-        return value != null ? value.getState() : null;
-    }
-
-    public String getStreetName() {
-        return value != null ? value.getStreetName() : null;
-    }
-
-    public String getStreetNumber() {
-        return value != null ? value.getStreetNumber() : null;
-    }
-
-    public String getValue() {
-        return value != null ? value.getValue() : null;
+        return this.value != null && this.value != null ? this.value.hashCode() : 0;
     }
 
 }
