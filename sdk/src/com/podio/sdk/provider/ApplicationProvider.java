@@ -25,6 +25,7 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Application;
+import com.podio.sdk.internal.Utils;
 import com.podio.sdk.volley.VolleyProvider;
 
 public class ApplicationProvider extends VolleyProvider {
@@ -64,9 +65,10 @@ public class ApplicationProvider extends VolleyProvider {
          *
          * @return
          */
-        public Path withWorkspaceField() {
-            addQueryParameter("fields", "space");
-
+        public Path withFields(String[] fieldValues) {
+            if (fieldValues.length > 0) {
+            addQueryParameter("fields", Utils.convertToCommaDelimited(fieldValues));
+            }
             return this;
         }
     }
@@ -81,7 +83,25 @@ public class ApplicationProvider extends VolleyProvider {
     public Request<Application> get(long applicationId) {
         Path filter = new Path()
                 .withApplicationId(applicationId)
-                .withType("full").withWorkspaceField();
+                .withType("full");
+
+        return get(filter, Application.class);
+    }
+
+    /**
+     * Fetches the full content set of the application with the given id.
+     *
+     * @param applicationId
+     *        The id of the application to fetch.
+     * @param fieldValues
+     *        Name of json objects not returned by default in the app data
+     *        structure, e.g. "space".
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Application> get(long applicationId, String... fieldValues) {
+        Path filter = new Path()
+                .withApplicationId(applicationId)
+                .withType("full").withFields(fieldValues);
 
         return get(filter, Application.class);
     }
