@@ -67,7 +67,7 @@ public class ApplicationProvider extends VolleyProvider {
          */
         public Path withFields(String[] fieldValues) {
             if (fieldValues.length > 0) {
-            addQueryParameter("fields", Utils.convertToCommaDelimited(fieldValues));
+                addQueryParameter("fields", Utils.join(fieldValues, ","));
             }
             return this;
         }

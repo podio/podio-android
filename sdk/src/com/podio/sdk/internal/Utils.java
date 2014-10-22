@@ -153,12 +153,12 @@ public class Utils {
         return !isEmpty(string);
     }
 
-    public static String convertToCommaDelimited(String[] strings) {
+    public static String join(String[] array, String seperator) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; strings != null && i < strings.length; i++) {
-            result.append(strings[i]);
-            if (i < strings.length - 1) {
-                result.append(',');
+        for (int i = 0; array != null && i < array.length; i++) {
+            result.append(array[i]);
+            if (i < array.length - 1) {
+                result.append(seperator);
             }
         }
         return result.toString();
