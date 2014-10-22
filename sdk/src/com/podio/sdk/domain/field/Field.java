@@ -49,11 +49,20 @@ public abstract class Field implements Pushable {
      * @author Christian Holm
      */
     public static enum Type {
-        app(RelationshipField.class), calculation(CalculationField.class), category(
-                CategoryField.class), contact(ContactField.class), date(DateField.class), duration(
-                DurationField.class), embed(LinkField.class), image(ImageField.class), location(
-                MapField.class), money(MoneyField.class), number(NumberField.class), progress(
-                ProgressField.class), text(TextField.class), undefined(EmptyField.class);
+        app(RelationshipField.class),
+        calculation(CalculationField.class),
+        category(CategoryField.class),
+        contact(ContactField.class),
+        date(DateField.class),
+        duration(DurationField.class),
+        embed(LinkField.class),
+        image(ImageField.class),
+        location(MapField.class),
+        money(MoneyField.class),
+        number(NumberField.class),
+        progress(ProgressField.class),
+        text(TextField.class),
+        undefined(EmptyField.class);
 
         private final Class<? extends Field> fieldClass;
 

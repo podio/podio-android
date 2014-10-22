@@ -32,10 +32,16 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.podio.sdk.domain.field.Field;
 
 public class JsonParser {
 
+    // TODO: Investigate the possibilities offered by Gson TypeAdapter instead.
+    // According to Google documentation it's the preferred way of
+    // (de)serializing JSON as it's more efficient and has a smaller memory
+    // footprint.
     private static final class FieldDeserializer implements JsonDeserializer<Field> {
 
         @Override
@@ -72,10 +78,20 @@ public class JsonParser {
         }
     }
 
+    private static final class FieldSerializer implements JsonSerializer<Field> {
+
+        @Override
+        public JsonElement serialize(Field field, Type type, JsonSerializationContext gsonContext) {
+            return gsonContext.serialize(field, field.getType().getFieldClass());
+        }
+
+    }
+
     private static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .registerTypeAdapter(Field.class, new FieldDeserializer())
+            .registerTypeAdapter(Field.class, new FieldSerializer())
             .disableHtmlEscaping()
             .create();
 
