@@ -22,41 +22,29 @@
 package com.podio.sdk;
 
 /**
- * @author laszlo
+ * Definition of capabilities for a Store object.
+ * 
+ * @author László Urszuly
  */
 public interface Store {
 
     /**
-     * Callback interface through which a prepared local store client is
-     * delivered to the calling implementation.
-     * 
-     * @author László Urszuly
-     */
-    public static interface StorePrepareListener {
-
-        /**
-         * Returns the created and pre-cached local store object.
-         * 
-         * @param store
-         *        The local store client.
-         */
-        public void onStorePrepared(Store store);
-
-    }
-
-    /**
      * Enables means of completely clearing the store from the system.
+     * 
+     * @return The future task which enables hooking in callback listeners.
      */
-    public void destroy();
+    public Request<Void> destroy();
 
     /**
      * Enables means of retrieving an object with the given key from the store.
      * 
      * @param key
      *        The key of the object to retrieve.
-     * @return The object with the corresponding key, or null if none found.
+     * @param classOfValue
+     *        The Class definition of any disk persisted JSON.
+     * @return The future task which enables hooking in callback listeners.
      */
-    public <T> Request<T> get(Object key);
+    public <T> Request<T> get(Object key, Class<T> classOfValue);
 
     /**
      * Enables means of adding or replacing an item with the given key in the
@@ -66,15 +54,21 @@ public interface Store {
      *        The key associated with the object.
      * @param value
      *        The object to cache.
+     * @param classOfValue
+     *        The Class definition of any disk persisted JSON.
+     * @return The future task which enables hooking in callback listeners.
      */
-    public void put(Object key, Object value);
+    public <T> Request<T> set(Object key, Object value, Class<T> classOfValue);
 
     /**
      * Enables means of removing an object with the given key from the store.
      * 
      * @param key
      *        The key of the object to remove.
+     * @param classOfValue
+     *        The Class definition of any disk persisted JSON.
+     * @return The future task which enables hooking in callback listeners.
      */
-    public void remove(Object key);
+    public <T> Request<T> remove(Object key, Class<T> classOfValue);
 
 }
