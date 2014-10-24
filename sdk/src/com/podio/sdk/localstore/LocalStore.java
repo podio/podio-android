@@ -18,6 +18,7 @@
 package com.podio.sdk.localstore;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,6 +35,7 @@ public class LocalStore implements Store {
 
     /**
      * Creates a new instance of this class and configures its initial state.
+     * This is the only way to create and initialize a store.
      * 
      * @param context
      *        Used to fetch the disk storage folder.
@@ -45,7 +47,7 @@ public class LocalStore implements Store {
      *        The callback implementation through which the store will be
      *        delivered through.
      */
-    public static void create(Context context, String name, int maxMemoryInKiloBytes, final ResultListener<Store> listener) {
+    public static Request<Store> open(Context context, String name, int maxMemoryInKiloBytes) {
         final int corePoolSize = 1;
         final int maxPoolSize = 1;
         final long waitTime = 0L;
@@ -75,14 +77,26 @@ public class LocalStore implements Store {
                             @Override
                             public boolean onRequestPerformed(File result) {
                                 store.diskStore = result;
-                                listener.onRequestPerformed(store);
                                 return false;
                             }
 
                         });
 
+        LocalStoreRequest<Store> deliverStoreRequest =
+                new LocalStoreRequest<Store>(new Callable<Store>() {
+
+                    @Override
+                    public Store call() throws Exception {
+                        return store;
+                    }
+
+                });
+
         store.executorService.execute(initMemoryStoreRequest);
         store.executorService.execute(initDiskStoreRequest);
+        store.executorService.execute(deliverStoreRequest);
+
+        return deliverStoreRequest;
     }
 
     /**

@@ -447,12 +447,12 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     private Throwable error;
 
     /**
-     * Hidden constructor.
+     * Initializes the listener containers.
      * 
      * @param callable
      *        The actual task to perform sometime in the future.
      */
-    private LocalStoreRequest(Callable<T> callable) {
+    LocalStoreRequest(Callable<T> callable) {
         super(callable);
         resultListeners = new ArrayList<ResultListener<T>>();
         errorListeners = new ArrayList<ErrorListener>();

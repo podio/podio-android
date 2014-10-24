@@ -32,6 +32,7 @@ import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
+import com.podio.sdk.provider.StoreProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
 import com.podio.sdk.volley.VolleyClient;
@@ -129,6 +130,11 @@ public class Podio {
      * end point.
      */
     public static final OrganizationProvider organization = new OrganizationProvider();
+
+    /**
+     * Enables means of requesting a handle to a local store manager.
+     */
+    public static final StoreProvider store = new StoreProvider();
 
     /**
      * Enables means of easy operating on the {@link UserProvider} API end
@@ -238,12 +244,16 @@ public class Podio {
     public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
 
+        // Providers relying on a rest client in order to operate properly.
         application.setClient(restClient);
         calendar.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
         user.setClient(restClient);
         view.setClient(restClient);
+
+        // Providers that doesn't need a rest client in order to operate.
+        // store;
     }
 
     /**
