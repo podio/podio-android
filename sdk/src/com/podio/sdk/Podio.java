@@ -30,6 +30,7 @@ import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
+import com.podio.sdk.provider.ClientProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.StoreProvider;
@@ -45,55 +46,6 @@ import com.podio.sdk.volley.VolleyRequest;
  * @author László Urszuly
  */
 public class Podio {
-
-    /**
-     * A custom provider implementation to expose the authentication features of
-     * the current {@link Client} implementation.
-     * 
-     * @author László Urszuly
-     */
-    public static class ClientProvider {
-
-        /**
-         * Enables means of user authentication, where the caller authenticates
-         * with a user name and a password.
-         * 
-         * @param username
-         *        The user name to log in with.
-         * @param password
-         *        The corresponding password.
-         * @return A request future, enabling the caller to hook in optional
-         *         callback implementations.
-         */
-        public Request<Void> authenticateWithUserCredentials(String username, String password) {
-            return restClient.authenticateWithUserCredentials(username, password);
-        }
-
-        /**
-         * Enables means of user authentication, where the caller authenticates
-         * with a Podio app id and app token.
-         * 
-         * @param appId
-         *        The app id to log in with.
-         * @param appToken
-         *        The corresponding app token.
-         * @return A request future, enabling the caller to hook in optional
-         *         callback implementations.
-         */
-        public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
-            return restClient.authenticateWithAppCredentials(appId, appToken);
-        }
-
-        /**
-         * Enables means of forcing a refresh of auth tokens. *DEPRECATED* This
-         * call may interfere with the internal execution flow of the SDK and
-         * should be avoided at all cost.
-         */
-        @Deprecated
-        public Request<Void> forceRefreshTokens() {
-            return restClient.forceRefreshTokens();
-        }
-    }
 
     private static final String SCHEME = "https";
     private static final String AUTHORITY = "api.podio.com";
@@ -247,6 +199,7 @@ public class Podio {
         // Providers relying on a rest client in order to operate properly.
         application.setClient(restClient);
         calendar.setClient(restClient);
+        client.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
         user.setClient(restClient);
