@@ -22,18 +22,11 @@
 
 package com.podio.sdk.volley;
 
-import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
-import com.podio.sdk.Request;
 import com.podio.sdk.Provider;
+import com.podio.sdk.Request;
 
 public class VolleyProvider extends Provider {
-
-    protected Client client;
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
 
     protected <T> Request<T> delete(Filter filter) {
         return client.request(Request.Method.DELETE, filter, null, null);

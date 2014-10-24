@@ -23,6 +23,12 @@ package com.podio.sdk;
 
 public abstract class Provider {
 
+    protected Client client;
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     protected abstract <T> Request<T> delete(Filter filter);
 
     protected abstract <T> Request<T> get(Filter filter, Class<T> classOfResult);
