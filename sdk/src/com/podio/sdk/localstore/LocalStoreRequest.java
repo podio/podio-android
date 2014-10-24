@@ -43,6 +43,23 @@ import com.podio.sdk.Request;
 
 public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
+    public static LocalStoreRequest<Void> newCloseRequest(final LruCache<Object, Object> memoryStore,
+            final File diskStore) {
+
+        return new LocalStoreRequest<Void>(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                if (memoryStore != null) {
+                    memoryStore.evictAll();
+                }
+
+                return null;
+            }
+
+        });
+    }
+
     /**
      * Creates a new Request for destroying the local store. The request will
      * not deliver anything.

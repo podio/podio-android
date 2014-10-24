@@ -121,16 +121,51 @@ public class LocalStore implements Store {
     }
 
     /**
+     * Clears the memory store but leaves the disk store intact. Both the memory
+     * store handle as well as the disk store handle is closed, rendering any
+     * further interaction with this store invalid.
+     * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
+     * @see com.podio.sdk.Store#close()
+     */
+    @Override
+    public Request<Void> close() throws IllegalStateException {
+        validateState();
+
+        LocalStoreRequest<Void> request =
+                (LocalStoreRequest<Void>) LocalStoreRequest
+                        .newCloseRequest(memoryStore, diskStore)
+                        .withResultListener(new ResultListener<Void>() {
+
+                            @Override
+                            public boolean onRequestPerformed(Void nothing) {
+                                memoryStore = null;
+                                diskStore = null;
+                                return false;
+                            }
+
+                        });
+
+        executorService.execute(request);
+        return request;
+    }
+
+    /**
      * Destroys this instance of the local store. The in memory cache will be
      * cleared and all files in the disk store, as well as the store container
      * itself, will be deleted.
      * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
      * @see com.podio.sdk.Store#destroy()
      */
     @Override
-    public Request<Void> destroy() {
+    public Request<Void> destroy() throws IllegalStateException {
+        validateState();
         LocalStoreRequest<Void> request = LocalStoreRequest.newDestroyRequest(memoryStore, diskStore);
         executorService.execute(request);
+
         return request;
     }
 
@@ -140,12 +175,16 @@ public class LocalStore implements Store {
      * will be looked for on disk. If it's not found there either, a null
      * pointer will be returned.
      * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
      * @see com.podio.sdk.Store#get(java.lang.Object, java.lang.Class)
      */
     @Override
-    public <T> Request<T> get(Object key, Class<T> classOfValue) {
+    public <T> Request<T> get(Object key, Class<T> classOfValue) throws IllegalStateException {
+        validateState();
         LocalStoreRequest<T> request = LocalStoreRequest.newGetRequest(memoryStore, diskStore, key, classOfValue);
         executorService.execute(request);
+
         return request;
     }
 
@@ -155,12 +194,16 @@ public class LocalStore implements Store {
      * exists in the disk store and a {@link Class} template is given, the disk
      * store version will be returned prior to deletion.
      * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
      * @see com.podio.sdk.Store#remove(java.lang.Object, java.lang.Class)
      */
     @Override
-    public <T> Request<T> remove(Object key, Class<T> classOfValue) {
+    public <T> Request<T> remove(Object key, Class<T> classOfValue) throws IllegalStateException {
+        validateState();
         LocalStoreRequest<T> request = LocalStoreRequest.newRemoveRequest(memoryStore, diskStore, key, classOfValue);
         executorService.execute(request);
+
         return request;
     }
 
@@ -170,14 +213,31 @@ public class LocalStore implements Store {
      * returned, else if a corresponding value exists in the disk store and a
      * {@link Class} template is given, the disk store version will be returned.
      * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
      * @see com.podio.sdk.Store#put(java.lang.Object, java.lang.Object,
      *      java.lang.Class)
      */
     @Override
-    public <T> Request<T> set(Object key, Object value, Class<T> classOfValue) {
+    public <T> Request<T> set(Object key, Object value, Class<T> classOfValue) throws IllegalStateException {
+        validateState();
         LocalStoreRequest<T> request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value, classOfValue);
         executorService.execute(request);
+
         return request;
     }
 
+    /**
+     * Validates the memory and disk store handles. If none of them are ready
+     * for use, an {@link IllegalStateException} is thrown, otherwise we're
+     * cool.
+     * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
+     */
+    private void validateState() throws IllegalStateException {
+        if (memoryStore == null && diskStore == null) {
+            throw new IllegalStateException("You're trying to interact with a closed store.");
+        }
+    }
 }
