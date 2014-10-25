@@ -21,19 +21,19 @@
  */
 package com.podio.sdk.localstore;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.LruCache;
@@ -41,23 +41,34 @@ import android.util.LruCache;
 import com.podio.sdk.JsonParser;
 import com.podio.sdk.Request;
 
-public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
+/**
+ * A base class for operations targeting a local store. The
+ * <code>LocalStoreRequest</code> offers means of hooking in callback interfaces
+ * which will be called once the operation has delivered it's result (or an
+ * error).
+ * 
+ * @author László Urszuly
+ * @param <T>
+ *        The type of data handled by a given request. This only applies to the
+ *        "get" operation.
+ */
+class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
-    public static LocalStoreRequest<Void> newCloseRequest(final LruCache<Object, Object> memoryStore,
-            final File diskStore) {
-
-        return new LocalStoreRequest<Void>(new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                if (memoryStore != null) {
-                    memoryStore.evictAll();
-                }
-
-                return null;
-            }
-
-        });
+    /**
+     * Creates a new Request for closing the local store, clearing the memory
+     * store. The disk store is not cleared. The request will not deliver
+     * anything.
+     * 
+     * @param memoryStore
+     *        The memory store to clear and close.
+     * @param diskStore
+     *        The disk store to close (do not touch the content).
+     * @return A request ready for being enqueued in a queue.
+     * @see com.podio.sdk.localstore.LocalStoreRequest#newDestroyRequest(LruCache,
+     *      File)
+     */
+    static CloseRequest newCloseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
+        return new CloseRequest(memoryStore, diskStore);
     }
 
     /**
@@ -70,32 +81,8 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The file handle to the disk store directory.
      * @return A request ready for being enqueued in a queue.
      */
-    public static LocalStoreRequest<Void> newDestroyRequest(final LruCache<Object, Object> memoryStore,
-            final File diskStore) {
-
-        return new LocalStoreRequest<Void>(new Callable<Void>() {
-
-            @Override
-            public Void call() throws Exception {
-                // Delete memory store.
-                if (memoryStore != null) {
-                    memoryStore.evictAll();
-                }
-
-                // Delete disk store.
-                if (!isWritableDirectory(diskStore)) {
-                    File[] files = diskStore.listFiles();
-
-                    for (File file : files) {
-                        file.delete();
-                    }
-
-                    diskStore.delete();
-                }
-                return null;
-            }
-
-        });
+    static DestroyRequest newDestroyRequest(LruCache<Object, Object> memoryStore, File diskStore) {
+        return new DestroyRequest(memoryStore, diskStore);
     }
 
     /**
@@ -113,37 +100,9 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The type to parse the file into (if needed).
      * @return A request ready for being enqueued in a queue.
      */
-    public static <E> LocalStoreRequest<E> newGetRequest(final LruCache<Object, Object> memoryStore,
-            final File diskStore, final Object key, final Class<E> classOfValue) {
-
-        return new LocalStoreRequest<E>(new Callable<E>() {
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public E call() throws Exception {
-                E value = null;
-
-                // Try to read from memory.
-                if (memoryStore != null) {
-                    value = (E) memoryStore.get(key);
-                }
-
-                // If failed try to read from disk.
-                if (value == null && classOfValue != null && isReadableDirectory(diskStore)) {
-                    String fileName = key.toString();
-                    File file = new File(diskStore, fileName);
-                    value = readObjectFromDisk(file, classOfValue);
-
-                    // Update memory.
-                    if (value != null) {
-                        memoryStore.put(key, value);
-                    }
-                }
-
-                return value;
-            }
-
-        });
+    static <E> GetRequest<E> newGetRequest(LruCache<Object, Object> memoryStore,
+            File diskStore, Object key, Class<E> classOfValue) {
+        return new GetRequest<E>(memoryStore, diskStore, key, classOfValue);
     }
 
     /**
@@ -156,33 +115,8 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The name of the store to initialize.
      * @return A request ready for being enqueued in a queue.
      */
-    public static LocalStoreRequest<File> newInitDiskStoreRequest(final Context context, final String name) {
-        return new LocalStoreRequest<File>(new Callable<File>() {
-
-            @Override
-            public File call() throws Exception {
-                String externalStorageState = Environment.getExternalStorageState();
-                String systemCachePath;
-
-                // Get external cache directory, fallback to internal storage.
-                if (Environment.MEDIA_MOUNTED.equals(externalStorageState)) {
-                    systemCachePath = context.getExternalCacheDir().getPath();
-                } else if (!Environment.isExternalStorageRemovable()) {
-                    systemCachePath = context.getExternalCacheDir().getPath();
-                } else {
-                    systemCachePath = context.getCacheDir().getPath();
-                }
-
-                // Validate and create if necessary.
-                File diskStore = new File(systemCachePath + File.separator + name);
-                if (diskStore != null && !isWritableDirectory(diskStore)) {
-                    diskStore.mkdir();
-                }
-
-                return diskStore;
-            }
-
-        });
+    static InitDiskRequest newInitDiskStoreRequest(Context context, String name) {
+        return new InitDiskRequest(context, name);
     }
 
     /**
@@ -191,28 +125,12 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * 
      * @return A request ready for being enqueued in a queue.
      */
-    public static LocalStoreRequest<LruCache<Object, Object>> newInitMemoryStoreRequest(final int maxMemoryAsKiloBytes) {
-        return new LocalStoreRequest<LruCache<Object, Object>>(new Callable<LruCache<Object, Object>>() {
-
-            @Override
-            public LruCache<Object, Object> call() throws Exception {
-                return new LruCache<Object, Object>(maxMemoryAsKiloBytes) {
-
-                    @Override
-                    protected int sizeOf(Object key, Object value) {
-                        return calculateSizeOfObject(value);
-                    }
-
-                };
-            }
-
-        });
+    static InitMemoryRequest newInitMemoryStoreRequest(int maxMemoryAsKiloBytes) {
+        return new InitMemoryRequest(maxMemoryAsKiloBytes);
     }
 
     /**
-     * Creates a new Request for removing a value from the local store. The
-     * request will deliver the removed value, or a null-pointer if no object is
-     * found by the given key.
+     * Creates a new Request for removing a value from the local store.
      * 
      * @param memoryStore
      *        The in-memory store.
@@ -220,41 +138,10 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The file handle to the disk store directory.
      * @param key
      *        The key of the value.
-     * @param classOfValue
-     *        The type to parse the file into (if needed).
      * @return A request ready for being enqueued in a queue.
      */
-    public static <E> LocalStoreRequest<E> newRemoveRequest(final LruCache<Object, Object> memoryStore,
-            final File diskStore, final Object key, final Class<E> classOfValue) {
-
-        return new LocalStoreRequest<E>(new Callable<E>() {
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public E call() throws Exception {
-                E value = null;
-
-                // Remove from memory.
-                if (memoryStore != null) {
-                    value = (E) memoryStore.remove(key);
-                }
-
-                // Remove from disk.
-                if (isReadableDirectory(diskStore)) {
-                    String fileName = key.toString();
-                    File file = new File(diskStore, fileName);
-
-                    if (value == null && classOfValue != null) {
-                        value = readObjectFromDisk(file, classOfValue);
-                    }
-
-                    file.delete();
-                }
-
-                return value;
-            }
-
-        });
+    static RemoveRequest newRemoveRequest(LruCache<Object, Object> memoryStore, File diskStore, Object key) {
+        return new RemoveRequest(memoryStore, diskStore, key);
     }
 
     /**
@@ -272,74 +159,24 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The value.
      * @return A request ready for being enqueued in a queue.
      */
-    public static <E> LocalStoreRequest<E> newSetRequest(final LruCache<Object, Object> memoryStore,
-            final File diskStore, final Object key, final Object value, final Class<E> classOfValue) {
-
-        return new LocalStoreRequest<E>(new Callable<E>() {
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public E call() throws Exception {
-                E previous = null;
-
-                // Update memory
-                if (memoryStore != null) {
-                    previous = (E) memoryStore.put(key, value);
-                }
-
-                // Update disk.
-                if (diskStore != null) {
-                    String fileName = key.toString();
-                    File file = new File(diskStore, fileName);
-
-                    // ...but first, get any value being overwritten.
-                    if (previous == null && classOfValue != null) {
-                        previous = readObjectFromDisk(file, classOfValue);
-                    }
-
-                    writeObjectToDisk(file, value);
-                }
-
-                return previous;
-            }
-
-        });
+    static SetRequest newSetRequest(LruCache<Object, Object> memoryStore, File diskStore,
+            Object key, Object value) {
+        return new SetRequest(memoryStore, diskStore, key, value);
     }
 
     /**
-     * Estimates the size of an object expressed in kilobytes. This is done by
-     * counting the number of bytes the object would occupy while serialized
-     * through an object byte array output stream.
-     * <p>
-     * Up to date I'm not aware of any intelligent and reliable means to get
-     * this figure from the platform. Java 7 (?) has the 'java.lang.instrument'
-     * package which could have been of use, but the API is not available in
-     * Android (as it operates on Java byte code executed on a Java VM, while
-     * Android apps are dex byte code executed on the Dalvik VM)
+     * URL encodes the string format of the given key, so it can be used as a
+     * file name.
      * 
-     * @param object
-     *        The object to estimate a size for.
-     * @return The estimated size in KB.
+     * @param key
+     *        The key to build a file name on.
+     * @return The URL encoded string notation of the given key.
+     * @throws UnsupportedEncodingException
+     *         If using an invalid charset name. This should never happen as we
+     *         call for the default charset of the system.
      */
-    private static int calculateSizeOfObject(Object object) {
-        if (object == null) {
-            return 0;
-        }
-
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-
-            objectOutputStream.writeObject(object);
-            objectOutputStream.flush();
-            objectOutputStream.close();
-
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            return (int) (byteArray.length / 1024);
-        } catch (IOException e) {
-            // We don't know anything about the size, assuming it's HUGE.
-            return Integer.MAX_VALUE;
-        }
+    protected static String getFileName(Object key) throws UnsupportedEncodingException {
+        return URLEncoder.encode(key.toString(), Charset.defaultCharset().name());
     }
 
     /**
@@ -351,7 +188,7 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * @return Boolean <code>true</code> if the conditions are met, boolean
      *         <code>false</code> otherwise.
      */
-    private static boolean isReadableDirectory(File directory) {
+    protected static boolean isReadableDirectory(File directory) {
         return directory != null && directory.exists() && directory.isDirectory() && directory.canRead();
     }
 
@@ -364,8 +201,21 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * @return Boolean <code>true</code> if the conditions are met, boolean
      *         <code>false</code> otherwise.
      */
-    private static boolean isReadableFile(File file) {
+    protected static boolean isReadableFile(File file) {
         return file != null && file.exists() && file.isFile() && file.canRead();
+    }
+
+    /**
+     * Verifies that the given class definition isn't a null pointer or a
+     * {@link Void} class.
+     * 
+     * @param template
+     *        The class definition to test.
+     * @return Boolean <code>true</code> if the conditions are met, boolean
+     *         <code>false</code> otherwise.
+     */
+    protected static boolean isValidTemplate(Class<?> template) {
+        return template != null && !template.equals(Void.class);
     }
 
     /**
@@ -377,7 +227,7 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * @return Boolean <code>true</code> if the conditions are met, boolean
      *         <code>false</code> otherwise.
      */
-    private static boolean isWritableDirectory(File directory) {
+    protected static boolean isWritableDirectory(File directory) {
         return directory != null && directory.exists() && directory.isDirectory() && directory.canWrite();
     }
 
@@ -392,9 +242,13 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * @throws IOException
      *         If anything went wrong during file access.
      */
-    private static <E> E readObjectFromDisk(File file, Class<E> classOfValue) throws IOException {
+    protected static <E> E readObjectFromDisk(File file, Class<E> classOfValue) throws IOException {
         // Validate file.
         if (!isReadableFile(file)) {
+            return null;
+        }
+
+        if (classOfValue == null || classOfValue.equals(Void.class)) {
             return null;
         }
 
@@ -432,7 +286,7 @@ public class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The value that will be serialized to JSON and saved as a file.
      * @throws IOException
      */
-    private static void writeObjectToDisk(File file, Object value) throws IOException {
+    protected static void writeObjectToDisk(File file, Object value) throws IOException {
         String json = JsonParser.toJson(value);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
 

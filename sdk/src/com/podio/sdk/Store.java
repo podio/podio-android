@@ -62,21 +62,17 @@ public interface Store {
      *        The key associated with the object.
      * @param value
      *        The object to cache.
-     * @param classOfValue
-     *        The Class definition of any disk persisted JSON.
      * @return The future task which enables hooking in callback listeners.
      */
-    public <T> Request<T> set(Object key, Object value, Class<T> classOfValue);
+    public Request<Void> set(Object key, Object value);
 
     /**
      * Enables means of removing an object with the given key from the store.
      * 
      * @param key
      *        The key of the object to remove.
-     * @param classOfValue
-     *        The Class definition of any disk persisted JSON.
      * @return The future task which enables hooking in callback listeners.
      */
-    public <T> Request<T> remove(Object key, Class<T> classOfValue);
+    public Request<Void> remove(Object key);
 
 }

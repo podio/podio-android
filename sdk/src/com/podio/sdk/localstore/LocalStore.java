@@ -31,11 +31,33 @@ import com.podio.sdk.Request;
 import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Store;
 
+/**
+ * A {@link Store} implementation modeling a memory-cache backed by persistent
+ * disk storage. The memory cache heavily relies on the Android {@link LruCache}
+ * while the disk store is a basic directory in the internal cache directory of
+ * the app. The actual contents are saved as JSON files in sub-directories.
+ * <p>
+ * The {@link Store} interface enables means of adding, removing, and fetching
+ * content to and from the store. Further more the caller can choose to close
+ * the store to free up memory, leaving the disk store intact, or even destroy
+ * the store, wiping all data from both memory and disk store (but only for the
+ * current store, though).
+ * <p>
+ * What is put in the store is completely up to the developer. There are no
+ * constraints nor requirements on the data to have any association to Podio
+ * domain objects. The only general requirement is for the <em>key</em> objects
+ * to have a constant string representation (the disk store will call the
+ * <code>toString()</code> method on them to determine which file to access) and
+ * for the <code>value</code> objects to be able to be parsed by the Google Gson
+ * library.
+ * 
+ * @author László Urszuly
+ */
 public class LocalStore implements Store {
 
     /**
      * Creates a new instance of this class and configures its initial state.
-     * This is the only way to create and initialize a store.
+     * This is the only way to create and initialize a <code>LocalStore</code>.
      * 
      * @param context
      *        Used to fetch the disk storage folder.
@@ -48,39 +70,31 @@ public class LocalStore implements Store {
      *        delivered through.
      */
     public static Request<Store> open(Context context, String name, int maxMemoryInKiloBytes) {
-        final int corePoolSize = 1;
-        final int maxPoolSize = 1;
-        final long waitTime = 0L;
-
         final LocalStore store = new LocalStore();
-        store.executorService = new ThreadPoolExecutor(corePoolSize, maxPoolSize, waitTime, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(Integer.MAX_VALUE));
 
-        LocalStoreRequest<LruCache<Object, Object>> initMemoryStoreRequest =
-                (LocalStoreRequest<LruCache<Object, Object>>) LocalStoreRequest
-                        .newInitMemoryStoreRequest(maxMemoryInKiloBytes)
-                        .withResultListener(new ResultListener<LruCache<Object, Object>>() {
+        InitMemoryRequest initMemoryStoreRequest = (InitMemoryRequest) LocalStoreRequest
+                .newInitMemoryStoreRequest(maxMemoryInKiloBytes)
+                .withResultListener(new ResultListener<LruCache<Object, Object>>() {
 
-                            @Override
-                            public boolean onRequestPerformed(LruCache<Object, Object> result) {
-                                store.memoryStore = result;
-                                return false;
-                            }
+                    @Override
+                    public boolean onRequestPerformed(LruCache<Object, Object> result) {
+                        store.memoryStore = result;
+                        return false;
+                    }
 
-                        });
+                });
 
-        LocalStoreRequest<File> initDiskStoreRequest =
-                (LocalStoreRequest<File>) LocalStoreRequest
-                        .newInitDiskStoreRequest(context, name)
-                        .withResultListener(new ResultListener<File>() {
+        InitDiskRequest initDiskStoreRequest = (InitDiskRequest) LocalStoreRequest
+                .newInitDiskStoreRequest(context, name)
+                .withResultListener(new ResultListener<File>() {
 
-                            @Override
-                            public boolean onRequestPerformed(File result) {
-                                store.diskStore = result;
-                                return false;
-                            }
+                    @Override
+                    public boolean onRequestPerformed(File result) {
+                        store.diskStore = result;
+                        return false;
+                    }
 
-                        });
+                });
 
         LocalStoreRequest<Store> deliverStoreRequest =
                 new LocalStoreRequest<Store>(new Callable<Store>() {
@@ -92,6 +106,10 @@ public class LocalStore implements Store {
 
                 });
 
+        // Since the thread pool executor is spawning one thread only and it's
+        // backed by a linked blocking queue, it's fair to expect these requests
+        // being addressed in a serialized manner, finishing with the deliver
+        // request.
         store.executorService.execute(initMemoryStoreRequest);
         store.executorService.execute(initDiskStoreRequest);
         store.executorService.execute(deliverStoreRequest);
@@ -118,6 +136,12 @@ public class LocalStore implements Store {
      * Hidden constructor.
      */
     private LocalStore() {
+        final int corePoolSize = 1;
+        final int maxPoolSize = 1;
+        final long waitTime = 0L;
+
+        executorService = new ThreadPoolExecutor(corePoolSize, maxPoolSize, waitTime, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(Integer.MAX_VALUE));
     }
 
     /**
@@ -133,19 +157,18 @@ public class LocalStore implements Store {
     public Request<Void> close() throws IllegalStateException {
         validateState();
 
-        LocalStoreRequest<Void> request =
-                (LocalStoreRequest<Void>) LocalStoreRequest
-                        .newCloseRequest(memoryStore, diskStore)
-                        .withResultListener(new ResultListener<Void>() {
+        CloseRequest request = (CloseRequest) LocalStoreRequest
+                .newCloseRequest(memoryStore, diskStore)
+                .withResultListener(new ResultListener<Void>() {
 
-                            @Override
-                            public boolean onRequestPerformed(Void nothing) {
-                                memoryStore = null;
-                                diskStore = null;
-                                return false;
-                            }
+                    @Override
+                    public boolean onRequestPerformed(Void nothing) {
+                        memoryStore = null;
+                        diskStore = null;
+                        return false; // Don't consume this event.
+                    }
 
-                        });
+                });
 
         executorService.execute(request);
         return request;
@@ -163,9 +186,21 @@ public class LocalStore implements Store {
     @Override
     public Request<Void> destroy() throws IllegalStateException {
         validateState();
-        LocalStoreRequest<Void> request = LocalStoreRequest.newDestroyRequest(memoryStore, diskStore);
-        executorService.execute(request);
 
+        DestroyRequest request = (DestroyRequest) LocalStoreRequest
+                .newDestroyRequest(memoryStore, diskStore)
+                .withResultListener(new ResultListener<Void>() {
+
+                    @Override
+                    public boolean onRequestPerformed(Void nothing) {
+                        memoryStore = null;
+                        diskStore = null;
+                        return false; // Don't consume this event.
+                    }
+
+                });
+
+        executorService.execute(request);
         return request;
     }
 
@@ -182,7 +217,7 @@ public class LocalStore implements Store {
     @Override
     public <T> Request<T> get(Object key, Class<T> classOfValue) throws IllegalStateException {
         validateState();
-        LocalStoreRequest<T> request = LocalStoreRequest.newGetRequest(memoryStore, diskStore, key, classOfValue);
+        GetRequest<T> request = LocalStoreRequest.newGetRequest(memoryStore, diskStore, key, classOfValue);
         executorService.execute(request);
 
         return request;
@@ -199,9 +234,9 @@ public class LocalStore implements Store {
      * @see com.podio.sdk.Store#remove(java.lang.Object, java.lang.Class)
      */
     @Override
-    public <T> Request<T> remove(Object key, Class<T> classOfValue) throws IllegalStateException {
+    public Request<Void> remove(Object key) throws IllegalStateException {
         validateState();
-        LocalStoreRequest<T> request = LocalStoreRequest.newRemoveRequest(memoryStore, diskStore, key, classOfValue);
+        RemoveRequest request = LocalStoreRequest.newRemoveRequest(memoryStore, diskStore, key);
         executorService.execute(request);
 
         return request;
@@ -209,9 +244,8 @@ public class LocalStore implements Store {
 
     /**
      * Adds or updates a value with the given key in the local store. If there
-     * already is a value for the given key in the memory store it will be
-     * returned, else if a corresponding value exists in the disk store and a
-     * {@link Class} template is given, the disk store version will be returned.
+     * already is a value for the given key in the store, it will silently be
+     * overwritten.
      * 
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
@@ -219,18 +253,18 @@ public class LocalStore implements Store {
      *      java.lang.Class)
      */
     @Override
-    public <T> Request<T> set(Object key, Object value, Class<T> classOfValue) throws IllegalStateException {
+    public Request<Void> set(Object key, Object value) throws IllegalStateException {
         validateState();
-        LocalStoreRequest<T> request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value, classOfValue);
+        SetRequest request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value);
         executorService.execute(request);
 
         return request;
     }
 
     /**
-     * Validates the memory and disk store handles. If none of them are ready
-     * for use, an {@link IllegalStateException} is thrown, otherwise we're
-     * cool.
+     * Validates the memory cache and the disk store handles. If none of them
+     * are ready for use, an {@link IllegalStateException} is thrown, otherwise
+     * we're cool.
      * 
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
