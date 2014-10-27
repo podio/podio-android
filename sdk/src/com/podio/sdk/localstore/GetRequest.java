@@ -107,6 +107,7 @@ final class GetRequest<T> extends LocalStoreRequest<T> {
 
             @Override
             public T call() throws Exception {
+                validateState(memoryStore, diskStore);
                 return getValue(memoryStore, diskStore, key, classOfValue);
             }
 

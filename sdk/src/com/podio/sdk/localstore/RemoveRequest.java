@@ -79,6 +79,7 @@ final class RemoveRequest extends LocalStoreRequest<Void> {
 
             @Override
             public Void call() throws Exception {
+                validateState(memoryStore, diskStore);
                 removeValue(memoryStore, diskStore, key);
                 return null;
             }

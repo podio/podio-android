@@ -47,6 +47,8 @@ final class CloseRequest extends LocalStoreRequest<Void> {
 
             @Override
             public Void call() throws Exception {
+                validateState(memoryStore, diskStore);
+
                 if (memoryStore != null) {
                     memoryStore.evictAll();
                 }

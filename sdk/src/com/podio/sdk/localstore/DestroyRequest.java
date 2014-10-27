@@ -83,6 +83,7 @@ final class DestroyRequest extends LocalStoreRequest<Void> {
 
             @Override
             public Void call() throws Exception {
+                validateState(memoryStore, diskStore);
                 destroyMemoryStore(memoryStore);
                 destroyDiskStore(diskStore);
                 return null;

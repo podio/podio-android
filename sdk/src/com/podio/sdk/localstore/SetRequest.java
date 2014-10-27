@@ -85,6 +85,7 @@ final class SetRequest extends LocalStoreRequest<Void> {
 
             @Override
             public Void call() throws Exception {
+                validateState(memoryStore, diskStore);
                 setValue(memoryStore, diskStore, key, value);
                 return null;
             }

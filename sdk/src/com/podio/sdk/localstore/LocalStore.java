@@ -155,8 +155,6 @@ public class LocalStore implements Store {
      */
     @Override
     public Request<Void> close() throws IllegalStateException {
-        validateState();
-
         CloseRequest request = (CloseRequest) LocalStoreRequest
                 .newCloseRequest(memoryStore, diskStore)
                 .withResultListener(new ResultListener<Void>() {
@@ -185,8 +183,6 @@ public class LocalStore implements Store {
      */
     @Override
     public Request<Void> destroy() throws IllegalStateException {
-        validateState();
-
         DestroyRequest request = (DestroyRequest) LocalStoreRequest
                 .newDestroyRequest(memoryStore, diskStore)
                 .withResultListener(new ResultListener<Void>() {
@@ -216,7 +212,6 @@ public class LocalStore implements Store {
      */
     @Override
     public <T> Request<T> get(Object key, Class<T> classOfValue) throws IllegalStateException {
-        validateState();
         GetRequest<T> request = LocalStoreRequest.newGetRequest(memoryStore, diskStore, key, classOfValue);
         executorService.execute(request);
 
@@ -235,7 +230,6 @@ public class LocalStore implements Store {
      */
     @Override
     public Request<Void> remove(Object key) throws IllegalStateException {
-        validateState();
         RemoveRequest request = LocalStoreRequest.newRemoveRequest(memoryStore, diskStore, key);
         executorService.execute(request);
 
@@ -254,24 +248,9 @@ public class LocalStore implements Store {
      */
     @Override
     public Request<Void> set(Object key, Object value) throws IllegalStateException {
-        validateState();
         SetRequest request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value);
         executorService.execute(request);
 
         return request;
-    }
-
-    /**
-     * Validates the memory cache and the disk store handles. If none of them
-     * are ready for use, an {@link IllegalStateException} is thrown, otherwise
-     * we're cool.
-     * 
-     * @throws IllegalStateException
-     *         If neither in-memory store, nor disk store has a valid handle.
-     */
-    private void validateState() throws IllegalStateException {
-        if (memoryStore == null && diskStore == null) {
-            throw new IllegalStateException("You're trying to interact with a closed store.");
-        }
     }
 }

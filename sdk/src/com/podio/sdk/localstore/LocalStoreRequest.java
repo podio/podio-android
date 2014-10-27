@@ -298,6 +298,20 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
+     * Validates the memory cache and the disk store handles. If none of them
+     * are ready for use, an {@link IllegalStateException} is thrown, otherwise
+     * we're cool.
+     * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
+     */
+    protected static void validateState(LruCache<Object, Object> memoryStore, File diskStore) throws IllegalStateException {
+        if (memoryStore == null && diskStore == null) {
+            throw new IllegalStateException("You're trying to interact with a closed store.");
+        }
+    }
+
+    /**
      * The list to put any subscribing result listeners in.
      */
     private ArrayList<ResultListener<T>> resultListeners;
