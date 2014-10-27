@@ -22,6 +22,7 @@
 package com.podio.sdk.localstore;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
 
 import android.content.Context;
@@ -48,13 +49,17 @@ final class InitDiskRequest extends LocalStoreRequest<File> {
      *        The name of the store, i.e. the name of the sub-folder in the
      *        cache directory.
      * @return A File object pointing at the disk store directory.
+     * @throws UnsupportedEncodingException
+     *         If trying to URL encode the name with an invalid charset. This
+     *         should never happen as we request the platform default charset.
      */
-    private static final File getDiskStoreDirectory(Context context, String name) {
-        String systemCachePath = context.getCacheDir().getPath();
+    private static final File getDiskStoreDirectory(Context context, String name) throws UnsupportedEncodingException {
         File diskStore = null;
 
-        if (Utils.notEmpty(name)) {
-            diskStore = new File(systemCachePath + File.separator + name);
+        if (context != null && Utils.notEmpty(name)) {
+            String systemCachePath = context.getCacheDir().getPath();
+            String directoryName = getFileName(name);
+            diskStore = new File(systemCachePath + File.separator + directoryName);
 
             if (diskStore != null && !isWritableDirectory(diskStore)) {
                 diskStore.mkdir();
