@@ -145,34 +145,6 @@ public class LocalStore implements Store {
     }
 
     /**
-     * Clears the memory store but leaves the disk store intact. Both the memory
-     * store handle as well as the disk store handle is closed, rendering any
-     * further interaction with this store invalid.
-     * 
-     * @throws IllegalStateException
-     *         If neither in-memory store, nor disk store has a valid handle.
-     * @see com.podio.sdk.Store#close()
-     */
-    @Override
-    public Request<Void> close() throws IllegalStateException {
-        FreeRequest request = (FreeRequest) LocalStoreRequest
-                .newFreeRequest(memoryStore)
-                .withResultListener(new ResultListener<Void>() {
-
-                    @Override
-                    public boolean onRequestPerformed(Void nothing) {
-                        memoryStore = null;
-                        diskStore = null;
-                        return false; // Don't consume this event.
-                    }
-
-                });
-
-        executorService.execute(request);
-        return request;
-    }
-
-    /**
      * Removes all objects in the memory cache. The disk store is left
      * unaffected.
      * 

@@ -29,14 +29,6 @@ package com.podio.sdk;
 public interface Store {
 
     /**
-     * Enables means of closing the store. The implementation should free up
-     * memory here.
-     * 
-     * @return The future task which enables hooking in callback listeners.
-     */
-    public Request<Void> close();
-
-    /**
      * Enables means of freeing up memory without affecting the long term store.
      * 
      * @return The future task which enables hooking in callback listeners.
