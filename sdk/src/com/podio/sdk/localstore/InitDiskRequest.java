@@ -26,6 +26,8 @@ import java.util.concurrent.Callable;
 
 import android.content.Context;
 
+import com.podio.sdk.internal.Utils;
+
 /**
  * A specific {@link LocalStoreRequest}, targeting the "initialize disk store"
  * operation. This implementation gets a handle to the internal cache directory
@@ -49,10 +51,14 @@ final class InitDiskRequest extends LocalStoreRequest<File> {
      */
     private static final File getDiskStoreDirectory(Context context, String name) {
         String systemCachePath = context.getCacheDir().getPath();
-        File diskStore = new File(systemCachePath + File.separator + name);
+        File diskStore = null;
 
-        if (diskStore != null && !isWritableDirectory(diskStore)) {
-            diskStore.mkdir();
+        if (Utils.notEmpty(name)) {
+            diskStore = new File(systemCachePath + File.separator + name);
+
+            if (diskStore != null && !isWritableDirectory(diskStore)) {
+                diskStore.mkdir();
+            }
         }
 
         return diskStore;
