@@ -71,7 +71,7 @@ final class GetRequest<T> extends LocalStoreRequest<T> {
         }
 
         // If failed try to read from disk.
-        if (value == null && isValidTemplate(classOfValue) && isReadableDirectory(diskStore)) {
+        if (value == null && isReadableDirectory(diskStore) && isValidTemplate(classOfValue)) {
             String fileName = getFileName(key);
             File file = new File(diskStore, fileName);
             value = readObjectFromDisk(file, classOfValue);
