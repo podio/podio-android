@@ -35,7 +35,7 @@ import com.podio.sdk.internal.Utils;
  * and looks for a sub directory therein with the given store name. If no such
  * sub directory is found, one is created.
  * 
- * @see com.podio.sdk.localstore.DestroyRequest
+ * @see com.podio.sdk.localstore.EraseRequest
  * @author László Urszuly
  */
 final class InitDiskRequest extends LocalStoreRequest<File> {

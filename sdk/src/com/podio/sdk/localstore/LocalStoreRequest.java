@@ -78,8 +78,8 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The file handle to the disk store directory.
      * @return A request ready for being enqueued in a queue.
      */
-    static DestroyRequest newEraseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
-        return new DestroyRequest(memoryStore, diskStore);
+    static EraseRequest newEraseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
+        return new EraseRequest(memoryStore, diskStore);
     }
 
     /**

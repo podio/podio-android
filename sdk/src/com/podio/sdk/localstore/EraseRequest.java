@@ -36,7 +36,7 @@ import android.util.LruCache;
  * @see .com.podio.sdk.localstore.InitDiskRequest
  * @author László Urszuly
  */
-final class DestroyRequest extends LocalStoreRequest<Void> {
+final class EraseRequest extends LocalStoreRequest<Void> {
 
     /**
      * Evicts all entries in the given memory cache.
@@ -78,7 +78,7 @@ final class DestroyRequest extends LocalStoreRequest<Void> {
      * @param diskStore
      *        The file handle to the disk store directory.
      */
-    DestroyRequest(final LruCache<Object, Object> memoryStore, final File diskStore) {
+    EraseRequest(final LruCache<Object, Object> memoryStore, final File diskStore) {
         super(new Callable<Void>() {
 
             @Override

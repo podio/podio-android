@@ -199,7 +199,7 @@ public class LocalStore implements Store {
      */
     @Override
     public Request<Void> erase() throws IllegalStateException {
-        DestroyRequest request = (DestroyRequest) LocalStoreRequest
+        EraseRequest request = (EraseRequest) LocalStoreRequest
                 .newEraseRequest(memoryStore, diskStore)
                 .withResultListener(new ResultListener<Void>() {
 
