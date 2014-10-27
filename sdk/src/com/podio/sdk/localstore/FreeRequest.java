@@ -21,7 +21,6 @@
  */
 package com.podio.sdk.localstore;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 import android.util.LruCache;
@@ -33,25 +32,21 @@ import android.util.LruCache;
  * 
  * @author László Urszuly
  */
-final class CloseRequest extends LocalStoreRequest<Void> {
+final class FreeRequest extends LocalStoreRequest<Void> {
 
     /**
      * Creates a new Request for closing the local store, clearing the memory
      * store. The request will not deliver anything.
      * 
      * @param memoryStore
-     * @param diskStore
      */
-    CloseRequest(final LruCache<Object, Object> memoryStore, final File diskStore) {
+    FreeRequest(final LruCache<Object, Object> memoryStore) {
         super(new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {
-                validateState(memoryStore, diskStore);
-
-                if (memoryStore != null) {
-                    memoryStore.evictAll();
-                }
+                validateState(memoryStore, null);
+                memoryStore.evictAll();
 
                 return null;
             }

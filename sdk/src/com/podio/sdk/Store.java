@@ -37,11 +37,18 @@ public interface Store {
     public Request<Void> close();
 
     /**
-     * Enables means of completely clearing the store from the system.
+     * Enables means of freeing up memory without affecting the long term store.
      * 
      * @return The future task which enables hooking in callback listeners.
      */
-    public Request<Void> destroy();
+    public Request<Void> free();
+
+    /**
+     * Enables means of completely erasing the store from the system.
+     * 
+     * @return The future task which enables hooking in callback listeners.
+     */
+    public Request<Void> erase();
 
     /**
      * Enables means of retrieving an object with the given key from the store.

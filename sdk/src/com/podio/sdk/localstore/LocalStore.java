@@ -155,8 +155,8 @@ public class LocalStore implements Store {
      */
     @Override
     public Request<Void> close() throws IllegalStateException {
-        CloseRequest request = (CloseRequest) LocalStoreRequest
-                .newCloseRequest(memoryStore, diskStore)
+        FreeRequest request = (FreeRequest) LocalStoreRequest
+                .newFreeRequest(memoryStore)
                 .withResultListener(new ResultListener<Void>() {
 
                     @Override
@@ -173,6 +173,22 @@ public class LocalStore implements Store {
     }
 
     /**
+     * Removes all objects in the memory cache. The disk store is left
+     * unaffected.
+     * 
+     * @throws IllegalStateException
+     *         If neither in-memory store, nor disk store has a valid handle.
+     * @see com.podio.sdk.Store#destroy()
+     */
+    @Override
+    public Request<Void> free() throws IllegalStateException {
+        FreeRequest request = LocalStoreRequest.newFreeRequest(memoryStore);
+        executorService.execute(request);
+
+        return request;
+    }
+
+    /**
      * Destroys this instance of the local store. The in memory cache will be
      * cleared and all files in the disk store, as well as the store container
      * itself, will be deleted.
@@ -182,9 +198,9 @@ public class LocalStore implements Store {
      * @see com.podio.sdk.Store#destroy()
      */
     @Override
-    public Request<Void> destroy() throws IllegalStateException {
+    public Request<Void> erase() throws IllegalStateException {
         DestroyRequest request = (DestroyRequest) LocalStoreRequest
-                .newDestroyRequest(memoryStore, diskStore)
+                .newEraseRequest(memoryStore, diskStore)
                 .withResultListener(new ResultListener<Void>() {
 
                     @Override

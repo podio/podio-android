@@ -55,20 +55,17 @@ import com.podio.sdk.Request;
 class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
     /**
-     * Creates a new Request for closing the local store, clearing the memory
-     * store. The disk store is not cleared. The request will not deliver
-     * anything.
+     * Creates a new Request for clearing the memory store. The disk store is
+     * not affected by this. The request will not deliver anything.
      * 
      * @param memoryStore
      *        The memory store to clear and close.
-     * @param diskStore
-     *        The disk store to close (do not touch the content).
      * @return A request ready for being enqueued in a queue.
-     * @see com.podio.sdk.localstore.LocalStoreRequest#newDestroyRequest(LruCache,
+     * @see com.podio.sdk.localstore.LocalStoreRequest#newEraseRequest(LruCache,
      *      File)
      */
-    static CloseRequest newCloseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
-        return new CloseRequest(memoryStore, diskStore);
+    static FreeRequest newFreeRequest(LruCache<Object, Object> memoryStore) {
+        return new FreeRequest(memoryStore);
     }
 
     /**
@@ -81,7 +78,7 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *        The file handle to the disk store directory.
      * @return A request ready for being enqueued in a queue.
      */
-    static DestroyRequest newDestroyRequest(LruCache<Object, Object> memoryStore, File diskStore) {
+    static DestroyRequest newEraseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
         return new DestroyRequest(memoryStore, diskStore);
     }
 
