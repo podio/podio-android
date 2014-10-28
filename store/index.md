@@ -2,11 +2,11 @@
 layout: default
 ---
 # Local Storage and Caching
-Sometimes you'll find yourself with the need of temporarilly storing data in a way so that it survives your app being brought down by the Android system. For these cases the Podio SDK can offer a simple local storage infrastructure. It is actually a combination of an in-memory cache (based on the [Android LruCache](http://developer.android.com/reference/android/util/LruCache.html)) and good old file storage.
+Sometimes you'll find yourself with the need of temporarily storing data in a way so that it survives your app being brought down by the Android system. For these cases the Podio SDK can offer a simple local storage infrastructure. It is actually a combination of an in-memory cache (based on the [Android LruCache](http://developer.android.com/reference/android/util/LruCache.html)) and good old file storage.
 
 You can basically put anything in the local store, it doesn't even have to be Podio domain objects. Bare in mind, though, that the items will be serialized to JSON and stored as such on the file system. Hence, the object must be serializable to JSON notation in order to be persisted on disk.
 
-The local store works in an asynchronous manner, just as the Podio SDK. You even get the same type of `Request` objects back when trying to manipulate it and you inject the same `ResultListener` and `ErrorListener` callbacks as you would do when accesing the Podio API. The local store doesn't handle `SessionListener` callbacks, though. It will throw an `UnsupportedOperationException` would you still try to inject such a listener.
+The local store works in an asynchronous manner, just as the Podio SDK. You even get the same type of `Request` objects back when trying to manipulate it and you inject the same `ResultListener` and `ErrorListener` callbacks as you would do when accessing the Podio API. The local store doesn't handle `SessionListener` callbacks, though. It will throw an `UnsupportedOperationException` would you still try to inject such a listener.
 
 This is how you setup a local store to interact with:
 
@@ -45,7 +45,7 @@ The initialization is done on a spawned worker thread as it involves file system
 Would you pass on a null-pointer `Context` or an empty store name, then the disk store will not be initialized and you'd have a really fast in-memory cache only. The way to operate the store wouldn't change by this, though.
 
 ## Store objects
-When you're adding an object to the local store you just pass it to the infrastructure along with a key. The object will be added to the cache as well as written to the filesystem in your internal memory. Any previous objects with the same key will be overwritten silently.
+When you're adding an object to the local store you just pass it to the infrastructure along with a key. The object will be added to the cache as well as written to the file system in your internal memory. Any previous objects with the same key will be overwritten silently.
 
 The key can be any object, but the local store implementation will call the `toString()` method on it prior to persisting it to disk, so you need to make sure your keys don't change over time.
 
