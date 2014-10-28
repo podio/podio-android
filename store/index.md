@@ -38,7 +38,13 @@ Podio.store
     });
 {% endhighlight %}
 
-The main difference in how you use the local store, compared to how you use the Podio API, is that you're operating on an instance variable when manipulating the store (the API is manipulated through the static `Podio` facade). A call to the `Podio.store.open(...)` method will, through the injected `ResultListener` callback, return the actual store instance you later on can interact with. The store doesn't hold any references to the provided context, it's only used to find the path to the disk store on the internal memory.
+The main difference in how you use the local store, compared to how you use the Podio API, is that you're operating on an instance variable when manipulating the store (the API is manipulated through the static `Podio` facade). A call to the `Podio.store.open(...)` method will, through the injected `ResultListener` callback, return the actual store instance you later on can interact with.
+
+The store doesn't hold any long term references to the provided context, it's only using it to find the path to the disk store in the internal memory. The disk store content will be persisted in the system default cache directory of the parent app.
+
+The provided `name` argument will make up the name of the store in the cache directory. It will essentially be a subdirectory therein.
+
+The third argument is a size limitation on the memory cache only (the disk store is unlimited as far as system resources allow). The limit is expressed in kilobytes (KB) and is an estimate as there aren't any civilized way to measure an object in terms of occupied runtime memory on Android.
 
 The initialization is done on a spawned worker thread as it involves file system access, which - as we all know - doesn't really have a predictable timing behavior by its nature.
 
