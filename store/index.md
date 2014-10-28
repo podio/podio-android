@@ -4,7 +4,7 @@ layout: default
 # Local Storage and Caching
 Sometimes you'll find yourself with the need of temporarily storing data in a way so that it survives your app being brought down by the Android system. For these cases the Podio SDK can offer a simple local storage infrastructure. It is actually a combination of an in-memory cache (based on the [Android LruCache](http://developer.android.com/reference/android/util/LruCache.html)) and good old file storage.
 
-You can basically put anything in the local store, it doesn't even have to be Podio domain objects. Bare in mind, though, that the items will be serialized to JSON and stored as such on the file system. Hence, the object must be serializable to JSON notation in order to be persisted on disk.
+You can basically put anything in the local store, it doesn't even have to be Podio domain objects. Bare in mind, though, that even though the items are stored "as is" in the memory cache, they will be serialized to JSON (using the [Gson library](https://code.google.com/p/google-gson/)) and stored as such on the file system.
 
 The local store works in an asynchronous manner, just as the Podio SDK. You even get the same type of `Request` objects back when trying to manipulate it and you inject the same `ResultListener` and `ErrorListener` callbacks as you would do when accessing the Podio API. The local store doesn't handle `SessionListener` callbacks, though. It will throw an `UnsupportedOperationException` would you still try to inject such a listener.
 
