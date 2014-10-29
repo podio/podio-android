@@ -80,7 +80,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         RequestFuture<E> volleyRequestFuture = RequestFuture.newFuture();
         int volleyMethod = parseMethod(method);
 
-        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, volleyRequestFuture);
+        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, volleyRequestFuture, false);
         request.contentType = "application/json; charset=UTF-8";
 
         if (Utils.notEmpty(Session.accessToken())) {
@@ -88,7 +88,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
 
         request.body = body;
-        request.isAuthRequest = false;
 
         return request;
     }
@@ -97,15 +96,14 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         RequestFuture<Void> volleyRequestFuture = RequestFuture.newFuture();
         int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
 
-        VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, volleyRequestFuture);
+        VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, volleyRequestFuture, true);
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
-        request.isAuthRequest = true;
 
         return request;
     }
 
-    private static int parseMethod(com.podio.sdk.Request.Method method) {
+    protected static int parseMethod(com.podio.sdk.Request.Method method) {
         switch (method) {
         case DELETE:
             return com.android.volley.Request.Method.DELETE;
@@ -128,17 +126,17 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private final RequestFuture<T> volleyRequestFuture;
     private final Class<T> classOfResult;
 
-    private HashMap<String, String> headers;
-    private HashMap<String, String> params;
-    private String contentType;
-    private String body;
+    protected HashMap<String, String> headers;
+    protected HashMap<String, String> params;
+    protected String contentType;
+    protected String body;
 
     private T result;
     private Throwable error;
     private boolean isAuthRequest;
     private boolean hasSessionChanged;
 
-    private VolleyRequest(int method, String url, Class<T> resultType, RequestFuture<T> volleyRequestFuture) {
+    protected VolleyRequest(int method, String url, Class<T> resultType, RequestFuture<T> volleyRequestFuture, boolean isAuthRequest) {
         super(method, url, volleyRequestFuture);
 
         this.authErrorListeners = new ArrayList<AuthErrorListener<T>>();
@@ -155,6 +153,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         this.body = null;
 
         this.hasSessionChanged = false;
+        this.isAuthRequest = isAuthRequest;
     }
 
     @Override
@@ -355,10 +354,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return sessionListeners.contains(sessionListener) ?
                 sessionListeners.remove(index) :
                 null;
-    }
-
-    public void setIsAuthRequest(boolean isAuthRequest) {
-        this.isAuthRequest = isAuthRequest;
     }
 
     public void setSessionChanged(boolean hasChanged) {
