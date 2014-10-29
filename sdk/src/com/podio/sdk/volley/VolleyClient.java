@@ -39,6 +39,7 @@ import com.podio.sdk.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.Request.AuthErrorListener;
 import com.podio.sdk.Request.ErrorListener;
+import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.Session;
 import com.podio.sdk.internal.Utils;
@@ -97,7 +98,7 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-        volleyRequestQueue.add(request);
+        volleySessionQueue.add(request);
 
         return request;
     }
@@ -112,7 +113,7 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-        volleyRequestQueue.add(request);
+        volleySessionQueue.add(request);
 
         return request;
     }
@@ -122,12 +123,35 @@ public class VolleyClient implements Client {
     public Request<Void> forceRefreshTokens() {
         volleyRequestQueue.stop();
 
-        // Prepare to re-authenticate...
+        // Prepare to re-authenticate.
         Uri uri = buildAuthUri();
+
+        // Opt out if we can't re-authenticate.
+        if (uri == null) {
+            clearRequestQueue();
+            volleyRequestQueue.start();
+            return null;
+        }
+
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> authRequest = VolleyRequest
                 .newAuthRequest(url, params)
+                .withAuthErrorListener(new AuthErrorListener<Void>() {
+                    @Override
+                    public boolean onAuthErrorOccured(Request<Void> originalRequest) {
+                        volleyRequestQueue.start();
+                        return false;
+                    }
+                })
+                .withResultListener(new ResultListener<Void>() {
+
+                    @Override
+                    public boolean onRequestPerformed(Void nothing) {
+                        volleyRequestQueue.start();
+                        return false;
+                    }
+                })
                 .withSessionListener(new SessionListener() {
 
                     @Override
@@ -147,7 +171,7 @@ public class VolleyClient implements Client {
 
                 });
 
-        // ...and add it to the prioritized session request queue.
+        // Re-authenticate on a prioritized request queue.
         volleySessionQueue.add(authRequest);
 
         return authRequest;
@@ -170,11 +194,21 @@ public class VolleyClient implements Client {
                 // have valid auth tokens.
                 volleyRequestQueue.stop();
 
-                // Prepare to re-authenticate...
+                // Prepare to re-authenticate.
                 Uri uri = buildAuthUri();
+
+                // Opt out if we can't re-authenticate.
+                if (uri == null) {
+                    clearRequestQueue();
+                    volleyRequestQueue.start();
+                    return false;
+                }
+
                 String url = parseUrl(uri);
                 HashMap<String, String> params = parseParams(uri);
-                VolleyRequest<Void> reAuthRequest = VolleyRequest
+
+                // Re-authenticate on a prioritized request queue.
+                volleySessionQueue.add(VolleyRequest
                         .newAuthRequest(url, params)
                         .withSessionListener(new SessionListener() {
 
@@ -194,23 +228,12 @@ public class VolleyClient implements Client {
                             @Override
                             public boolean onErrorOccured(Throwable cause) {
                                 // Re-authentication has failed utterly.
-                                volleyRequestQueue.cancelAll(new RequestFilter() {
-
-                                    @Override
-                                    public boolean apply(com.android.volley.Request<?> request) {
-                                        return true;
-                                    }
-
-                                });
+                                clearRequestQueue();
                                 volleyRequestQueue.start();
-
                                 return false;
                             }
 
-                        });
-
-                // ...and add it to the prioritized session request queue.
-                addToRequestQueue(reAuthRequest);
+                        }));
 
                 return false;
             }
@@ -236,12 +259,26 @@ public class VolleyClient implements Client {
             this.volleyRequestQueue = Volley.newRequestQueue(context, stack);
             this.volleySessionQueue = Volley.newRequestQueue(context, stack);
         }
+
+        this.volleyRequestQueue.start();
+        this.volleySessionQueue.start();
     }
 
-    protected <T> void addToRequestQueue(com.android.volley.Request<T> request) {
+    protected void addToRequestQueue(com.android.volley.Request<?> request) {
         if (request != null) {
             volleyRequestQueue.add(request);
         }
+    }
+
+    protected void clearRequestQueue() {
+        volleyRequestQueue.cancelAll(new RequestFilter() {
+
+            @Override
+            public boolean apply(com.android.volley.Request<?> request) {
+                return true;
+            }
+
+        });
     }
 
     protected HashMap<String, String> parseParams(Uri uri) {
@@ -272,10 +309,17 @@ public class VolleyClient implements Client {
     }
 
     private Uri buildAuthUri() {
-        return new AuthPath()
-                .withClientCredentials(clientId, clientSecret)
-                .withRefreshToken(Session.refreshToken())
-                .buildUri(scheme, authority);
+        Uri result = null;
+        String refreshToken = Session.refreshToken();
+
+        if (Utils.notEmpty(refreshToken)) {
+            result = new AuthPath()
+                    .withClientCredentials(clientId, clientSecret)
+                    .withRefreshToken(refreshToken)
+                    .buildUri(scheme, authority);
+        }
+
+        return result;
     }
 
 }
