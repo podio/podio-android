@@ -319,6 +319,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
             if (isAuthRequest) {
                 Session.set(json);
+                hasSessionChanged = true;
                 return Response.success(null, cacheHeaders);
             } else if (classOfResult == null || classOfResult == Void.class) {
                 return Response.success(null, cacheHeaders);
