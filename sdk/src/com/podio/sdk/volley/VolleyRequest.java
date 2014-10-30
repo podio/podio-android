@@ -212,7 +212,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         if (sessionListener != null) {
             sessionListeners.add(sessionListener);
 
-            if (isDone() && (isAuthRequest || hasSessionChanged)) {
+            if (isDone() && hasSessionChanged) {
                 sessionListener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
             }
         }
@@ -275,7 +275,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
         this.result = result;
 
-        if (isAuthRequest || hasSessionChanged) {
+        if (hasSessionChanged) {
             deliverSession();
         }
 
@@ -355,10 +355,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return sessionListeners.contains(sessionListener) ?
                 sessionListeners.remove(index) :
                 null;
-    }
-
-    public void setSessionChanged(boolean hasChanged) {
-        this.hasSessionChanged = hasChanged;
     }
 
     VolleyRequest<T> withAuthErrorListener(AuthErrorListener<T> authErrorListener) {
