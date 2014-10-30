@@ -210,18 +210,15 @@ public class VolleyClient implements Client {
                 // Re-authenticate on a prioritized request queue.
                 volleySessionQueue.add(VolleyRequest
                         .newAuthRequest(url, params)
-                        .withSessionListener(new SessionListener() {
-
+                        .withAuthErrorListener(new AuthErrorListener<Void>() {
                             @Override
-                            @SuppressWarnings("unchecked")
-                            public boolean onSessionChanged(String authToken, String refreshToken, long expires) {
-                                // The authentication has succeeded and the new
-                                // session tokens are now available.
-                                addToRequestQueue((com.android.volley.Request<T>) originalRequest);
+                            public boolean onAuthErrorOccured(Request<Void> originalRequest) {
+                                // Re-authentication has failed utterly (with an
+                                // authentication error).
+                                clearRequestQueue();
                                 volleyRequestQueue.start();
                                 return false;
                             }
-
                         })
                         .withErrorListener(new ErrorListener() {
 
@@ -233,6 +230,32 @@ public class VolleyClient implements Client {
                                 return false;
                             }
 
+                        })
+                        .withSessionListener(new SessionListener() {
+
+                            @Override
+                            @SuppressWarnings("unchecked")
+                            public boolean onSessionChanged(String authToken, String refreshToken, long expires) {
+                                // The authentication has succeeded and the new
+                                // session tokens are now available. Maybe the
+                                // original request should also be added to the
+                                // prioritized queue instead. As of now, it's
+                                // appended to the end of the general queue,
+                                // even though it, just seconds ago was at the
+                                // head of the same queue.
+                                addToRequestQueue((com.android.volley.Request<T>) originalRequest);
+                                volleyRequestQueue.start();
+                                return false;
+                            }
+
+                        })
+                        .withResultListener(new ResultListener<Void>() {
+
+                            @Override
+                            public boolean onRequestPerformed(Void nothing) {
+                                volleyRequestQueue.start();
+                                return false;
+                            }
                         }));
 
                 return false;
