@@ -310,6 +310,6 @@ public class PodioError extends RuntimeException {
      *         expired.
      */
     public boolean isExpiredError() {
-        return getStatusCode() == 401 || "unauthorized".equals(error) || "expired_token".equals(error_description);
+        return getStatusCode() == 401 || "unauthorized".equals(error) || "invalid_grant".equals(error);
     }
 }
