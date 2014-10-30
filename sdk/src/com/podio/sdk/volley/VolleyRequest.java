@@ -248,24 +248,26 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         if (isAuthError(this.error)) {
             for (AuthErrorListener<T> authErrorListener : authErrorListeners) {
                 if (authErrorListener.onAuthErrorOccured(this)) {
-                    return;
-                }
-            }
-        } else {
-            for (ErrorListener errorListener : errorListeners) {
-                if (errorListener.onErrorOccured(this.error)) {
-                    // The callback consumed the event, stop the bubbling.
-                    return;
-                }
-            }
-
-            for (ErrorListener errorListener : GLOBAL_ERROR_LISTENERS) {
-                if (errorListener.onErrorOccured(this.error)) {
                     // The callback consumed the event, stop the bubbling.
                     return;
                 }
             }
         }
+
+        for (ErrorListener errorListener : errorListeners) {
+            if (errorListener.onErrorOccured(this.error)) {
+                // The callback consumed the event, stop the bubbling.
+                return;
+            }
+        }
+
+        for (ErrorListener errorListener : GLOBAL_ERROR_LISTENERS) {
+            if (errorListener.onErrorOccured(this.error)) {
+                // The callback consumed the event, stop the bubbling.
+                return;
+            }
+        }
+
     }
 
     @Override
@@ -394,7 +396,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private boolean isAuthError(Throwable error) {
         if (error instanceof PodioError) {
             PodioError e = (PodioError) error;
-            return e.getStatusCode() == 401;
+            return e.isExpiredError();
         } else if (error instanceof VolleyError) {
             VolleyError e = (VolleyError) error;
             return e.networkResponse != null && e.networkResponse.statusCode == 401;

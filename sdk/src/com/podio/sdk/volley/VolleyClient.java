@@ -201,7 +201,7 @@ public class VolleyClient implements Client {
                 if (uri == null) {
                     clearRequestQueue();
                     volleyRequestQueue.start();
-                    return false;
+                    return true;
                 }
 
                 String url = parseUrl(uri);
@@ -210,16 +210,6 @@ public class VolleyClient implements Client {
                 // Re-authenticate on a prioritized request queue.
                 volleySessionQueue.add(VolleyRequest
                         .newAuthRequest(url, params)
-                        .withAuthErrorListener(new AuthErrorListener<Void>() {
-                            @Override
-                            public boolean onAuthErrorOccured(Request<Void> originalRequest) {
-                                // Re-authentication has failed utterly (with an
-                                // authentication error).
-                                clearRequestQueue();
-                                volleyRequestQueue.start();
-                                return false;
-                            }
-                        })
                         .withErrorListener(new ErrorListener() {
 
                             @Override
@@ -254,11 +244,11 @@ public class VolleyClient implements Client {
                             @Override
                             public boolean onRequestPerformed(Void nothing) {
                                 volleyRequestQueue.start();
-                                return false;
+                                return true;
                             }
                         }));
 
-                return false;
+                return true;
             }
 
         });
