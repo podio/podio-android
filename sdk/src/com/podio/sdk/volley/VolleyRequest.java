@@ -139,6 +139,8 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     protected VolleyRequest(int method, String url, Class<T> resultType, RequestFuture<T> volleyRequestFuture, boolean isAuthRequest) {
         super(method, url, volleyRequestFuture);
 
+        setShouldCache(false);
+
         this.authErrorListeners = new ArrayList<AuthErrorListener<T>>();
         this.resultListeners = new ArrayList<ResultListener<T>>();
         this.sessionListeners = new ArrayList<SessionListener>();

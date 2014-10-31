@@ -29,6 +29,7 @@ import javax.net.ssl.SSLSocketFactory;
 import android.content.Context;
 import android.net.Uri;
 
+import com.android.volley.Cache;
 import com.android.volley.RequestQueue;
 import com.android.volley.RequestQueue.RequestFilter;
 import com.android.volley.toolbox.HurlStack;
@@ -271,6 +272,16 @@ public class VolleyClient implements Client {
             HurlStack stack = new HurlStack(null, sslSocketFactory);
             this.volleyRequestQueue = Volley.newRequestQueue(context, stack);
             this.volleySessionQueue = Volley.newRequestQueue(context, stack);
+        }
+
+        Cache requestCache = this.volleyRequestQueue.getCache();
+        if (requestCache != null) {
+            requestCache.clear();
+        }
+
+        Cache sessionCache = this.volleySessionQueue.getCache();
+        if (sessionCache != null) {
+            sessionCache.clear();
         }
 
         this.volleyRequestQueue.start();
