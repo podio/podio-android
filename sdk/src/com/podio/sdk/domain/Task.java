@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 import com.podio.sdk.internal.Utils;
-import com.podio.sdk.provider.TaskProvider.Grouping;
+import com.podio.sdk.provider.TaskProvider.GetTaskFilter.Grouping;
 
 /**
  * @author rabie

@@ -34,6 +34,7 @@ import com.podio.sdk.provider.ClientProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.StoreProvider;
+import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
 import com.podio.sdk.volley.VolleyClient;
@@ -99,6 +100,12 @@ public class Podio {
      * point.
      */
     public static final ViewProvider view = new ViewProvider();
+
+    /**
+     * Enables means of easy operating on the {@link TaskProvider} API end
+     * point.
+     */
+    public static final TaskProvider task = new TaskProvider();
 
     /**
      * Enables means of registering global error listeners. These callback
