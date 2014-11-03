@@ -422,19 +422,20 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      */
     private void notifyErrorListeners() {
         Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
 
-        for (final ErrorListener listener : errorListeners) {
-            if (listener != null) {
-                handler.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        listener.onErrorOccured(error);
+            @Override
+            public void run() {
+                for (final ErrorListener listener : errorListeners) {
+                    if (listener != null) {
+                        if (listener.onErrorOccured(error)) {
+                            return;
+                        }
                     }
-
-                });
+                }
             }
-        }
+
+        });
     }
 
     /**
@@ -443,19 +444,20 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      */
     private void notifyResultListeners() {
         Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
 
-        for (final ResultListener<T> listener : resultListeners) {
-            if (listener != null) {
-                handler.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        listener.onRequestPerformed(result);
+            @Override
+            public void run() {
+                for (final ResultListener<T> listener : resultListeners) {
+                    if (listener != null) {
+                        if (listener.onRequestPerformed(result)) {
+                            return;
+                        }
                     }
-
-                });
+                }
             }
-        }
+
+        });
     }
 
 }
