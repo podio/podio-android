@@ -29,6 +29,12 @@ public abstract class Provider {
         this.client = client;
     }
 
+    protected void isClientSet(){
+        if(this.client == null){
+            throw new NullPointerException("Your provider subclass MUST set a Client instance prior to a REST operation!");
+        }
+    }
+
     protected abstract <T> Request<T> delete(Filter filter);
 
     protected abstract <T> Request<T> get(Filter filter, Class<T> classOfResult);
