@@ -22,6 +22,7 @@ public class TaskProvider extends VolleyProvider {
     public static class GetTaskFilter extends TaskFilter {
 
         public GetTaskFilter() {
+            addPathSegment("");
             this.fullView();
         }
 
@@ -219,7 +220,7 @@ public class TaskProvider extends VolleyProvider {
         }
     }
 
-    public Request<Task[]> getTasks(TaskFilter filter) {
+    public Request<Task[]> getTasks(GetTaskFilter filter) {
         return get(filter, Task[].class);
     }
 

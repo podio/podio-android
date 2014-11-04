@@ -211,6 +211,7 @@ public class Podio {
         organization.setClient(restClient);
         user.setClient(restClient);
         view.setClient(restClient);
+        task.setClient(restClient);
 
         // Providers that doesn't need a rest client in order to operate.
         // store;
