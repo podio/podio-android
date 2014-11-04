@@ -19,14 +19,11 @@ package com.podio.sdk.localstore;
 
 import java.io.File;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.util.LruCache;
 
+import com.podio.sdk.QueueClient;
 import com.podio.sdk.Request;
 import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Store;
@@ -53,7 +50,7 @@ import com.podio.sdk.Store;
  * 
  * @author László Urszuly
  */
-public class LocalStore implements Store {
+public class LocalStore extends QueueClient implements Store {
 
     /**
      * Creates a new instance of this class and configures its initial state.
@@ -110,17 +107,12 @@ public class LocalStore implements Store {
         // backed by a linked blocking queue, it's fair to expect these requests
         // being addressed in a serialized manner, finishing with the deliver
         // request.
-        store.executorService.execute(initMemoryStoreRequest);
-        store.executorService.execute(initDiskStoreRequest);
-        store.executorService.execute(deliverStoreRequest);
+        store.execute(initMemoryStoreRequest);
+        store.execute(initDiskStoreRequest);
+        store.execute(deliverStoreRequest);
 
         return deliverStoreRequest;
     }
-
-    /**
-     * The queue executor service that manages the request queue.
-     */
-    private ExecutorService executorService;
 
     /**
      * The in-memory store.
@@ -136,12 +128,7 @@ public class LocalStore implements Store {
      * Hidden constructor.
      */
     private LocalStore() {
-        final int corePoolSize = 1;
-        final int maxPoolSize = 1;
-        final long waitTime = 0L;
-
-        executorService = new ThreadPoolExecutor(corePoolSize, maxPoolSize, waitTime, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(Integer.MAX_VALUE));
+        super(1, 1, 0L);
     }
 
     /**
@@ -155,8 +142,7 @@ public class LocalStore implements Store {
     @Override
     public Request<Void> free() throws IllegalStateException {
         FreeRequest request = LocalStoreRequest.newFreeRequest(memoryStore);
-        executorService.execute(request);
-
+        execute(request);
         return request;
     }
 
@@ -184,7 +170,7 @@ public class LocalStore implements Store {
 
                 });
 
-        executorService.execute(request);
+        execute(request);
         return request;
     }
 
@@ -201,8 +187,7 @@ public class LocalStore implements Store {
     @Override
     public <T> Request<T> get(Object key, Class<T> classOfValue) throws IllegalStateException {
         GetRequest<T> request = LocalStoreRequest.newGetRequest(memoryStore, diskStore, key, classOfValue);
-        executorService.execute(request);
-
+        execute(request);
         return request;
     }
 
@@ -219,8 +204,7 @@ public class LocalStore implements Store {
     @Override
     public Request<Void> remove(Object key) throws IllegalStateException {
         RemoveRequest request = LocalStoreRequest.newRemoveRequest(memoryStore, diskStore, key);
-        executorService.execute(request);
-
+        execute(request);
         return request;
     }
 
@@ -237,8 +221,7 @@ public class LocalStore implements Store {
     @Override
     public Request<Void> set(Object key, Object value) throws IllegalStateException {
         SetRequest request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value);
-        executorService.execute(request);
-
+        execute(request);
         return request;
     }
 }
