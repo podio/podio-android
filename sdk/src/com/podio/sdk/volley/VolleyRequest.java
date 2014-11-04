@@ -22,7 +22,6 @@
 package com.podio.sdk.volley;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -45,35 +44,20 @@ import com.podio.sdk.internal.Utils;
 
 public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
 
-    private static final ArrayList<ErrorListener> GLOBAL_ERROR_LISTENERS = new ArrayList<ErrorListener>();
-    private static final ArrayList<SessionListener> GLOBAL_SESSION_LISTENERS = new ArrayList<SessionListener>();
-
     public static ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
-        return errorListener != null && GLOBAL_ERROR_LISTENERS.add(errorListener) ?
-                errorListener :
-                null;
+        return VolleyCallbackManager.addGlobalErrorListener(errorListener);
     }
 
     public static SessionListener addGlobalSessionListener(SessionListener sessionListener) {
-        return sessionListener != null && GLOBAL_SESSION_LISTENERS.add(sessionListener) ?
-                sessionListener :
-                null;
+        return VolleyCallbackManager.addGlobalSessionListener(sessionListener);
     }
 
     public static ErrorListener removeGlobalErrorListener(ErrorListener errorListener) {
-        int index = GLOBAL_ERROR_LISTENERS.indexOf(errorListener);
-
-        return GLOBAL_ERROR_LISTENERS.contains(errorListener) ?
-                GLOBAL_ERROR_LISTENERS.remove(index) :
-                null;
+        return VolleyCallbackManager.addGlobalErrorListener(errorListener);
     }
 
     public static SessionListener removeGlobalSessionListener(SessionListener sessionListener) {
-        int index = GLOBAL_SESSION_LISTENERS.indexOf(sessionListener);
-
-        return GLOBAL_SESSION_LISTENERS.contains(sessionListener) ?
-                GLOBAL_SESSION_LISTENERS.remove(index) :
-                null;
+        return VolleyCallbackManager.removeGlobalSessionListener(sessionListener);
     }
 
     static <E> VolleyRequest<E> newRequest(com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
@@ -118,10 +102,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
     }
 
-    private final ArrayList<AuthErrorListener<T>> authErrorListeners;
-    private final ArrayList<ResultListener<T>> resultListeners;
-    private final ArrayList<SessionListener> sessionListeners;
-    private final ArrayList<ErrorListener> errorListeners;
+    private final VolleyCallbackManager<T> callbackManager;
 
     private final RequestFuture<T> volleyRequestFuture;
     private final Class<T> classOfResult;
@@ -141,10 +122,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
         setShouldCache(false);
 
-        this.authErrorListeners = new ArrayList<AuthErrorListener<T>>();
-        this.resultListeners = new ArrayList<ResultListener<T>>();
-        this.sessionListeners = new ArrayList<SessionListener>();
-        this.errorListeners = new ArrayList<ErrorListener>();
+        this.callbackManager = new VolleyCallbackManager<T>();
 
         this.volleyRequestFuture = volleyRequestFuture;
         this.volleyRequestFuture.setRequest(this);
@@ -185,40 +163,19 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     @Override
     public VolleyRequest<T> withResultListener(ResultListener<T> resultListener) {
-        if (resultListener != null) {
-            resultListeners.add(resultListener);
-
-            if (isDone() && result != null) {
-                resultListener.onRequestPerformed(result);
-            }
-        }
-
+        callbackManager.addResultListener(resultListener, isDone(), result);
         return this;
     }
 
     @Override
     public VolleyRequest<T> withErrorListener(ErrorListener errorListener) {
-        if (errorListener != null) {
-            errorListeners.add(errorListener);
-
-            if (isDone() && error != null) {
-                errorListener.onErrorOccured(error);
-            }
-        }
-
+        callbackManager.addErrorListener(errorListener, isDone() && error != null, error);
         return this;
     }
 
     @Override
     public VolleyRequest<T> withSessionListener(SessionListener sessionListener) {
-        if (sessionListener != null) {
-            sessionListeners.add(sessionListener);
-
-            if (isDone() && hasSessionChanged) {
-                sessionListener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
-            }
-        }
-
+        callbackManager.addSessionListener(sessionListener, isDone() && hasSessionChanged);
         return this;
     }
 
@@ -248,28 +205,10 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // taken on what is done here.
 
         if (isAuthError(this.error)) {
-            for (AuthErrorListener<T> authErrorListener : authErrorListeners) {
-                if (authErrorListener.onAuthErrorOccured(this)) {
-                    // The callback consumed the event, stop the bubbling.
-                    return;
-                }
-            }
+            callbackManager.deliverAuthError(this);
         }
 
-        for (ErrorListener errorListener : errorListeners) {
-            if (errorListener.onErrorOccured(this.error)) {
-                // The callback consumed the event, stop the bubbling.
-                return;
-            }
-        }
-
-        for (ErrorListener errorListener : GLOBAL_ERROR_LISTENERS) {
-            if (errorListener.onErrorOccured(this.error)) {
-                // The callback consumed the event, stop the bubbling.
-                return;
-            }
-        }
-
+        callbackManager.deliverError(this.error);
     }
 
     @Override
@@ -280,15 +219,10 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         this.result = result;
 
         if (hasSessionChanged) {
-            deliverSession();
+            callbackManager.deliverSession();
         }
 
-        for (ResultListener<T> resultListener : resultListeners) {
-            if (resultListener.onRequestPerformed(result)) {
-                // The callback consumed the event, stop the bubbling.
-                break;
-            }
-        }
+        callbackManager.deliverResult(result);
     }
 
     @Override
@@ -337,62 +271,25 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
     }
 
-    public ResultListener<T> removeResultListener(ResultListener<T> resultListener) {
-        int index = resultListeners.indexOf(resultListener);
-
-        return resultListeners.contains(resultListener) ?
-                resultListeners.remove(index) :
-                null;
+    public ErrorListener removeErrorListener(ErrorListener errorListener) {
+        return callbackManager.removeErrorListener(errorListener);
     }
 
-    public ErrorListener removeErrorListener(ErrorListener errorListener) {
-        int index = errorListeners.indexOf(errorListener);
-
-        return errorListeners.contains(errorListener) ?
-                errorListeners.remove(index) :
-                null;
+    public ResultListener<T> removeResultListener(ResultListener<T> resultListener) {
+        return callbackManager.removeResultListener(resultListener);
     }
 
     public SessionListener removeSessionListener(SessionListener sessionListener) {
-        int index = sessionListeners.indexOf(sessionListener);
+        return callbackManager.removeSessionListener(sessionListener);
+    }
 
-        return sessionListeners.contains(sessionListener) ?
-                sessionListeners.remove(index) :
-                null;
+    AuthErrorListener<T> removeAuthErrorListener(AuthErrorListener<T> authErrorListener) {
+        return callbackManager.removeAuthErrorListener(authErrorListener);
     }
 
     VolleyRequest<T> withAuthErrorListener(AuthErrorListener<T> authErrorListener) {
-        if (authErrorListener != null) {
-            authErrorListeners.add(authErrorListener);
-
-            if (isDone() && isAuthError(error)) {
-                authErrorListener.onAuthErrorOccured(this);
-            }
-        }
-
+        callbackManager.addAuthErrorListener(authErrorListener, isDone() && isAuthError(error), this);
         return this;
-    }
-
-    private void deliverSession() {
-        // This method is executed on the main thread. Extra care should be
-        // taken on what is done here.
-        String accessToken = Session.accessToken();
-        String refreshToken = Session.refreshToken();
-        long expires = Session.expires();
-
-        for (SessionListener sessionListener : sessionListeners) {
-            if (sessionListener.onSessionChanged(accessToken, refreshToken, expires)) {
-                // The callback consumed the event, stop the bubbling.
-                return;
-            }
-        }
-
-        for (SessionListener sessionListener : GLOBAL_SESSION_LISTENERS) {
-            if (sessionListener.onSessionChanged(accessToken, refreshToken, expires)) {
-                // The callback consumed the event, stop the bubbling.
-                return;
-            }
-        }
     }
 
     private boolean isAuthError(Throwable error) {
