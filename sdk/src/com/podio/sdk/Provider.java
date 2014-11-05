@@ -29,7 +29,7 @@ public abstract class Provider {
         this.client = client;
     }
 
-    protected void isClientSet(){
+    protected void validateClient() {
         if(this.client == null){
             throw new NullPointerException("Your provider subclass MUST set a Client instance prior to a REST operation!");
         }
