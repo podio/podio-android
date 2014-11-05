@@ -29,18 +29,22 @@ import com.podio.sdk.Request;
 public class VolleyProvider extends Provider {
 
     protected <T> Request<T> delete(Filter filter) {
+        validateClient();
         return client.request(Request.Method.DELETE, filter, null, null);
     }
 
     protected <T> Request<T> get(Filter filter, Class<T> classOfResult) {
+        validateClient();
         return client.request(Request.Method.GET, filter, null, classOfResult);
     }
 
     protected <T> Request<T> post(Filter filter, Object item, Class<T> classOfItem) {
+        validateClient();
         return client.request(Request.Method.POST, filter, item, classOfItem);
     }
 
     protected <T> Request<T> put(Filter filter, Object item, Class<T> classOfItem) {
+        validateClient();
         return client.request(Request.Method.PUT, filter, item, classOfItem);
     }
 
