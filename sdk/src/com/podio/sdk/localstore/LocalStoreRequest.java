@@ -28,18 +28,16 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.LruCache;
 
 import com.podio.sdk.JsonParser;
 import com.podio.sdk.Request;
+import com.podio.sdk.internal.CallbackManager;
 
 /**
  * A base class for operations targeting a local store. The
@@ -309,14 +307,10 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * The list to put any subscribing result listeners in.
+     * The delegate callback handler that will manage our callback interfaces
+     * for us.
      */
-    private ArrayList<ResultListener<T>> resultListeners;
-
-    /**
-     * The list to put any subscribing error listeners in.
-     */
-    private ArrayList<ErrorListener> errorListeners;
+    private final CallbackManager<T> callbackManager;
 
     /**
      * The delivered result.
@@ -336,8 +330,7 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      */
     LocalStoreRequest(Callable<T> callable) {
         super(callable);
-        resultListeners = new ArrayList<ResultListener<T>>();
-        errorListeners = new ArrayList<ErrorListener>();
+        callbackManager = new CallbackManager<T>();
     }
 
     /**
@@ -353,15 +346,15 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
         try {
             result = get();
             error = null;
-            notifyResultListeners();
+            callbackManager.deliverResultOnMainThread(result);
         } catch (ExecutionException e) {
             result = null;
             error = e.getCause();
-            notifyErrorListeners();
+            callbackManager.deliverErrorOnMainThread(error);
         } catch (InterruptedException e) {
             result = null;
             error = e;
-            notifyErrorListeners();
+            callbackManager.deliverErrorOnMainThread(error);
         }
     }
 
@@ -370,18 +363,13 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * delivered, then the result listener will be called immediately with the
      * result.
      * 
-     * @see com.podio.sdk.Request#withResultListener(com.podio.sdk.Request.ResultListener)
+     * @see Request#withResultListener(Request.ResultListener)
+     * @see CallbackManager#addResultListener(Request.ResultListener, boolean,
+     *      Object)
      */
     @Override
     public Request<T> withResultListener(Request.ResultListener<T> contentListener) {
-        if (contentListener != null && !resultListeners.contains(contentListener)) {
-            resultListeners.add(contentListener);
-        }
-
-        if (isDone() && error == null) {
-            contentListener.onRequestPerformed(result);
-        }
-
+        callbackManager.addResultListener(contentListener, isDone(), result);
         return this;
     }
 
@@ -390,18 +378,13 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * delivered, then the error listener will be called immediately with the
      * error.
      * 
-     * @see com.podio.sdk.Request#withErrorListener(com.podio.sdk.Request.ErrorListener)
+     * @see Request#withErrorListener(Request.ErrorListener)
+     * @see CallbackManager#addErrorListener(Request.ErrorListener, boolean,
+     *      Throwable)
      */
     @Override
     public Request<T> withErrorListener(Request.ErrorListener errorListener) throws UnsupportedOperationException {
-        if (errorListener != null && !errorListeners.contains(errorListener)) {
-            errorListeners.add(errorListener);
-        }
-
-        if (isDone() && error != null) {
-            errorListener.onErrorOccured(error);
-        }
-
+        callbackManager.addErrorListener(errorListener, isDone() && error != null, error);
         return this;
     }
 
@@ -414,50 +397,6 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     @Override
     public Request<T> withSessionListener(Request.SessionListener sessionListener) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("This implementation doesn't handle sessions.");
-    }
-
-    /**
-     * Reports a delivered error to all error listeners. The callback
-     * implementations will be called on the Main thread.
-     */
-    private void notifyErrorListeners() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                for (final ErrorListener listener : errorListeners) {
-                    if (listener != null) {
-                        if (listener.onErrorOccured(error)) {
-                            return;
-                        }
-                    }
-                }
-            }
-
-        });
-    }
-
-    /**
-     * Reports a delivered result to all result listeners. The callback
-     * implementations will be called on the Main thread.
-     */
-    private void notifyResultListeners() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                for (final ResultListener<T> listener : resultListeners) {
-                    if (listener != null) {
-                        if (listener.onRequestPerformed(result)) {
-                            return;
-                        }
-                    }
-                }
-            }
-
-        });
     }
 
 }
