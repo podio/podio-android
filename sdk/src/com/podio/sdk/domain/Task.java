@@ -3,6 +3,7 @@ package com.podio.sdk.domain;
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
+import com.podio.sdk.domain.User.Profile;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.provider.TaskProvider.GetTaskFilter.Grouping;
 
@@ -23,6 +24,7 @@ public class Task {
     private final String group = null;
     @SerializedName("ref")
     private final Reference reference = null;
+    private final Profile responsible = null;
 
     public long getTaskId() {
         return Utils.getNative(task_id, 0);
@@ -50,6 +52,10 @@ public class Task {
      */
     public Reminder getReminder() {
         return reminder;
+    }
+
+    public Profile getResponsible() {
+        return responsible;
     }
 
     public boolean isPrivate() {
