@@ -15,32 +15,41 @@ public class Task {
     private final String due_date = null;
     private final String due_time = null;
     private final String due_on = null;
-    private final Integer reminder = null;
+    private final Reminder reminder = null;
     @SerializedName("private")
     private final Boolean is_private = null;
     private final String text = null;
     private final String description = null;
     private final String group = null;
+    @SerializedName("ref")
+    private final Reference reference = null;
 
     public long getTaskId() {
         return Utils.getNative(task_id, 0);
     }
 
+    /**
+     * @return returns a timezone independent date component formatted as
+     *         2014-11-25
+     */
     public String getDueDate() {
         return due_date;
     }
 
-    // TODO is this description correct?
     /**
-     * @return returns the raw string given from the API, denoting the local
-     *         time based on the web
+     * @return returns the raw string given from the API, representing time
+     *         formatted as 16:04:00 in the timezone of the user's web account
      */
     public String getDueTime() {
         return due_time;
     }
 
-    public int getReminder() {
-        return Utils.getNative(reminder, -1);
+    /**
+     * @return returns the {@link Reminder} object or null if no reminder was
+     *         set
+     */
+    public Reminder getReminder() {
+        return reminder;
     }
 
     public boolean isPrivate() {
@@ -68,10 +77,16 @@ public class Task {
     }
 
     /**
-     * @return returns the due date of this task in UTC
+     * @return returns the due date of this task in the phone's local time. It
+     *         accounts for the fact that due on may or may not have a usable
+     *         time component as described by hasTime().
      */
     public Date getDueOn() {
-        return Utils.parseDateTime(due_on);
+        if (hasDueTime()) {
+            return Utils.parseDateTime(due_on);
+        } else {
+            return Utils.parseDate(due_on);
+        }
     }
 
     /**
@@ -87,6 +102,10 @@ public class Task {
 
     public String getDueOnString() {
         return due_on;
+    }
+
+    public Reference getReference() {
+        return reference;
     }
 
 }
