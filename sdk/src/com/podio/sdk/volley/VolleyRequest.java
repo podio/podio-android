@@ -82,11 +82,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, volleyRequestFuture, false);
         request.contentType = "application/json; charset=UTF-8";
-
-        if (Utils.notEmpty(Session.accessToken())) {
-            request.headers.put("Authorization", "Bearer " + Session.accessToken());
-        }
-
         request.body = body;
 
         return request;
@@ -234,11 +229,24 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
+        String accessToken = Session.accessToken();
+
+        if (!isAuthRequest && Utils.notEmpty(accessToken)) {
+            headers.put("Authorization", "Bearer " + accessToken);
+        } else {
+            headers.remove("Authorization");
+        }
+
         return headers;
     }
 
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
+        if (params.containsKey("refresh_token")) {
+            String refreshToken = Session.refreshToken();
+            params.put("refresh_token", refreshToken);
+        }
+
         return params;
     }
 
@@ -247,7 +255,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
 
-        if (isAuthError(this.error)) {
+        if (isExpiredError(this.error)) {
             for (AuthErrorListener<T> authErrorListener : authErrorListeners) {
                 if (authErrorListener.onAuthErrorOccured(this)) {
                     // The callback consumed the event, stop the bubbling.
@@ -365,12 +373,20 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         if (authErrorListener != null) {
             authErrorListeners.add(authErrorListener);
 
-            if (isDone() && isAuthError(error)) {
+            if (isDone() && isExpiredError(error)) {
                 authErrorListener.onAuthErrorOccured(this);
             }
         }
 
         return this;
+    }
+
+    AuthErrorListener<T> removeAuthErrorListener(AuthErrorListener<T> authErrorListener) {
+        int index = authErrorListeners.indexOf(authErrorListener);
+
+        return authErrorListeners.contains(authErrorListener) ?
+                authErrorListeners.remove(index) :
+                null;
     }
 
     private void deliverSession() {
@@ -395,7 +411,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
     }
 
-    private boolean isAuthError(Throwable error) {
+    private boolean isExpiredError(Throwable error) {
         if (error instanceof PodioError) {
             PodioError e = (PodioError) error;
             return e.isExpiredError();

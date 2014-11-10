@@ -303,13 +303,24 @@ public class PodioError extends RuntimeException {
     }
 
     /**
-     * Checks whether this API error was thrown due to a session being
-     * unauthorized or expired.
+     * Checks whether this API error was thrown due to a session being expired.
      * 
-     * @return Boolean <code>true</code> if the session was unauthorized or
-     *         expired.
+     * @return Boolean <code>true</code> if the session is expired.
      */
     public boolean isExpiredError() {
-        return getStatusCode() == 401 || "unauthorized".equals(error) || "invalid_grant".equals(error);
+        return getStatusCode() == 401 ||
+                ("unauthorized".equals(error) && "expired_token".equals(error_description));
+    }
+
+    /**
+     * Checks whether this API error was thrown due to a session having invalid
+     * grants.
+     * 
+     * @return Boolean <code>true</code> if the session has invalid grands.
+     */
+    public boolean isAuthError() {
+        return getStatusCode() == 400 &&
+                ("invalid_grant".equals(error)) ||
+                ("invalid_client".equals(error) && "invalid_auth".equals(error_description));
     }
 }
