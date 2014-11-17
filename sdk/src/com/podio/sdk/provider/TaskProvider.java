@@ -226,6 +226,26 @@ public class TaskProvider extends VolleyProvider {
         }
     }
 
+    private static class TaskFilter extends Filter {
+        public TaskFilter() {
+            super("task");
+        }
+
+        public TaskFilter withId(long taskId) {
+            addPathSegment(Long.toString(taskId, 10));
+            return this;
+        }
+
+        public TaskFilter withComplete(boolean isCompleted) {
+            if (isCompleted) {
+                addPathSegment("complete");
+            } else {
+                addPathSegment("incomplete");
+            }
+            return this;
+        }
+    }
+
     /**
      * @param filter
      * @return returns an array of {@link Task} domain objects from the API,
@@ -233,6 +253,12 @@ public class TaskProvider extends VolleyProvider {
      */
     public Request<Task[]> getTasks(GetTaskFilter filter) {
         return get(filter, Task[].class);
+    }
+
+    public Request<Void> setTaskCompleted(long taskId, boolean isCompleted) {
+        TaskFilter filter = new TaskFilter();
+        filter.withId(taskId).withComplete(isCompleted);
+        return post(filter, null, Void.class);
     }
 
 }

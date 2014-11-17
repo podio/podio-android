@@ -1,5 +1,6 @@
 package com.podio.sdk.domain;
 
+import java.util.Collection;
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
@@ -25,6 +26,22 @@ public class Task {
     @SerializedName("ref")
     private final Reference reference = null;
     private final Profile responsible = null;
+    private final String status = null;
+    private final Collection<Comment> comments = null;
+
+    public static enum Status {
+        COMPLETED("completed"), ACTIVE("active"), DELEGATED("deleted");
+
+        private String status;
+
+        private Status(String status) {
+            this.status = status;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+    }
 
     public long getTaskId() {
         return Utils.getNative(task_id, 0);
@@ -114,4 +131,26 @@ public class Task {
         return reference;
     }
 
+    public String getStatusString() {
+        return status;
+    }
+
+    /**
+     * @return returns the {@link Status} of the task or null if no such value
+     *         is available
+     */
+    public Status getStatus() {
+        if (text != null) {
+            for (Status status : Status.values()) {
+                if (text.equalsIgnoreCase(status.getStatus())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Collection<Comment> getComments() {
+        return comments;
+    }
 }
