@@ -21,24 +21,23 @@
  */
 package com.podio.sdk.push;
 
-import com.podio.sdk.Request;
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
 
-public interface Push {
+interface Transport {
 
-    public Request<Void> publish(String channel, String signature, String timestamp, Object data);
+    public String close();
 
-    public Request<Void> subscribe(String channel, String signature, String timestamp);
+    public String open(Object handshakeData);
 
-    public Request<Void> unsubscribe(String channel);
+    public String connect(Object connectData, int timeoutMillis);
 
-    public Push addErrorListener(ErrorListener errorListener);
+    public String disconnect(Object disconnectData);
 
-    public Push addEventListener(String channel, ResultListener<?> listener, Class<?> template);
+    public String send(Object object);
 
-    public Push removeErrorListener(ErrorListener errorListener);
+    public void setErrorListener(ErrorListener listener);
 
-    public Push removeEventListener(ResultListener<?> listener);
+    public void setEventListener(ResultListener<String> listener);
 
 }

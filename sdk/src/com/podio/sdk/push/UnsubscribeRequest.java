@@ -21,24 +21,38 @@
  */
 package com.podio.sdk.push;
 
-import com.podio.sdk.Request;
-import com.podio.sdk.Request.ErrorListener;
-import com.podio.sdk.Request.ResultListener;
+import java.util.concurrent.Callable;
 
-public interface Push {
+class UnsubscribeRequest extends PushRequest<Void> {
 
-    public Request<Void> publish(String channel, String signature, String timestamp, Object data);
+    private static final class UnsubscribeData {
+        @SuppressWarnings("unused")
+        private final String channel;
 
-    public Request<Void> subscribe(String channel, String signature, String timestamp);
+        @SuppressWarnings("unused")
+        private final String clientId;
 
-    public Request<Void> unsubscribe(String channel);
+        @SuppressWarnings("unused")
+        private final String subscription;
 
-    public Push addErrorListener(ErrorListener errorListener);
+        private UnsubscribeData(String clientId, String subscription) {
+            this.channel = "/meta/unsubscribe";
+            this.clientId = clientId;
+            this.subscription = subscription;
+        }
+    }
 
-    public Push addEventListener(String channel, ResultListener<?> listener, Class<?> template);
+    UnsubscribeRequest(final String subscription, final Transport transport) {
+        super(new Callable<Void>() {
 
-    public Push removeErrorListener(ErrorListener errorListener);
+            @Override
+            public Void call() throws Exception {
+                UnsubscribeData data = new UnsubscribeData(clientId, subscription);
+                send(transport, data);
+                return null;
+            }
 
-    public Push removeEventListener(ResultListener<?> listener);
+        });
+    }
 
 }
