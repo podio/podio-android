@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
-import com.podio.sdk.domain.User.Profile;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.provider.TaskProvider.GetTaskFilter.Grouping;
 
@@ -25,7 +24,7 @@ public class Task {
     private final String group = null;
     @SerializedName("ref")
     private final Reference reference = null;
-    private final Profile responsible = null;
+    private final User responsible = null;
     private final String status = null;
     private final Collection<Comment> comments = null;
 
@@ -71,7 +70,7 @@ public class Task {
         return reminder;
     }
 
-    public Profile getResponsible() {
+    public User getResponsible() {
         return responsible;
     }
 

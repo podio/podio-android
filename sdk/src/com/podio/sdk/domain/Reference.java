@@ -10,7 +10,6 @@ public class Reference {
     private final String typeName = null;
     private final Long id = null;
     private final String title = null;
-    private final Data data = null;
 
     public String getType() {
         return type;
@@ -30,10 +29,6 @@ public class Reference {
 
     public String getTitle() {
         return title;
-    }
-
-    public Data getData() {
-        return data;
     }
 
 }
