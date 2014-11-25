@@ -87,7 +87,7 @@ public class VolleyClient implements Client {
     protected String authority;
 
     private RequestQueue volleyRequestQueue;
-    private RequestQueue volleySessionQueue;
+    private RequestQueue volleyPriorityQueue;
 
     @Override
     public Request<Void> authenticateWithUserCredentials(String username, String password) {
@@ -99,7 +99,7 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-        volleySessionQueue.add(request);
+        volleyPriorityQueue.add(request);
 
         return request;
     }
@@ -114,7 +114,7 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-        volleySessionQueue.add(request);
+        volleyPriorityQueue.add(request);
 
         return request;
     }
@@ -173,7 +173,7 @@ public class VolleyClient implements Client {
                 });
 
         // Re-authenticate on a prioritized request queue.
-        volleySessionQueue.add(authRequest);
+        volleyPriorityQueue.add(authRequest);
 
         return authRequest;
     }
@@ -193,6 +193,7 @@ public class VolleyClient implements Client {
                 // The original request failed due to an authentication error.
                 // Stop executing the default HTTP queue as we currently don't
                 // have valid auth tokens.
+                ((VolleyRequest<T>) originalRequest).removeAuthErrorListener(this);
                 volleyRequestQueue.stop();
 
                 // Prepare to re-authenticate.
@@ -209,15 +210,20 @@ public class VolleyClient implements Client {
                 HashMap<String, String> params = parseParams(uri);
 
                 // Re-authenticate on a prioritized request queue.
-                volleySessionQueue.add(VolleyRequest
+                volleyPriorityQueue.add(VolleyRequest
                         .newAuthRequest(url, params)
                         .withErrorListener(new ErrorListener() {
 
                             @Override
+                            @SuppressWarnings("unchecked")
                             public boolean onErrorOccured(Throwable cause) {
-                                // Re-authentication has failed utterly.
+                                // The re-authentication request has failed
+                                // utterly. Running the original request again
+                                // will ensure to trigger any error listeners
+                                // attached to it.
                                 clearRequestQueue();
                                 volleyRequestQueue.start();
+                                addToPriorityQueue((com.android.volley.Request<T>) originalRequest);
                                 return false;
                             }
 
@@ -228,25 +234,12 @@ public class VolleyClient implements Client {
                             @SuppressWarnings("unchecked")
                             public boolean onSessionChanged(String authToken, String refreshToken, long expires) {
                                 // The authentication has succeeded and the new
-                                // session tokens are now available. Maybe the
-                                // original request should also be added to the
-                                // prioritized queue instead. As of now, it's
-                                // appended to the end of the general queue,
-                                // even though it, just seconds ago was at the
-                                // head of the same queue.
-                                addToRequestQueue((com.android.volley.Request<T>) originalRequest);
+                                // session tokens are now available.
+                                addToPriorityQueue((com.android.volley.Request<T>) originalRequest);
                                 volleyRequestQueue.start();
                                 return false;
                             }
 
-                        })
-                        .withResultListener(new ResultListener<Void>() {
-
-                            @Override
-                            public boolean onRequestPerformed(Void nothing) {
-                                volleyRequestQueue.start();
-                                return true;
-                            }
                         }));
 
                 return true;
@@ -267,11 +260,11 @@ public class VolleyClient implements Client {
 
         if (sslSocketFactory == null) {
             this.volleyRequestQueue = Volley.newRequestQueue(context);
-            this.volleySessionQueue = Volley.newRequestQueue(context);
+            this.volleyPriorityQueue = Volley.newRequestQueue(context);
         } else {
             HurlStack stack = new HurlStack(null, sslSocketFactory);
             this.volleyRequestQueue = Volley.newRequestQueue(context, stack);
-            this.volleySessionQueue = Volley.newRequestQueue(context, stack);
+            this.volleyPriorityQueue = Volley.newRequestQueue(context, stack);
         }
 
         Cache requestCache = this.volleyRequestQueue.getCache();
@@ -279,18 +272,24 @@ public class VolleyClient implements Client {
             requestCache.clear();
         }
 
-        Cache sessionCache = this.volleySessionQueue.getCache();
+        Cache sessionCache = this.volleyPriorityQueue.getCache();
         if (sessionCache != null) {
             sessionCache.clear();
         }
 
         this.volleyRequestQueue.start();
-        this.volleySessionQueue.start();
+        this.volleyPriorityQueue.start();
     }
 
     protected void addToRequestQueue(com.android.volley.Request<?> request) {
         if (request != null) {
             volleyRequestQueue.add(request);
+        }
+    }
+
+    protected void addToPriorityQueue(com.android.volley.Request<?> request) {
+        if (request != null) {
+            volleyPriorityQueue.add(request);
         }
     }
 

@@ -1,28 +1,24 @@
 package com.podio.sdk.provider;
 
+import java.util.Date;
+
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Task;
+import com.podio.sdk.internal.Utils;
 import com.podio.sdk.volley.VolleyProvider;
 
 /**
+ * This class provides methods to access {@link Task} objects from the API.
+ * 
  * @author rabie
  */
 public class TaskProvider extends VolleyProvider {
 
-    // TODO javadoc the whole lot
-
-    static class TaskFilter extends Filter {
-
-        TaskFilter() {
-            super("task");
-        }
-    }
-
-    public static class GetTaskFilter extends TaskFilter {
+    public static class GetTaskFilter extends Filter {
 
         public GetTaskFilter() {
-            addPathSegment("");
+            super("task/");
             this.fullView();
         }
 
@@ -72,9 +68,19 @@ public class TaskProvider extends VolleyProvider {
             throw new UnsupportedOperationException("not implemented yet");
         }
 
-        // TODO support SDK operation
-        public GetTaskFilter dueDate() {
-            throw new UnsupportedOperationException("not implemented yet");
+        /**
+         * The from and to date the task should be due between. This method will
+         * only consider the date part of the given from and to Date object,
+         * meaning that the time component is disregarded. Thus the timezone in
+         * which these date represent is irrelevant.
+         * 
+         * @param from
+         * @param to
+         * @return
+         */
+        public GetTaskFilter dueDate(Date from, Date to) {
+            this.addQueryParameter("due_date", Utils.formatDate(from) + "-" + Utils.formatDate(to));
+            return this;
         }
 
         // TODO support SDK operation
@@ -220,8 +226,39 @@ public class TaskProvider extends VolleyProvider {
         }
     }
 
+    private static class TaskFilter extends Filter {
+        public TaskFilter() {
+            super("task");
+        }
+
+        public TaskFilter withId(long taskId) {
+            addPathSegment(Long.toString(taskId, 10));
+            return this;
+        }
+
+        public TaskFilter withComplete(boolean isCompleted) {
+            if (isCompleted) {
+                addPathSegment("complete");
+            } else {
+                addPathSegment("incomplete");
+            }
+            return this;
+        }
+    }
+
+    /**
+     * @param filter
+     * @return returns an array of {@link Task} domain objects from the API,
+     *         depending on the given filter.
+     */
     public Request<Task[]> getTasks(GetTaskFilter filter) {
         return get(filter, Task[].class);
+    }
+
+    public Request<Void> setTaskCompleted(long taskId, boolean isCompleted) {
+        TaskFilter filter = new TaskFilter();
+        filter.withId(taskId).withComplete(isCompleted);
+        return post(filter, null, Void.class);
     }
 
 }

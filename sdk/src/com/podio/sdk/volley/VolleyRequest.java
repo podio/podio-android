@@ -22,6 +22,7 @@
 package com.podio.sdk.volley;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -191,11 +192,24 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
+        String accessToken = Session.accessToken();
+
+        if (!isAuthRequest && Utils.notEmpty(accessToken)) {
+            headers.put("Authorization", "Bearer " + accessToken);
+        } else {
+            headers.remove("Authorization");
+        }
+
         return headers;
     }
 
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
+        if (params.containsKey("refresh_token")) {
+            String refreshToken = Session.refreshToken();
+            params.put("refresh_token", refreshToken);
+        }
+
         return params;
     }
 
@@ -292,7 +306,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return this;
     }
 
-    private boolean isAuthError(Throwable error) {
+    private boolean isExpiredError(Throwable error) {
         if (error instanceof PodioError) {
             PodioError e = (PodioError) error;
             return e.isExpiredError();

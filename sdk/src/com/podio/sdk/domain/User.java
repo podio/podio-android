@@ -127,11 +127,16 @@ public class User {
         private final String link = null;
         private final String last_seen_on = null;
         private final String name = null;
-
-        // private final Type type = null;
+        // TODO consider offering an enum representation of the possible types
+        // so the API becomes clearer for a user of the SDK
+        private final String type = null;
 
         public String getAbout() {
             return about;
+        }
+
+        public String getType() {
+            return type;
         }
 
         public long getAvatarId() {
