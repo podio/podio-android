@@ -22,7 +22,6 @@
 package com.podio.sdk.volley;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -218,7 +217,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
 
-        if (isAuthError(this.error)) {
+        if (isExpiredError(this.error)) {
             callbackManager.deliverAuthError(this);
         }
 
@@ -302,7 +301,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     }
 
     VolleyRequest<T> withAuthErrorListener(AuthErrorListener<T> authErrorListener) {
-        callbackManager.addAuthErrorListener(authErrorListener, isDone() && isAuthError(error), this);
+        callbackManager.addAuthErrorListener(authErrorListener, isDone() && isExpiredError(error), this);
         return this;
     }
 
