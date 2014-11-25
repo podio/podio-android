@@ -31,60 +31,31 @@ import com.podio.sdk.internal.Utils;
 public class User {
 
     public static enum Flag {
-        god, bulletin_author, app_store_manager, experiment_manager,
-        org_viewer, org_manager, api_manager, extension_manager,
-        tnol_manager, seo_manager, out_of_office, sales, sales_default,
-        sales_large, sales_contract, undefined
+        god,
+        bulletin_author,
+        app_store_manager,
+        experiment_manager,
+        org_viewer,
+        org_manager,
+        api_manager,
+        extension_manager,
+        tnol_manager,
+        seo_manager,
+        out_of_office,
+        sales,
+        sales_default,
+        sales_large,
+        sales_contract,
+        undefined
     }
 
     public static enum Status {
-        inactive, active, deleted, blocked, blacklisted, undefined
-    }
-
-    public static class Presence {
-        private final String ref_type = null;
-        private final Long ref_id = null;
-        private final Long user_id = null;
-        private final String signature = null;
-
-        public String getRef_type() {
-            return ref_type;
-        }
-
-        public long getRefId() {
-            return Utils.getNative(ref_id, -1L);
-        }
-
-        public long getUserId() {
-            return Utils.getNative(user_id, -1L);
-        }
-
-        public String getSignature() {
-            return signature;
-        }
-    }
-
-    public static class Push {
-        private final Long timestamp = null;
-        private final Integer expires_in = null;
-        private final String channel = null;
-        private final String signature = null;
-
-        public long getTimestamp() {
-            return Utils.getNative(timestamp, -1L);
-        }
-
-        public int getExpiresIn() {
-            return Utils.getNative(expires_in, -1);
-        }
-
-        public String getChannel() {
-            return channel;
-        }
-
-        public String getSignature() {
-            return signature;
-        }
+        inactive,
+        active,
+        deleted,
+        blocked,
+        blacklisted,
+        undefined
     }
 
     public static class Email {
@@ -236,16 +207,20 @@ public class User {
         }
     }
 
-    public static User newInstance() {
-        return new User();
-    }
-
     private final Long user_id = null;
+    private final Long profile_id = null;
+    private final Long org_id = null;
+    private final Long space_id = null;
     private final String name = null;
+    private final String link = null;
+    private final String url = null;
+    private final File image = null;
     private final Long avatar = null;
-    private final List<Flag> flags = null;
+    private final List<String> flags = null;
     private final List<Email> mails = null;
-    private final Status status = null;
+    private final String type = null;
+    private final String status = null;
+    private final String last_seen_on = null;
     private final String activated_on = null;
     private final String created_on = null;
     private final String locale = null;
@@ -272,11 +247,31 @@ public class User {
         return profile;
     }
 
+    public long getProfileId() {
+        return Utils.getNative(profile_id, -1L);
+    }
+
+    public long getOrganizationId() {
+        return Utils.getNative(org_id, -1L);
+    }
+
+    public long getSpaceId() {
+        return Utils.getNative(space_id, -1L);
+    }
+
+    public String getLink() {
+        return link != null ? link : url;
+    }
+
     public int getInboxNew() {
         return Utils.getNative(inbox_new, -1);
     }
 
-    public int getMessageUnreadCount() {
+    public File getImage() {
+        return image;
+    }
+
+    public int getUnreadMessagesCount() {
         return Utils.getNative(message_unread_count, -1);
     }
 
@@ -291,6 +286,14 @@ public class User {
 
     public String getActivatedDateString() {
         return activated_on;
+    }
+
+    public Date getLastSeenDate() {
+        return Utils.parseDateTime(last_seen_on);
+    }
+
+    public String getLastSeenDateString() {
+        return last_seen_on;
     }
 
     /**
@@ -333,17 +336,27 @@ public class User {
     }
 
     public Status getStatus() {
-        return status != null ? status : Status.undefined;
+        try {
+            return Status.valueOf(status);
+        } catch (NullPointerException e) {
+            return Status.undefined;
+        } catch (IllegalArgumentException e) {
+            return Status.undefined;
+        }
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getTimezone() {
         return timezone;
     }
 
-    public boolean hasFlags(Flag... flags) {
-        if (this.flags != null) {
-            for (Flag flag : flags) {
-                if (!this.flags.contains(flag)) {
+    public boolean hasFlags(Flag... data) {
+        if (Utils.notEmpty(flags)) {
+            for (Flag flag : data) {
+                if (!flags.contains(flag.name())) {
                     return false;
                 }
             }
