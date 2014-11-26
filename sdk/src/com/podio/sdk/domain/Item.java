@@ -46,6 +46,7 @@ public class Item implements Pushable {
         private int offset;
         private Map<String, Object> filters;
         private String sort_by;
+        private boolean sort_nulls_last;
 
         public FilterData() {
             this.filters = new HashMap<String, Object>();
@@ -53,6 +54,7 @@ public class Item implements Pushable {
             this.limit = DEFAULT_LIMIT;
             this.offset = DEFAULT_OFFSET;
             this.remember = true;
+            sort_nulls_last = false;
         }
 
         public void addConstraint(String key, Object value) {
@@ -113,6 +115,11 @@ public class Item implements Pushable {
             this.sort_desc = doSortDescending;
             return this;
         }
+
+        public FilterData setSortNullLast(boolean sortNullLast) {
+            this.sort_nulls_last = sortNullLast;
+            return this;
+        }
     }
 
     public static class FilterResult {
@@ -129,9 +136,7 @@ public class Item implements Pushable {
         }
 
         public List<Item> getItems() {
-            return items != null ?
-                    new ArrayList<Item>(items) :
-                    new ArrayList<Item>();
+            return items != null ? new ArrayList<Item>(items) : new ArrayList<Item>();
         }
     }
 
@@ -323,9 +328,7 @@ public class Item implements Pushable {
     }
 
     public List<Field> getFields() {
-        return fields != null ?
-                new ArrayList<Field>(fields) :
-                new ArrayList<Field>();
+        return fields != null ? new ArrayList<Field>(fields) : new ArrayList<Field>();
     }
 
     public long getId() {
@@ -362,9 +365,7 @@ public class Item implements Pushable {
     }
 
     public List<String> getTags() {
-        return tags != null ?
-                new ArrayList<String>(tags) :
-                new ArrayList<String>();
+        return tags != null ? new ArrayList<String>(tags) : new ArrayList<String>();
     }
 
     public String getTitle() {

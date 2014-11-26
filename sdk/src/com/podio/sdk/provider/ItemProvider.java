@@ -154,6 +154,24 @@ public class ItemProvider extends VolleyProvider {
         }
 
         /**
+         * If you sort by a certain field and there are items that doesn't have
+         * this field set then if sortNullLast is set to true then these not set
+         * values will be delivered in the end of the sort result instead of the
+         * beginning.
+         * 
+         * @param sortNullLast
+         *        true if null values should be in the end, false otherwise.
+         * @return This instance of the {@link ItemFilterProvider}, to enable
+         *         convenient chaining.
+         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         */
+        public ItemFilterProvider onSortNullLast(boolean sortNullLast) {
+            filterData.setSortNullLast(sortNullLast);
+
+            return this;
+        }
+
+        /**
          * Fetches a set of filtered items for the application with the given
          * id.
          * <p>
