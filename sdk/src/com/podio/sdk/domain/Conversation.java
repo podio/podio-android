@@ -28,6 +28,75 @@ import java.util.List;
 import com.podio.sdk.internal.Utils;
 
 public class Conversation {
+
+    public static class Source {
+        private final Long id = null;
+        private final Long auth_client_id = null;
+        private final Boolean display = null;
+        private final String name = null;
+        private final String url = null;
+    }
+
+    private static class Data {
+        private final Long message_id = null;
+        private final List<File> files = null;
+        private final String text = null;
+        private final String created_on = null;
+    }
+
+    public static class Event {
+        private final Long event_id = null;
+        private final Source created_via = null;
+        private final User created_by = null;
+        private final String created_on = null;
+        private final String action = null;
+        private final Data data = null;
+
+        public long getEventId() {
+            return Utils.getNative(event_id, -1L);
+        }
+
+        public Source getCreatedVia() {
+            return created_via;
+        }
+
+        public User getCreatedBy() {
+            return created_by;
+        }
+
+        public Date getCreatedDate() {
+            return Utils.parseDateTime(created_on);
+        }
+
+        public String getCreatedDateString() {
+            return created_on;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public long getMessageId() {
+            return data != null ? Utils.getNative(data.message_id, -1L) : -1L;
+        }
+
+        public List<File> getMessageFiles() {
+            return data != null && data.files != null ? data.files : new ArrayList<File>();
+        }
+
+        public String getMessageText() {
+            return data != null ? data.text : null;
+        }
+
+        public Date getMessageCreatedDate() {
+            return data != null ? Utils.parseDateTime(data.created_on) : null;
+        }
+
+        public String getMessageCreatedDateString() {
+            return data != null ? data.created_on : null;
+        }
+    }
+
     private final Integer unread_count = null;
     private final Presence presence = null;
     private final String excerpt = null;
