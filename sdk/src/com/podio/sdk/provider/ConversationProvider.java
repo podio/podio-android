@@ -94,9 +94,9 @@ public class ConversationProvider extends VolleyProvider {
      *        The number of events to skip before start fetching.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Conversation.Event> getConversationMessages(long id, int limit, int offset) {
+    public Request<Conversation.Event[]> getConversationMessages(long id, int limit, int offset) {
         Path filter = new Path().withEvents(id, limit, offset);
-        return get(filter, Conversation.Event.class);
+        return get(filter, Conversation.Event[].class);
     }
 
 }
