@@ -64,6 +64,10 @@ public class Conversation {
             return created_by;
         }
 
+        public long getCreatedById() {
+            return created_by != null ? created_by.getId() : -1L;
+        }
+
         public Date getCreatedDate() {
             return Utils.parseDateTime(created_on);
         }
