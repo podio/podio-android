@@ -267,6 +267,10 @@ public class User {
         return Utils.getNative(inbox_new, -1);
     }
 
+    public String getImageUrl() {
+        return image != null ? image.getLink() : null;
+    }
+
     public File getImage() {
         return image;
     }
