@@ -31,6 +31,7 @@ import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ClientProvider;
+import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
@@ -67,6 +68,12 @@ public class Podio {
      * point.
      */
     public static final CalendarProvider calendar = new CalendarProvider();
+
+    /**
+     * Enables means of easy operating on the {@link ContactProvider} API end
+     * point.
+     */
+    public static final ContactProvider contact = new ContactProvider();
 
     /**
      * Enables means of easy operating on the {@link ConversationProvider} API
@@ -214,6 +221,7 @@ public class Podio {
         application.setClient(restClient);
         calendar.setClient(restClient);
         client.setClient(restClient);
+        contact.setClient(restClient);
         conversation.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
