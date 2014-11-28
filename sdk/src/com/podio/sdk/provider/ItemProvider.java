@@ -82,7 +82,7 @@ public class ItemProvider extends VolleyProvider {
         /**
          * Constructor.
          */
-        public ItemFilterProvider() {
+        private ItemFilterProvider() {
             filterData = new Item.FilterData();
         }
 
