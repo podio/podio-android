@@ -22,12 +22,29 @@
 package com.podio.sdk.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.podio.sdk.internal.Utils;
 
 public class Conversation {
+
+    public static class Reply {
+        private final String text;
+        private final String embed_url;
+        private final List<Long> file_ids;
+
+        public Reply(String text, String embedUrl, Long... fileIds) {
+            this.text = text;
+            this.embed_url = embedUrl;
+            this.file_ids = new ArrayList<Long>();
+
+            if (Utils.notEmpty(fileIds)) {
+                this.file_ids.addAll(Arrays.asList(fileIds));
+            }
+        }
+    }
 
     public static class Source {
         private final Long id = null;

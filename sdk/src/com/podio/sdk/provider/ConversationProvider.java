@@ -57,6 +57,13 @@ public class ConversationProvider extends VolleyProvider {
             addQueryParameter("offset", Integer.toString(offset, 10));
             return this;
         }
+
+        Path withReply(long id) {
+            addPathSegment(Long.toString(id, 10));
+            addPathSegment("reply");
+            addPathSegment("v2");
+            return this;
+        }
     }
 
     /**
@@ -97,6 +104,24 @@ public class ConversationProvider extends VolleyProvider {
     public Request<Conversation.Event[]> getConversationMessages(long id, int limit, int offset) {
         Path filter = new Path().withEvents(id, limit, offset);
         return get(filter, Conversation.Event[].class);
+    }
+
+    /**
+     * Sends a reply to the conversation with the given id. The request result
+     * will deliver the generated conversation event.
+     * 
+     * @param message
+     *        The reply body.
+     * @param link
+     *        The embedded link (if any).
+     * @param fileIds
+     *        The list of ids of any files attached to the reply.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Conversation.Event> replyToConversation(long conversationId, String message, String link, Long... fileIds) {
+        Path filter = new Path().withReply(conversationId);
+        Conversation.Reply reply = new Conversation.Reply(message, link, fileIds);
+        return post(filter, reply, Conversation.Event.class);
     }
 
 }
