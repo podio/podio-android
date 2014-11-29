@@ -100,6 +100,23 @@ public class ContactProvider extends VolleyProvider {
         }
     }
 
+    static class Path extends Filter {
+
+        protected Path() {
+            super("contact");
+        }
+
+        Path withProfileIds(String... ids) {
+            if (Utils.notEmpty(ids)) {
+                String segment = Utils.join(ids, ",");
+                addPathSegment(segment);
+                addPathSegment("v2");
+            }
+
+            return this;
+        }
+    }
+
     /**
      * Returns a filter the caller can use to define which contacts to get.
      * 
@@ -109,4 +126,19 @@ public class ContactProvider extends VolleyProvider {
         return new ContactFilterProvider();
     }
 
+    public Request<Contact[]> getWithProfileIds(long... ids) {
+        String[] strings = null;
+
+        if (Utils.notEmpty(ids)) {
+            int size = ids.length;
+            strings = new String[size];
+
+            for (int i = 0; i < size; i++) {
+                strings[i] = Long.toString(ids[i], 10);
+            }
+        }
+
+        Path filter = new Path().withProfileIds(strings);
+        return get(filter, Contact[].class);
+    }
 }
