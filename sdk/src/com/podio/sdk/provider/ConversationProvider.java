@@ -24,6 +24,7 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Conversation;
+import com.podio.sdk.domain.Conversation.CreateResult;
 import com.podio.sdk.volley.VolleyProvider;
 
 /**
@@ -64,6 +65,23 @@ public class ConversationProvider extends VolleyProvider {
             addPathSegment("v2");
             return this;
         }
+
+        Path withCreate() {
+            addPathSegment("v2");
+            return this;
+        }
+    }
+
+    /**
+     * Creates a new conversation as of the parameters in the given template.
+     * 
+     * @param data
+     *        The parameters for the new conversation.
+     * @return A creation result.
+     */
+    public Request<Conversation.CreateResult> createConversation(Conversation.Create data) {
+        Path filter = new Path().withCreate();
+        return post(filter, data, CreateResult.class);
     }
 
     /**
@@ -118,7 +136,7 @@ public class ConversationProvider extends VolleyProvider {
      *        The list of ids of any files attached to the reply.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Conversation.Event> replyToConversation(long conversationId, String message, String link, Long... fileIds) {
+    public Request<Conversation.Event> replyToConversation(long conversationId, String message, String link, long... fileIds) {
         Path filter = new Path().withReply(conversationId);
         Conversation.Reply reply = new Conversation.Reply(message, link, fileIds);
         return post(filter, reply, Conversation.Event.class);

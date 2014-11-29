@@ -22,7 +22,6 @@
 package com.podio.sdk.domain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -31,19 +30,77 @@ import com.podio.sdk.internal.Utils;
 public class Conversation {
 
     public static class Reply {
+        @SuppressWarnings("unused")
         private final String text;
-        private final String embed_url;
-        private final List<Long> file_ids;
 
-        public Reply(String text, String embedUrl, Long... fileIds) {
+        @SuppressWarnings("unused")
+        private final String embed_url;
+
+        @SuppressWarnings("unused")
+        private final long[] file_ids;
+
+        public Reply(String text, String embedUrl, long... fileIds) {
             this.text = text;
             this.embed_url = embedUrl;
-            this.file_ids = new ArrayList<Long>();
-
-            if (Utils.notEmpty(fileIds)) {
-                this.file_ids.addAll(Arrays.asList(fileIds));
-            }
+            this.file_ids = Utils.notEmpty(fileIds) ? fileIds : new long[0];
         }
+    }
+
+    public static class Create {
+        @SuppressWarnings("unused")
+        private final String subject;
+
+        @SuppressWarnings("unused")
+        private final String text;
+
+        @SuppressWarnings("unused")
+        private final String embed_url;
+
+        @SuppressWarnings("unused")
+        private final long[] file_ids;
+
+        @SuppressWarnings("unused")
+        private final long[] participants;
+
+        public Create(String subject, String text, String link, long[] participants, long[] fileIds) {
+            this.subject = subject;
+            this.text = text;
+            this.embed_url = link;
+            this.file_ids = Utils.notEmpty(fileIds) ? fileIds : new long[0];
+            this.participants = Utils.notEmpty(participants) ? participants : new long[0];
+        }
+    }
+
+    public static class CreateResult {
+        private final Long conversation_id = null;
+        private final String subject = null;
+        private final String created_on = null;
+        private final User created_by = null;
+
+        public long getConversationId() {
+            return Utils.getNative(conversation_id, -1L);
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public Date getCreateDate() {
+            return Utils.parseDateTime(created_on);
+        }
+
+        public String getCreateDateString() {
+            return created_on;
+        }
+
+        public User getCreatedBy() {
+            return created_by;
+        }
+
+        public long getCreatedById() {
+            return created_by != null ? created_by.getId() : -1L;
+        }
+
     }
 
     public static class Source {
