@@ -21,35 +21,96 @@
  */
 package com.podio.sdk.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.podio.sdk.internal.Utils;
 
-public class Contact {
+public class Contact implements Parcelable {
+
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
+        public Contact createFromParcel(Parcel in) {
+            return new Contact(in);
+        }
+
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
+
     public static enum Type {
         user, unknown
     }
 
-    private final Long profile_id = null;
-    private final Long user_id = null;
-    private final Long space_id = null;
-    private final Long org_id = null;
-    private final Long avatar = null;
-    private final String external_id = null;
-    private final String type = null;
-    private final String name = null;
-    private final String[] title = null;
-    private final String[] address = null;
-    private final String zip = null;
-    private final String city = null;
-    private final String country = null;
-    private final File image = null;
-    private final String[] mail = null;
-    private final String[] phone = null;
-    private final String link = null;
-    private final String last_seen_on = null;
-    private final List<String> rights = null;
+    private final Long profile_id;
+    private final Long user_id;
+    private final Long space_id;
+    private final Long org_id;
+    private final Long avatar;
+    private final String external_id;
+    private final String type;
+    private final String name;
+    private final String[] title;
+    private final String[] address;
+    private final String zip;
+    private final String city;
+    private final String country;
+    private final File image;
+    private final String[] mail;
+    private final String[] phone;
+    private final String link;
+    private final String last_seen_on;
+    private final List<String> rights;
+
+    private Contact(Parcel parcel) {
+        this.profile_id = parcel.readLong();
+        this.user_id = parcel.readLong();
+        this.space_id = parcel.readLong();
+        this.org_id = parcel.readLong();
+        this.avatar = parcel.readLong();
+        this.external_id = parcel.readString();
+        this.type = parcel.readString();
+        this.name = parcel.readString();
+        this.title = parcel.createStringArray();
+        this.address = parcel.createStringArray();
+        this.zip = parcel.readString();
+        this.city = parcel.readString();
+        this.country = parcel.readString();
+        this.image = parcel.readParcelable(ClassLoader.getSystemClassLoader());
+        this.mail = parcel.createStringArray();
+        this.phone = parcel.createStringArray();
+        this.link = parcel.readString();
+        this.last_seen_on = parcel.readString();
+
+        this.rights = new ArrayList<String>();
+        parcel.readStringList(rights);
+    }
+
+    private Contact() {
+        this.profile_id = null;
+        this.user_id = null;
+        this.space_id = null;
+        this.org_id = null;
+        this.avatar = null;
+        this.external_id = null;
+        this.type = null;
+        this.name = null;
+        this.title = null;
+        this.address = null;
+        this.zip = null;
+        this.city = null;
+        this.country = null;
+        this.image = null;
+        this.mail = null;
+        this.phone = null;
+        this.link = null;
+        this.last_seen_on = null;
+        this.rights = null;
+    }
 
     public long getProfileId() {
         return Utils.getNative(profile_id, -1L);
@@ -153,6 +214,34 @@ public class Contact {
         }
 
         return false;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(Utils.getNative(this.profile_id, -1L));
+        dest.writeLong(Utils.getNative(this.user_id, -1L));
+        dest.writeLong(Utils.getNative(this.space_id, -1L));
+        dest.writeLong(Utils.getNative(this.org_id, -1L));
+        dest.writeLong(Utils.getNative(this.avatar, -1L));
+        dest.writeString(this.external_id);
+        dest.writeString(this.type);
+        dest.writeString(this.name);
+        dest.writeStringArray(this.title);
+        dest.writeStringArray(this.address);
+        dest.writeString(this.zip);
+        dest.writeString(this.city);
+        dest.writeString(this.country);
+        dest.writeParcelable(this.image, 0);
+        dest.writeStringArray(this.mail);
+        dest.writeStringArray(this.phone);
+        dest.writeString(this.link);
+        dest.writeString(this.last_seen_on);
+        dest.writeStringList(this.rights);
     }
 
 }

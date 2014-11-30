@@ -22,26 +22,78 @@
 
 package com.podio.sdk.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
  */
-public class File {
+public class File implements Parcelable {
+    public static final Parcelable.Creator<File> CREATOR = new Parcelable.Creator<File>() {
+        public File createFromParcel(Parcel in) {
+            return new File(in);
+        }
+
+        public File[] newArray(int size) {
+            return new File[size];
+        }
+    };
+
     private final Long file_id;
-    private final Integer size = null;
-    private final String description = null;
-    private final String hosted_by = null;
-    private final String hosted_by_humanized_name = null;
-    private final String link = null;
-    private final String link_target = null;
-    private final String mimetype = null;
-    private final String name = null;
-    private final String perma_link = null;
-    private final String thumbnail_link = null;
+    private final Integer size;
+    private final String description;
+    private final String hosted_by;
+    private final String hosted_by_humanized_name;
+    private final String link;
+    private final String link_target;
+    private final String mimetype;
+    private final String name;
+    private final String perma_link;
+    private final String thumbnail_link;
+
+    private File(Parcel parcel) {
+        this.file_id = parcel.readLong();
+        this.size = parcel.readInt();
+        this.description = parcel.readString();
+        this.hosted_by = parcel.readString();
+        this.hosted_by_humanized_name = parcel.readString();
+        this.link = parcel.readString();
+        this.link_target = parcel.readString();
+        this.mimetype = parcel.readString();
+        this.name = parcel.readString();
+        this.perma_link = parcel.readString();
+        this.thumbnail_link = parcel.readString();
+    }
+
+    @SuppressWarnings("unused")
+    private File() {
+        this.file_id = null;
+        this.size = null;
+        this.description = null;
+        this.hosted_by = null;
+        this.hosted_by_humanized_name = null;
+        this.link = null;
+        this.link_target = null;
+        this.mimetype = null;
+        this.name = null;
+        this.perma_link = null;
+        this.thumbnail_link = null;
+    }
 
     public File(long fileId) {
         this.file_id = fileId;
+        this.size = null;
+        this.description = null;
+        this.hosted_by = null;
+        this.hosted_by_humanized_name = null;
+        this.link = null;
+        this.link_target = null;
+        this.mimetype = null;
+        this.name = null;
+        this.perma_link = null;
+        this.thumbnail_link = null;
     }
 
     public String getDescription() {
@@ -86,6 +138,26 @@ public class File {
 
     public String getThumbnailLink() {
         return thumbnail_link;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(Utils.getNative(this.file_id, -1L));
+        dest.writeLong(Utils.getNative(this.size, -1));
+        dest.writeString(this.description);
+        dest.writeString(this.hosted_by);
+        dest.writeString(this.hosted_by_humanized_name);
+        dest.writeString(this.link);
+        dest.writeString(this.link_target);
+        dest.writeString(this.mimetype);
+        dest.writeString(this.name);
+        dest.writeString(this.perma_link);
+        dest.writeString(this.thumbnail_link);
     }
 
 }
