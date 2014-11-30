@@ -82,7 +82,7 @@ public class ContactProvider extends VolleyProvider {
             return this;
         }
 
-        public ContactFilterProvider withRequiredFields(String... fieldNames) {
+        public ContactFilterProvider withRequiredFields(String[] fieldNames) {
             if (Utils.notEmpty(fieldNames)) {
                 String fields = Utils.join(fieldNames, ",");
                 addQueryParameter("required", fields);
@@ -106,7 +106,7 @@ public class ContactProvider extends VolleyProvider {
             super("contact");
         }
 
-        Path withProfileIds(String... ids) {
+        Path withProfileIds(String[] ids) {
             if (Utils.notEmpty(ids)) {
                 String segment = Utils.join(ids, ",");
                 addPathSegment(segment);
@@ -126,7 +126,7 @@ public class ContactProvider extends VolleyProvider {
         return new ContactFilterProvider();
     }
 
-    public Request<Contact[]> getWithProfileIds(long... ids) {
+    public Request<Contact[]> getWithProfileIds(long[] ids) {
         String[] strings = null;
 
         if (Utils.notEmpty(ids)) {

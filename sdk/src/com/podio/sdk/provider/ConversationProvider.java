@@ -136,7 +136,7 @@ public class ConversationProvider extends VolleyProvider {
      *        The list of ids of any files attached to the reply.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Conversation.Event> replyToConversation(long conversationId, String message, String link, long... fileIds) {
+    public Request<Conversation.Event> replyToConversation(long conversationId, String message, String link, long[] fileIds) {
         Path filter = new Path().withReply(conversationId);
         Conversation.Reply reply = new Conversation.Reply(message, link, fileIds);
         return post(filter, reply, Conversation.Event.class);
