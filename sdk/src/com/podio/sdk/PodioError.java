@@ -33,10 +33,31 @@ import com.podio.sdk.internal.Utils;
 public class PodioError extends RuntimeException {
     private transient static final long serialVersionUID = -798570582194918180L;
 
+    /**
+     * Sub object of the ErrorBundle class.
+     * 
+     * @author László Urszuly
+     */
     private static final class ErrorRequest {
         private final String url = null;
         private final String query_string = null;
         private final String method = null;
+    }
+
+    /**
+     * The very Podio error domain model as sent by the API. This class is used
+     * to isolate the object layout and not have the PodioError exception being
+     * directly dependent of it.
+     * 
+     * @author László Urszuly
+     */
+    private static final class ErrorBundle {
+        private final HashMap<String, String> error_parameters = null;
+        private final String error_detail = null;
+        private final Boolean error_propagate = null;
+        private final ErrorRequest request = null;
+        private final String error_description = null;
+        private final String error = null;
     }
 
     public static PodioError fromThrowable(Throwable throwable) {
@@ -88,12 +109,10 @@ public class PodioError extends RuntimeException {
      * @return A new PodioException instance.
      */
     public static PodioError fromJson(String json, int statusCode, Throwable cause) {
-        PodioError podioError;
+        PodioError podioError = new PodioError();
 
         if (Utils.notEmpty(json)) {
-            podioError = JsonParser.fromJson(json, PodioError.class);
-        } else {
-            podioError = new PodioError();
+            podioError.errorBundle = JsonParser.fromJson(json, ErrorBundle.class);
         }
 
         podioError.initCause(cause);
@@ -103,15 +122,9 @@ public class PodioError extends RuntimeException {
         return podioError;
     }
 
-    private final HashMap<String, String> error_parameters = null;
-    private final String error_detail = null;
-    private final Boolean error_propagate = null;
-    private final ErrorRequest request = null;
-    private final String error_description = null;
-    private final String error = null;
-
-    private transient Integer statusCode = null;
-    private transient String source = null;
+    private ErrorBundle errorBundle = null;
+    private Integer statusCode = null;
+    private String source = null;
 
     /**
      * Constructor.
@@ -148,7 +161,7 @@ public class PodioError extends RuntimeException {
      * @return Boolean. Defaults to false if not stated.
      */
     public boolean doPropagate() {
-        return error_propagate != null ? error_propagate.booleanValue() : false;
+        return errorBundle != null ? Utils.getNative(errorBundle.error_propagate, false) : false;
     }
 
     /**
@@ -156,8 +169,8 @@ public class PodioError extends RuntimeException {
      * 
      * @return String or null.
      */
-    public String getDescription() {
-        return error_description;
+    public String getErrorDescription() {
+        return errorBundle != null ? errorBundle.error_description : null;
     }
 
     /**
@@ -166,7 +179,7 @@ public class PodioError extends RuntimeException {
      * @return String or null
      */
     public String getError() {
-        return error;
+        return errorBundle != null ? errorBundle.error : null;
     }
 
     /**
@@ -175,7 +188,7 @@ public class PodioError extends RuntimeException {
      * @return String or null.
      */
     public String getErrorDetail() {
-        return error_detail;
+        return errorBundle != null ? errorBundle.error_detail : null;
     }
 
     /**
@@ -186,7 +199,7 @@ public class PodioError extends RuntimeException {
      * @return String or null.
      */
     public String getErrorParameter(String key) {
-        return error_parameters != null ? error_parameters.get(key) : null;
+        return errorBundle != null && errorBundle.error_parameters != null ? errorBundle.error_parameters.get(key) : null;
     }
 
     /**
@@ -219,7 +232,7 @@ public class PodioError extends RuntimeException {
      * @return String or null.
      */
     public String getMethod() {
-        return request != null ? request.method : null;
+        return errorBundle != null && errorBundle.request != null ? errorBundle.request.method : null;
     }
 
     /**
@@ -229,7 +242,7 @@ public class PodioError extends RuntimeException {
      * @return String or null.
      */
     public String getQueryString() {
-        return request != null ? request.query_string : null;
+        return errorBundle != null && errorBundle.request != null ? errorBundle.request.query_string : null;
     }
 
     /**
@@ -257,7 +270,7 @@ public class PodioError extends RuntimeException {
      * @return String or null.
      */
     public String getUrl() {
-        return request != null ? request.url : null;
+        return errorBundle != null && errorBundle.request != null ? errorBundle.request.url : null;
     }
 
     /**
@@ -269,7 +282,7 @@ public class PodioError extends RuntimeException {
      * @return Boolean.
      */
     public boolean hasErrorParameter(String key) {
-        return error_parameters != null && error_parameters.containsKey(key);
+        return errorBundle != null && errorBundle.error_parameters != null && errorBundle.error_parameters.containsKey(key);
     }
 
     /**
@@ -309,7 +322,7 @@ public class PodioError extends RuntimeException {
      */
     public boolean isExpiredError() {
         return getStatusCode() == 401 ||
-                ("unauthorized".equals(error) && "expired_token".equals(error_description));
+                ("unauthorized".equals(getError()) && "expired_token".equals(getErrorDescription()));
     }
 
     /**
@@ -319,8 +332,11 @@ public class PodioError extends RuntimeException {
      * @return Boolean <code>true</code> if the session has invalid grands.
      */
     public boolean isAuthError() {
+        String error = getError();
+        String description = getErrorDescription();
+
         return getStatusCode() == 400 &&
                 ("invalid_grant".equals(error)) ||
-                ("invalid_client".equals(error) && "invalid_auth".equals(error_description));
+                ("invalid_client".equals(error) && "invalid_auth".equals(description));
     }
 }
