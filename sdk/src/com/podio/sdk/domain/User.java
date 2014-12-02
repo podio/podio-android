@@ -22,6 +22,9 @@
 
 package com.podio.sdk.domain;
 
+import static com.podio.sdk.internal.Utils.FALSE;
+import static com.podio.sdk.internal.Utils.TRUE;
+
 import java.util.Date;
 import java.util.List;
 
@@ -61,8 +64,6 @@ public class User implements Parcelable {
      * @author László Urszuly
      */
     public static class Email implements Parcelable {
-        private static final int TRUE = 1;
-        private static final int FALSE = 1;
 
         public static final Parcelable.Creator<User.Email> CREATOR = new Parcelable.Creator<User.Email>() {
             public User.Email createFromParcel(Parcel in) {
