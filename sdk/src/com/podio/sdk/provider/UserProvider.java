@@ -23,6 +23,7 @@ package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
+import com.podio.sdk.domain.Profile;
 import com.podio.sdk.domain.User;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -71,9 +72,9 @@ public class UserProvider extends VolleyProvider {
      * 
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<User.Profile> getProfile() {
+    public Request<Profile> getProfile() {
         Path filter = new Path().withProfile();
-        return get(filter, User.Profile.class);
+        return get(filter, Profile.class);
     }
 
     /**

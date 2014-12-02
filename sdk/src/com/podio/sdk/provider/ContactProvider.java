@@ -23,7 +23,7 @@ package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
-import com.podio.sdk.domain.User;
+import com.podio.sdk.domain.Profile;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.volley.VolleyProvider;
 
@@ -95,8 +95,8 @@ public class ContactProvider extends VolleyProvider {
             return this;
         }
 
-        public Request<User.Profile[]> get() {
-            return ContactProvider.this.get(this, User.Profile[].class);
+        public Request<Profile[]> get() {
+            return ContactProvider.this.get(this, Profile[].class);
         }
     }
 
@@ -126,7 +126,7 @@ public class ContactProvider extends VolleyProvider {
         return new ContactFilterProvider();
     }
 
-    public Request<User.Profile[]> getWithProfileIds(long[] ids) {
+    public Request<Profile[]> getWithProfileIds(long[] ids) {
         String[] strings = null;
 
         if (Utils.notEmpty(ids)) {
@@ -139,7 +139,7 @@ public class ContactProvider extends VolleyProvider {
         }
 
         Path filter = new Path().withProfileIds(strings);
-        return get(filter, User.Profile[].class);
+        return get(filter, Profile[].class);
     }
 
 }

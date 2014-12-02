@@ -236,7 +236,7 @@ public class Conversation implements Parcelable {
     private final Boolean unread;
     private final Integer unread_count;
     private final Byline created_by;
-    private final User.Profile[] participants;
+    private final Profile[] participants;
     private final String created_on;
     private final String last_event_on;
     private final String link;
@@ -253,7 +253,7 @@ public class Conversation implements Parcelable {
         this.unread = (parcel.readInt() == 1);
         this.unread_count = parcel.readInt();
         this.created_by = parcel.readParcelable(ClassLoader.getSystemClassLoader());
-        this.participants = parcel.createTypedArray(User.Profile.CREATOR);
+        this.participants = parcel.createTypedArray(Profile.CREATOR);
         this.created_on = parcel.readString();
         this.last_event_on = parcel.readString();
         this.link = parcel.readString();
@@ -350,8 +350,8 @@ public class Conversation implements Parcelable {
         return link;
     }
 
-    public User.Profile[] getParticipants() {
-        return participants != null ? participants.clone() : new User.Profile[0];
+    public Profile[] getParticipants() {
+        return participants != null ? participants.clone() : new Profile[0];
     }
 
     public Presence getPresenceMetaData() {
