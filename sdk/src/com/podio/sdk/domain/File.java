@@ -96,6 +96,26 @@ public class File implements Parcelable {
         this.thumbnail_link = null;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(Utils.getNative(this.file_id, -1L));
+        dest.writeLong(Utils.getNative(this.size, -1));
+        dest.writeString(this.description);
+        dest.writeString(this.hosted_by);
+        dest.writeString(this.hosted_by_humanized_name);
+        dest.writeString(this.link);
+        dest.writeString(this.link_target);
+        dest.writeString(this.mimetype);
+        dest.writeString(this.name);
+        dest.writeString(this.perma_link);
+        dest.writeString(this.thumbnail_link);
+    }
+
     public String getDescription() {
         return description;
     }
@@ -138,26 +158,6 @@ public class File implements Parcelable {
 
     public String getThumbnailLink() {
         return thumbnail_link;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(Utils.getNative(this.file_id, -1L));
-        dest.writeLong(Utils.getNative(this.size, -1));
-        dest.writeString(this.description);
-        dest.writeString(this.hosted_by);
-        dest.writeString(this.hosted_by_humanized_name);
-        dest.writeString(this.link);
-        dest.writeString(this.link_target);
-        dest.writeString(this.mimetype);
-        dest.writeString(this.name);
-        dest.writeString(this.perma_link);
-        dest.writeString(this.thumbnail_link);
     }
 
 }

@@ -22,47 +22,89 @@
 
 package com.podio.sdk.domain;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.podio.sdk.internal.Utils;
 
-public class User {
+/**
+ * A Java representation of the UserDTO API domain object.
+ * 
+ * @author László Urszuly
+ */
+public class User implements Parcelable {
 
-    public static enum Flag {
-        god,
-        bulletin_author,
-        app_store_manager,
-        experiment_manager,
-        org_viewer,
-        org_manager,
-        api_manager,
-        extension_manager,
-        tnol_manager,
-        seo_manager,
-        out_of_office,
-        sales,
-        sales_default,
-        sales_large,
-        sales_contract,
-        undefined
-    }
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public static enum Status {
         inactive,
         active,
         deleted,
         blocked,
-        blacklisted,
-        undefined
+        unknown
     }
 
-    public static class Email {
-        private final Boolean disabled = null;
-        private final Boolean primary = null;
-        private final Boolean verified = null;
-        private final String mail = null;
+    /**
+     * A Java implementation of the UserMailDTO domain object.
+     * 
+     * @author László Urszuly
+     */
+    public static class Email implements Parcelable {
+        private static final int TRUE = 1;
+        private static final int FALSE = 1;
+
+        public static final Parcelable.Creator<User.Email> CREATOR = new Parcelable.Creator<User.Email>() {
+            public User.Email createFromParcel(Parcel in) {
+                return new Email(in);
+            }
+
+            public User.Email[] newArray(int size) {
+                return new Email[size];
+            }
+        };
+
+        private final Boolean disabled;
+        private final Boolean primary;
+        private final Boolean verified;
+        private final String mail;
+
+        private Email(Parcel parcel) {
+            this.disabled = (parcel.readInt() == 1);
+            this.primary = (parcel.readInt() == 1);
+            this.verified = (parcel.readInt() == 1);
+            this.mail = parcel.readString();
+        }
+
+        private Email() {
+            this.disabled = null;
+            this.primary = null;
+            this.verified = null;
+            this.mail = null;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(disabled ? TRUE : FALSE);
+            dest.writeInt(primary ? TRUE : FALSE);
+            dest.writeInt(verified ? TRUE : FALSE);
+            dest.writeString(mail);
+        }
 
         public String getAddress() {
             return mail;
@@ -79,28 +121,154 @@ public class User {
         public boolean isVerified() {
             return Utils.getNative(verified, false);
         }
+
     }
 
-    public static class Profile {
-        private final File image = null;
-        private final Long avatar = null;
-        private final Long org_id = null;
-        private final Long profile_id = null;
-        private final Long space_id = null;
-        private final Long user_id = null;
-        private final List<String> location = null;
-        private final List<String> mail = null;
-        private final List<String> phone = null;
-        private final List<Right> rights = null;
-        private final List<String> title = null;
-        private final String about = null;
-        private final String external_id = null;
-        private final String link = null;
-        private final String last_seen_on = null;
-        private final String name = null;
-        // TODO consider offering an enum representation of the possible types
-        // so the API becomes clearer for a user of the SDK
-        private final String type = null;
+    public static class Profile implements Parcelable {
+
+        public static final Parcelable.Creator<User.Profile> CREATOR = new Parcelable.Creator<User.Profile>() {
+            public User.Profile createFromParcel(Parcel in) {
+                return new Profile(in);
+            }
+
+            public User.Profile[] newArray(int size) {
+                return new Profile[size];
+            }
+        };
+
+        private final Long user_id;
+        private final Long profile_id;
+        private final Long org_id;
+        private final Long space_id;
+        private final String external_id;
+        private final String last_seen_on;
+        private final String type; // See the "Type" enum.
+        private final String link;
+        private final List<String> rights; // See the "Right" enum.
+        private final Push push;
+        private final File image;
+
+        // Not found in the API ProfileDTO
+        private final String name;
+        private final String about;
+        private final String[] title;
+        private final String[] location;
+        private final String[] phone;
+        private final String[] mail;
+        private final String[] address;         // -> ContactAPI, not in ProfileDTO
+        private final String zip;               // -> ContactAPI, not in ProfileDTO
+        private final String city;              // -> ContactAPI, not in ProfileDTO
+        private final String country;           // -> ContactAPI, not in ProfileDTO
+
+        private Profile(Parcel parcel) {
+            this.user_id = parcel.readLong();
+            this.profile_id = parcel.readLong();
+            this.org_id = parcel.readLong();
+            this.space_id = parcel.readLong();
+            this.external_id = parcel.readString();
+            this.last_seen_on = parcel.readString();
+            this.type = parcel.readString();
+            this.link = parcel.readString();
+            this.rights = parcel.createStringArrayList();
+            this.push = parcel.readParcelable(ClassLoader.getSystemClassLoader());
+            this.image = parcel.readParcelable(ClassLoader.getSystemClassLoader());
+
+            // Non-ProfileDTO's
+            this.name = parcel.readString();
+            this.about = parcel.readString();
+            this.title = parcel.createStringArray();
+            this.location = parcel.createStringArray();
+            this.phone = parcel.createStringArray();
+            this.mail = parcel.createStringArray();
+            this.address = parcel.createStringArray();
+            this.zip = parcel.readString();
+            this.city = parcel.readString();
+            this.country = parcel.readString();
+        }
+
+        private Profile() {
+            this.user_id = null;
+            this.profile_id = null;
+            this.org_id = null;
+            this.space_id = null;
+            this.external_id = null;
+            this.last_seen_on = null;
+            this.type = null;
+            this.link = null;
+            this.rights = null;
+            this.push = null;
+            this.image = null;
+
+            // Non-ProfileDTO's
+            this.name = null;
+            this.about = null;
+            this.title = null;
+            this.location = null;
+            this.phone = null;
+            this.mail = null;
+            this.address = null;
+            this.zip = null;
+            this.city = null;
+            this.country = null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Profile)) {
+                return false;
+            }
+
+            Profile other = (Profile) o;
+            long pid1 = Utils.getNative(profile_id, -1);
+            long uid1 = Utils.getNative(user_id, -1);
+            long pid2 = other.getId();
+            long uid2 = other.getUserId();
+
+            return (pid1 == pid2 && pid1 != -1) || (uid1 == uid2 && uid1 != -1);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 29;
+            int result = 1;
+
+            result = prime * result + (user_id != null ? user_id.hashCode() : 0);
+            result = prime * result + (profile_id != null ? profile_id.hashCode() : 0);
+
+            return result;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(user_id);
+            dest.writeLong(profile_id);
+            dest.writeLong(org_id);
+            dest.writeLong(space_id);
+            dest.writeString(external_id);
+            dest.writeString(last_seen_on);
+            dest.writeString(type);
+            dest.writeString(link);
+            dest.writeStringList(rights);
+            dest.writeParcelable(push, flags);
+            dest.writeParcelable(image, flags);
+
+            // Non-ProfileDTO's
+            dest.writeString(name);
+            dest.writeString(about);
+            dest.writeStringArray(title);
+            dest.writeStringArray(location);
+            dest.writeStringArray(phone);
+            dest.writeStringArray(mail);
+            dest.writeStringArray(address);
+            dest.writeString(zip);
+            dest.writeString(city);
+            dest.writeString(country);
+        }
 
         public String getAbout() {
             return about;
@@ -110,14 +278,8 @@ public class User {
             return type;
         }
 
-        public long getAvatarId() {
-            return Utils.getNative(avatar, -1L);
-        }
-
-        public List<String> getEmailAddresses() {
-            return mail != null ?
-                    new ArrayList<String>(mail) :
-                    new ArrayList<String>();
+        public String[] getEmailAddresses() {
+            return mail != null ? mail.clone() : new String[0];
         }
 
         public String getExternalId() {
@@ -132,11 +294,10 @@ public class User {
             return image;
         }
 
-        /**
-         * Gets the date when the user was activated.
-         * 
-         * @return A date object, or null if the date couldn't be parsed.
-         */
+        public String getImageUrl() {
+            return image != null ? image.getLink() : null;
+        }
+
         public Date getLastSeenDate() {
             return Utils.parseDateTime(last_seen_on);
         }
@@ -149,10 +310,8 @@ public class User {
             return link;
         }
 
-        public List<String> getLocations() {
-            return location != null ?
-                    new ArrayList<String>(location) :
-                    new ArrayList<String>();
+        public String[] getLocations() {
+            return location != null ? location.clone() : new String[0];
         }
 
         public String getName() {
@@ -163,16 +322,20 @@ public class User {
             return Utils.getNative(org_id, -1L);
         }
 
-        public List<String> getPhoneNumbers() {
-            return phone != null ?
-                    new ArrayList<String>(phone) :
-                    new ArrayList<String>();
+        public String[] getPhoneNumbers() {
+            return phone != null ? phone.clone() : new String[0];
         }
 
-        public List<String> getTitles() {
-            return title != null ?
-                    new ArrayList<String>(title) :
-                    new ArrayList<String>();
+        public Push getPushTokens() {
+            return push;
+        }
+
+        public String getThumbnailUrl() {
+            return image != null ? image.getThumbnailLink() : null;
+        }
+
+        public String[] getTitles() {
+            return title != null ? title.clone() : new String[0];
         }
 
         public long getUserId() {
@@ -184,127 +347,85 @@ public class User {
         }
 
         /**
-         * Checks whether the list of rights the user has for this application
-         * contains <em>all</em> the given permissions.
+         * Checks whether the list of rights the user has for this domain object
+         * contains the given permission.
          * 
-         * @param permissions
-         *        The list of permissions to check for.
-         * @return Boolean true if all given permissions are found or no
-         *         permissions are given. Boolean false otherwise.
+         * @param permission
+         *        The permission to verify.
+         * @return True if the given permission is granted, false otherwise.
          */
-        public boolean hasRights(Right... permissions) {
-            if (rights != null) {
-                for (Right permission : permissions) {
-                    if (!rights.contains(permission)) {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
+        public boolean hasRight(Right permission) {
+            return rights != null && rights.contains(permission.name());
         }
+
     }
 
-    private final Long user_id = null;
-    private final Long profile_id = null;
-    private final Long org_id = null;
-    private final Long space_id = null;
-    private final String name = null;
-    private final String link = null;
-    private final String url = null;
-    private final File image = null;
-    private final Long avatar = null;
-    private final List<String> flags = null;
-    private final List<Email> mails = null;
-    private final String type = null;
-    private final String status = null;
-    private final String last_seen_on = null;
-    private final String activated_on = null;
-    private final String created_on = null;
-    private final String locale = null;
-    private final String mail = null;
-    private final String timezone = null;
-    private final Integer inbox_new = null;
-    private final Integer message_unread_count = null;
-    private final Push push = null;
-    private final Profile profile = null;
-    private final Presence presence = null;
+    private final Long user_id;
+    private final String status;
+    private final String created_on;
+    private final String mail;
+    private final Email[] mails;
+    private final String locale;
+    private final String timezone;
+
+    private User(Parcel parcel) {
+        this.user_id = parcel.readLong();
+        this.status = parcel.readString();
+        this.created_on = parcel.readString();
+        this.mail = parcel.readString();
+        this.mails = parcel.createTypedArray(Email.CREATOR);
+        this.locale = parcel.readString();
+        this.timezone = parcel.readString();
+    }
 
     private User() {
+        this.user_id = null;
+        this.status = null;
+        this.created_on = null;
+        this.mail = null;
+        this.mails = null;
+        this.locale = null;
+        this.timezone = null;
     }
 
-    public Presence getPresence() {
-        return presence;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public Push getPush() {
-        return push;
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User)) {
+            return false;
+        }
+
+        User other = (User) o;
+        long uid1 = Utils.getNative(user_id, -1);
+        long uid2 = other.getUserId();
+
+        return uid1 == uid2 && uid1 != -1;
     }
 
-    public Profile getProfile() {
-        return profile;
+    @Override
+    public int hashCode() {
+        final int prime = 37;
+        int result = 1;
+        result = prime * result + (user_id != null ? user_id.hashCode() : 0);
+
+        return result;
     }
 
-    public long getProfileId() {
-        return Utils.getNative(profile_id, -1L);
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(Utils.getNative(user_id, -1L));
+        dest.writeString(status);
+        dest.writeString(created_on);
+        dest.writeString(mail);
+        dest.writeTypedArray(mails, flags);
+        dest.writeString(locale);
+        dest.writeString(timezone);
     }
 
-    public long getOrganizationId() {
-        return Utils.getNative(org_id, -1L);
-    }
-
-    public long getSpaceId() {
-        return Utils.getNative(space_id, -1L);
-    }
-
-    public String getLink() {
-        return link != null ? link : url;
-    }
-
-    public int getInboxNew() {
-        return Utils.getNative(inbox_new, -1);
-    }
-
-    public String getImageUrl() {
-        return image != null ? image.getLink() : null;
-    }
-
-    public File getImage() {
-        return image;
-    }
-
-    public int getUnreadMessagesCount() {
-        return Utils.getNative(message_unread_count, -1);
-    }
-
-    /**
-     * Gets the date when the user was activated.
-     * 
-     * @return A date object, or null if the date couldn't be parsed.
-     */
-    public Date getActivatedDate() {
-        return Utils.parseDateTime(activated_on);
-    }
-
-    public String getActivatedDateString() {
-        return activated_on;
-    }
-
-    public Date getLastSeenDate() {
-        return Utils.parseDateTime(last_seen_on);
-    }
-
-    public String getLastSeenDateString() {
-        return last_seen_on;
-    }
-
-    /**
-     * Gets the date when the user was created.
-     * 
-     * @return A date object, or null if the date couldn't be parsed.
-     */
     public Date getCreatedDate() {
         return Utils.parseDateTime(created_on);
     }
@@ -317,22 +438,12 @@ public class User {
         return mail;
     }
 
-    public List<Email> getEmails() {
-        return mails != null ?
-                new ArrayList<Email>(mails) :
-                new ArrayList<Email>();
+    public Email[] getEmails() {
+        return mails != null ? mails.clone() : new Email[0];
     }
 
-    public long getId() {
+    public long getUserId() {
         return Utils.getNative(user_id, -1L);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public long getAvatar() {
-        return Utils.getNative(avatar, -1L);
     }
 
     public String getLocale() {
@@ -343,31 +454,14 @@ public class User {
         try {
             return Status.valueOf(status);
         } catch (NullPointerException e) {
-            return Status.undefined;
+            return Status.unknown;
         } catch (IllegalArgumentException e) {
-            return Status.undefined;
+            return Status.unknown;
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getTimezone() {
         return timezone;
     }
 
-    public boolean hasFlags(Flag... data) {
-        if (Utils.notEmpty(flags)) {
-            for (Flag flag : data) {
-                if (!flags.contains(flag.name())) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
 }
