@@ -24,7 +24,6 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Conversation;
-import com.podio.sdk.domain.Conversation.CreateResult;
 import com.podio.sdk.volley.VolleyProvider;
 
 /**
@@ -79,9 +78,9 @@ public class ConversationProvider extends VolleyProvider {
      *        The parameters for the new conversation.
      * @return A creation result.
      */
-    public Request<Conversation.CreateResult> createConversation(Conversation.Create data) {
+    public Request<Conversation> createConversation(Conversation.Create data) {
         Path filter = new Path().withCreate();
-        return post(filter, data, CreateResult.class);
+        return post(filter, data, Conversation.class);
     }
 
     /**
