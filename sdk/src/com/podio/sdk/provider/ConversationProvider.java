@@ -39,22 +39,24 @@ public class ConversationProvider extends VolleyProvider {
             super("conversation");
         }
 
-        Path withId(long id) {
-            addPathSegment(Long.toString(id, 10));
+        Path withCreate() {
+            addPathSegment("v2");
             return this;
         }
 
-        Path withSpan(int limit, int offset) {
-            addQueryParameter("limit", Integer.toString(limit, 10));
-            addQueryParameter("offset", Integer.toString(offset, 10));
-            return this;
-        }
-
-        Path withEvents(long id, int limit, int offset) {
+        Path withEvents(long id) {
             addPathSegment(Long.toString(id, 10));
             addPathSegment("event");
-            addQueryParameter("limit", Integer.toString(limit, 10));
-            addQueryParameter("offset", Integer.toString(offset, 10));
+            return this;
+        }
+
+        Path withFlag(String key, String value) {
+            addQueryParameter(key, value);
+            return this;
+        }
+
+        Path withId(long id) {
+            addPathSegment(Long.toString(id, 10));
             return this;
         }
 
@@ -65,10 +67,18 @@ public class ConversationProvider extends VolleyProvider {
             return this;
         }
 
-        Path withCreate() {
-            addPathSegment("v2");
+        Path withSearch(String text) {
+            addPathSegment("search");
+            addQueryParameter("text", text);
             return this;
         }
+
+        Path withSpan(int limit, int offset) {
+            addQueryParameter("limit", Integer.toString(limit, 10));
+            addQueryParameter("offset", Integer.toString(offset, 10));
+            return this;
+        }
+
     }
 
     /**
@@ -119,7 +129,7 @@ public class ConversationProvider extends VolleyProvider {
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation.Event[]> getConversationMessages(long id, int limit, int offset) {
-        Path filter = new Path().withEvents(id, limit, offset);
+        Path filter = new Path().withEvents(id).withSpan(limit, offset);
         return get(filter, Conversation.Event[].class);
     }
 
@@ -141,4 +151,26 @@ public class ConversationProvider extends VolleyProvider {
         return post(filter, reply, Conversation.Event.class);
     }
 
+    /**
+     * Searches the conversations for the given text snippet.
+     * 
+     * @param text
+     *        The text to match conversations to.
+     * @param limit
+     *        The maximum number of replies to return.
+     * @param offset
+     *        The number of replies to skip before start counting the number of
+     *        replies to pick.
+     * @param searchParticipants
+     *        Whether to search for participant names or not.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Conversation[]> searchConversations(String text, int limit, int offset, boolean searchParticipants) {
+        Path filter = new Path().withSearch(text).withSpan(limit, offset);
+        if (searchParticipants) {
+            filter.withFlag("participants", "true");
+        }
+
+        return get(filter, Conversation[].class);
+    }
 }
