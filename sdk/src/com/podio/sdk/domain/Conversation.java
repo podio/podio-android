@@ -37,6 +37,7 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class Conversation implements Parcelable {
+    public static final Conversation EMPTY = new Conversation();
 
     public static final Parcelable.Creator<Conversation> CREATOR = new Parcelable.Creator<Conversation>() {
         public Conversation createFromParcel(Parcel in) {
@@ -91,6 +92,7 @@ public class Conversation implements Parcelable {
     }
 
     public static class Data implements Parcelable {
+        public static final Data EMPTY = new Data();
 
         public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {
             public Data createFromParcel(Parcel in) {
@@ -128,15 +130,16 @@ public class Conversation implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(message_id);
-            dest.writeTypedArray(files, flags);
-            dest.writeString(text);
-            dest.writeString(created_on);
+            dest.writeLong(Utils.getNative(message_id, -1L));
+            dest.writeTypedArray(Utils.getObject(files, new File[0]), flags);
+            dest.writeString(Utils.getObject(text, ""));
+            dest.writeString(Utils.getObject(created_on, ""));
         }
 
     }
 
     public static class Event implements Parcelable {
+        public static final Event EMPTY = new Event();
 
         public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
             public Event createFromParcel(Parcel in) {
@@ -155,11 +158,11 @@ public class Conversation implements Parcelable {
         private final Data data;
 
         private Event(Parcel parcel) {
+            this.created_by = parcel.readParcelable(Byline.class.getClassLoader());
+            this.data = parcel.readParcelable(Data.class.getClassLoader());
             this.event_id = parcel.readLong();
-            this.created_by = parcel.readParcelable(ClassLoader.getSystemClassLoader());
             this.created_on = parcel.readString();
             this.action = parcel.readString();
-            this.data = parcel.readParcelable(ClassLoader.getSystemClassLoader());
         }
 
         private Event() {
@@ -177,11 +180,11 @@ public class Conversation implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(event_id);
-            dest.writeParcelable(created_by, flags);
-            dest.writeString(created_on);
-            dest.writeString(action);
-            dest.writeParcelable(data, flags);
+            dest.writeParcelable(Utils.getObject(created_by, Byline.EMPTY), flags);
+            dest.writeParcelable(Utils.getObject(data, Data.EMPTY), flags);
+            dest.writeLong(Utils.getNative(event_id, -1L));
+            dest.writeString(Utils.getObject(created_on, ""));
+            dest.writeString(Utils.getObject(action, ""));
         }
 
         public long getEventId() {
@@ -247,12 +250,14 @@ public class Conversation implements Parcelable {
     private final Push push;
 
     private Conversation(Parcel parcel) {
+        this.created_by = parcel.readParcelable(Byline.class.getClassLoader());
+        this.presence = parcel.readParcelable(Presence.class.getClassLoader());
+        this.push = parcel.readParcelable(Push.class.getClassLoader());
         this.conversation_id = parcel.readLong();
         this.pinned = (parcel.readInt() == 1);
         this.starred = (parcel.readInt() == 1);
         this.unread = (parcel.readInt() == 1);
         this.unread_count = parcel.readInt();
-        this.created_by = parcel.readParcelable(ClassLoader.getSystemClassLoader());
         this.participants = parcel.createTypedArray(Profile.CREATOR);
         this.created_on = parcel.readString();
         this.last_event_on = parcel.readString();
@@ -260,8 +265,6 @@ public class Conversation implements Parcelable {
         this.type = parcel.readString();
         this.subject = parcel.readString();
         this.excerpt = parcel.readString();
-        this.presence = parcel.readParcelable(ClassLoader.getSystemClassLoader());
-        this.push = parcel.readParcelable(ClassLoader.getSystemClassLoader());
     }
 
     private Conversation() {
@@ -289,21 +292,21 @@ public class Conversation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(conversation_id);
+        dest.writeParcelable(Utils.getObject(created_by, Byline.EMPTY), flags);
+        dest.writeParcelable(Utils.getObject(presence, Presence.EMPTY), flags);
+        dest.writeParcelable(Utils.getObject(push, Push.EMPTY), flags);
+        dest.writeLong(Utils.getNative(conversation_id, -1L));
         dest.writeInt(pinned ? TRUE : FALSE);
         dest.writeInt(starred ? TRUE : FALSE);
         dest.writeInt(unread ? TRUE : FALSE);
-        dest.writeInt(unread_count);
-        dest.writeParcelable(created_by, flags);
-        dest.writeTypedArray(participants, flags);
-        dest.writeString(created_on);
-        dest.writeString(last_event_on);
-        dest.writeString(link);
-        dest.writeString(type);
-        dest.writeString(subject);
-        dest.writeString(excerpt);
-        dest.writeParcelable(presence, flags);
-        dest.writeParcelable(push, flags);
+        dest.writeInt(Utils.getNative(unread_count, 1));
+        dest.writeTypedArray(Utils.getObject(participants, new Profile[0]), flags);
+        dest.writeString(Utils.getObject(created_on, ""));
+        dest.writeString(Utils.getObject(last_event_on, ""));
+        dest.writeString(Utils.getObject(link, ""));
+        dest.writeString(Utils.getObject(type, Type.unknown.name()));
+        dest.writeString(Utils.getObject(subject, ""));
+        dest.writeString(Utils.getObject(excerpt, ""));
     }
 
     public long getConversationId() {

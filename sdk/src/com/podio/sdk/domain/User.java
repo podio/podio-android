@@ -38,6 +38,7 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class User implements Parcelable {
+    public static final User EMPTY = new User();
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
         public User createFromParcel(Parcel in) {
@@ -63,6 +64,7 @@ public class User implements Parcelable {
      * @author László Urszuly
      */
     public static class Email implements Parcelable {
+        public static final Email EMPTY = new Email();
 
         public static final Parcelable.Creator<User.Email> CREATOR = new Parcelable.Creator<User.Email>() {
             public User.Email createFromParcel(Parcel in) {
@@ -103,7 +105,7 @@ public class User implements Parcelable {
             dest.writeInt(disabled ? TRUE : FALSE);
             dest.writeInt(primary ? TRUE : FALSE);
             dest.writeInt(verified ? TRUE : FALSE);
-            dest.writeString(mail);
+            dest.writeString(Utils.getObject(mail, ""));
         }
 
         public String getAddress() {
@@ -182,12 +184,12 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(Utils.getNative(user_id, -1L));
-        dest.writeString(status);
-        dest.writeString(created_on);
-        dest.writeString(mail);
-        dest.writeTypedArray(mails, flags);
-        dest.writeString(locale);
-        dest.writeString(timezone);
+        dest.writeString(Utils.getObject(status, Status.unknown.name()));
+        dest.writeString(Utils.getObject(created_on, ""));
+        dest.writeString(Utils.getObject(mail, ""));
+        dest.writeTypedArray(Utils.getObject(mails, new Email[0]), flags);
+        dest.writeString(Utils.getObject(locale, ""));
+        dest.writeString(Utils.getObject(timezone, ""));
     }
 
     public Date getCreatedDate() {

@@ -21,6 +21,7 @@
  */
 package com.podio.sdk.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import android.os.Parcelable;
 import com.podio.sdk.internal.Utils;
 
 public class Profile implements Parcelable {
+    public static final Profile EMPTY = new Profile();
 
     public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
         public Profile createFromParcel(Parcel in) {
@@ -66,6 +68,8 @@ public class Profile implements Parcelable {
     private final String country;           // -> ContactAPI, not in ProfileDTO
 
     private Profile(Parcel parcel) {
+        this.push = parcel.readParcelable(Push.class.getClassLoader());
+        this.image = parcel.readParcelable(File.class.getClassLoader());
         this.user_id = parcel.readLong();
         this.profile_id = parcel.readLong();
         this.org_id = parcel.readLong();
@@ -75,8 +79,6 @@ public class Profile implements Parcelable {
         this.type = parcel.readString();
         this.link = parcel.readString();
         this.rights = parcel.createStringArrayList();
-        this.push = parcel.readParcelable(ClassLoader.getSystemClassLoader());
-        this.image = parcel.readParcelable(ClassLoader.getSystemClassLoader());
 
         // Non-ProfileDTO's
         this.name = parcel.readString();
@@ -150,29 +152,30 @@ public class Profile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(user_id);
-        dest.writeLong(profile_id);
-        dest.writeLong(org_id);
-        dest.writeLong(space_id);
-        dest.writeString(external_id);
-        dest.writeString(last_seen_on);
-        dest.writeString(type);
-        dest.writeString(link);
-        dest.writeStringList(rights);
-        dest.writeParcelable(push, flags);
-        dest.writeParcelable(image, flags);
+        dest.writeParcelable(Utils.getObject(push, Push.EMPTY), flags);
+        dest.writeParcelable(Utils.getObject(image, File.EMPTY), flags);
+        dest.writeLong(Utils.getNative(user_id, -1L));
+        dest.writeLong(Utils.getNative(profile_id, -1L));
+        dest.writeLong(Utils.getNative(org_id, -1L));
+        dest.writeLong(Utils.getNative(space_id, -1L));
+        dest.writeString(Utils.getObject(external_id, ""));
+        dest.writeString(Utils.getObject(last_seen_on, ""));
+        dest.writeString(Utils.getObject(type, ""));
+        dest.writeString(Utils.getObject(link, ""));
+        dest.writeStringList(Utils.getObject(rights, new ArrayList<String>()));
 
         // Non-ProfileDTO's
-        dest.writeString(name);
-        dest.writeString(about);
-        dest.writeStringArray(title);
-        dest.writeStringArray(location);
-        dest.writeStringArray(phone);
-        dest.writeStringArray(mail);
-        dest.writeStringArray(address);
-        dest.writeString(zip);
-        dest.writeString(city);
-        dest.writeString(country);
+        String[] stringArrayEmpty = {};
+        dest.writeString(Utils.getObject(name, ""));
+        dest.writeString(Utils.getObject(about, ""));
+        dest.writeStringArray(Utils.getObject(title, stringArrayEmpty));
+        dest.writeStringArray(Utils.getObject(location, stringArrayEmpty));
+        dest.writeStringArray(Utils.getObject(phone, stringArrayEmpty));
+        dest.writeStringArray(Utils.getObject(mail, stringArrayEmpty));
+        dest.writeStringArray(Utils.getObject(address, stringArrayEmpty));
+        dest.writeString(Utils.getObject(zip, ""));
+        dest.writeString(Utils.getObject(city, ""));
+        dest.writeString(Utils.getObject(country, ""));
     }
 
     public String getAbout() {

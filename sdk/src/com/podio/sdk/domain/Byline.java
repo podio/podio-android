@@ -29,6 +29,18 @@ import android.os.Parcelable;
 import com.podio.sdk.internal.Utils;
 
 public class Byline implements Parcelable {
+    public static final Byline EMPTY = new Byline();
+
+    public static final Parcelable.Creator<Byline> CREATOR = new Parcelable.Creator<Byline>() {
+        public Byline createFromParcel(Parcel in) {
+            return new Byline(in);
+        }
+
+        public Byline[] newArray(int size) {
+            return new Byline[size];
+        }
+    };
+
     private final Long id;
     private final Long user_id;
     private final Long avatar;
@@ -41,6 +53,7 @@ public class Byline implements Parcelable {
     private final File image;
 
     private Byline(Parcel parcel) {
+        this.image = parcel.readParcelable(File.class.getClassLoader());
         this.id = parcel.readLong();
         this.user_id = parcel.readLong();
         this.avatar = parcel.readLong();
@@ -50,7 +63,6 @@ public class Byline implements Parcelable {
         this.last_seen_on = parcel.readString();
         this.type = parcel.readString();
         this.url = parcel.readString();
-        this.image = parcel.readParcelable(ClassLoader.getSystemClassLoader());
     }
 
     private Byline() {
@@ -73,16 +85,16 @@ public class Byline implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeLong(user_id);
-        dest.writeLong(avatar);
-        dest.writeLong(avatar_id);
-        dest.writeString(avatar_type);
-        dest.writeString(name);
-        dest.writeString(last_seen_on);
-        dest.writeString(type);
-        dest.writeString(url);
-        dest.writeParcelable(image, flags);
+        dest.writeParcelable(Utils.getObject(image, File.EMPTY), flags);
+        dest.writeLong(Utils.getNative(id, -1L));
+        dest.writeLong(Utils.getNative(user_id, -1L));
+        dest.writeLong(Utils.getNative(avatar, -1L));
+        dest.writeLong(Utils.getNative(avatar_id, -1L));
+        dest.writeString(Utils.getObject(avatar_type, Type.unknown.name()));
+        dest.writeString(Utils.getObject(name, ""));
+        dest.writeString(Utils.getObject(last_seen_on, ""));
+        dest.writeString(Utils.getObject(type, Type.unknown.name()));
+        dest.writeString(Utils.getObject(url, ""));
     }
 
     public long getId() {

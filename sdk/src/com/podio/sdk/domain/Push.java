@@ -27,6 +27,7 @@ import android.os.Parcelable;
 import com.podio.sdk.internal.Utils;
 
 public class Push implements Parcelable {
+    public static final Push EMPTY = new Push();
 
     public static final Parcelable.Creator<Push> CREATOR = new Parcelable.Creator<Push>() {
         public Push createFromParcel(Parcel in) {
@@ -64,10 +65,10 @@ public class Push implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(timestamp);
-        dest.writeInt(expires_in);
-        dest.writeString(channel);
-        dest.writeString(signature);
+        dest.writeLong(Utils.getObject(timestamp, -1L));
+        dest.writeInt(Utils.getObject(expires_in, 1));
+        dest.writeString(Utils.getObject(channel, ""));
+        dest.writeString(Utils.getObject(signature, ""));
     }
 
     public long getTimestamp() {

@@ -77,6 +77,10 @@ public class Utils {
         return object != null ? object.longValue() : fallback;
     }
 
+    public static <T> T getObject(T target, T fallback) {
+        return target != null ? target : fallback;
+    }
+
     public static boolean isAnyEmpty(String... strings) {
         boolean isEmpty = isEmpty(strings);
 

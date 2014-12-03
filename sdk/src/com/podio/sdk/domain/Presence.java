@@ -27,6 +27,7 @@ import android.os.Parcelable;
 import com.podio.sdk.internal.Utils;
 
 public class Presence implements Parcelable {
+    public static final Presence EMPTY = new Presence();
 
     public static final Parcelable.Creator<Presence> CREATOR = new Parcelable.Creator<Presence>() {
         public Presence createFromParcel(Parcel in) {
@@ -64,10 +65,10 @@ public class Presence implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(ref_id);
-        dest.writeLong(user_id);
-        dest.writeString(ref_type);
-        dest.writeString(signature);
+        dest.writeLong(Utils.getNative(ref_id, -1L));
+        dest.writeLong(Utils.getNative(user_id, -1L));
+        dest.writeString(Utils.getObject(ref_type, Type.unknown.name()));
+        dest.writeString(Utils.getObject(signature, ""));
     }
 
     public Type getRefType() {

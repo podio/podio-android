@@ -31,6 +31,8 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class File implements Parcelable {
+    public static final File EMPTY = new File();
+
     public static final Parcelable.Creator<File> CREATOR = new Parcelable.Creator<File>() {
         public File createFromParcel(Parcel in) {
             return new File(in);
@@ -67,7 +69,6 @@ public class File implements Parcelable {
         this.thumbnail_link = parcel.readString();
     }
 
-    @SuppressWarnings("unused")
     private File() {
         this.file_id = null;
         this.size = null;
@@ -103,17 +104,17 @@ public class File implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(Utils.getNative(this.file_id, -1L));
-        dest.writeLong(Utils.getNative(this.size, -1));
-        dest.writeString(this.description);
-        dest.writeString(this.hosted_by);
-        dest.writeString(this.hosted_by_humanized_name);
-        dest.writeString(this.link);
-        dest.writeString(this.link_target);
-        dest.writeString(this.mimetype);
-        dest.writeString(this.name);
-        dest.writeString(this.perma_link);
-        dest.writeString(this.thumbnail_link);
+        dest.writeLong(Utils.getNative(file_id, -1L));
+        dest.writeLong(Utils.getNative(size, -1));
+        dest.writeString(Utils.getObject(description, ""));
+        dest.writeString(Utils.getObject(hosted_by, ""));
+        dest.writeString(Utils.getObject(hosted_by_humanized_name, ""));
+        dest.writeString(Utils.getObject(link, ""));
+        dest.writeString(Utils.getObject(link_target, ""));
+        dest.writeString(Utils.getObject(mimetype, ""));
+        dest.writeString(Utils.getObject(name, ""));
+        dest.writeString(Utils.getObject(perma_link, ""));
+        dest.writeString(Utils.getObject(thumbnail_link, ""));
     }
 
     public String getDescription() {
