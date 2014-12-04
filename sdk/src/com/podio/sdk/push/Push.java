@@ -29,16 +29,12 @@ public interface Push {
 
     public Request<Void> publish(String channel, String signature, String timestamp, Object data);
 
-    public Request<Void> subscribe(String channel, String signature, String timestamp);
+    public Request<Void> subscribe(String channel, String signature, String timestamp, ResultListener<?> listener, Class<?> template);
 
-    public Request<Void> unsubscribe(String channel);
+    public Request<Void> unsubscribe(String channel, ResultListener<?> listener);
 
     public Push addErrorListener(ErrorListener errorListener);
 
-    public Push addEventListener(String channel, ResultListener<?> listener, Class<?> template);
-
     public Push removeErrorListener(ErrorListener errorListener);
-
-    public Push removeEventListener(ResultListener<?> listener);
 
 }
