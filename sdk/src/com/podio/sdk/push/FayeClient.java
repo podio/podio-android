@@ -184,21 +184,31 @@ public class FayeClient extends QueueClient implements Push {
      */
     @Override
     public Request<Void> unsubscribe(String channel, ResultListener<?> listener) {
-        if (listener != null) {
-            if (subscriptions.containsKey(channel)) {
-                subscriptions.get(channel).listeners.remove(listener);
-            }
-
-            return null;
-        } else {
+        if (listener == null) {
             if (subscriptions.containsKey(channel)) {
                 subscriptions.remove(channel);
-            }
 
-            UnsubscribeRequest request = new UnsubscribeRequest(channel, transport);
-            execute(request);
-            return request;
+                UnsubscribeRequest request = new UnsubscribeRequest(channel, transport);
+                execute(request);
+                return request;
+            }
+        } else {
+            if (subscriptions.containsKey(channel)) {
+                Subscription subscription = subscriptions.get(channel);
+                subscription.listeners.remove(listener);
+
+                if (subscription.listeners.size() == 0) {
+                    subscription = null;
+                    subscriptions.remove(channel);
+
+                    UnsubscribeRequest request = new UnsubscribeRequest(channel, transport);
+                    execute(request);
+                    return request;
+                }
+            }
         }
+
+        return null;
     }
 
     /**
