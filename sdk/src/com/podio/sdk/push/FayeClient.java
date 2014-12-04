@@ -141,7 +141,6 @@ public class FayeClient extends QueueClient implements Push {
         super(1, 1, 0L);
         this.subscriptions = new HashMap<String, Subscription>();
         this.errorListeners = new ArrayList<ErrorListener>();
-        // this.url = "https://push.podio.com/faye";
         this.transport = transport;
         this.transport.setErrorListener(internalErrorListener);
         this.transport.setEventListener(internalEventListener);

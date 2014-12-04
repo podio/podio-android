@@ -39,6 +39,9 @@ import com.podio.sdk.provider.StoreProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
+import com.podio.sdk.push.FayeClient;
+import com.podio.sdk.push.Push;
+import com.podio.sdk.push.VolleyLongPollingTransport;
 import com.podio.sdk.volley.VolleyClient;
 import com.podio.sdk.volley.VolleyRequest;
 
@@ -55,7 +58,12 @@ public class Podio {
     private static final String VERSION_NAME = "0.0.1";
     private static final int VERSION_CODE = 1;
 
+    /**
+     * The default request client for the providers.
+     */
     protected static VolleyClient restClient = new VolleyClient();
+
+    public static Push push;
 
     /**
      * Enables means of easy operating on the {@link ApplicationProvider} API
@@ -216,6 +224,9 @@ public class Podio {
      */
     public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
+
+        // TODO: Enable configuration of push end point.
+        push = new FayeClient(new VolleyLongPollingTransport(context, "https://push.podio.com/faye"));
 
         // Providers relying on a rest client in order to operate properly.
         application.setClient(restClient);
