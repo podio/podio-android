@@ -86,8 +86,8 @@ public class VolleyClient implements Client {
     protected String scheme;
     protected String authority;
 
-    private RequestQueue volleyRequestQueue;
-    private RequestQueue volleyPriorityQueue;
+    private static RequestQueue volleyRequestQueue;
+    private static RequestQueue volleyPriorityQueue;
 
     @Override
     public Request<Void> authenticateWithUserCredentials(String username, String password) {
@@ -258,27 +258,55 @@ public class VolleyClient implements Client {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
 
+        // Ensure the expected request queues exists.
         if (sslSocketFactory == null) {
-            this.volleyRequestQueue = Volley.newRequestQueue(context);
-            this.volleyPriorityQueue = Volley.newRequestQueue(context);
-        } else {
+            if (volleyRequestQueue == null) {
+                volleyRequestQueue = Volley.newRequestQueue(context);
+                volleyRequestQueue.start();
+            }
+
+            if (volleyPriorityQueue == null) {
+                volleyPriorityQueue = Volley.newRequestQueue(context);
+                volleyPriorityQueue.start();
+            }
+        } else if (volleyRequestQueue == null || volleyPriorityQueue == null) {
             HurlStack stack = new HurlStack(null, sslSocketFactory);
-            this.volleyRequestQueue = Volley.newRequestQueue(context, stack);
-            this.volleyPriorityQueue = Volley.newRequestQueue(context, stack);
+
+            if (volleyRequestQueue == null) {
+                volleyRequestQueue = Volley.newRequestQueue(context, stack);
+                volleyRequestQueue.start();
+            }
+
+            if (volleyPriorityQueue == null) {
+                volleyPriorityQueue = Volley.newRequestQueue(context, stack);
+                volleyPriorityQueue.start();
+            }
         }
 
-        Cache requestCache = this.volleyRequestQueue.getCache();
+        // Clear out any and all queued requests.
+        // TODO: It's a bit unclear what will happen to any processing requests.
+        RequestFilter blindRequestFilter = new RequestFilter() {
+
+            @Override
+            public boolean apply(com.android.volley.Request<?> request) {
+                return true;
+            }
+
+        };
+
+        volleyRequestQueue.cancelAll(blindRequestFilter);
+        volleyPriorityQueue.cancelAll(blindRequestFilter);
+
+        // Clear out any cached content in the request queues.
+        Cache requestCache = volleyRequestQueue.getCache();
         if (requestCache != null) {
             requestCache.clear();
         }
 
-        Cache sessionCache = this.volleyPriorityQueue.getCache();
-        if (sessionCache != null) {
-            sessionCache.clear();
+        Cache priorityCache = volleyPriorityQueue.getCache();
+        if (priorityCache != null) {
+            priorityCache.clear();
         }
-
-        this.volleyRequestQueue.start();
-        this.volleyPriorityQueue.start();
     }
 
     protected void addToRequestQueue(com.android.volley.Request<?> request) {
