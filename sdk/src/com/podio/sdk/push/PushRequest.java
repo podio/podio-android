@@ -31,6 +31,10 @@ import com.podio.sdk.internal.CallbackManager;
 
 class PushRequest<T> extends FutureTask<T> implements Request<T> {
 
+    private static enum Machine {
+        connected, handshaken, created, success, error
+    }
+
     private static final class HandshakeData {
         @SuppressWarnings("unused")
         private final String channel;
@@ -91,6 +95,8 @@ class PushRequest<T> extends FutureTask<T> implements Request<T> {
         }
     }
 
+    private static Machine state = Machine.created;
+
     /**
      * @param transport
      * @throws IllegalStateException
@@ -118,18 +124,34 @@ class PushRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     protected static Status send(Transport transport, Object data) {
+        if (state == Machine.created || state == Machine.error) {
+            state = open(transport).isSuccess() ?
+                    Machine.handshaken :
+                    Machine.error;
+        }
+
+        if (state == Machine.handshaken) {
+            state = connect(transport).isSuccess() ?
+                    Machine.connected :
+                    Machine.error;
+        }
+
         String json = transport.send(data);
         Status status = buildStatusObject(json);
 
         if (!status.isSuccess()) {
+            state = Machine.error;
+
             switch (status.advicedReconnectApproach()) {
             case unknown:
                 break;
             case handshake:
                 open(transport).validate();
+                state = Machine.handshaken;
                 // Intentional fall-through
             case retry:
                 connect(transport).validate();
+                state = Machine.connected;
                 // Intentional fall-through
             default:
                 json = transport.send(data);
@@ -138,6 +160,7 @@ class PushRequest<T> extends FutureTask<T> implements Request<T> {
         }
 
         status.validate();
+        state = Machine.success;
         return status;
     }
 
