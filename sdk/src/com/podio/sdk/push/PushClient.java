@@ -31,7 +31,7 @@ public interface PushClient {
 
     public void subscribe(String channel, String signature, String timestamp, ResultListener<Event[]> eventListener);
 
-    public void unsubscribe(String channel, ResultListener<?> listener);
+    public void unsubscribe(String channel, ResultListener<Event[]> listener);
 
     public PushClient addErrorListener(ErrorListener errorListener);
 
