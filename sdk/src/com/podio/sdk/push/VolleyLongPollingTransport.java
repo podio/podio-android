@@ -1,27 +1,25 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 package com.podio.sdk.push;
-
-import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
 
@@ -37,26 +35,19 @@ import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.podio.sdk.internal.CallbackManager;
+
+import java.util.concurrent.ExecutionException;
 
 public class VolleyLongPollingTransport implements Transport, Listener<String>, ErrorListener {
     private static RequestQueue metaQueue;
     private static RequestQueue dataQueue;
 
-    private static final Listener<String> SILENT = new Listener<String>() {
-
-        @Override
-        public void onResponse(String json) {
-            // This listener won't propagate any results to the external
-            // callbacks.
-        }
-
-    };
-
     private static class VolleyRequest extends StringRequest {
         private final Object data;
 
-        private VolleyRequest(String url, Object data, ErrorListener errorListener) {
-            this(url, data, SILENT, errorListener);
+        private VolleyRequest(String url, Object data, RequestFuture<String> future) {
+            this(url, data, future, future);
         }
 
         private VolleyRequest(String url, Object data, Listener<String> resultListener, ErrorListener errorListener) {
@@ -83,13 +74,10 @@ public class VolleyLongPollingTransport implements Transport, Listener<String>, 
 
             return super.getBody();
         }
-
     }
 
     private final String url;
-
-    private com.podio.sdk.Request.ErrorListener errorListener;
-    private com.podio.sdk.Request.ResultListener<String> resultListener;
+    private final CallbackManager<String> callbackManager;
 
     public VolleyLongPollingTransport(Context context, String url) {
         if (metaQueue == null) {
@@ -103,28 +91,32 @@ public class VolleyLongPollingTransport implements Transport, Listener<String>, 
         }
 
         this.url = url;
-        this.errorListener = null;
-        this.resultListener = null;
+        this.callbackManager = new CallbackManager<String>();
     }
 
     @Override
     public String connect(Object connectData, int timeoutMillis) {
-        VolleyRequest request = new VolleyRequest(url, connectData, this);
+        VolleyRequest request = new VolleyRequest(url, connectData, this, this);
         request.setRetryPolicy(new DefaultRetryPolicy(timeoutMillis, 0, 0.0f));
-        return waitForResult(request, dataQueue);
+        dataQueue.add(request);
+        request.setRequestQueue(dataQueue);
+
+        return null;
     }
 
     @Override
     public String disconnect(Object disconnectData) {
-        VolleyRequest request = new VolleyRequest(url, disconnectData, this);
-        return waitForResult(request, metaQueue);
+        RequestFuture<String> future = RequestFuture.newFuture();
+        VolleyRequest request = new VolleyRequest(url, disconnectData, future);
+        return waitForResult(future, request, metaQueue);
     }
 
     @Override
-    public String open(Object handshakeData) {
+    public String initialize(Object handshakeData) {
         clearQueue(dataQueue);
-        VolleyRequest request = new VolleyRequest(url, handshakeData, this);
-        return waitForResult(request, dataQueue);
+        RequestFuture<String> future = RequestFuture.newFuture();
+        VolleyRequest request = new VolleyRequest(url, handshakeData, future);
+        return waitForResult(future, request, metaQueue);
     }
 
     @Override
@@ -135,19 +127,20 @@ public class VolleyLongPollingTransport implements Transport, Listener<String>, 
     }
 
     @Override
-    public String send(final Object object) {
-        VolleyRequest request = new VolleyRequest(url, object, this, this);
-        return waitForResult(request, metaQueue);
+    public String configure(Object object) {
+        RequestFuture<String> future = RequestFuture.newFuture();
+        VolleyRequest request = new VolleyRequest(url, object, future);
+        return waitForResult(future, request, metaQueue);
     }
 
     @Override
     public void setErrorListener(com.podio.sdk.Request.ErrorListener listener) {
-        errorListener = listener;
+        callbackManager.addErrorListener(listener, false, null);
     }
 
     @Override
     public void setEventListener(com.podio.sdk.Request.ResultListener<String> listener) {
-        resultListener = listener;
+        callbackManager.addResultListener(listener, false, null);
     }
 
     @Override
@@ -157,15 +150,10 @@ public class VolleyLongPollingTransport implements Transport, Listener<String>, 
 
     @Override
     public void onResponse(String json) {
-        if (resultListener != null) {
-            resultListener.onRequestPerformed(json);
-        }
+        callbackManager.deliverResultOnMainThread(json);
     }
 
-    private String waitForResult(VolleyRequest request, RequestQueue queue) {
-        RequestFuture<String> future = RequestFuture.newFuture();
-        future.setRequest(request);
-
+    private String waitForResult(RequestFuture<String> future, VolleyRequest request, RequestQueue queue) {
         queue.add(request);
         request.setRequestQueue(queue);
 
@@ -193,9 +181,7 @@ public class VolleyLongPollingTransport implements Transport, Listener<String>, 
     }
 
     private void deliverError(Throwable cause) {
-        if (errorListener != null) {
-            errorListener.onErrorOccured(cause);
-        }
+        callbackManager.deliverErrorOnMainThread(cause);
     }
 
 }

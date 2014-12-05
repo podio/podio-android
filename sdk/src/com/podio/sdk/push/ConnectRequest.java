@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.podio.sdk.push;
 
 import java.util.concurrent.Callable;
 
-class UnsubscribeRequest extends PushRequest<Void> {
+class ConnectRequest extends PushRequest<Void> {
 
-    UnsubscribeRequest(final String channel, final Transport transport) {
+    ConnectRequest(final Transport transport) {
         super(new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {
-                unsubscribe(transport, channel);
+                State state = getState();
+                if (state != State.initialized && state != State.connected) {
+                    shakeHands(transport);
+                }
+
+                connect(transport);
                 return null;
             }
 
