@@ -228,7 +228,7 @@ public class FayePushClient extends QueueClient implements PushClient {
 
                 try {
                     Event.Type eventType = Event.Type.valueOf(type);
-                    Event event = gson.fromJson(fayeData, eventType.getClassObject());
+                    Event event = gson.fromJson(podioData, eventType.getClassObject());
                     addEventToMap(key, event, result);
                 } catch (NullPointerException e) {
                 } catch (IllegalArgumentException e) {
