@@ -40,7 +40,7 @@ import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
 import com.podio.sdk.push.FayeClient;
-import com.podio.sdk.push.Push;
+import com.podio.sdk.push.PushClient;
 import com.podio.sdk.push.VolleyLongPollingTransport;
 import com.podio.sdk.volley.VolleyClient;
 import com.podio.sdk.volley.VolleyRequest;
@@ -63,7 +63,7 @@ public class Podio {
      */
     protected static VolleyClient restClient = new VolleyClient();
 
-    public static Push push;
+    public static PushClient push;
 
     /**
      * Enables means of easy operating on the {@link ApplicationProvider} API

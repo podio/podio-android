@@ -23,17 +23,18 @@ package com.podio.sdk.push;
 
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
+import com.podio.sdk.domain.push.Event;
 
-public interface Push {
+public interface PushClient {
 
     public void publish(String channel, String signature, String timestamp, Object data);
 
-    public void subscribe(String channel, String signature, String timestamp, ResultListener<?> eventListener, Class<?> template);
+    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event> eventListener);
 
     public void unsubscribe(String channel, ResultListener<?> listener);
 
-    public Push addErrorListener(ErrorListener errorListener);
+    public PushClient addErrorListener(ErrorListener errorListener);
 
-    public Push removeErrorListener(ErrorListener errorListener);
+    public PushClient removeErrorListener(ErrorListener errorListener);
 
 }

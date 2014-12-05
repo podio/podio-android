@@ -21,43 +21,26 @@
  */
 package com.podio.sdk.push;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.util.Log;
 
 import com.podio.sdk.QueueClient;
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
+import com.podio.sdk.domain.push.Event;
 import com.podio.sdk.internal.CallbackManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author László Urszuly
  */
-public class FayeClient extends QueueClient implements Push {
-
-
-    /**
-     * A pure data structure class that bundles the caller provided listeners, a template class
-     * definition (this is what the transport layer provided json will be parsed into) and the
-     * original request object together for easy management.
-     *
-     * @author László Urszuly
-     */
-    private static class Subscription {
-        private final ArrayList<ResultListener<?>> listeners;
-        private final Class<?> template;
-
-        private Subscription(ResultListener<?> listener, Class<?> template) {
-            this.listeners = new ArrayList<ResultListener<?>>();
-            this.listeners.add(listener);
-            this.template = template;
-        }
-    }
+public class FayeClient extends QueueClient implements PushClient {
 
     /**
-     * The internal error listener channel between the push client and the transport layer. It's up
-     * to this implementation to decide what is facing the caller and what is not.
+     * The internal error listener channel between the push client and the
+     * transport layer. It's up to this implementation to decide what is facing
+     * the caller and what is not.
      */
     private final ErrorListener internalErrorListener = new ErrorListener() {
 
@@ -70,9 +53,9 @@ public class FayeClient extends QueueClient implements Push {
     };
 
     /**
-     * The internal event listener channel between the push client and the transport layer. This
-     * implementation is responsible for parsing the provided json and call appropriate push event
-     * listeners.
+     * The internal event listener channel between the push client and the
+     * transport layer. This implementation is responsible for parsing the
+     * provided json and call appropriate push event listeners.
      */
     private final ResultListener<String> internalEventListener = new ResultListener<String>() {
 
@@ -95,7 +78,7 @@ public class FayeClient extends QueueClient implements Push {
     /**
      * The list of active subscriptions, grouped by channel.
      */
-    private final HashMap<String, Subscription> subscriptions;
+    private final HashMap<String, ArrayList<ResultListener<Event>>> subscriptions;
 
     private final CallbackManager<Void> callbackManager;
 
@@ -108,14 +91,14 @@ public class FayeClient extends QueueClient implements Push {
      * Initializes the push client to its default state.
      *
      * @param transport
-     *         The transport implementation over which the push events and configurations will be
-     *         sent and received.
+     *        The transport implementation over which the push events and
+     *        configurations will be sent and received.
      */
     public FayeClient(Transport transport) {
         super(1, 1, 0L);
 
         this.callbackManager = new CallbackManager<Void>();
-        this.subscriptions = new HashMap<String, Subscription>();
+        this.subscriptions = new HashMap<String, ArrayList<ResultListener<Event>>>();
         this.transport = transport;
         this.transport.setErrorListener(internalErrorListener);
         this.transport.setEventListener(internalEventListener);
@@ -127,28 +110,31 @@ public class FayeClient extends QueueClient implements Push {
     }
 
     /**
-     * Subscribes to the given push channel in the Podio infrastructure. If there already is an
-     * existing subscription, the given listener will simply be added to the list of event listeners
-     * and the original request will be returned. Note that this request may be null by now as this
-     * implementation only keeps a weak reference to it. The caller must therefore check for null
-     * pointers.
+     * Subscribes to the given push channel in the Podio infrastructure. If
+     * there already is an existing subscription, the given listener will simply
+     * be added to the list of event listeners and the original request will be
+     * returned. Note that this request may be null by now as this
+     * implementation only keeps a weak reference to it. The caller must
+     * therefore check for null pointers.
      */
     @Override
-    public void subscribe(String channel, String signature, String timestamp, ResultListener<?> listener, Class<?> template) {
+    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event> listener) {
         if (subscriptions.containsKey(channel)) {
-            Subscription subscription = subscriptions.get(channel);
-            subscription.listeners.add(listener);
+            ArrayList<ResultListener<Event>> listeners = subscriptions.get(channel);
+            listeners.add(listener);
         } else {
-            Subscription subscription = new Subscription(listener, template);
-            subscriptions.put(channel, subscription);
+            ArrayList<ResultListener<Event>> listeners = new ArrayList<ResultListener<Event>>();
+            listeners.add(listener);
+            subscriptions.put(channel, listeners);
             execute(new SubscribeRequest(channel, signature, timestamp, transport));
         }
     }
 
     /**
-     * Removes the given listener from the stated push channel. If {@code null} is provided as
-     * listener, then all listeners will be removed. If there are no more listeners listening for
-     * events at the stated channel, a termination request will be sent to the Podio API.
+     * Removes the given listener from the stated push channel. If {@code null}
+     * is provided as listener, then all listeners will be removed. If there are
+     * no more listeners listening for events at the stated channel, a
+     * termination request will be sent to the Podio API.
      */
     @Override
     public void unsubscribe(String channel, ResultListener<?> listener) {
@@ -161,11 +147,11 @@ public class FayeClient extends QueueClient implements Push {
         } else {
             // Remove the given listener for the given channel.
             if (subscriptions.containsKey(channel)) {
-                Subscription subscription = subscriptions.get(channel);
-                subscription.listeners.remove(listener);
+                ArrayList<ResultListener<Event>> listeners = subscriptions.get(channel);
+                listeners.remove(listener);
 
                 // If no more listener, then also unsubscribe at API level.
-                if (subscription.listeners.size() == 0) {
+                if (listeners.size() == 0) {
                     subscriptions.remove(channel);
                     execute(new UnsubscribeRequest(channel, transport));
                 }
@@ -178,13 +164,13 @@ public class FayeClient extends QueueClient implements Push {
     }
 
     @Override
-    public Push addErrorListener(ErrorListener errorListener) {
+    public PushClient addErrorListener(ErrorListener errorListener) {
         callbackManager.addErrorListener(errorListener, false, null);
         return this;
     }
 
     @Override
-    public Push removeErrorListener(ErrorListener errorListener) {
+    public PushClient removeErrorListener(ErrorListener errorListener) {
         callbackManager.removeErrorListener(errorListener);
         return this;
     }
