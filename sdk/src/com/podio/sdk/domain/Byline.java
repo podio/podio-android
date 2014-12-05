@@ -23,79 +23,19 @@ package com.podio.sdk.domain;
 
 import java.util.Date;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.podio.sdk.internal.Utils;
 
-public class Byline implements Parcelable {
-    public static final Byline EMPTY = new Byline();
-
-    public static final Parcelable.Creator<Byline> CREATOR = new Parcelable.Creator<Byline>() {
-        public Byline createFromParcel(Parcel in) {
-            return new Byline(in);
-        }
-
-        public Byline[] newArray(int size) {
-            return new Byline[size];
-        }
-    };
-
-    private final Long id;
-    private final Long user_id;
-    private final Long avatar;
-    private final Long avatar_id;
-    private final String avatar_type; // See "Type" enum.
-    private final String name;
-    private final String last_seen_on;
-    private final String type; // See "Type" enum.
-    private final String url;
-    private final File image;
-
-    private Byline(Parcel parcel) {
-        this.image = parcel.readParcelable(File.class.getClassLoader());
-        this.id = parcel.readLong();
-        this.user_id = parcel.readLong();
-        this.avatar = parcel.readLong();
-        this.avatar_id = parcel.readLong();
-        this.avatar_type = parcel.readString();
-        this.name = parcel.readString();
-        this.last_seen_on = parcel.readString();
-        this.type = parcel.readString();
-        this.url = parcel.readString();
-    }
-
-    private Byline() {
-        this.id = null;
-        this.user_id = null;
-        this.avatar = null;
-        this.avatar_id = null;
-        this.avatar_type = null;
-        this.name = null;
-        this.last_seen_on = null;
-        this.type = null;
-        this.url = null;
-        this.image = null;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(Utils.getObject(image, File.EMPTY), flags);
-        dest.writeLong(Utils.getNative(id, -1L));
-        dest.writeLong(Utils.getNative(user_id, -1L));
-        dest.writeLong(Utils.getNative(avatar, -1L));
-        dest.writeLong(Utils.getNative(avatar_id, -1L));
-        dest.writeString(Utils.getObject(avatar_type, Type.unknown.name()));
-        dest.writeString(Utils.getObject(name, ""));
-        dest.writeString(Utils.getObject(last_seen_on, ""));
-        dest.writeString(Utils.getObject(type, Type.unknown.name()));
-        dest.writeString(Utils.getObject(url, ""));
-    }
+public class Byline {
+    private final Long id = null;
+    private final Long user_id = null;
+    private final Long avatar = null;
+    private final Long avatar_id = null;
+    private final String avatar_type = null; // See "Type" enum.
+    private final String name = null;
+    private final String last_seen_on = null;
+    private final String type = null; // See "Type" enum.
+    private final String url = null;
+    private final File image = null;
 
     public long getId() {
         return Utils.getNative(id, -1L);
@@ -110,7 +50,7 @@ public class Byline implements Parcelable {
     }
 
     public long getAvatarId() {
-        return Utils.getNative(avatar, -1L);
+        return Utils.getNative(avatar_id, -1L);
     }
 
     public Type getAvatarType() {

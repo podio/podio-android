@@ -21,55 +21,14 @@
  */
 package com.podio.sdk.domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.podio.sdk.internal.Utils;
 
-public class Push implements Parcelable {
-    public static final Push EMPTY = new Push();
+public class Push {
 
-    public static final Parcelable.Creator<Push> CREATOR = new Parcelable.Creator<Push>() {
-        public Push createFromParcel(Parcel in) {
-            return new Push(in);
-        }
-
-        public Push[] newArray(int size) {
-            return new Push[size];
-        }
-    };
-
-    private final Long timestamp;
-    private final Integer expires_in;
-    private final String channel;
-    private final String signature;
-
-    private Push(Parcel parcel) {
-        this.timestamp = parcel.readLong();
-        this.expires_in = parcel.readInt();
-        this.channel = parcel.readString();
-        this.signature = parcel.readString();
-    }
-
-    private Push() {
-        this.timestamp = null;
-        this.expires_in = null;
-        this.channel = null;
-        this.signature = null;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(Utils.getObject(timestamp, -1L));
-        dest.writeInt(Utils.getObject(expires_in, 1));
-        dest.writeString(Utils.getObject(channel, ""));
-        dest.writeString(Utils.getObject(signature, ""));
-    }
+    private final Long timestamp = null;
+    private final Integer expires_in = null;
+    private final String channel = null;
+    private final String signature = null;
 
     public long getTimestamp() {
         return Utils.getNative(timestamp, -1L);

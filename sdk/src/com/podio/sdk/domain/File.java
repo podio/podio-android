@@ -22,27 +22,12 @@
 
 package com.podio.sdk.domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
  */
-public class File implements Parcelable {
-    public static final File EMPTY = new File();
-
-    public static final Parcelable.Creator<File> CREATOR = new Parcelable.Creator<File>() {
-        public File createFromParcel(Parcel in) {
-            return new File(in);
-        }
-
-        public File[] newArray(int size) {
-            return new File[size];
-        }
-    };
-
+public class File {
     private final Long file_id;
     private final Integer size;
     private final String description;
@@ -54,34 +39,6 @@ public class File implements Parcelable {
     private final String name;
     private final String perma_link;
     private final String thumbnail_link;
-
-    private File(Parcel parcel) {
-        this.file_id = parcel.readLong();
-        this.size = parcel.readInt();
-        this.description = parcel.readString();
-        this.hosted_by = parcel.readString();
-        this.hosted_by_humanized_name = parcel.readString();
-        this.link = parcel.readString();
-        this.link_target = parcel.readString();
-        this.mimetype = parcel.readString();
-        this.name = parcel.readString();
-        this.perma_link = parcel.readString();
-        this.thumbnail_link = parcel.readString();
-    }
-
-    private File() {
-        this.file_id = null;
-        this.size = null;
-        this.description = null;
-        this.hosted_by = null;
-        this.hosted_by_humanized_name = null;
-        this.link = null;
-        this.link_target = null;
-        this.mimetype = null;
-        this.name = null;
-        this.perma_link = null;
-        this.thumbnail_link = null;
-    }
 
     public File(long fileId) {
         this.file_id = fileId;
@@ -95,26 +52,6 @@ public class File implements Parcelable {
         this.name = null;
         this.perma_link = null;
         this.thumbnail_link = null;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(Utils.getNative(file_id, -1L));
-        dest.writeLong(Utils.getNative(size, -1));
-        dest.writeString(Utils.getObject(description, ""));
-        dest.writeString(Utils.getObject(hosted_by, ""));
-        dest.writeString(Utils.getObject(hosted_by_humanized_name, ""));
-        dest.writeString(Utils.getObject(link, ""));
-        dest.writeString(Utils.getObject(link_target, ""));
-        dest.writeString(Utils.getObject(mimetype, ""));
-        dest.writeString(Utils.getObject(name, ""));
-        dest.writeString(Utils.getObject(perma_link, ""));
-        dest.writeString(Utils.getObject(thumbnail_link, ""));
     }
 
     public String getDescription() {

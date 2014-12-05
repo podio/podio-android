@@ -21,103 +21,35 @@
  */
 package com.podio.sdk.domain;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.podio.sdk.internal.Utils;
 
-public class Profile implements Parcelable {
-    public static final Profile EMPTY = new Profile();
-
-    public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
-        public Profile createFromParcel(Parcel in) {
-            return new Profile(in);
-        }
-
-        public Profile[] newArray(int size) {
-            return new Profile[size];
-        }
-    };
-
-    private final Long user_id;
-    private final Long profile_id;
-    private final Long org_id;
-    private final Long space_id;
-    private final String external_id;
-    private final String last_seen_on;
-    private final String type; // See the "Type" enum.
-    private final String link;
-    private final List<String> rights; // See the "Right" enum.
-    private final Push push;
-    private final File image;
+public class Profile {
+    private final Long user_id = null;
+    private final Long profile_id = null;
+    private final Long org_id = null;
+    private final Long space_id = null;
+    private final String external_id = null;
+    private final String last_seen_on = null;
+    private final String type = null; // See the "Type" enum.
+    private final String link = null;
+    private final List<String> rights = null; // See the "Right" enum.
+    private final Push push = null;
+    private final File image = null;
 
     // Not found in the API ProfileDTO
-    private final String name;
-    private final String about;
-    private final String[] title;
-    private final String[] location;
-    private final String[] phone;
-    private final String[] mail;
-    private final String[] address;         // -> ContactAPI, not in ProfileDTO
-    private final String zip;               // -> ContactAPI, not in ProfileDTO
-    private final String city;              // -> ContactAPI, not in ProfileDTO
-    private final String country;           // -> ContactAPI, not in ProfileDTO
-
-    private Profile(Parcel parcel) {
-        this.push = parcel.readParcelable(Push.class.getClassLoader());
-        this.image = parcel.readParcelable(File.class.getClassLoader());
-        this.user_id = parcel.readLong();
-        this.profile_id = parcel.readLong();
-        this.org_id = parcel.readLong();
-        this.space_id = parcel.readLong();
-        this.external_id = parcel.readString();
-        this.last_seen_on = parcel.readString();
-        this.type = parcel.readString();
-        this.link = parcel.readString();
-        this.rights = parcel.createStringArrayList();
-
-        // Non-ProfileDTO's
-        this.name = parcel.readString();
-        this.about = parcel.readString();
-        this.title = parcel.createStringArray();
-        this.location = parcel.createStringArray();
-        this.phone = parcel.createStringArray();
-        this.mail = parcel.createStringArray();
-        this.address = parcel.createStringArray();
-        this.zip = parcel.readString();
-        this.city = parcel.readString();
-        this.country = parcel.readString();
-    }
-
-    private Profile() {
-        this.user_id = null;
-        this.profile_id = null;
-        this.org_id = null;
-        this.space_id = null;
-        this.external_id = null;
-        this.last_seen_on = null;
-        this.type = null;
-        this.link = null;
-        this.rights = null;
-        this.push = null;
-        this.image = null;
-
-        // Non-ProfileDTO's
-        this.name = null;
-        this.about = null;
-        this.title = null;
-        this.location = null;
-        this.phone = null;
-        this.mail = null;
-        this.address = null;
-        this.zip = null;
-        this.city = null;
-        this.country = null;
-    }
+    private final String name = null;
+    private final String about = null;
+    private final String[] title = null;
+    private final String[] location = null;
+    private final String[] phone = null;
+    private final String[] mail = null;
+    private final String[] address = null;         // -> ContactAPI, not in ProfileDTO
+    private final String zip = null;               // -> ContactAPI, not in ProfileDTO
+    private final String city = null;              // -> ContactAPI, not in ProfileDTO
+    private final String country = null;           // -> ContactAPI, not in ProfileDTO
 
     @Override
     public boolean equals(Object o) {
@@ -143,39 +75,6 @@ public class Profile implements Parcelable {
         result = prime * result + (profile_id != null ? profile_id.hashCode() : 0);
 
         return result;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(Utils.getObject(push, Push.EMPTY), flags);
-        dest.writeParcelable(Utils.getObject(image, File.EMPTY), flags);
-        dest.writeLong(Utils.getNative(user_id, -1L));
-        dest.writeLong(Utils.getNative(profile_id, -1L));
-        dest.writeLong(Utils.getNative(org_id, -1L));
-        dest.writeLong(Utils.getNative(space_id, -1L));
-        dest.writeString(Utils.getObject(external_id, ""));
-        dest.writeString(Utils.getObject(last_seen_on, ""));
-        dest.writeString(Utils.getObject(type, ""));
-        dest.writeString(Utils.getObject(link, ""));
-        dest.writeStringList(Utils.getObject(rights, new ArrayList<String>()));
-
-        // Non-ProfileDTO's
-        String[] stringArrayEmpty = {};
-        dest.writeString(Utils.getObject(name, ""));
-        dest.writeString(Utils.getObject(about, ""));
-        dest.writeStringArray(Utils.getObject(title, stringArrayEmpty));
-        dest.writeStringArray(Utils.getObject(location, stringArrayEmpty));
-        dest.writeStringArray(Utils.getObject(phone, stringArrayEmpty));
-        dest.writeStringArray(Utils.getObject(mail, stringArrayEmpty));
-        dest.writeStringArray(Utils.getObject(address, stringArrayEmpty));
-        dest.writeString(Utils.getObject(zip, ""));
-        dest.writeString(Utils.getObject(city, ""));
-        dest.writeString(Utils.getObject(country, ""));
     }
 
     public String getAbout() {
@@ -252,6 +151,22 @@ public class Profile implements Parcelable {
 
     public long getWorkspaceId() {
         return Utils.getNative(space_id, -1L);
+    }
+
+    public String[] getAddressLines() {
+        return address.clone();
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
     }
 
     /**

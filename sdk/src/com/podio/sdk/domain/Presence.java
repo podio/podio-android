@@ -21,55 +21,13 @@
  */
 package com.podio.sdk.domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.podio.sdk.internal.Utils;
 
-public class Presence implements Parcelable {
-    public static final Presence EMPTY = new Presence();
-
-    public static final Parcelable.Creator<Presence> CREATOR = new Parcelable.Creator<Presence>() {
-        public Presence createFromParcel(Parcel in) {
-            return new Presence(in);
-        }
-
-        public Presence[] newArray(int size) {
-            return new Presence[size];
-        }
-    };
-
-    private final Long ref_id;
-    private final Long user_id;
-    private final String ref_type;
-    private final String signature;
-
-    private Presence(Parcel parcel) {
-        this.ref_id = parcel.readLong();
-        this.user_id = parcel.readLong();
-        this.ref_type = parcel.readString();
-        this.signature = parcel.readString();
-    }
-
-    private Presence() {
-        this.ref_id = null;
-        this.user_id = null;
-        this.ref_type = null;
-        this.signature = null;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(Utils.getNative(ref_id, -1L));
-        dest.writeLong(Utils.getNative(user_id, -1L));
-        dest.writeString(Utils.getObject(ref_type, Type.unknown.name()));
-        dest.writeString(Utils.getObject(signature, ""));
-    }
+public class Presence {
+    private final Long ref_id = null;
+    private final Long user_id = null;
+    private final String ref_type = null;
+    private final String signature = null;
 
     public Type getRefType() {
         try {

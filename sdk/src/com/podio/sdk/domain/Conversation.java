@@ -21,13 +21,7 @@
  */
 package com.podio.sdk.domain;
 
-import static com.podio.sdk.internal.Utils.FALSE;
-import static com.podio.sdk.internal.Utils.TRUE;
-
 import java.util.Date;
-
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.podio.sdk.internal.Utils;
 
@@ -36,19 +30,7 @@ import com.podio.sdk.internal.Utils;
  * 
  * @author László Urszuly
  */
-public class Conversation implements Parcelable {
-    public static final Conversation EMPTY = new Conversation();
-
-    public static final Parcelable.Creator<Conversation> CREATOR = new Parcelable.Creator<Conversation>() {
-        public Conversation createFromParcel(Parcel in) {
-            return new Conversation(in);
-        }
-
-        public Conversation[] newArray(int size) {
-            return new Conversation[size];
-        }
-    };
-
+public class Conversation {
     public static class Reply {
         @SuppressWarnings("unused")
         private final String text;
@@ -91,101 +73,19 @@ public class Conversation implements Parcelable {
         }
     }
 
-    public static class Data implements Parcelable {
-        public static final Data EMPTY = new Data();
-
-        public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {
-            public Data createFromParcel(Parcel in) {
-                return new Data(in);
-            }
-
-            public Data[] newArray(int size) {
-                return new Data[size];
-            }
-        };
-
-        private final Long message_id;
-        private final File[] files;
-        private final String text;
-        private final String created_on;
-
-        private Data(Parcel parcel) {
-            this.message_id = parcel.readLong();
-            this.files = parcel.createTypedArray(File.CREATOR);
-            this.text = parcel.readString();
-            this.created_on = parcel.readString();
-        }
-
-        private Data() {
-            this.message_id = null;
-            this.files = null;
-            this.text = null;
-            this.created_on = null;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(Utils.getNative(message_id, -1L));
-            dest.writeTypedArray(Utils.getObject(files, new File[0]), flags);
-            dest.writeString(Utils.getObject(text, ""));
-            dest.writeString(Utils.getObject(created_on, ""));
-        }
-
+    private static class Data {
+        private final Long message_id = null;
+        private final File[] files = null;
+        private final String text = null;
+        private final String created_on = null;
     }
 
-    public static class Event implements Parcelable {
-        public static final Event EMPTY = new Event();
-
-        public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
-            public Event createFromParcel(Parcel in) {
-                return new Event(in);
-            }
-
-            public Event[] newArray(int size) {
-                return new Event[size];
-            }
-        };
-
-        private final Long event_id;
-        private final Byline created_by;
-        private final String created_on;
-        private final String action;
-        private final Data data;
-
-        private Event(Parcel parcel) {
-            this.created_by = parcel.readParcelable(Byline.class.getClassLoader());
-            this.data = parcel.readParcelable(Data.class.getClassLoader());
-            this.event_id = parcel.readLong();
-            this.created_on = parcel.readString();
-            this.action = parcel.readString();
-        }
-
-        private Event() {
-            this.event_id = null;
-            this.created_by = null;
-            this.created_on = null;
-            this.action = null;
-            this.data = null;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(Utils.getObject(created_by, Byline.EMPTY), flags);
-            dest.writeParcelable(Utils.getObject(data, Data.EMPTY), flags);
-            dest.writeLong(Utils.getNative(event_id, -1L));
-            dest.writeString(Utils.getObject(created_on, ""));
-            dest.writeString(Utils.getObject(action, ""));
-        }
+    public static class Event {
+        private final Long event_id = null;
+        private final Byline created_by = null;
+        private final String created_on = null;
+        private final String action = null;
+        private final Data data = null;
 
         public long getEventId() {
             return Utils.getNative(event_id, -1L);
@@ -233,81 +133,21 @@ public class Conversation implements Parcelable {
 
     }
 
-    private final Long conversation_id;
-    private final Boolean pinned;
-    private final Boolean starred;
-    private final Boolean unread;
-    private final Integer unread_count;
-    private final Byline created_by;
-    private final Profile[] participants;
-    private final String created_on;
-    private final String last_event_on;
-    private final String link;
-    private final String type; // See "Type" enum.
-    private final String subject;
-    private final String excerpt;
-    private final Presence presence;
-    private final Push push;
-
-    private Conversation(Parcel parcel) {
-        this.created_by = parcel.readParcelable(Byline.class.getClassLoader());
-        this.presence = parcel.readParcelable(Presence.class.getClassLoader());
-        this.push = parcel.readParcelable(Push.class.getClassLoader());
-        this.conversation_id = parcel.readLong();
-        this.pinned = (parcel.readInt() == 1);
-        this.starred = (parcel.readInt() == 1);
-        this.unread = (parcel.readInt() == 1);
-        this.unread_count = parcel.readInt();
-        this.participants = parcel.createTypedArray(Profile.CREATOR);
-        this.created_on = parcel.readString();
-        this.last_event_on = parcel.readString();
-        this.link = parcel.readString();
-        this.type = parcel.readString();
-        this.subject = parcel.readString();
-        this.excerpt = parcel.readString();
-    }
-
-    private Conversation() {
-        this.conversation_id = null;
-        this.pinned = null;
-        this.starred = null;
-        this.unread = null;
-        this.unread_count = null;
-        this.created_by = null;
-        this.participants = null;
-        this.created_on = null;
-        this.last_event_on = null;
-        this.link = null;
-        this.type = null; // See "Type" enum.
-        this.subject = null;
-        this.excerpt = null;
-        this.presence = null;
-        this.push = null;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(Utils.getObject(created_by, Byline.EMPTY), flags);
-        dest.writeParcelable(Utils.getObject(presence, Presence.EMPTY), flags);
-        dest.writeParcelable(Utils.getObject(push, Push.EMPTY), flags);
-        dest.writeLong(Utils.getNative(conversation_id, -1L));
-        dest.writeInt(pinned ? TRUE : FALSE);
-        dest.writeInt(starred ? TRUE : FALSE);
-        dest.writeInt(unread ? TRUE : FALSE);
-        dest.writeInt(Utils.getNative(unread_count, 1));
-        dest.writeTypedArray(Utils.getObject(participants, new Profile[0]), flags);
-        dest.writeString(Utils.getObject(created_on, ""));
-        dest.writeString(Utils.getObject(last_event_on, ""));
-        dest.writeString(Utils.getObject(link, ""));
-        dest.writeString(Utils.getObject(type, Type.unknown.name()));
-        dest.writeString(Utils.getObject(subject, ""));
-        dest.writeString(Utils.getObject(excerpt, ""));
-    }
+    private final Long conversation_id = null;
+    private final Boolean pinned = null;
+    private final Boolean starred = null;
+    private final Boolean unread = null;
+    private final Integer unread_count = null;
+    private final Byline created_by = null;
+    private final Profile[] participants = null;
+    private final String created_on = null;
+    private final String last_event_on = null;
+    private final String link = null;
+    private final String type = null; // See "Type" enum.
+    private final String subject = null;
+    private final String excerpt = null;
+    private final Presence presence = null;
+    private final Push push = null;
 
     public long getConversationId() {
         return Utils.getNative(conversation_id, -1L);
