@@ -29,7 +29,7 @@ public interface PushClient {
 
     public void publish(String channel, String signature, String timestamp, Object data);
 
-    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event> eventListener);
+    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event[]> eventListener);
 
     public void unsubscribe(String channel, ResultListener<?> listener);
 

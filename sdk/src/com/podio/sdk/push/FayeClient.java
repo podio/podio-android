@@ -23,14 +23,19 @@ package com.podio.sdk.push;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
-import android.util.Log;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.podio.sdk.QueueClient;
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.domain.push.Event;
 import com.podio.sdk.internal.CallbackManager;
+import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -38,49 +43,17 @@ import com.podio.sdk.internal.CallbackManager;
 public class FayeClient extends QueueClient implements PushClient {
 
     /**
-     * The internal error listener channel between the push client and the
-     * transport layer. It's up to this implementation to decide what is facing
-     * the caller and what is not.
-     */
-    private final ErrorListener internalErrorListener = new ErrorListener() {
-
-        @Override
-        public boolean onErrorOccured(final Throwable cause) {
-            cause.printStackTrace();
-            return true;
-        }
-
-    };
-
-    /**
-     * The internal event listener channel between the push client and the
-     * transport layer. This implementation is responsible for parsing the
-     * provided json and call appropriate push event listeners.
-     */
-    private final ResultListener<String> internalEventListener = new ResultListener<String>() {
-
-        @Override
-        public boolean onRequestPerformed(final String json) {
-            // This one should be running on the main thread.
-            Log.d("MYTAG", "Poll result: " + json);
-
-            // Reconnect if needed.
-            if (PushRequest.getState() != PushRequest.State.closed) {
-                ConnectRequest reconnectRequest = new ConnectRequest(transport);
-                execute(reconnectRequest);
-            }
-
-            return true;
-        }
-
-    };
-
-    /**
      * The list of active subscriptions, grouped by channel.
      */
-    private final HashMap<String, ArrayList<ResultListener<Event>>> subscriptions;
+    private final HashMap<String, ArrayList<ResultListener<Event[]>>> subscriptions;
 
-    private final CallbackManager<Void> callbackManager;
+    /**
+     * Manages the external error listeners.
+     * <p/>
+     * TODO: Investigate the effort needed to add "grouping" support to
+     * CallbackManager, much like the "subscriptions" map in this class.
+     */
+    private final CallbackManager<Event[]> callbackManager;
 
     /**
      * The transport layer to be used by this push implementation.
@@ -97,11 +70,53 @@ public class FayeClient extends QueueClient implements PushClient {
     public FayeClient(Transport transport) {
         super(1, 1, 0L);
 
-        this.callbackManager = new CallbackManager<Void>();
-        this.subscriptions = new HashMap<String, ArrayList<ResultListener<Event>>>();
+        this.callbackManager = new CallbackManager<Event[]>();
+        this.subscriptions = new HashMap<String, ArrayList<ResultListener<Event[]>>>();
         this.transport = transport;
-        this.transport.setErrorListener(internalErrorListener);
-        this.transport.setEventListener(internalEventListener);
+
+        // The internal error listener channel between the push client and the
+        // transport layer. It's up to this implementation to decide what is
+        // facing the caller and what is not.
+        this.transport.setErrorListener(new ErrorListener() {
+
+            @Override
+            public boolean onErrorOccured(Throwable cause) {
+                // Shut down everything and clear any subscriptions.
+                Transport transport = FayeClient.this.transport;
+                execute(new DisconnectRequest(transport));
+                subscriptions.clear();
+
+                // Tell the world.
+                callbackManager.deliverErrorOnMainThread(cause);
+                return true;
+            }
+
+        });
+
+        // The internal event listener channel between the push client and the
+        // transport layer. This implementation is responsible for parsing the
+        // provided json and call appropriate push event listeners.
+        this.transport.setEventListener(new ResultListener<String>() {
+
+            @Override
+            public boolean onRequestPerformed(String json) {
+                // This one should be running on the main thread.
+
+                // Reconnect if needed.
+                if (PushRequest.getState() != PushRequest.State.closed) {
+                    Transport transport = FayeClient.this.transport;
+                    ConnectRequest reconnectRequest = new ConnectRequest(transport);
+                    execute(reconnectRequest);
+                }
+
+                // Parse the delivered json events.
+                HashMap<String, ArrayList<Event>> events = parseEventData(json);
+                deliverEvents(events);
+
+                return true;
+            }
+
+        });
     }
 
     @Override
@@ -118,12 +133,12 @@ public class FayeClient extends QueueClient implements PushClient {
      * therefore check for null pointers.
      */
     @Override
-    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event> listener) {
+    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event[]> listener) {
         if (subscriptions.containsKey(channel)) {
-            ArrayList<ResultListener<Event>> listeners = subscriptions.get(channel);
+            ArrayList<ResultListener<Event[]>> listeners = subscriptions.get(channel);
             listeners.add(listener);
         } else {
-            ArrayList<ResultListener<Event>> listeners = new ArrayList<ResultListener<Event>>();
+            ArrayList<ResultListener<Event[]>> listeners = new ArrayList<ResultListener<Event[]>>();
             listeners.add(listener);
             subscriptions.put(channel, listeners);
             execute(new SubscribeRequest(channel, signature, timestamp, transport));
@@ -147,7 +162,7 @@ public class FayeClient extends QueueClient implements PushClient {
         } else {
             // Remove the given listener for the given channel.
             if (subscriptions.containsKey(channel)) {
-                ArrayList<ResultListener<Event>> listeners = subscriptions.get(channel);
+                ArrayList<ResultListener<Event[]>> listeners = subscriptions.get(channel);
                 listeners.remove(listener);
 
                 // If no more listener, then also unsubscribe at API level.
@@ -175,4 +190,92 @@ public class FayeClient extends QueueClient implements PushClient {
         return this;
     }
 
+    private HashMap<String, ArrayList<Event>> parseEventData(String json) {
+        HashMap<String, ArrayList<Event>> result = new HashMap<String, ArrayList<Event>>();
+
+        if (Utils.isEmpty(json)) {
+            return result;
+        }
+
+        // Parse the root json element.
+        JsonParser jsonParser = new JsonParser();
+        JsonElement root = jsonParser.parse(json);
+        JsonArray jsonElements;
+
+        // Make sure we're always operating on an array of objects.
+        if (root.isJsonArray()) {
+            jsonElements = root.getAsJsonArray();
+        } else if (root.isJsonObject()) {
+            jsonElements = new JsonArray();
+            jsonElements.add(root.getAsJsonObject());
+        } else {
+            return result;
+        }
+
+        JsonObject jsonObject;
+        Gson gson = new Gson();
+
+        // Search for all data bearing event objects.
+        for (JsonElement jsonElement : jsonElements) {
+            if (jsonElement.isJsonObject()) {
+                jsonObject = jsonElement.getAsJsonObject();
+
+                JsonObject fayeData = getJsonObject(jsonObject, "data");
+                JsonObject podioData = getJsonObject(fayeData, "data");
+
+                String key = getString(jsonObject, "channel");
+                String type = getString(podioData, "event");
+
+                try {
+                    Event.Type eventType = Event.Type.valueOf(type);
+                    Event event = gson.fromJson(fayeData, eventType.getClassObject());
+                    addEventToMap(key, event, result);
+                } catch (NullPointerException e) {
+                } catch (IllegalArgumentException e) {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private JsonObject getJsonObject(JsonObject parent, String member) {
+        return parent != null && parent.has(member) ? parent.getAsJsonObject(member) : new JsonObject();
+    }
+
+    private String getString(JsonObject parent, String member) {
+        return parent != null && parent.has(member) ? parent.get(member).getAsString() : "";
+    }
+
+    private void addEventToMap(String key, Event event, HashMap<String, ArrayList<Event>> map) {
+        if (event != null && Utils.notEmpty(key) && Utils.notEmpty(map)) {
+            if (map.containsKey(key)) {
+                map.get(key).add(event);
+            } else {
+                ArrayList<Event> events = new ArrayList<Event>();
+                events.add(event);
+                map.put(key, events);
+            }
+        }
+    }
+
+    private void deliverEvents(HashMap<String, ArrayList<Event>> events) {
+        if (events == null) {
+            return;
+        }
+
+        Set<String> keys = events.keySet();
+
+        // ...and deliver to their corresponding listeners.
+        for (String key : keys) {
+            ArrayList<Event> eventsList = events.get(key);
+            Event[] eventsArray = new Event[eventsList.size()];
+            eventsList.toArray(eventsArray);
+
+            ArrayList<ResultListener<Event[]>> listeners = subscriptions.get(key);
+            for (ResultListener<Event[]> listener : listeners) {
+                listener.onRequestPerformed(eventsArray);
+            }
+        }
+    }
 }
