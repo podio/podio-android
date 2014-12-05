@@ -31,39 +31,50 @@ public abstract class Event {
      * @author László Urszuly
      */
     public static enum Type {
-        comment_create,
-        comment_delete,
-        comment_update,
-        conversation_event,
-        conversation_read,
-        conversation_read_all,
-        conversation_starred,
-        conversation_starred_count,
-        conversation_unread,
-        conversation_unread_count,
-        conversation_unstarred,
-        create,
-        delete,
-        file_attach,
-        file_delete,
-        grant_create,
-        grant_delete,
-        live_accept,
-        live_decline,
-        live_end,
-        live_settings,
-        notification_create,
-        notification_unread,
-        rating_like_create,
-        rating_like_delete,
-        stream_create,
-        stream_event,
-        subscribe,
-        typing,
-        unsubscribe,
-        update,
-        viewing,
-        unknown
+        comment_create(CommentCreate.class),
+        comment_delete(CommentDelete.class),
+        comment_update(CommentUpdate.class),
+        conversation_event(ConversationEvent.class),
+        conversation_read(ConversationRead.class),
+        conversation_read_all(ConversationReadAll.class),
+        conversation_starred(ConversationStarred.class),
+        conversation_starred_count(ConversationStarredCount.class),
+        conversation_unread(ConversationUnread.class),
+        conversation_unread_count(ConversationUnreadCount.class),
+        conversation_unstarred(ConversationUnstarred.class),
+        create(ObjectCreate.class),
+        delete(ObjectDelete.class),
+        file_attach(FileAttach.class),
+        file_delete(FileDelete.class),
+        grant_create(GrantCreate.class),
+        grant_delete(GrantDelete.class),
+        // TODO: Add support for "live" events as well.
+        // live_accept(),
+        // live_decline,
+        // live_end,
+        // live_settings,
+        notification_create(NotificationCreate.class),
+        notification_unread(NotificationUnread.class),
+        rating_like_create(RatingCreate.class),
+        rating_like_delete(RatingDelete.class),
+        stream_create(StreamCreate.class),
+        stream_event(StreamEvent.class),
+        subscribe(Subscribe.class),
+        typing(Typing.class),
+        unsubscribe(Unsubscribe.class),
+        update(ObjectUpdate.class),
+        viewing(Viewing.class),
+        unknown(null);
+
+        private final Class<? extends Event> classOfEvent;
+
+        private Type(Class<? extends Event> classOfEvent) {
+            this.classOfEvent = classOfEvent;
+        }
+
+        public Class<? extends Event> getClassObject() {
+            return classOfEvent;
+        }
     }
 
     /**
