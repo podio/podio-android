@@ -40,7 +40,7 @@ import com.podio.sdk.internal.Utils;
 /**
  * @author László Urszuly
  */
-public class FayeClient extends QueueClient implements PushClient {
+public class FayePushClient extends QueueClient implements PushClient {
 
     /**
      * The list of active subscriptions, grouped by channel.
@@ -67,7 +67,7 @@ public class FayeClient extends QueueClient implements PushClient {
      *        The transport implementation over which the push events and
      *        configurations will be sent and received.
      */
-    public FayeClient(Transport transport) {
+    public FayePushClient(Transport transport) {
         super(1, 1, 0L);
 
         this.callbackManager = new CallbackManager<Event[]>();
@@ -82,7 +82,7 @@ public class FayeClient extends QueueClient implements PushClient {
             @Override
             public boolean onErrorOccured(Throwable cause) {
                 // Shut down everything and clear any subscriptions.
-                Transport transport = FayeClient.this.transport;
+                Transport transport = FayePushClient.this.transport;
                 execute(new DisconnectRequest(transport));
                 subscriptions.clear();
 
@@ -104,7 +104,7 @@ public class FayeClient extends QueueClient implements PushClient {
 
                 // Reconnect if needed.
                 if (PushRequest.getState() != PushRequest.State.closed) {
-                    Transport transport = FayeClient.this.transport;
+                    Transport transport = FayePushClient.this.transport;
                     ConnectRequest reconnectRequest = new ConnectRequest(transport);
                     execute(reconnectRequest);
                 }
