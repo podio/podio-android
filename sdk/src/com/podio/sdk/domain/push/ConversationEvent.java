@@ -23,70 +23,42 @@ package com.podio.sdk.domain.push;
 
 import java.util.Date;
 
+import com.podio.sdk.domain.Byline;
+import com.podio.sdk.domain.Conversation;
 import com.podio.sdk.internal.Utils;
 
 public class ConversationEvent extends Event {
 
+    private static class Settings {
+        private final Boolean sound = null;
+        private final Boolean popup = null;
+    }
+
     private static class Data {
-        /**
-         * The id of the conversation.
-         */
         private final Long conversation_id = null;
-
-        /**
-         * The id of the event.
-         */
         private final Long event_id = null;
-
-        /**
-         * The action that was performed.
-         */
         private final String action = null;
-
-        /**
-         * A short excerpt of the event, e.g. a preview of the message.
-         */
         private final String text = null;
-
-        /**
-         * The date and time when the event was created. This can be compared to
-         * the "last_event_on" on the conversation to see if this is never than
-         * the already known.
-         */
+        private final Settings settings = null;
+        private final Conversation.Data data = null;
         private final String created_on = null;
-
-        /**
-         * he byline of the user who created the event.
-         */
-        private final String created_by = null;
-
-        /**
-         * The number of unread events on the conversation.
-         */
+        private final Byline created_by = null;
         private final Integer unread_count = null;
-
-        /**
-         * The total number of unread events on all conversations.
-         */
         private final Integer total_unread_count = null;
     }
 
     private final Data data = null;
 
-    public long conversationId() {
-        return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
-    }
-
-    public long eventId() {
-        return data != null ? Utils.getNative(data.event_id, -1L) : -1L;
-    }
-
     public String action() {
         return data != null ? data.action : null;
     }
 
-    public String excerpt() {
-        return data != null ? data.text : null;
+    public Byline byline() {
+        return data != null ? data.created_by : null;
+    }
+
+    public long conversationId() {
+        return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
     }
 
     public Date createdOnDateTime() {
@@ -97,8 +69,24 @@ public class ConversationEvent extends Event {
         return data != null ? data.created_on : null;
     }
 
-    public String byline() {
-        return data != null ? data.created_by : null;
+    public Conversation.Data data() {
+        return data != null ? data.data : null;
+    }
+
+    public boolean doPlaySound() {
+        return data != null && data.settings != null ? Utils.getNative(data.settings.sound, false) : false;
+    }
+
+    public boolean doShowPopup() {
+        return data != null && data.settings != null ? Utils.getNative(data.settings.popup, false) : false;
+    }
+
+    public long eventId() {
+        return data != null ? Utils.getNative(data.event_id, -1L) : -1L;
+    }
+
+    public String excerpt() {
+        return data != null ? data.text : null;
     }
 
     public int unreadMessagesCountInConversation() {

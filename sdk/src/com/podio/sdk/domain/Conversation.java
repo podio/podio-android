@@ -73,11 +73,31 @@ public class Conversation {
         }
     }
 
-    private static class Data {
+    public static class Data {
         private final Long message_id = null;
         private final File[] files = null;
         private final String text = null;
         private final String created_on = null;
+
+        public File[] getFiles() {
+            return files.clone();
+        }
+
+        public String text() {
+            return text;
+        }
+
+        public Date getCreatedOnDateTime() {
+            return Utils.parseDateTime(created_on);
+        }
+
+        public String getCreatedOnDateTimeString() {
+            return created_on;
+        }
+
+        public long getMessageId() {
+            return Utils.getNative(message_id, -1L);
+        }
     }
 
     public static class Event {
@@ -96,7 +116,7 @@ public class Conversation {
         }
 
         public long getCreatedById() {
-            return created_by != null ? created_by.getUserId() : -1L;
+            return created_by != null ? created_by.getId() : -1L;
         }
 
         public Date getCreatedDate() {

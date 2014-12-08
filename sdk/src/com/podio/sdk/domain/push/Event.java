@@ -101,7 +101,6 @@ public abstract class Event {
     private final Reference ref = null;
     private final String event = null;
     private final Reference created_by = null;
-    private final String created_via = null;
 
     public String referenceType() {
         return ref != null ? ref.type : null;
@@ -127,10 +126,6 @@ public abstract class Event {
 
     public long createdById() {
         return created_by != null ? Utils.getNative(created_by.id, -1L) : -1L;
-    }
-
-    public String createdVia() {
-        return created_via;
     }
 
 }
