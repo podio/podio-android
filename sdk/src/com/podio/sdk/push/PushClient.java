@@ -27,9 +27,15 @@ import com.podio.sdk.domain.push.Event;
 
 public interface PushClient {
 
+    public static interface EventListener {
+
+        public void onEventReceived(Event[] events);
+
+    }
+
     public void publish(String channel, String signature, String timestamp, Object data);
 
-    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event[]> eventListener);
+    public void subscribe(String channel, String signature, String timestamp, EventListener eventListener);
 
     public void unsubscribe(String channel, ResultListener<Event[]> listener);
 

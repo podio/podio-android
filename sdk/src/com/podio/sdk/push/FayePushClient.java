@@ -46,15 +46,12 @@ public class FayePushClient extends QueueClient implements PushClient {
     /**
      * The list of active subscriptions, grouped by channel.
      */
-    private final HashMap<String, ArrayList<ResultListener<Event[]>>> subscriptions;
+    private final HashMap<String, ArrayList<EventListener>> subscriptions;
 
     /**
      * Manages the external error listeners.
-     * <p/>
-     * TODO: Investigate the effort needed to add "grouping" support to
-     * CallbackManager, much like the "subscriptions" map in this class.
      */
-    private final CallbackManager<Event[]> callbackManager;
+    private final CallbackManager<Void> callbackManager;
 
     /**
      * The transport layer to be used by this push implementation.
@@ -71,8 +68,8 @@ public class FayePushClient extends QueueClient implements PushClient {
     public FayePushClient(Transport transport) {
         super(1, 1, 0L);
 
-        this.callbackManager = new CallbackManager<Event[]>();
-        this.subscriptions = new HashMap<String, ArrayList<ResultListener<Event[]>>>();
+        this.callbackManager = new CallbackManager<Void>();
+        this.subscriptions = new HashMap<String, ArrayList<EventListener>>();
         this.transport = transport;
 
         // The internal error listener channel between the push client and the
@@ -136,12 +133,12 @@ public class FayePushClient extends QueueClient implements PushClient {
      * therefore check for null pointers.
      */
     @Override
-    public void subscribe(String channel, String signature, String timestamp, ResultListener<Event[]> listener) {
+    public void subscribe(String channel, String signature, String timestamp, EventListener listener) {
         if (subscriptions.containsKey(channel)) {
-            ArrayList<ResultListener<Event[]>> listeners = subscriptions.get(channel);
+            ArrayList<EventListener> listeners = subscriptions.get(channel);
             listeners.add(listener);
         } else {
-            ArrayList<ResultListener<Event[]>> listeners = new ArrayList<ResultListener<Event[]>>();
+            ArrayList<EventListener> listeners = new ArrayList<EventListener>();
             listeners.add(listener);
             subscriptions.put(channel, listeners);
             execute(new SubscribeRequest(channel, signature, timestamp, transport));
@@ -165,7 +162,7 @@ public class FayePushClient extends QueueClient implements PushClient {
         } else {
             // Remove the given listener for the given channel.
             if (subscriptions.containsKey(channel)) {
-                ArrayList<ResultListener<Event[]>> listeners = subscriptions.get(channel);
+                ArrayList<EventListener> listeners = subscriptions.get(channel);
                 listeners.remove(listener);
 
                 // If no more listener, then also unsubscribe at API level.
@@ -277,9 +274,9 @@ public class FayePushClient extends QueueClient implements PushClient {
             Event[] eventsArray = new Event[eventsList.size()];
             eventsList.toArray(eventsArray);
 
-            ArrayList<ResultListener<Event[]>> listeners = subscriptions.get(key);
-            for (ResultListener<Event[]> listener : listeners) {
-                listener.onRequestPerformed(eventsArray);
+            ArrayList<EventListener> listeners = subscriptions.get(key);
+            for (EventListener listener : listeners) {
+                listener.onEventReceived(eventsArray);
             }
         }
     }
