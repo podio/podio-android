@@ -21,6 +21,10 @@
  */
 package com.podio.sdk.push;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -29,10 +33,6 @@ import com.google.gson.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.internal.CallbackManager;
 import com.podio.sdk.internal.Utils;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
 
@@ -96,7 +96,7 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
         private HandshakeData() {
             this.channel = "/meta/handshake";
             this.version = "1.0";
-            this.supportedConnectionTypes = new String[]{"long-polling"};
+            this.supportedConnectionTypes = new String[] { "long-polling" };
         }
     }
 
@@ -163,12 +163,14 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     protected static void disconnect(Transport transport) {
+        // Make sure the state is set properly even if we can't disconnect
+        // gracefully.
+        state = State.closed;
         String clientId = status.clientId();
         String json = transport.disconnect(new DisconnectData(clientId));
         transport.close();
 
         parseStatus(json);
-        state = State.closed;
     }
 
     static State getState() {
@@ -249,7 +251,8 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * The delegate callback handler that will manage our callback interfaces for us.
+     * The delegate callback handler that will manage our callback interfaces
+     * for us.
      */
     private final CallbackManager<T> callbackManager;
 
@@ -269,7 +272,8 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Makes sure the result listeners are called properly when a result is delivered.
+     * Makes sure the result listeners are called properly when a result is
+     * delivered.
      *
      * @see java.util.concurrent.FutureTask#done()
      */

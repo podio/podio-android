@@ -30,6 +30,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.podio.sdk.QueueClient;
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
@@ -82,9 +83,11 @@ public class FayePushClient extends QueueClient implements PushClient {
             @Override
             public boolean onErrorOccured(Throwable cause) {
                 // Shut down everything and clear any subscriptions.
-                Transport transport = FayePushClient.this.transport;
-                execute(new DisconnectRequest(transport));
-                subscriptions.clear();
+                if (PushRequest.getState() != PushRequest.State.closed) {
+                    Transport transport = FayePushClient.this.transport;
+                    execute(new DisconnectRequest(transport));
+                    subscriptions.clear();
+                }
 
                 // Tell the world.
                 callbackManager.deliverErrorOnMainThread(cause);
@@ -220,23 +223,38 @@ public class FayePushClient extends QueueClient implements PushClient {
             if (jsonElement.isJsonObject()) {
                 jsonObject = jsonElement.getAsJsonObject();
 
-                JsonObject fayeData = getJsonObject(jsonObject, "data");
-                JsonObject podioData = getJsonObject(fayeData, "data");
+                if (jsonObject.has("channel") && jsonObject.has("data")) {
+                    JsonObject fayeData = getJsonObject(jsonObject, "data");
+                    JsonObject podioData = getJsonObject(fayeData, "data");
 
-                String key = getString(jsonObject, "channel");
-                String type = getString(podioData, "event");
+                    String key = getString(jsonObject, "channel");
+                    String type = getString(podioData, "event");
 
-                try {
-                    Event.Type eventType = Event.Type.valueOf(type);
-                    Event event = gson.fromJson(podioData, eventType.getClassObject());
-                    addEventToMap(key, event, result);
-                } catch (NullPointerException e) {
-                } catch (IllegalArgumentException e) {
+                    if (Utils.notAnyEmpty(key, type)) {
+                        try {
+                            Event.Type eventType = Event.Type.valueOf(type);
+                            Event event = gson.fromJson(podioData, eventType.getClassObject());
+
+                            if (result.containsKey(key)) {
+                                result.get(key).add(event);
+                            } else {
+                                ArrayList<Event> events = new ArrayList<Event>();
+                                events.add(event);
+                                result.put(key, events);
+                            }
+                        } catch (NullPointerException e) {
+                            callbackManager.deliverError(e);
+                        } catch (IllegalArgumentException e) {
+                            callbackManager.deliverError(e);
+                        } catch (JsonSyntaxException e) {
+                            callbackManager.deliverError(e);
+                        }
+                    }
                 }
             }
         }
 
-        return null;
+        return result;
     }
 
     private JsonObject getJsonObject(JsonObject parent, String member) {
@@ -247,26 +265,13 @@ public class FayePushClient extends QueueClient implements PushClient {
         return parent != null && parent.has(member) ? parent.get(member).getAsString() : "";
     }
 
-    private void addEventToMap(String key, Event event, HashMap<String, ArrayList<Event>> map) {
-        if (event != null && Utils.notEmpty(key) && Utils.notEmpty(map)) {
-            if (map.containsKey(key)) {
-                map.get(key).add(event);
-            } else {
-                ArrayList<Event> events = new ArrayList<Event>();
-                events.add(event);
-                map.put(key, events);
-            }
-        }
-    }
-
     private void deliverEvents(HashMap<String, ArrayList<Event>> events) {
         if (events == null) {
             return;
         }
 
+        // Deliver to their corresponding listeners.
         Set<String> keys = events.keySet();
-
-        // ...and deliver to their corresponding listeners.
         for (String key : keys) {
             ArrayList<Event> eventsList = events.get(key);
             Event[] eventsArray = new Event[eventsList.size()];
