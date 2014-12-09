@@ -205,7 +205,7 @@ public class Item implements Pushable {
     private final String last_event_on = null;
     private final String link = null;
     private final String title = null;
-    private final User created_by = null;
+    private final Byline created_by = null;
 
     // This member should not be included in any JSON built from this class,
     // hence the 'transient' keyword.
@@ -302,7 +302,7 @@ public class Item implements Pushable {
         return app;
     }
 
-    public User getCreatedByUser() {
+    public Byline getCreatedBy() {
         return created_by;
     }
 
