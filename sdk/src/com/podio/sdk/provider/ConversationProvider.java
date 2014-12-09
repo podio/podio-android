@@ -44,6 +44,12 @@ public class ConversationProvider extends VolleyProvider {
             return this;
         }
 
+        Path withEvent(long id) {
+            addPathSegment("event");
+            addPathSegment(Long.toString(id));
+            return this;
+        }
+
         Path withEvents(long id) {
             addPathSegment(Long.toString(id, 10));
             addPathSegment("event");
@@ -128,9 +134,21 @@ public class ConversationProvider extends VolleyProvider {
      *        The number of events to skip before start fetching.
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Conversation.Event[]> getConversationMessages(long id, int limit, int offset) {
+    public Request<Conversation.Event[]> getConversationEvents(long id, int limit, int offset) {
         Path filter = new Path().withEvents(id).withSpan(limit, offset);
         return get(filter, Conversation.Event[].class);
+    }
+
+    /**
+     * Fetches a single conversation event with the given id.
+     * 
+     * @param id
+     *        The id of the conversation event.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Conversation.Event> getConversationEvent(long id) {
+        Path filter = new Path().withEvent(id);
+        return get(filter, Conversation.Event.class);
     }
 
     /**
