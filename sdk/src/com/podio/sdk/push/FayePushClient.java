@@ -152,7 +152,7 @@ public class FayePushClient extends QueueClient implements PushClient {
      * termination request will be sent to the Podio API.
      */
     @Override
-    public void unsubscribe(String channel, ResultListener<Event[]> listener) {
+    public void unsubscribe(String channel, EventListener listener) {
         if (listener == null) {
             // Remove all subscriptions for the given channel.
             if (subscriptions.containsKey(channel)) {

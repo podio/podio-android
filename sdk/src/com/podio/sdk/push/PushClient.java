@@ -22,7 +22,6 @@
 package com.podio.sdk.push;
 
 import com.podio.sdk.Request.ErrorListener;
-import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.domain.push.Event;
 
 public interface PushClient {
@@ -37,7 +36,7 @@ public interface PushClient {
 
     public void subscribe(String channel, String signature, String timestamp, EventListener eventListener);
 
-    public void unsubscribe(String channel, ResultListener<Event[]> listener);
+    public void unsubscribe(String channel, EventListener listener);
 
     public PushClient addErrorListener(ErrorListener errorListener);
 
