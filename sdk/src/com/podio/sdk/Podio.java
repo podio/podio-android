@@ -226,7 +226,7 @@ public class Podio {
         restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
 
         // TODO: Enable proper configuration of push end point.
-        String pushUrl = scheme + "://" + authority.replace("api.", "push.");
+        String pushUrl = scheme + "://" + authority.replace("api.", "push.") + "/faye";
         push = new FayePushClient(new VolleyLongPollingTransport(context, pushUrl));
 
         // Providers relying on a rest client in order to operate properly.
