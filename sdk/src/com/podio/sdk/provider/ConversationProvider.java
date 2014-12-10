@@ -66,6 +66,12 @@ public class ConversationProvider extends VolleyProvider {
             return this;
         }
 
+        Path withReadFlag(long id) {
+            addPathSegment(Long.toString(id, 10));
+            addPathSegment("read");
+            return this;
+        }
+
         Path withReply(long id) {
             addPathSegment(Long.toString(id, 10));
             addPathSegment("reply");
@@ -149,6 +155,18 @@ public class ConversationProvider extends VolleyProvider {
     public Request<Conversation.Event> getConversationEvent(long id) {
         Path filter = new Path().withEvent(id);
         return get(filter, Conversation.Event.class);
+    }
+
+    /**
+     * Marks the conversation with the given id as "read".
+     * 
+     * @param conversationId
+     *        The id of the conversation.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> markConversationAsRead(long conversationId) {
+        Path filter = new Path().withReadFlag(conversationId);
+        return post(filter, null, Void.class);
     }
 
     /**
