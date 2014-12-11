@@ -57,12 +57,12 @@ final class InitDiskRequest extends LocalStoreRequest<File> {
         File diskStore = null;
 
         if (context != null && Utils.notEmpty(name)) {
-            String systemCachePath = context.getCacheDir().getPath();
+            File storesRoot = getRootDirectory(context);
             String directoryName = getFileName(name);
-            diskStore = new File(systemCachePath + File.separator + directoryName);
+            diskStore = new File(storesRoot, directoryName);
 
             if (diskStore != null && !isWritableDirectory(diskStore)) {
-                diskStore.mkdir();
+                diskStore.mkdirs();
             }
         }
 

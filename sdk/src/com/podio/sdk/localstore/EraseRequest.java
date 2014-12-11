@@ -58,11 +58,17 @@ final class EraseRequest extends LocalStoreRequest<Void> {
      *        The disk cache to clear.
      */
     private static final void destroyDiskStore(File diskStore) {
-        if (!isWritableDirectory(diskStore)) {
+        if (isWritableDirectory(diskStore)) {
             File[] files = diskStore.listFiles();
 
-            for (File file : files) {
-                file.delete();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        destroyDiskStore(file);
+                    } else if (file.isFile()) {
+                        file.delete();
+                    }
+                }
             }
 
             diskStore.delete();

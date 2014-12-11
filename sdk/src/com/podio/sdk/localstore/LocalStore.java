@@ -53,6 +53,20 @@ import com.podio.sdk.Store;
 public class LocalStore extends QueueClient implements Store {
 
     /**
+     * Erases all local stores in the root store folder for this app.
+     * 
+     * @param context
+     *        The context used to find the cache directory for this app.
+     */
+    public static Request<Void> eraseAllDiskStores(Context context) {
+        File root = LocalStoreRequest.getRootDirectory(context);
+        EraseRequest request = LocalStoreRequest.newEraseRequest(null, root);
+        LocalStore store = new LocalStore();
+        store.execute(request);
+        return request;
+    }
+
+    /**
      * Creates a new instance of this class and configures its initial state.
      * This is the only way to create and initialize a <code>LocalStore</code>.
      * 
@@ -140,7 +154,7 @@ public class LocalStore extends QueueClient implements Store {
      * @see com.podio.sdk.Store#destroy()
      */
     @Override
-    public Request<Void> free() throws IllegalStateException {
+    public Request<Void> free() {
         FreeRequest request = LocalStoreRequest.newFreeRequest(memoryStore);
         execute(request);
         return request;
@@ -156,7 +170,7 @@ public class LocalStore extends QueueClient implements Store {
      * @see com.podio.sdk.Store#destroy()
      */
     @Override
-    public Request<Void> erase() throws IllegalStateException {
+    public Request<Void> erase() {
         EraseRequest request = (EraseRequest) LocalStoreRequest
                 .newEraseRequest(memoryStore, diskStore)
                 .withResultListener(new ResultListener<Void>() {
@@ -224,4 +238,5 @@ public class LocalStore extends QueueClient implements Store {
         execute(request);
         return request;
     }
+
 }

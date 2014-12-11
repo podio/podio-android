@@ -160,6 +160,19 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
+     * Returns the root folder for the disk store. All stores are created in
+     * their own sub directories here under.
+     * 
+     * @param context
+     *        The context used to find the cache directory of this app.
+     * @return The {@link File} object pointing to the root local store folder.
+     */
+    static File getRootDirectory(Context context) {
+        String systemCachePath = context.getCacheDir().getPath();
+        return new File(systemCachePath + File.separator + "stores");
+    }
+
+    /**
      * URL encodes the string format of the given key, so it can be used as a
      * file name.
      * 
