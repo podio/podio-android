@@ -35,6 +35,7 @@ import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
+import com.podio.sdk.provider.SearchProvider;
 import com.podio.sdk.provider.StoreProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
@@ -66,14 +67,12 @@ public class Podio {
     public static PushClient push;
 
     /**
-     * Enables means of easy operating on the {@link ApplicationProvider} API
-     * end point.
+     * Enables means of easy operating on the Application API end point.
      */
     public static final ApplicationProvider application = new ApplicationProvider();
 
     /**
-     * Enables means of easy operating on the {@link CalendarProvider} API end
-     * point.
+     * Enables means of easy operating on the Calendar API end point.
      */
     public static final CalendarProvider calendar = new CalendarProvider();
 
@@ -84,8 +83,7 @@ public class Podio {
     public static final ContactProvider contact = new ContactProvider();
 
     /**
-     * Enables means of easy operating on the {@link ConversationProvider} API
-     * end point.
+     * Enables means of easy operating on the Conversation API end point.
      */
     public static final ConversationProvider conversation = new ConversationProvider();
 
@@ -95,16 +93,19 @@ public class Podio {
     public static final ClientProvider client = new ClientProvider();
 
     /**
-     * Enables means of easy operating on the {@link ItemProvider} API end
-     * point.
+     * Enables means of easy operating on the Item API end point.
      */
     public static final ItemProvider item = new ItemProvider();
 
     /**
-     * Enables means of easy operating on the {@link OrganizationProvider} API
-     * end point.
+     * Enables means of easy operating on the Organization API end point.
      */
     public static final OrganizationProvider organization = new OrganizationProvider();
+
+    /**
+     * Enables means of easy operating on the Search API end point.
+     */
+    public static final SearchProvider search = new SearchProvider();
 
     /**
      * Enables means of requesting a handle to a local store manager.
@@ -112,20 +113,17 @@ public class Podio {
     public static final StoreProvider store = new StoreProvider();
 
     /**
-     * Enables means of easy operating on the {@link UserProvider} API end
-     * point.
+     * Enables means of easy operating on the User API end point.
      */
     public static final UserProvider user = new UserProvider();
 
     /**
-     * Enables means of easy operating on the {@link ViewProvider} API end
-     * point.
+     * Enables means of easy operating on the View API end point.
      */
     public static final ViewProvider view = new ViewProvider();
 
     /**
-     * Enables means of easy operating on the {@link TaskProvider} API end
-     * point.
+     * Enables means of easy operating on the Task API end point.
      */
     public static final TaskProvider task = new TaskProvider();
 
@@ -237,6 +235,7 @@ public class Podio {
         conversation.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
+        search.setClient(restClient);
         user.setClient(restClient);
         view.setClient(restClient);
         task.setClient(restClient);
