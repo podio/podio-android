@@ -39,7 +39,13 @@ public class SearchProvider extends VolleyProvider {
      * @author László Urszuly
      */
     public static enum Type {
-        item, task, conversation, app, status, file, profile
+        app,
+        conversation,
+        file,
+        item,
+        profile,
+        status,
+        task
     }
 
     static class Path extends Filter {

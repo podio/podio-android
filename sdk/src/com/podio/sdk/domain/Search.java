@@ -42,31 +42,31 @@ public class Search {
         private final Counts counts = null;
         private final T[] results = null;
 
-        public int getAppsCount() {
+        public int getAppCount() {
             return counts != null ? Utils.getNative(counts.app, -1) : -1;
         }
 
-        public int getConversationsCount() {
+        public int getConversationCount() {
             return counts != null ? Utils.getNative(counts.conversation, -1) : -1;
         }
 
-        public int getFilessCount() {
+        public int getFileCount() {
             return counts != null ? Utils.getNative(counts.file, -1) : -1;
         }
 
-        public int getItemsCount() {
+        public int getItemCount() {
             return counts != null ? Utils.getNative(counts.item, -1) : -1;
         }
 
-        public int getProfilesCount() {
+        public int getProfileCount() {
             return counts != null ? Utils.getNative(counts.profile, -1) : -1;
         }
 
-        public int getStatusesCount() {
+        public int getStatusCount() {
             return counts != null ? Utils.getNative(counts.status, -1) : -1;
         }
 
-        public int getTasksCount() {
+        public int getTaskCount() {
             return counts != null ? Utils.getNative(counts.task, -1) : -1;
         }
 
