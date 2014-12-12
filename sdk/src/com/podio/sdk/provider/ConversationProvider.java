@@ -56,13 +56,13 @@ public class ConversationProvider extends VolleyProvider {
             return this;
         }
 
-        Path withFlag(String key, String value) {
-            addQueryParameter(key, value);
+        Path withId(long id) {
+            addPathSegment(Long.toString(id, 10));
             return this;
         }
 
-        Path withId(long id) {
-            addPathSegment(Long.toString(id, 10));
+        Path withParticipantsOnly() {
+            addQueryParameter("participants", "true");
             return this;
         }
 
@@ -203,8 +203,9 @@ public class ConversationProvider extends VolleyProvider {
      */
     public Request<Conversation[]> searchConversations(String text, int limit, int offset, boolean searchParticipants) {
         Path filter = new Path().withSearch(text).withSpan(limit, offset);
+
         if (searchParticipants) {
-            filter.withFlag("participants", "true");
+            filter.withParticipantsOnly();
         }
 
         return get(filter, Conversation[].class);
