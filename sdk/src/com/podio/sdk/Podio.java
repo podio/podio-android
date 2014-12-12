@@ -35,7 +35,6 @@ import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
-import com.podio.sdk.provider.SearchProvider;
 import com.podio.sdk.provider.StoreProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
@@ -101,11 +100,6 @@ public class Podio {
      * Enables means of easy operating on the Organization API end point.
      */
     public static final OrganizationProvider organization = new OrganizationProvider();
-
-    /**
-     * Enables means of easy operating on the Search API end point.
-     */
-    public static final SearchProvider search = new SearchProvider();
 
     /**
      * Enables means of requesting a handle to a local store manager.
@@ -235,7 +229,6 @@ public class Podio {
         conversation.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
-        search.setClient(restClient);
         user.setClient(restClient);
         view.setClient(restClient);
         task.setClient(restClient);
