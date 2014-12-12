@@ -163,12 +163,15 @@ public class FayePushClient extends QueueClient implements PushClient {
             // Remove the given listener for the given channel.
             if (subscriptions.containsKey(channel)) {
                 ArrayList<EventListener> listeners = subscriptions.get(channel);
-                listeners.remove(listener);
 
-                // If no more listener, then also unsubscribe at API level.
-                if (listeners.size() == 0) {
-                    subscriptions.remove(channel);
-                    execute(new UnsubscribeRequest(channel, transport));
+                if (listeners != null) {
+                    listeners.remove(listener);
+
+                    // If no more listener, then also unsubscribe at API level.
+                    if (listeners.size() == 0) {
+                        subscriptions.remove(channel);
+                        execute(new UnsubscribeRequest(channel, transport));
+                    }
                 }
             }
         }
@@ -275,8 +278,13 @@ public class FayePushClient extends QueueClient implements PushClient {
             eventsList.toArray(eventsArray);
 
             ArrayList<EventListener> listeners = subscriptions.get(key);
-            for (EventListener listener : listeners) {
-                listener.onEventReceived(eventsArray);
+
+            if (listeners != null) {
+                for (EventListener listener : listeners) {
+                    if (listener != null) {
+                        listener.onEventReceived(eventsArray);
+                    }
+                }
             }
         }
     }
