@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+apply plugin: 'retrolambda'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 21
+
+        versionCode 1
+        versionName '0.1.0'
+        project.archivesBaseName = 'sdk'
+        project.version = android.defaultConfig.versionName
+    }
+    buildTypes {
+        release {
+            debuggable false
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    // Compile with Java 8 to support Lambdas (comes with the 'retrolambda' plugin)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    libraryVariants.all { variant ->
+        def name = variant.name.capitalize()
+        def classifier = name.replaceAll('([A-Z])', '-$1').toLowerCase()
+        def template = "${project.archivesBaseName}-${project.version}-${classifier}"
+
+        // Force AAR archives to have the same naming conventions as the JAR's.
+        variant.outputs.each { output ->
+            def fileName = output.outputFile.name
+            if (fileName.endsWith('.aar')) {
+                output.outputFile = new File(output.outputFile.parent, template + '.aar')
+            }
+        }
+
+        // Build JAR's
+        task("podioJavadoc${name}", type: Javadoc) {
+            source = android.sourceSets.main.java.srcDirs
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        }
+
+        task("podioJavadocJar${name}", type: Jar, dependsOn: "podioJavadoc${name}") {
+            classifier = 'javadoc'
+            from tasks["podioJavadoc${name}"].destinationDir
+            destinationDir = file("${buildDir}/outputs/jar/")
+        }
+
+        artifacts.add('archives', task("podioSourceJar${name}", type: Jar) {
+            classifier = 'sources'
+            from android.sourceSets.main.java.srcDirs
+            destinationDir = file("${buildDir}/outputs/jar/")
+        })
+
+        artifacts.add('archives', task("podioJar${name}", type: Jar) {
+            dependsOn variant.javaCompile
+            from variant.javaCompile.destinationDir
+            destinationDir = file("${buildDir}/outputs/jar/")
+        })
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.mcxiaoke.volley:library:1.0.9'
+}
