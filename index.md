@@ -73,7 +73,7 @@ And then you need to define your dependencies, which could look something like t
 {% endhighlight %}
 
 ### Other IDE, like Eclipse, IntelliJ etc
-If you're developing in another IDE, say Eclipse, you need to manually download and provide the libraries as required by your environment. You'll need the [Podio SDK](https://bintray.com/podio/android/sdk/_latestVersion), which in turn depends on [Google Gson](https://bintray.com/bintray/jcenter/com.google.code.gson%3Agson/_latestVersion) and [Android Volley](https://bintray.com/bintray/jcenter/com.mcxiaoke.volley%3Alibrary/_latestVersion). You can find them all on JCenter (the "Files" link on the respective page will take you to the actual binaries).
+If your development environment isn't covered by above examples, you may need to manually download and provide the libraries as required by your environment. You'll need the [Podio SDK](https://bintray.com/podio/android/sdk/_latestVersion), which in turn depends on [Google Gson](https://bintray.com/bintray/jcenter/com.google.code.gson%3Agson/_latestVersion) and [Android Volley](https://bintray.com/bintray/jcenter/com.mcxiaoke.volley%3Alibrary/_latestVersion). You can find them all on JCenter (the "Files" link on respective page will take you to the actual binaries).
 
 ## Setup your API keys
 Before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details [here](https://developers.podio.com/api-key).
