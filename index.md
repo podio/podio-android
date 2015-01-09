@@ -15,11 +15,11 @@ The Podio SDK for Android is currently in a early development stage where the en
 ## Integrate with your Android project
 If you're developing in Android Studio you can add the Podio SDK as a module (or app) dependency like this:
 
-```java
+{% highlight java %}
 dependencies {
     compile 'com.podio.android:sdk:0.1.0'
 }
-```
+{% endhighlight %}
 
 You may want to check for the [latest version](https://bintray.com/podio/android/sdk/_latestVersion) and adjust accordingly.
 
@@ -27,7 +27,7 @@ If you're developing in another IDE, say Eclipse, you need to manually download 
 
 If you prefer to use Maven you'll first need to add JCenter as a custom repository, as the Podio SDK doesn't exist in Maven Central. An example of how to do it could look like this:
 
-```xml
+{% highlight xml %}
 <project>
 ...
   <repositories>
@@ -39,12 +39,11 @@ If you prefer to use Maven you'll first need to add JCenter as a custom reposito
   </repositories>
 ...
 </project>
-
-```
+{% endhighlight %}
 
 And then you need to define your dependencies, which could look something like this:
 
-```xml
+{% highlight xml %}
 <project>
 ...
   <dependencies>
@@ -69,7 +68,7 @@ And then you need to define your dependencies, which could look something like t
   </dependencies>
 ...
 </project>
-```
+{% endhighlight %}
 
 ## Setup your API keys
 Before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details [here](https://developers.podio.com/api-key).
