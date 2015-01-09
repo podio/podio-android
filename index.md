@@ -13,7 +13,9 @@ The test project is using the [NanoHTTPD](http://nanohttpd.com/) web server for 
 The Podio SDK for Android is currently in a early development stage where the entire feature set has not yet been fully implemented. We are working very actively on making it feature complete within the near future.
 
 ## Integrate with your Android project
-If you're developing in Android Studio you can add the Podio SDK as a module (or app) dependency like this:
+
+### Android Studio
+Since the Podio SDK is now distributed through JCenter, you can very conveniently just add the Podio SDK as a module (or app) dependency like this:
 
 {% highlight java %}
 dependencies {
@@ -21,11 +23,11 @@ dependencies {
 }
 {% endhighlight %}
 
-You may want to check for the [latest version](https://bintray.com/podio/android/sdk/_latestVersion) and adjust accordingly.
+And that's it. You may, however, want to check for the [latest version](https://bintray.com/podio/android/sdk/_latestVersion).
 
-If you're developing in another IDE, say Eclipse, you need to manually download and provide the libraries as required by your environment. You'll need the [Podio SDK](https://bintray.com/podio/android/sdk/_latestVersion), which in turn depends on [Google Gson](https://bintray.com/bintray/jcenter/com.google.code.gson%3Agson/_latestVersion) and [Android Volley](https://bintray.com/bintray/jcenter/com.mcxiaoke.volley%3Alibrary/_latestVersion). You can find them all on JCenter (the "Files" link on the respective page will take you to the actual binaries).
 
-If you prefer to use Maven you'll first need to add JCenter as a custom repository, as the Podio SDK doesn't exist in Maven Central. An example of how to do it could look like this:
+### Maven
+As the Podio SDK doesn't exist in Maven Central, you'll need to add JCenter as a custom repository to your Maven POM file. An example of how to do it could look like this:
 
 {% highlight xml %}
 <project>
@@ -69,6 +71,9 @@ And then you need to define your dependencies, which could look something like t
 ...
 </project>
 {% endhighlight %}
+
+### Other IDE, like Eclipse, IntelliJ etc
+If you're developing in another IDE, say Eclipse, you need to manually download and provide the libraries as required by your environment. You'll need the [Podio SDK](https://bintray.com/podio/android/sdk/_latestVersion), which in turn depends on [Google Gson](https://bintray.com/bintray/jcenter/com.google.code.gson%3Agson/_latestVersion) and [Android Volley](https://bintray.com/bintray/jcenter/com.mcxiaoke.volley%3Alibrary/_latestVersion). You can find them all on JCenter (the "Files" link on the respective page will take you to the actual binaries).
 
 ## Setup your API keys
 Before you can communicate with the Podio API, you need to generate a set of API keys for your application from your "Account Settings" page on Podio. You can find further details [here](https://developers.podio.com/api-key).
