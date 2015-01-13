@@ -4,6 +4,7 @@ apply plugin: 'retrolambda'
 android {
     compileSdkVersion 21
     buildToolsVersion '21.1.1'
+    defaultPublishConfig 'release'
 
     defaultConfig {
         minSdkVersion 15
@@ -14,6 +15,7 @@ android {
         project.archivesBaseName = 'sdk'
         project.version = android.defaultConfig.versionName
     }
+
     buildTypes {
         release {
             debuggable false
@@ -31,8 +33,8 @@ android {
 
     libraryVariants.all { variant ->
         def name = variant.name.capitalize()
-        def classifier = name.replaceAll('([A-Z])', '-$1').toLowerCase()
-        def template = "${project.archivesBaseName}-${project.version}-${classifier}"
+        def suffix = name.replaceAll('([A-Z])', '-$1').toLowerCase()
+        def template = "${project.archivesBaseName}-${project.version}-${suffix}"
 
         // Force AAR archives to have the same naming conventions as the JAR's.
         variant.outputs.each { output ->
