@@ -179,13 +179,15 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     }
 
     @Override
-    protected Map<String, String> getParams() throws AuthFailureError {
-        if (params.containsKey("refresh_token")) {
-            String refreshToken = Session.refreshToken();
-            params.put("refresh_token", refreshToken);
+    public synchronized T waitForResult(long maxSeconds) {
+        try {
+            wait(TimeUnit.SECONDS.toMillis(maxSeconds > 0 ? maxSeconds : 0));
+        } catch (InterruptedException e) {
+            callbackManager.deliverError(e);
+            return null;
         }
 
-        return params;
+        return result;
     }
 
     @Override
@@ -208,6 +210,16 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
 
         callbackManager.deliverResult(result);
+    }
+
+    @Override
+    protected Map<String, String> getParams() throws AuthFailureError {
+        if (params.containsKey("refresh_token")) {
+            String refreshToken = Session.refreshToken();
+            params.put("refresh_token", refreshToken);
+        }
+
+        return params;
     }
 
     @Override
@@ -280,17 +292,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     public SessionListener removeSessionListener(SessionListener sessionListener) {
         return callbackManager.removeSessionListener(sessionListener);
-    }
-
-    public synchronized T waitForResult(long maxSeconds) {
-        try {
-            wait(TimeUnit.SECONDS.toMillis(maxSeconds > 0 ? maxSeconds : 0));
-        } catch (InterruptedException e) {
-            callbackManager.deliverError(e);
-            return null;
-        }
-
-        return result;
     }
 
 }

@@ -1,25 +1,32 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 package com.podio.sdk.localstore;
+
+import android.content.Context;
+import android.util.LruCache;
+
+import com.podio.sdk.JsonParser;
+import com.podio.sdk.Request;
+import com.podio.sdk.internal.CallbackManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,49 +38,44 @@ import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-
-import android.content.Context;
-import android.util.LruCache;
-
-import com.podio.sdk.JsonParser;
-import com.podio.sdk.Request;
-import com.podio.sdk.internal.CallbackManager;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
- * A base class for operations targeting a local store. The
- * <code>LocalStoreRequest</code> offers means of hooking in callback interfaces
- * which will be called once the operation has delivered it's result (or an
- * error).
- * 
- * @author László Urszuly
+ * A base class for operations targeting a local store. The <code>LocalStoreRequest</code> offers
+ * means of hooking in callback interfaces which will be called once the operation has delivered
+ * it's result (or an error).
+ *
  * @param <T>
- *        The type of data handled by a given request. This only applies to the
- *        "get" operation.
+ *         The type of data handled by a given request. This only applies to the "get" operation.
+ *
+ * @author László Urszuly
  */
 class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
     /**
-     * Creates a new Request for clearing the memory store. The disk store is
-     * not affected by this. The request will not deliver anything.
-     * 
+     * Creates a new Request for clearing the memory store. The disk store is not affected by this.
+     * The request will not deliver anything.
+     *
      * @param memoryStore
-     *        The memory store to clear and close.
+     *         The memory store to clear and close.
+     *
      * @return A request ready for being enqueued in a queue.
-     * @see com.podio.sdk.localstore.LocalStoreRequest#newEraseRequest(LruCache,
-     *      File)
+     *
+     * @see com.podio.sdk.localstore.LocalStoreRequest#newEraseRequest(LruCache, File)
      */
     static FreeRequest newFreeRequest(LruCache<Object, Object> memoryStore) {
         return new FreeRequest(memoryStore);
     }
 
     /**
-     * Creates a new Request for destroying the local store. The request will
-     * not deliver anything.
-     * 
+     * Creates a new Request for destroying the local store. The request will not deliver anything.
+     *
      * @param memoryStore
-     *        The in-memory store.
+     *         The in-memory store.
      * @param diskStore
-     *        The file handle to the disk store directory.
+     *         The file handle to the disk store directory.
+     *
      * @return A request ready for being enqueued in a queue.
      */
     static EraseRequest newEraseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
@@ -81,33 +83,34 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Creates a new Request for retrieving a value from the local store. The
-     * request will deliver the requested object, or a null-pointer if no object
-     * is found by the given key.
-     * 
+     * Creates a new Request for retrieving a value from the local store. The request will deliver
+     * the requested object, or a null-pointer if no object is found by the given key.
+     *
      * @param memoryStore
-     *        The in-memory store.
+     *         The in-memory store.
      * @param diskStore
-     *        The file handle to the disk store directory.
+     *         The file handle to the disk store directory.
      * @param key
-     *        The key of the value.
+     *         The key of the value.
      * @param classOfValue
-     *        The type to parse the file into (if needed).
+     *         The type to parse the file into (if needed).
+     *
      * @return A request ready for being enqueued in a queue.
      */
     static <E> GetRequest<E> newGetRequest(LruCache<Object, Object> memoryStore,
-            File diskStore, Object key, Class<E> classOfValue) {
+                                           File diskStore, Object key, Class<E> classOfValue) {
         return new GetRequest<E>(memoryStore, diskStore, key, classOfValue);
     }
 
     /**
-     * Creates a new initialization request targeting the disk store, enabling
-     * the caller to initialize the store on a worker thread.
-     * 
+     * Creates a new initialization request targeting the disk store, enabling the caller to
+     * initialize the store on a worker thread.
+     *
      * @param context
-     *        The context from which the cache directory path will be extracted.
+     *         The context from which the cache directory path will be extracted.
      * @param name
-     *        The name of the store to initialize.
+     *         The name of the store to initialize.
+     *
      * @return A request ready for being enqueued in a queue.
      */
     static InitDiskRequest newInitDiskStoreRequest(Context context, String name) {
@@ -115,9 +118,9 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Creates a new initialization request targeting the in-memory store,
-     * enabling the caller to initialize the store on a worker thread.
-     * 
+     * Creates a new initialization request targeting the in-memory store, enabling the caller to
+     * initialize the store on a worker thread.
+     *
      * @return A request ready for being enqueued in a queue.
      */
     static InitMemoryRequest newInitMemoryStoreRequest(int maxMemoryAsKiloBytes) {
@@ -126,13 +129,14 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
     /**
      * Creates a new Request for removing a value from the local store.
-     * 
+     *
      * @param memoryStore
-     *        The in-memory store.
+     *         The in-memory store.
      * @param diskStore
-     *        The file handle to the disk store directory.
+     *         The file handle to the disk store directory.
      * @param key
-     *        The key of the value.
+     *         The key of the value.
+     *
      * @return A request ready for being enqueued in a queue.
      */
     static RemoveRequest newRemoveRequest(LruCache<Object, Object> memoryStore, File diskStore, Object key) {
@@ -140,31 +144,33 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Creates a new request for storing a given value. The request will deliver
-     * the previous value if an overwrite has occurred, or a null-pointer if no
-     * object is previously stored by the given key.
-     * 
+     * Creates a new request for storing a given value. The request will deliver the previous value
+     * if an overwrite has occurred, or a null-pointer if no object is previously stored by the
+     * given key.
+     *
      * @param memoryStore
-     *        The in-memory store.
+     *         The in-memory store.
      * @param diskStore
-     *        The file handle to the disk store directory.
+     *         The file handle to the disk store directory.
      * @param key
-     *        The key of the value.
+     *         The key of the value.
      * @param value
-     *        The value.
+     *         The value.
+     *
      * @return A request ready for being enqueued in a queue.
      */
     static SetRequest newSetRequest(LruCache<Object, Object> memoryStore, File diskStore,
-            Object key, Object value) {
+                                    Object key, Object value) {
         return new SetRequest(memoryStore, diskStore, key, value);
     }
 
     /**
-     * Returns the root folder for the disk store. All stores are created in
-     * their own sub directories here under.
-     * 
+     * Returns the root folder for the disk store. All stores are created in their own sub
+     * directories here under.
+     *
      * @param context
-     *        The context used to find the cache directory of this app.
+     *         The context used to find the cache directory of this app.
+     *
      * @return The {@link File} object pointing to the root local store folder.
      */
     static File getRootDirectory(Context context) {
@@ -173,67 +179,71 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * URL encodes the string format of the given key, so it can be used as a
-     * file name.
-     * 
+     * URL encodes the string format of the given key, so it can be used as a file name.
+     *
      * @param key
-     *        The key to build a file name on.
+     *         The key to build a file name on.
+     *
      * @return The URL encoded string notation of the given key.
+     *
      * @throws UnsupportedEncodingException
-     *         If using an invalid charset name. This should never happen as we
-     *         call for the default charset of the system.
+     *         If using an invalid charset name. This should never happen as we call for the default
+     *         charset of the system.
      */
     protected static String getFileName(Object key) throws UnsupportedEncodingException {
         return URLEncoder.encode(key.toString(), Charset.defaultCharset().name());
     }
 
     /**
-     * Verifies that the given file handle, 1) isn't a null pointer, 2) exists
-     * on the file system, 3) is a directory and 4) is readable.
-     * 
+     * Verifies that the given file handle, 1) isn't a null pointer, 2) exists on the file system,
+     * 3) is a directory and 4) is readable.
+     *
      * @param directory
-     *        The directory to test.
-     * @return Boolean <code>true</code> if the conditions are met, boolean
-     *         <code>false</code> otherwise.
+     *         The directory to test.
+     *
+     * @return Boolean <code>true</code> if the conditions are met, boolean <code>false</code>
+     * otherwise.
      */
     protected static boolean isReadableDirectory(File directory) {
         return directory != null && directory.exists() && directory.isDirectory() && directory.canRead();
     }
 
     /**
-     * Verifies that the given file handle, 1) isn't a null pointer, 2) exists
-     * on the file system, 3) is a file and 4) is readable.
-     * 
+     * Verifies that the given file handle, 1) isn't a null pointer, 2) exists on the file system,
+     * 3) is a file and 4) is readable.
+     *
      * @param file
-     *        The file to test.
-     * @return Boolean <code>true</code> if the conditions are met, boolean
-     *         <code>false</code> otherwise.
+     *         The file to test.
+     *
+     * @return Boolean <code>true</code> if the conditions are met, boolean <code>false</code>
+     * otherwise.
      */
     protected static boolean isReadableFile(File file) {
         return file != null && file.exists() && file.isFile() && file.canRead();
     }
 
     /**
-     * Verifies that the given class definition isn't a null pointer or a
-     * {@link Void} class.
-     * 
+     * Verifies that the given class definition isn't a null pointer or a {@link Void} class.
+     *
      * @param template
-     *        The class definition to test.
-     * @return Boolean <code>true</code> if the conditions are met, boolean
-     *         <code>false</code> otherwise.
+     *         The class definition to test.
+     *
+     * @return Boolean <code>true</code> if the conditions are met, boolean <code>false</code>
+     * otherwise.
      */
     protected static boolean isValidTemplate(Class<?> template) {
         return template != null && !template.equals(Void.class);
     }
 
     /**
-     * Verifies that the given file handle, 1) isn't a null pointer, 2) exists
-     * on the file system, 3) is a directory and 4) is writable.
-     * 
+     * Verifies that the given file handle, 1) isn't a null pointer, 2) exists on the file system,
+     * 3) is a directory and 4) is writable.
+     *
      * @param directory
-     *        The directory to test.
-     * @return Boolean <code>true</code> if the conditions are met, boolean
-     *         <code>false</code> otherwise.
+     *         The directory to test.
+     *
+     * @return Boolean <code>true</code> if the conditions are met, boolean <code>false</code>
+     * otherwise.
      */
     protected static boolean isWritableDirectory(File directory) {
         return directory != null && directory.exists() && directory.isDirectory() && directory.canWrite();
@@ -241,12 +251,14 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
     /**
      * Reads the content of a file and tries to parse it as JSON into an object.
-     * 
+     *
      * @param file
-     *        The file on disk to read from.
+     *         The file on disk to read from.
      * @param classOfValue
-     *        The class definition that the JSON should be parsed into.
+     *         The class definition that the JSON should be parsed into.
+     *
      * @return The object stored in the file.
+     *
      * @throws IOException
      *         If anything went wrong during file access.
      */
@@ -282,16 +294,16 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Tries to write the value to the disk store. An attempt will be made to
-     * parse the value to JSON and on success it will be written to a file with
-     * the same name as the key. The key will be transformed to the file name by
-     * calling the <code>toString()</code> method on it (pick your keys with
-     * great care).
-     * 
+     * Tries to write the value to the disk store. An attempt will be made to parse the value to
+     * JSON and on success it will be written to a file with the same name as the key. The key will
+     * be transformed to the file name by calling the <code>toString()</code> method on it (pick
+     * your keys with great care).
+     *
      * @param file
-     *        The {@link File} pointing at the desired destination file on disk.
+     *         The {@link File} pointing at the desired destination file on disk.
      * @param value
-     *        The value that will be serialized to JSON and saved as a file.
+     *         The value that will be serialized to JSON and saved as a file.
+     *
      * @throws IOException
      */
     protected static void writeObjectToDisk(File file, Object value) throws IOException {
@@ -306,10 +318,9 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Validates the memory cache and the disk store handles. If none of them
-     * are ready for use, an {@link IllegalStateException} is thrown, otherwise
-     * we're cool.
-     * 
+     * Validates the memory cache and the disk store handles. If none of them are ready for use, an
+     * {@link IllegalStateException} is thrown, otherwise we're cool.
+     *
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
      */
@@ -320,8 +331,7 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * The delegate callback handler that will manage our callback interfaces
-     * for us.
+     * The delegate callback handler that will manage our callback interfaces for us.
      */
     private final CallbackManager<T> callbackManager;
 
@@ -337,9 +347,9 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
     /**
      * Initializes the listener containers.
-     * 
+     *
      * @param callable
-     *        The actual task to perform sometime in the future.
+     *         The actual task to perform sometime in the future.
      */
     LocalStoreRequest(Callable<T> callable) {
         super(callable);
@@ -347,9 +357,8 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Makes sure the result listeners are called properly when a result is
-     * delivered.
-     * 
+     * Makes sure the result listeners are called properly when a result is delivered.
+     *
      * @see java.util.concurrent.FutureTask#done()
      */
     @Override
@@ -371,14 +380,27 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
         }
     }
 
+    @Override
+    public synchronized T waitForResult(long maxSeconds) {
+        try {
+            return get(maxSeconds, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            callbackManager.deliverError(e);
+        } catch (ExecutionException e) {
+            callbackManager.deliverError(e);
+        } catch (TimeoutException e) {
+            callbackManager.deliverError(e);
+        }
+
+        return null;
+    }
+
     /**
-     * Registers a result listener for this request. If the result is already
-     * delivered, then the result listener will be called immediately with the
-     * result.
-     * 
+     * Registers a result listener for this request. If the result is already delivered, then the
+     * result listener will be called immediately with the result.
+     *
      * @see Request#withResultListener(Request.ResultListener)
-     * @see CallbackManager#addResultListener(Request.ResultListener, boolean,
-     *      Object)
+     * @see CallbackManager#addResultListener(Request.ResultListener, boolean, Object)
      */
     @Override
     public Request<T> withResultListener(Request.ResultListener<T> contentListener) {
@@ -387,13 +409,11 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Registers an error listener for this request. If an error is already
-     * delivered, then the error listener will be called immediately with the
-     * error.
-     * 
+     * Registers an error listener for this request. If an error is already delivered, then the
+     * error listener will be called immediately with the error.
+     *
      * @see Request#withErrorListener(Request.ErrorListener)
-     * @see CallbackManager#addErrorListener(Request.ErrorListener, boolean,
-     *      Throwable)
+     * @see CallbackManager#addErrorListener(Request.ErrorListener, boolean, Throwable)
      */
     @Override
     public Request<T> withErrorListener(Request.ErrorListener errorListener) throws UnsupportedOperationException {
@@ -402,9 +422,9 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Throws an {@link UnsupportedOperationException} as this implementation
-     * doesn't deal with sessions.
-     * 
+     * Throws an {@link UnsupportedOperationException} as this implementation doesn't deal with
+     * sessions.
+     *
      * @see com.podio.sdk.Request#withSessionListener(com.podio.sdk.Request.SessionListener)
      */
     @Override

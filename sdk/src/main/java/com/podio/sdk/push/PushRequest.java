@@ -21,10 +21,6 @@
  */
 package com.podio.sdk.push;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -33,6 +29,10 @@ import com.google.gson.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.internal.CallbackManager;
 import com.podio.sdk.internal.Utils;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
 
@@ -96,7 +96,7 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
         private HandshakeData() {
             this.channel = "/meta/handshake";
             this.version = "1.0";
-            this.supportedConnectionTypes = new String[] { "long-polling" };
+            this.supportedConnectionTypes = new String[]{"long-polling"};
         }
     }
 
@@ -251,8 +251,7 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * The delegate callback handler that will manage our callback interfaces
-     * for us.
+     * The delegate callback handler that will manage our callback interfaces for us.
      */
     private final CallbackManager<T> callbackManager;
 
@@ -272,8 +271,7 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Makes sure the result listeners are called properly when a result is
-     * delivered.
+     * Makes sure the result listeners are called properly when a result is delivered.
      *
      * @see java.util.concurrent.FutureTask#done()
      */
@@ -296,6 +294,18 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
         }
     }
 
+    /**
+     * Unsupported operation. Always throws {@code UnsupportedOperationException}.
+     *
+     * @param maxSeconds
+     *
+     * @return
+     */
+    @Override
+    public T waitForResult(long maxSeconds) {
+        throw new UnsupportedOperationException("This implementation doesn't offer blocking.");
+    }
+
     @Override
     public Request<T> withResultListener(Request.ResultListener<T> listener) {
         callbackManager.addResultListener(listener, isDone(), result);
@@ -308,6 +318,13 @@ abstract class PushRequest<T> extends FutureTask<T> implements Request<T> {
         return null;
     }
 
+    /**
+     * Unsupported operation. Always throws {@code UnsupportedOperationException}.
+     *
+     * @param sessionListener
+     *
+     * @return
+     */
     @Override
     public Request<T> withSessionListener(Request.SessionListener sessionListener) {
         throw new UnsupportedOperationException("This implementation doesn't handle sessions.");

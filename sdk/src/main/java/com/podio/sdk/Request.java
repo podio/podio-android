@@ -94,6 +94,8 @@ public interface Request<T> {
 
     }
 
+    public T waitForResult(long maxSeconds);
+
     public Request<T> withResultListener(ResultListener<T> contentListener);
 
     public Request<T> withErrorListener(ErrorListener errorListener);
