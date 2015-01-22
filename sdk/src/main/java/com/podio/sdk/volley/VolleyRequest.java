@@ -39,9 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
 
@@ -116,6 +114,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     private T result;
     private Throwable error;
+    private boolean isDone;
     private boolean isAuthRequest;
     private boolean hasSessionChanged;
 
@@ -139,45 +138,20 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     }
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        return volleyRequestFuture.cancel(mayInterruptIfRunning);
-    }
-
-    @Override
-    public T get() throws InterruptedException, ExecutionException {
-        return volleyRequestFuture.get();
-    }
-
-    @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return volleyRequestFuture.get(timeout, unit);
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return volleyRequestFuture.isCancelled();
-    }
-
-    @Override
-    public boolean isDone() {
-        return volleyRequestFuture.isDone();
-    }
-
-    @Override
     public VolleyRequest<T> withResultListener(ResultListener<T> resultListener) {
-        callbackManager.addResultListener(resultListener, isDone(), result);
+        callbackManager.addResultListener(resultListener, isDone, result);
         return this;
     }
 
     @Override
     public VolleyRequest<T> withErrorListener(ErrorListener errorListener) {
-        callbackManager.addErrorListener(errorListener, isDone() && error != null, error);
+        callbackManager.addErrorListener(errorListener, isDone && error != null, error);
         return this;
     }
 
     @Override
     public VolleyRequest<T> withSessionListener(SessionListener sessionListener) {
-        callbackManager.addSessionListener(sessionListener, isDone() && hasSessionChanged);
+        callbackManager.addSessionListener(sessionListener, isDone && hasSessionChanged);
         return this;
     }
 
@@ -218,6 +192,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     public void deliverError(VolleyError error) {
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
+        isDone = true;
         callbackManager.deliverError(this.error);
     }
 
@@ -226,7 +201,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
 
-        this.result = result;
+        this.isDone = true;
 
         if (hasSessionChanged) {
             callbackManager.deliverSession();
@@ -252,33 +227,47 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
             error = volleyError;
         }
 
+        synchronized (this) {
+            notifyAll();
+        }
+
         return super.parseNetworkError(volleyError);
     }
 
     @Override
-    protected Response<T> parseNetworkResponse(NetworkResponse response) {
+    protected Response<T> parseNetworkResponse(NetworkResponse networkResponse) {
         // This method is executed on the worker thread. It's "safe" to perform
         // JSON parsing here.
+        Response<T> response;
 
         try {
-            Entry cacheHeaders = HttpHeaderParser.parseCacheHeaders(response);
-            String charSet = HttpHeaderParser.parseCharset(response.headers);
-            String json = new String(response.data, charSet);
+            Entry cacheHeaders = HttpHeaderParser.parseCacheHeaders(networkResponse);
+            String charSet = HttpHeaderParser.parseCharset(networkResponse.headers);
+            String json = new String(networkResponse.data, charSet);
 
             if (isAuthRequest) {
                 Session.set(json);
                 hasSessionChanged = true;
-                return Response.success(null, cacheHeaders);
+                result = null;
+                response = Response.success(null, cacheHeaders);
             } else if (classOfResult == null || classOfResult == Void.class) {
-                return Response.success(null, cacheHeaders);
+                result = null;
+                response = Response.success(null, cacheHeaders);
             } else {
-                T result = JsonParser.fromJson(json, classOfResult);
-                return Response.success(result, cacheHeaders);
+                result = JsonParser.fromJson(json, classOfResult);
+                response = Response.success(result, cacheHeaders);
             }
         } catch (UnsupportedEncodingException e) {
             // The provided response JSON is provided with an unknown char-set.
-            return Response.error(new ParseError(e));
+            result = null;
+            response = Response.error(new ParseError(e));
         }
+
+        synchronized (this) {
+            notifyAll();
+        }
+
+        return response;
     }
 
     public ErrorListener removeErrorListener(ErrorListener errorListener) {
@@ -293,15 +282,15 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return callbackManager.removeSessionListener(sessionListener);
     }
 
-    private boolean isExpiredError(Throwable error) {
-        if (error instanceof PodioError) {
-            PodioError e = (PodioError) error;
-            return e.isExpiredError();
-        } else if (error instanceof VolleyError) {
-            VolleyError e = (VolleyError) error;
-            return e.networkResponse != null && e.networkResponse.statusCode == 401;
-        } else {
-            return false;
+    public synchronized T waitForResult(long maxSeconds) {
+        try {
+            wait(TimeUnit.SECONDS.toMillis(maxSeconds > 0 ? maxSeconds : 0));
+        } catch (InterruptedException e) {
+            callbackManager.deliverError(e);
+            return null;
         }
+
+        return result;
     }
+
 }
