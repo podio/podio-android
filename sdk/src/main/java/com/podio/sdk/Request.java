@@ -30,28 +30,6 @@ public interface Request<T> extends Future<T> {
     }
 
     /**
-     * A special-case error listener, targeting authorization errors. This
-     * interface is intended to be used internally by the SDK only and enables
-     * the auth managers to detect and act on auth errors.
-     * 
-     * @author László Urszuly
-     */
-    interface AuthErrorListener<E> {
-
-        /**
-         * Delivers the request that caught an authorization error to the
-         * implementing receiver. This method should NOT - never ever - be
-         * called by the client as it may heavily interfere with the internal
-         * execution flow.
-         * 
-         * @param request
-         *        The request that caught the authorization error.
-         */
-        public boolean onAuthErrorOccured(Request<E> request);
-
-    }
-
-    /**
      * Callback interface for error events.
      * 
      * @author László Urszuly

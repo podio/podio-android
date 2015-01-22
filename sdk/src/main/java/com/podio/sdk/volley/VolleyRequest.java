@@ -91,16 +91,16 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     protected static int parseMethod(com.podio.sdk.Request.Method method) {
         switch (method) {
-        case DELETE:
-            return com.android.volley.Request.Method.DELETE;
-        case GET:
-            return com.android.volley.Request.Method.GET;
-        case POST:
-            return com.android.volley.Request.Method.POST;
-        case PUT:
-            return com.android.volley.Request.Method.PUT;
-        default:
-            return com.android.volley.Request.Method.GET;
+            case DELETE:
+                return com.android.volley.Request.Method.DELETE;
+            case GET:
+                return com.android.volley.Request.Method.GET;
+            case POST:
+                return com.android.volley.Request.Method.POST;
+            case PUT:
+                return com.android.volley.Request.Method.PUT;
+            default:
+                return com.android.volley.Request.Method.GET;
         }
     }
 
@@ -218,11 +218,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     public void deliverError(VolleyError error) {
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
-
-        if (isExpiredError(this.error)) {
-            callbackManager.deliverAuthError(this);
-        }
-
         callbackManager.deliverError(this.error);
     }
 
@@ -296,15 +291,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     public SessionListener removeSessionListener(SessionListener sessionListener) {
         return callbackManager.removeSessionListener(sessionListener);
-    }
-
-    AuthErrorListener<T> removeAuthErrorListener(AuthErrorListener<T> authErrorListener) {
-        return callbackManager.removeAuthErrorListener(authErrorListener);
-    }
-
-    VolleyRequest<T> withAuthErrorListener(AuthErrorListener<T> authErrorListener) {
-        callbackManager.addAuthErrorListener(authErrorListener, isDone() && isExpiredError(error), this);
-        return this;
     }
 
     private boolean isExpiredError(Throwable error) {
