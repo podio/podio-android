@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'retrolambda'
 
 android {
     compileSdkVersion 21
@@ -23,12 +22,6 @@ android {
         debug {
             debuggable true
         }
-    }
-
-    // Compile with Java 8 to support Lambdas (comes with the 'retrolambda' plugin)
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     libraryVariants.all { variant ->
