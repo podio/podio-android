@@ -23,7 +23,6 @@ package com.podio.sdk.volley;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
@@ -82,23 +81,26 @@ public class VolleyClient implements Client {
     }
 
     private final class VolleyRetryPolicy extends DefaultRetryPolicy {
-        private final VolleyRequest<?> originalRequest;
+        private final String originalAccessToken;
 
-        private VolleyRetryPolicy(VolleyRequest<?> originalRequest) {
+        private VolleyRetryPolicy(String referenceAccessToken) {
             super(0, 1, 0.0f);
-            this.originalRequest = originalRequest;
+            this.originalAccessToken = referenceAccessToken;
         }
 
         @Override
         public void retry(VolleyError error) throws VolleyError {
             super.retry(error);
+            String accessToken = Utils.notEmpty(originalAccessToken) ? originalAccessToken : "";
 
-            if (error instanceof AuthFailureError) {
-                // Prepare to re-authenticate.
+            // If the access token has changed since this request was originally executed (say, as a
+            // result of an other request refreshing it), the 401 status isn't necessarily valid any
+            // more, hence, we should only re-authenticate if our access token is intact.
+            if (error instanceof AuthFailureError && accessToken.equals(Session.accessToken())) {
                 Uri uri = buildAuthUri();
 
-                // Opt out if we can't re-authenticate.
                 if (uri == null) {
+                    // Opt out if we can't re-authenticate.
                     clearRequestQueue();
                     throw error;
                 }
@@ -107,40 +109,20 @@ public class VolleyClient implements Client {
                 HashMap<String, String> params = parseParams(uri);
 
                 // Re-authenticate on a prioritized request queue.
-                final Object lock = new Object();
-                synchronized (lock) {
-                    VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params)
-                            .withSessionListener(new Request.SessionListener() {
-                                @Override
-                                public boolean onSessionChanged(String authToken, String refreshToken, long expires) {
-                                    synchronized (lock) {
-                                        lock.notify();
-                                    }
-                                    return false;
-                                }
-                            })
-                            .withErrorListener(new Request.ErrorListener() {
-                                @Override
-                                public boolean onErrorOccured(Throwable cause) {
-                                    synchronized (lock) {
-                                        lock.notify();
-                                    }
-                                    return false;
-                                }
-                            });
-                    volleyRefreshQueue.add(reAuthRequest);
+                VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params);
+                volleyRefreshQueue.add(reAuthRequest);
 
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                reAuthRequest.withErrorListener(new Request.ErrorListener() {
+                    @Override
+                    public boolean onErrorOccured(Throwable cause) {
+                        clearRequestQueue();
+                        return false;
                     }
-                }
-
-                Log.d("MYTAG", "Released");
+                }).waitForResult(20);
             }
         }
     }
+
 
     protected String clientId;
     protected String clientSecret;
@@ -204,16 +186,11 @@ public class VolleyClient implements Client {
 
     @Override
     public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfItem) {
-        // Prepare the request.
-
         String url = filter.buildUri(scheme, authority).toString();
         String body = item != null ? JsonParser.toJson(item) : null;
+
         VolleyRequest<T> request = VolleyRequest.newRequest(method, url, body, classOfItem);
-
-        // Make us aware of any authentication errors.
-        request.setRetryPolicy(new VolleyRetryPolicy(request));
-
-        // Enqueue the request.
+        request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
         volleyRequestQueue.add(request);
 
         return request;
