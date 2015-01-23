@@ -230,7 +230,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         try {
             String charSet = HttpHeaderParser.parseCharset(volleyError.networkResponse.headers);
             String errorJson = new String(volleyError.networkResponse.data, charSet);
-            error = PodioError.fromJson(errorJson, volleyError.networkResponse.statusCode, error);
+            error = PodioError.fromJson(errorJson, volleyError.networkResponse.statusCode, volleyError);
         } catch (UnsupportedEncodingException e) {
             // The provided error JSON is provided with an unknown char-set.
             error = volleyError;
