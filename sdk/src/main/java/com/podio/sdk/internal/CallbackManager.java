@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.podio.sdk.PodioError;
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
 
@@ -79,6 +80,10 @@ public class CallbackManager<T> {
     }
 
     public void deliverError(Throwable error) {
+        if (Utils.isEmpty(errorListeners) && Utils.isEmpty(GLOBAL_ERROR_LISTENERS)) {
+            throw new PodioError(error);
+        }
+
         for (ErrorListener listener : errorListeners) {
             if (listener != null) {
                 if (listener.onErrorOccured(error)) {

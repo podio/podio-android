@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.podio.sdk;
 
 /**
- * This class represents a generic client side error with an undefined or unknown cause.
+ * This class represents a client side error caused by a request not delivering a response in a
+ * timely manner.
  *
  * @author László Urszuly
  */
-public class PodioError extends RuntimeException {
+public class NoResponseError extends PodioError {
 
-    public PodioError(String message, Throwable cause) {
+    public NoResponseError(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public PodioError(String message) {
+    public NoResponseError(String message) {
         super(message);
     }
 
-    public PodioError(Throwable cause) {
+    public NoResponseError(Throwable cause) {
         super(cause);
     }
 

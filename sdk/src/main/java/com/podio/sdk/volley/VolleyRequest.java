@@ -24,18 +24,23 @@ package com.podio.sdk.volley;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache.Entry;
 import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.RequestFuture;
+import com.podio.sdk.ApiError;
+import com.podio.sdk.ConnectionError;
 import com.podio.sdk.JsonParser;
+import com.podio.sdk.NoResponseError;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;
 import com.podio.sdk.internal.Utils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,10 +65,9 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     }
 
     static <E> VolleyRequest<E> newRequest(com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
-        RequestFuture<E> volleyRequestFuture = RequestFuture.newFuture();
         int volleyMethod = parseMethod(method);
 
-        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, volleyRequestFuture, false);
+        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
         request.contentType = "application/json; charset=UTF-8";
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
 
@@ -71,16 +75,15 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
             request.headers.put("Authorization", "Bearer " + Session.accessToken());
         }
 
-        request.body = body;
+        request.body = Utils.notEmpty(body) ? body.getBytes() : null;
 
         return request;
     }
 
     static VolleyRequest<Void> newAuthRequest(String url, Map<String, String> params) {
-        RequestFuture<Void> volleyRequestFuture = RequestFuture.newFuture();
         int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
 
-        VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, volleyRequestFuture, true);
+        VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
 
@@ -104,29 +107,24 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     private final VolleyCallbackManager<T> callbackManager;
 
-    private final RequestFuture<T> volleyRequestFuture;
     private final Class<T> classOfResult;
 
     protected HashMap<String, String> headers;
     protected HashMap<String, String> params;
     protected String contentType;
-    protected String body;
+    protected byte[] body;
 
     private T result;
-    private Throwable error;
+    private PodioError error;
     private boolean isDone;
     private boolean isAuthRequest;
     private boolean hasSessionChanged;
 
-    protected VolleyRequest(int method, String url, Class<T> resultType, RequestFuture<T> volleyRequestFuture, boolean isAuthRequest) {
-        super(method, url, volleyRequestFuture);
-
+    protected VolleyRequest(int method, String url, Class<T> resultType, boolean isAuthRequest) {
+        super(method, url, null);
         setShouldCache(false);
 
         this.callbackManager = new VolleyCallbackManager<T>();
-
-        this.volleyRequestFuture = volleyRequestFuture;
-        this.volleyRequestFuture.setRequest(this);
         this.classOfResult = resultType;
 
         this.headers = new HashMap<String, String>();
@@ -157,7 +155,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     @Override
     public byte[] getBody() throws AuthFailureError {
-        return body != null ? body.getBytes() : super.getBody();
+        return Utils.notEmpty(body) ? body : super.getBody();
     }
 
     @Override
@@ -179,12 +177,17 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     }
 
     @Override
-    public synchronized T waitForResult(long maxSeconds) {
+    public synchronized T waitForResult(long maxSeconds) throws PodioError {
+        // This is still awkward as we might end up blocking the delivery of
+        // a client side error (see
         try {
-            wait(TimeUnit.SECONDS.toMillis(maxSeconds > 0 ? maxSeconds : 0));
+            wait(TimeUnit.SECONDS.toMillis(Math.max(maxSeconds, 0)));
         } catch (InterruptedException e) {
             callbackManager.deliverError(e);
-            return null;
+        }
+
+        if (error != null) {
+            throw error;
         }
 
         return result;
@@ -203,7 +206,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the main thread. Extra care should be
         // taken on what is done here.
 
-        this.isDone = true;
+        isDone = true;
 
         if (hasSessionChanged) {
             callbackManager.deliverSession();
@@ -227,23 +230,26 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the worker thread. It's "safe" to perform
         // JSON parsing here.
 
-        try {
-            String charSet = HttpHeaderParser.parseCharset(volleyError.networkResponse.headers);
-            String errorJson = new String(volleyError.networkResponse.data, charSet);
-            error = PodioError.fromJson(errorJson, volleyError.networkResponse.statusCode, volleyError);
-        } catch (UnsupportedEncodingException e) {
-            // The provided error JSON is provided with an unknown char-set.
-            error = volleyError;
-        } catch (NullPointerException e) {
-            // For some reason the VollyError didn't provide a networkResponse.
-            error = volleyError;
+        if (volleyError instanceof NoConnectionError && volleyError.getCause() instanceof UnknownHostException) {
+            error = new ConnectionError(volleyError);
+        } else if (volleyError instanceof TimeoutError) {
+            error = new NoResponseError(volleyError);
+        } else {
+            String errorJson = getResponseBody(volleyError.networkResponse);
+            int responseCode = getResponseCode(volleyError.networkResponse);
+
+            if (Utils.notEmpty(errorJson) && responseCode > 0) {
+                error = new ApiError(errorJson, responseCode, volleyError);
+            } else {
+                error = new PodioError(volleyError);
+            }
         }
 
         synchronized (this) {
             notifyAll();
         }
 
-        return super.parseNetworkError(volleyError);
+        return volleyError;
     }
 
     @Override
@@ -294,4 +300,20 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return callbackManager.removeSessionListener(sessionListener);
     }
 
+    private String getResponseBody(NetworkResponse networkResponse) {
+        try {
+            String charSet = HttpHeaderParser.parseCharset(networkResponse.headers);
+            return new String(networkResponse.data, charSet);
+        } catch (UnsupportedEncodingException e) {
+            // The provided error JSON is provided with an unknown char-set.
+            return null;
+        } catch (NullPointerException e) {
+            // For some reason the VolleyError didn't provide a networkResponse.
+            return null;
+        }
+    }
+
+    private int getResponseCode(NetworkResponse networkResponse) {
+        return networkResponse != null ? networkResponse.statusCode : 0;
+    }
 }

@@ -116,7 +116,7 @@ public class VolleyClient implements Client {
                     @Override
                     public boolean onErrorOccured(Throwable cause) {
                         clearRequestQueue();
-                        return false;
+                        return true;
                     }
                 }).waitForResult(20);
             }

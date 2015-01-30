@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.podio.sdk;
 
 /**
- * This class represents a generic client side error with an undefined or unknown cause.
+ * This class represents a client side error caused by an invalid connection state (typically
+ * DISCONNECTED, CONNECTING or DISCONNECTING).
  *
  * @author László Urszuly
  */
-public class PodioError extends RuntimeException {
+public class ConnectionError extends PodioError {
 
-    public PodioError(String message, Throwable cause) {
+    public ConnectionError(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public PodioError(String message) {
+    public ConnectionError(String message) {
         super(message);
     }
 
-    public PodioError(Throwable cause) {
+    public ConnectionError(Throwable cause) {
         super(cause);
     }
 
