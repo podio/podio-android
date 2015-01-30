@@ -1,23 +1,17 @@
 /*
- *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
+ * Copyright (C) 2015 Citrix Systems, Inc
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of
- *  this software and associated documentation files (the "Software"), to deal in
- *  the Software without restriction, including without limitation the rights to
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- *  of the Software, and to permit persons to whom the Software is furnished to
- *  do so, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.podio.sdk;
@@ -31,6 +25,7 @@ import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ClientProvider;
 import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
+import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.StoreProvider;
@@ -88,6 +83,11 @@ public class Podio {
     public static final ClientProvider client = new ClientProvider();
 
     /**
+     * Enables means of easy operating on the File API end point.
+     */
+    public static final FileProvider file = new FileProvider();
+
+    /**
      * Enables means of easy operating on the Item API end point.
      */
     public static final ItemProvider item = new ItemProvider();
@@ -121,7 +121,7 @@ public class Podio {
      * Enables means of registering global error listeners. These callback implementations apply to
      * <em>all</em> requests until explicitly removed and they are called <em>after</em> any custom
      * callbacks added to a particular request future are called.
-     * <p>
+     * <p/>
      * If a callback chooses to consume a given event, then <em>all</em> further bubbling is
      * aborted, meaning that the event may not reach the global event listener you add here.
      *
@@ -138,7 +138,7 @@ public class Podio {
      * Registers a global session listeners. These callback implementations apply to <em>all</em>
      * requests until explicitly removed and they are called <em>after</em> any custom callbacks
      * added to a particular request future are called.
-     * <p>
+     * <p/>
      * If a callback chooses to consume a given event, then <em>all</em> further bubbling is
      * aborted, meaning that the event may not reach the global event listener you add here.
      *
@@ -221,6 +221,7 @@ public class Podio {
         client.setClient(restClient);
         contact.setClient(restClient);
         conversation.setClient(restClient);
+        file.setClient(restClient);
         item.setClient(restClient);
         organization.setClient(restClient);
         user.setClient(restClient);

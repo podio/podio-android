@@ -1,23 +1,17 @@
 /*
- *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
+ * Copyright (C) 2015 Citrix Systems, Inc
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of
- *  this software and associated documentation files (the "Software"), to deal in
- *  the Software without restriction, including without limitation the rights to
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- *  of the Software, and to permit persons to whom the Software is furnished to
- *  do so, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.podio.sdk.volley;
 
@@ -37,16 +31,93 @@ import com.podio.sdk.JsonParser;
 import com.podio.sdk.NoResponseError;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;
+import com.podio.sdk.domain.File;
 import com.podio.sdk.internal.Utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
+
+    private static final class Multipart {
+        private final String boundary;
+        private final File.PushData file;
+
+        private Multipart(File.PushData file) {
+            this.boundary = UUID.randomUUID().toString().replaceAll("[^A-Za-z0-9 ]", "");
+            this.file = file;
+        }
+
+        private byte[] constructBody() throws IOException {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            char[] crlf = {13, 10};
+
+            byte[] bytes = new StringBuilder()
+                    /* boundary */
+                    .append(crlf)
+                    .append(crlf)
+                    .append("--")
+                    .append(boundary)
+                    /* file name part */
+                    .append(crlf)
+                    .append("Content-Disposition: form-data; name=\"filename\"")
+                    .append(crlf)
+                    .append("Content-Type: text/plain; charset=\"utf-8\"")
+                    .append(crlf)
+                    .append(crlf)
+                    .append(file.getName())
+                    /* boundary */
+                    .append(crlf)
+                    .append("--")
+                    .append(boundary)
+                    /* source part */
+                    .append(crlf)
+                    .append("Content-Disposition: form-data; name=\"source\"; filename=\"")
+                    .append(file.getFile().getName())
+                    .append("\"")
+                    .append(crlf)
+                    .append("Content-Type: ")
+                    .append(file.getMimeType())
+                    .append(crlf)
+                    .append("Content-Transfer-Encoding: binary")
+                    .append(crlf)
+                    .append(crlf).toString().getBytes();
+
+            // Write the multipart data to the byte array stream.
+            byteArrayOutputStream.write(bytes, 0, bytes.length);
+
+            // Write the file content to the byte array stream.
+            byte[] buffer = new byte[1024];
+            int readCount;
+            FileInputStream fileInputStream = new FileInputStream(file.getFile());
+
+            while ((readCount = fileInputStream.read(buffer, 0, buffer.length)) > 0) {
+                byteArrayOutputStream.write(buffer, 0, readCount);
+            }
+
+            fileInputStream.close();
+
+            // Write the closing boundary to the byte array stream.
+            bytes = new StringBuilder()
+                    .append(crlf)
+                    .append("--")
+                    .append(boundary)
+                    .append("--")
+                    .append(crlf).toString().getBytes();
+
+            byteArrayOutputStream.write(bytes, 0, bytes.length);
+
+            return byteArrayOutputStream.toByteArray();
+        }
+    }
 
     public static ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
         return VolleyCallbackManager.addGlobalErrorListener(errorListener);
@@ -86,6 +157,34 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
+
+        return request;
+    }
+
+    static <E> VolleyRequest<E> newUploadRequest(String url, File.PushData file, Class<E> classOfResult) {
+        Multipart multipart = new Multipart(file);
+
+        byte[] body;
+
+        try {
+            body = multipart.constructBody();
+        } catch (IOException e) {
+            body = null;
+        }
+
+        int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
+        int contentLength = body != null ? body.length : 0;
+
+        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
+        request.contentType = "multipart/form-data; boundary=\"" + multipart.boundary + "\"";
+        request.headers.put("Content-Length", Integer.toString(contentLength, 10));
+        request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
+
+        if (Utils.notEmpty(Session.accessToken())) {
+            request.headers.put("Authorization", "Bearer " + Session.accessToken());
+        }
+
+        request.body = body;
 
         return request;
     }
