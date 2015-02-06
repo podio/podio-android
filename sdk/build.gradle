@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.1'
-    defaultPublishConfig 'release'
+    buildToolsVersion '21.1.2'
+    defaultPublishConfig 'production'
 
     defaultConfig {
         minSdkVersion 15
@@ -15,12 +15,18 @@ android {
         project.version = android.defaultConfig.versionName
     }
 
+    productFlavors {
+        production {
+            buildConfigField "String", "SCHEME", "\"https\""
+            buildConfigField "String", "API_AUTHORITY", "\"api.podio.com\""
+            buildConfigField "String", "PUSH_AUTHORITY", "\"push.podio.com\""
+            buildConfigField "String", "PUSH_PATH", "\"faye\""
+        }
+    }
+
     buildTypes {
         release {
             debuggable false
-        }
-        debug {
-            debuggable true
         }
     }
 

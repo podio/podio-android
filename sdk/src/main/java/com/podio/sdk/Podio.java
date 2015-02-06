@@ -17,6 +17,7 @@
 package com.podio.sdk;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.SessionListener;
@@ -48,9 +49,6 @@ import javax.net.ssl.SSLSocketFactory;
  * @author László Urszuly
  */
 public class Podio {
-    private static final String DEFAULT_SCHEME = "https";
-    private static final String DEFAULT_AUTHORITY_API = "api.podio.com";
-
     /**
      * The default request client for the providers.
      */
@@ -196,7 +194,7 @@ public class Podio {
      * @see Podio#setup(Context, String, String, String, String, SSLSocketFactory)
      */
     public static void setup(Context context, String clientId, String clientSecret) {
-        setup(context, DEFAULT_SCHEME, DEFAULT_AUTHORITY_API, clientId, clientSecret, null);
+        setup(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null);
     }
 
     /**
@@ -217,9 +215,8 @@ public class Podio {
     public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
 
-        // TODO: Enable proper configuration of push end point.
-        String pushUrl = scheme + "://" + authority.replace("api.", "push.") + "/faye";
-        push = new FayePushClient(new VolleyLongPollingTransport(context, pushUrl));
+        Uri pushUri = Uri.fromParts(BuildConfig.SCHEME, BuildConfig.PUSH_AUTHORITY, BuildConfig.PUSH_PATH);
+        push = new FayePushClient(new VolleyLongPollingTransport(context, pushUri.toString()));
 
         // Providers relying on a rest client in order to operate properly.
         application.setClient(restClient);

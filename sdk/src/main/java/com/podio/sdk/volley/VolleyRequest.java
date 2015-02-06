@@ -58,7 +58,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
         private byte[] constructBody() throws IOException {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            char[] crlf = {13, 10};
+            char[] crlf = { 13, 10 };
 
             byte[] bytes = new StringBuilder()
                     /* boundary */
@@ -141,11 +141,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
         request.contentType = "application/json; charset=UTF-8";
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
-
-        if (Utils.notEmpty(Session.accessToken())) {
-            request.headers.put("Authorization", "Bearer " + Session.accessToken());
-        }
-
         request.body = Utils.notEmpty(body) ? body.getBytes() : null;
 
         return request;
@@ -179,11 +174,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         request.contentType = "multipart/form-data; boundary=\"" + multipart.boundary + "\"";
         request.headers.put("Content-Length", Integer.toString(contentLength, 10));
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
-
-        if (Utils.notEmpty(Session.accessToken())) {
-            request.headers.put("Authorization", "Bearer " + Session.accessToken());
-        }
-
         request.body = body;
 
         return request;

@@ -105,7 +105,7 @@ public class VolleyClient implements Client {
 
                 // Re-authenticate on a prioritized request queue.
                 VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params);
-                volleyRefreshQueue.add(reAuthRequest);
+                addToRefreshQueue(reAuthRequest);
 
                 reAuthRequest.withErrorListener(new Request.ErrorListener() {
                     @Override
@@ -118,12 +118,12 @@ public class VolleyClient implements Client {
         }
     }
 
-
     protected String clientId;
     protected String clientSecret;
     protected String scheme;
     protected String authority;
 
+    // All implementations and instances will share these request queues.
     private static RequestQueue volleyRequestQueue;
     private static RequestQueue volleyRefreshQueue;
 
@@ -137,7 +137,7 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-        volleyRefreshQueue.add(request);
+        addToRefreshQueue(request);
 
         return request;
     }
@@ -152,7 +152,7 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-        volleyRefreshQueue.add(request);
+        addToRefreshQueue(request);
 
         return request;
     }
@@ -174,7 +174,7 @@ public class VolleyClient implements Client {
         VolleyRequest<Void> authRequest = VolleyRequest.newAuthRequest(url, params);
 
         // Re-authenticate on a prioritized request queue.
-        volleyRefreshQueue.add(authRequest);
+        addToRefreshQueue(authRequest);
 
         return authRequest;
     }
@@ -193,12 +193,12 @@ public class VolleyClient implements Client {
         }
 
         request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
-        volleyRequestQueue.add(request);
+        addToRequestQueue(request);
 
         return request;
     }
 
-    public void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
+    public synchronized void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         this.scheme = scheme;
         this.authority = authority;
         this.clientId = clientId;
@@ -230,18 +230,8 @@ public class VolleyClient implements Client {
         }
 
         // Clear out any and all queued requests.
-        // TODO: It's a bit unclear what will happen to any processing requests.
-        RequestFilter blindRequestFilter = new RequestFilter() {
-
-            @Override
-            public boolean apply(com.android.volley.Request<?> request) {
-                return true;
-            }
-
-        };
-
-        volleyRequestQueue.cancelAll(blindRequestFilter);
-        volleyRefreshQueue.cancelAll(blindRequestFilter);
+        clearRequestQueue();
+        clearRefreshQueue();
 
         // Clear out any cached content in the request queues.
         Cache requestCache = volleyRequestQueue.getCache();
@@ -255,7 +245,13 @@ public class VolleyClient implements Client {
         }
     }
 
-    protected void addToRequestQueue(com.android.volley.Request<?> request) {
+    protected synchronized void addToRefreshQueue(com.android.volley.Request<?> request) {
+        if (request != null) {
+            volleyRefreshQueue.add(request);
+        }
+    }
+
+    protected synchronized void addToRequestQueue(com.android.volley.Request<?> request) {
         if (request != null) {
             volleyRequestQueue.add(request);
         }
@@ -275,14 +271,21 @@ public class VolleyClient implements Client {
         return result;
     }
 
-    protected void clearRequestQueue() {
-        volleyRequestQueue.cancelAll(new RequestFilter() {
-
+    protected synchronized void clearRefreshQueue() {
+        volleyRefreshQueue.cancelAll(new RequestFilter() {
             @Override
             public boolean apply(com.android.volley.Request<?> request) {
                 return true;
             }
+        });
+    }
 
+    protected synchronized void clearRequestQueue() {
+        volleyRequestQueue.cancelAll(new RequestFilter() {
+            @Override
+            public boolean apply(com.android.volley.Request<?> request) {
+                return true;
+            }
         });
     }
 
