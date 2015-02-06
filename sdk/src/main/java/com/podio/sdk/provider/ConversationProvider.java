@@ -1,37 +1,37 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Conversation;
-import com.podio.sdk.volley.VolleyProvider;
 
 /**
  * Enables access to the Conversation API end point.
- * 
+ *
  * @author László Urszuly
  */
-public class ConversationProvider extends VolleyProvider {
+public class ConversationProvider extends Provider {
 
     static class Path extends Filter {
 
@@ -95,9 +95,10 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Creates a new conversation as of the parameters in the given template.
-     * 
+     *
      * @param data
-     *        The parameters for the new conversation.
+     *         The parameters for the new conversation.
+     *
      * @return A creation result.
      */
     public Request<Conversation> createConversation(Conversation.Create data) {
@@ -107,11 +108,12 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Fetches the given Conversation span.
-     * 
+     *
      * @param limit
-     *        The number of conversations to fetch.
+     *         The number of conversations to fetch.
      * @param offset
-     *        The number of conversations to skip before start fetching.
+     *         The number of conversations to skip before start fetching.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation[]> getConversations(int limit, int offset) {
@@ -121,7 +123,7 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Fetches the Conversation with the given id.
-     * 
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation> getConversation(long id) {
@@ -131,13 +133,14 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Fetches the events for the conversation with the given id.
-     * 
+     *
      * @param id
-     *        The id of the conversation.
+     *         The id of the conversation.
      * @param limit
-     *        The number of events to fetch.
+     *         The number of events to fetch.
      * @param offset
-     *        The number of events to skip before start fetching.
+     *         The number of events to skip before start fetching.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation.Event[]> getConversationEvents(long id, int limit, int offset) {
@@ -147,9 +150,10 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Fetches a single conversation event with the given id.
-     * 
+     *
      * @param id
-     *        The id of the conversation event.
+     *         The id of the conversation event.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation.Event> getConversationEvent(long id) {
@@ -159,9 +163,10 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Marks the conversation with the given id as "read".
-     * 
+     *
      * @param conversationId
-     *        The id of the conversation.
+     *         The id of the conversation.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Void> markConversationAsRead(long conversationId) {
@@ -170,15 +175,16 @@ public class ConversationProvider extends VolleyProvider {
     }
 
     /**
-     * Sends a reply to the conversation with the given id. The request result
-     * will deliver the generated conversation event.
-     * 
+     * Sends a reply to the conversation with the given id. The request result will deliver the
+     * generated conversation event.
+     *
      * @param message
-     *        The reply body.
+     *         The reply body.
      * @param link
-     *        The embedded link (if any).
+     *         The embedded link (if any).
      * @param fileIds
-     *        The list of ids of any files attached to the reply.
+     *         The list of ids of any files attached to the reply.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation.Event> replyToConversation(long conversationId, String message, String link, long[] fileIds) {
@@ -189,16 +195,16 @@ public class ConversationProvider extends VolleyProvider {
 
     /**
      * Searches the conversations for the given text snippet.
-     * 
+     *
      * @param text
-     *        The text to match conversations to.
+     *         The text to match conversations to.
      * @param limit
-     *        The maximum number of replies to return.
+     *         The maximum number of replies to return.
      * @param offset
-     *        The number of replies to skip before start counting the number of
-     *        replies to pick.
+     *         The number of replies to skip before start counting the number of replies to pick.
      * @param searchParticipants
-     *        Whether to search for participant names or not.
+     *         Whether to search for participant names or not.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation[]> searchConversations(String text, int limit, int offset, boolean searchParticipants) {

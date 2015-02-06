@@ -16,16 +16,16 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.File;
-import com.podio.sdk.volley.VolleyProvider;
 
 /**
  * This class provides methods to access {@link com.podio.sdk.domain.File} objects from the API.
  *
  * @author László Urszuly
  */
-public class FileProvider extends VolleyProvider {
+public class FileProvider extends Provider {
 
     static class Path extends Filter {
 

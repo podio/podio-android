@@ -1,40 +1,40 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.domain.Item;
-import com.podio.sdk.volley.VolleyProvider;
 
 /**
  * Enables access to the item API end point.
- * 
+ *
  * @author László Urszuly
  */
-public class ItemProvider extends VolleyProvider {
+public class ItemProvider extends Provider {
 
     static class Path extends Filter {
 
@@ -71,9 +71,8 @@ public class ItemProvider extends VolleyProvider {
     }
 
     /**
-     * Enables a forced set of methods to be called in order to be able to
-     * filter items.
-     * 
+     * Enables a forced set of methods to be called in order to be able to filter items.
+     *
      * @author László Urszuly
      */
     public class ItemFilterProvider {
@@ -88,13 +87,14 @@ public class ItemProvider extends VolleyProvider {
 
         /**
          * Prepares a filter constraint, used when fetching filtered items.
-         * 
+         *
          * @param key
-         *        The constraint key.
+         *         The constraint key.
          * @param value
-         *        The constraint value.
-         * @return This instance of the {@link ItemFilterProvider}, to enable
-         *         convenient chaining.
+         *         The constraint value.
+         *
+         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         *
          * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
          */
         public ItemFilterProvider onConstraint(String key, Object value) {
@@ -104,12 +104,13 @@ public class ItemProvider extends VolleyProvider {
 
         /**
          * Prepares the remember filter, used when fetching filtered items.
-         * 
+         *
          * @param doRemember
-         *        True if the API should remember this filter for you, otherwise
-         *        false. Defaults to true.
-         * @return This instance of the {@link ItemFilterProvider}, to enable
-         *         convenient chaining.
+         *         True if the API should remember this filter for you, otherwise false. Defaults to
+         *         true.
+         *
+         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         *
          * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
          */
         public ItemFilterProvider onDoRemember(boolean doRemember) {
@@ -118,16 +119,16 @@ public class ItemProvider extends VolleyProvider {
         }
 
         /**
-         * Prepares the limit and offset of the filter, used when fetching
-         * filtered items.
-         * 
+         * Prepares the limit and offset of the filter, used when fetching filtered items.
+         *
          * @param maxCount
-         *        The max number of items to fetch. The result could contain
-         *        less items, but never more.
+         *         The max number of items to fetch. The result could contain less items, but never
+         *         more.
          * @param offset
-         *        The zero-based offset of the first item in the span to fetch.
-         * @return This instance of the {@link ItemFilterProvider}, to enable
-         *         convenient chaining.
+         *         The zero-based offset of the first item in the span to fetch.
+         *
+         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         *
          * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
          */
         public ItemFilterProvider onSpan(int maxCount, int offset) {
@@ -137,15 +138,15 @@ public class ItemProvider extends VolleyProvider {
         }
 
         /**
-         * Prepares the sort order of the filter, used when fetching filtered
-         * items.
-         * 
+         * Prepares the sort order of the filter, used when fetching filtered items.
+         *
          * @param fieldName
-         *        The name of the field to sort by.
+         *         The name of the field to sort by.
          * @param doSortDescending
-         *        True for a descending sort order, false for an ascending.
-         * @return This instance of the {@link ItemFilterProvider}, to enable
-         *         convenient chaining.
+         *         True for a descending sort order, false for an ascending.
+         *
+         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         *
          * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
          */
         public ItemFilterProvider onSortOrder(String fieldName, boolean doSortDescending) {
@@ -154,15 +155,15 @@ public class ItemProvider extends VolleyProvider {
         }
 
         /**
-         * If you sort by a certain field and there are items that doesn't have
-         * this field set then if sortNullLast is set to true then these not set
-         * values will be delivered in the end of the sort result instead of the
-         * beginning.
-         * 
+         * If you sort by a certain field and there are items that doesn't have this field set then
+         * if sortNullLast is set to true then these not set values will be delivered in the end of
+         * the sort result instead of the beginning.
+         *
          * @param sortNullLast
-         *        true if null values should be in the end, false otherwise.
-         * @return This instance of the {@link ItemFilterProvider}, to enable
-         *         convenient chaining.
+         *         true if null values should be in the end, false otherwise.
+         *
+         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         *
          * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
          */
         public ItemFilterProvider onSortNullLast(boolean sortNullLast) {
@@ -172,19 +173,19 @@ public class ItemProvider extends VolleyProvider {
         }
 
         /**
-         * Fetches a set of filtered items for the application with the given
-         * id.
-         * <p>
-         * If no filter data has been configured, then the default filter will
-         * be used, with a behavior as the API sees fit.
-         * <p>
-         * Note that, while the other methods in this class are optional, this
-         * method must be called in order for the filtered request to take place
-         * 
+         * Fetches a set of filtered items for the application with the given id.
+         * <p/>
+         * If no filter data has been configured, then the default filter will be used, with a
+         * behavior as the API sees fit.
+         * <p/>
+         * Note that, while the other methods in this class are optional, this method must be called
+         * in order for the filtered request to take place
+         *
          * @param applicationId
-         *        The id of the parent application.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
+         *         The id of the parent application.
+         *
+         * @return A ticket which the caller can use to identify this request with.
+         *
          * @see {@link ItemFilterProvider#onConstraint(String, Object)}
          * @see {@link ItemFilterProvider#onRemember(boolean)}
          * @see {@link ItemFilterProvider#onSpan(int)}
@@ -196,21 +197,22 @@ public class ItemProvider extends VolleyProvider {
         }
 
         /**
-         * Fetches a set of filtered items for the application with the given id
-         * and a given view_id.
-         * <p>
-         * If no filter data has been configured, then the default filter will
-         * be used, with a behavior as the API sees fit.
-         * <p>
-         * Note that, while the other methods in this class are optional, this
-         * method must be called in order for the filtered request to take place
-         * 
+         * Fetches a set of filtered items for the application with the given id and a given
+         * view_id.
+         * <p/>
+         * If no filter data has been configured, then the default filter will be used, with a
+         * behavior as the API sees fit.
+         * <p/>
+         * Note that, while the other methods in this class are optional, this method must be called
+         * in order for the filtered request to take place
+         *
          * @param applicationId
-         *        The id of the parent application.
+         *         The id of the parent application.
          * @param viewId
-         *        The id of the view.
-         * @return A ticket which the caller can use to identify this request
-         *         with.
+         *         The id of the view.
+         *
+         * @return A ticket which the caller can use to identify this request with.
+         *
          * @see {@link ItemFilterProvider#onConstraint(String, Object)}
          * @see {@link ItemFilterProvider#onRemember(boolean)}
          * @see {@link ItemFilterProvider#onSpan(int)}
@@ -224,11 +226,12 @@ public class ItemProvider extends VolleyProvider {
 
     /**
      * Requests the API to create a new item
-     * 
+     *
      * @param applicationId
-     *        The id of the application to which this item is to be added.
+     *         The id of the application to which this item is to be added.
      * @param item
-     *        The data describing the new item to create.
+     *         The data describing the new item to create.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Item.PushResult> create(long applicationId, Item item) {
@@ -239,9 +242,8 @@ public class ItemProvider extends VolleyProvider {
 
     /**
      * Enables filtered request of items.
-     * 
-     * @return An ItemFilterProvider enabling the caller to configure the filter
-     *         details.
+     *
+     * @return An ItemFilterProvider enabling the caller to configure the filter details.
      */
     public ItemFilterProvider filter() {
         return new ItemFilterProvider();
@@ -249,9 +251,10 @@ public class ItemProvider extends VolleyProvider {
 
     /**
      * Fetches the single item with the given id.
-     * 
+     *
      * @param itemId
-     *        The id of the item to fetch.
+     *         The id of the item to fetch.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Item> get(long itemId) {
@@ -261,11 +264,12 @@ public class ItemProvider extends VolleyProvider {
 
     /**
      * Requests the API to update an item with new values.
-     * 
+     *
      * @param itemId
-     *        The id of the item to update.
+     *         The id of the item to update.
      * @param item
-     *        The changed data bundle.
+     *         The changed data bundle.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Item.PushResult> update(long itemId, Item item) {

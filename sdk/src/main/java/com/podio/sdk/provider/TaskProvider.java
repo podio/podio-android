@@ -1,19 +1,19 @@
 package com.podio.sdk.provider;
 
-import java.util.Date;
-
 import com.podio.sdk.Filter;
+import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Task;
 import com.podio.sdk.internal.Utils;
-import com.podio.sdk.volley.VolleyProvider;
+
+import java.util.Date;
 
 /**
  * This class provides methods to access {@link Task} objects from the API.
- * 
+ *
  * @author rabie
  */
-public class TaskProvider extends VolleyProvider {
+public class TaskProvider extends Provider {
 
     public static class GetTaskFilter extends Filter {
 
@@ -29,8 +29,8 @@ public class TaskProvider extends VolleyProvider {
 
         /**
          * @param isCompleted
-         *        True to only return completed tasks, False to return open
-         *        tasks.
+         *         True to only return completed tasks, False to return open tasks.
+         *
          * @return
          */
         public GetTaskFilter completed(boolean isCompleted) {
@@ -51,8 +51,9 @@ public class TaskProvider extends VolleyProvider {
         /**
          * @param authType
          * @param id
-         *        You can reference the the active user (the user logged in)
-         *        with id 0 assuming you are providing a USER {@link AuthType}
+         *         You can reference the the active user (the user logged in) with id 0 assuming you
+         *         are providing a USER {@link AuthType}
+         *
          * @return
          */
         public GetTaskFilter createdBy(AuthType authType, long id) {
@@ -69,13 +70,13 @@ public class TaskProvider extends VolleyProvider {
         }
 
         /**
-         * The from and to date the task should be due between. This method will
-         * only consider the date part of the given from and to Date object,
-         * meaning that the time component is disregarded. Thus the timezone in
-         * which these date represent is irrelevant.
-         * 
+         * The from and to date the task should be due between. This method will only consider the
+         * date part of the given from and to Date object, meaning that the time component is
+         * disregarded. Thus the timezone in which these date represent is irrelevant.
+         *
          * @param from
          * @param to
+         *
          * @return
          */
         public GetTaskFilter dueDate(Date from, Date to) {
@@ -120,9 +121,10 @@ public class TaskProvider extends VolleyProvider {
 
         /**
          * @param isReassigned
-         *        set to true to only return tasks the active user has assigned
-         *        to someone else, false to only return tasks that the active
-         *        user has not assigned to someone else.
+         *         set to true to only return tasks the active user has assigned to someone else,
+         *         false to only return tasks that the active user has not assigned to someone
+         *         else.
+         *
          * @return
          */
         public GetTaskFilter reassigned(boolean isReassigned) {
@@ -147,9 +149,10 @@ public class TaskProvider extends VolleyProvider {
 
         /**
          * If this filter isn't provided in
-         * 
+         *
          * @param isDescending
-         *        true if tasks should be sorted descending, false otherwise
+         *         true if tasks should be sorted descending, false otherwise
+         *
          * @return
          */
         public GetTaskFilter sortDesc(boolean isDescending) {
@@ -200,9 +203,9 @@ public class TaskProvider extends VolleyProvider {
         }
 
         /**
-         * This enum is used to query the Podio API for a set of tasks ordered
-         * based on a certain grouping
-         * 
+         * This enum is used to query the Podio API for a set of tasks ordered based on a certain
+         * grouping
+         *
          * @author rabie
          */
         public static enum Grouping {
@@ -248,8 +251,9 @@ public class TaskProvider extends VolleyProvider {
 
     /**
      * @param filter
-     * @return returns an array of {@link Task} domain objects from the API,
-     *         depending on the given filter.
+     *
+     * @return returns an array of {@link Task} domain objects from the API, depending on the given
+     * filter.
      */
     public Request<Task[]> getTasks(GetTaskFilter filter) {
         return get(filter, Task[].class);

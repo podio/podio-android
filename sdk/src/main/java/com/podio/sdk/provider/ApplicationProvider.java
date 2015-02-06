@@ -23,12 +23,12 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Application;
 import com.podio.sdk.internal.Utils;
-import com.podio.sdk.volley.VolleyProvider;
 
-public class ApplicationProvider extends VolleyProvider {
+public class ApplicationProvider extends Provider {
 
     static class Path extends Filter {
 
@@ -58,10 +58,9 @@ public class ApplicationProvider extends VolleyProvider {
         }
 
         /**
-         * This method will ensure that the request will return
-         * {@link Application} object with a {@link Space} in it (if the
-         * requester has access to the workspace that this app is associated
-         * with)
+         * This method will ensure that the request will return {@link Application} object with a
+         * {@link Space} in it (if the requester has access to the workspace that this app is
+         * associated with)
          *
          * @return
          */
@@ -77,7 +76,8 @@ public class ApplicationProvider extends VolleyProvider {
      * Fetches the full content set of the application with the given id.
      *
      * @param applicationId
-     *        The id of the application to fetch.
+     *         The id of the application to fetch.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application> get(long applicationId) {
@@ -92,10 +92,11 @@ public class ApplicationProvider extends VolleyProvider {
      * Fetches the full content set of the application with the given id.
      *
      * @param applicationId
-     *        The id of the application to fetch.
+     *         The id of the application to fetch.
      * @param fieldValues
-     *        Name of json objects not returned by default in the app data
-     *        structure, e.g. "space".
+     *         Name of json objects not returned by default in the app data structure, e.g.
+     *         "space".
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application> get(long applicationId, String... fieldValues) {
@@ -110,7 +111,8 @@ public class ApplicationProvider extends VolleyProvider {
      * Fetches a short subset of the application with the given id.
      *
      * @param applicationId
-     *        The id of the application to fetch.
+     *         The id of the application to fetch.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application> getShort(long applicationId) {
@@ -125,7 +127,8 @@ public class ApplicationProvider extends VolleyProvider {
      * Fetches a mini subset of the application with the given id.
      *
      * @param applicationId
-     *        The id of the application to fetch.
+     *         The id of the application to fetch.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application> getMini(long applicationId) {
@@ -140,7 +143,8 @@ public class ApplicationProvider extends VolleyProvider {
      * Fetches a micro subset of the application with the given id.
      *
      * @param applicationId
-     *        The id of the application to fetch.
+     *         The id of the application to fetch.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application> getMicro(long applicationId) {
@@ -155,7 +159,8 @@ public class ApplicationProvider extends VolleyProvider {
      * Fetches all active applications in the workspace with the given id.
      *
      * @param spaceId
-     *        The id of the parent workspace.
+     *         The id of the parent workspace.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application[]> getAllActive(long spaceId) {
@@ -167,11 +172,11 @@ public class ApplicationProvider extends VolleyProvider {
     }
 
     /**
-     * Fetches all applications, including the inactive ones, in the workspace
-     * with the given id.
+     * Fetches all applications, including the inactive ones, in the workspace with the given id.
      *
      * @param spaceId
-     *        The id of the parent workspace.
+     *         The id of the parent workspace.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Application[]> getAll(long spaceId) {
