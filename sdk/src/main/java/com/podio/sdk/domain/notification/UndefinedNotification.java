@@ -20,21 +20,15 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.notification;
 
 /**
- * @author rabie
+ * This class is used for all notifications that we are yet to define in the SDK. In most cases the
+ * attributes in the super class Notification is sufficient so notifications of this type are still
+ * useful to handle.
+ *
+ * @author Tobias Lindberg
  */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+public class UndefinedNotification extends Notification {
 
-    public String getRichValue() {
-        return rich_value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-    // TODO add the missing JSON attributes so it can be parsed
 }

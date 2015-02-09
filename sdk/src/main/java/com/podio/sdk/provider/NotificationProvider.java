@@ -19,22 +19,39 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+package com.podio.sdk.provider;
 
-package com.podio.sdk.domain;
+import com.podio.sdk.Filter;
+import com.podio.sdk.Request;
+import com.podio.sdk.domain.NotificationGroup;
+import com.podio.sdk.volley.VolleyProvider;
 
 /**
- * @author rabie
+ * Enables access to the NotificationGroup API end point.
+ *
+ * @author Tobias Lindberg
  */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+public class NotificationProvider extends VolleyProvider {
 
-    public String getRichValue() {
-        return rich_value;
+    static class Path extends Filter {
+
+        protected Path() {
+            super("notification");
+        }
+
+        Path withId(long id) {
+            addPathSegment(Long.toString(id, 10));
+            return this;
+        }
     }
 
-    public String getValue() {
-        return value;
+    /**
+     * Fetches the NotificationGroup with the given id.
+     *
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<NotificationGroup> getNotification(long id) {
+        Path filter = new Path().withId(id);
+        return get(filter, NotificationGroup.class);
     }
-    // TODO add the missing JSON attributes so it can be parsed
 }

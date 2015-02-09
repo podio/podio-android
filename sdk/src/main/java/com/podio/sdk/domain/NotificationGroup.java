@@ -19,22 +19,28 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.notification.Notification;
+import com.podio.sdk.domain.notification.NotificationContext;
+
+import java.util.List;
+
 /**
- * @author rabie
+ * A Java representation of the NotificationGroup API domain object.
+ *
+ * @author Tobias Lindberg
  */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+public class NotificationGroup {
 
-    public String getRichValue() {
-        return rich_value;
+    private final NotificationContext context = null;
+    private final List<Notification> notifications = null;
+
+    public List<Notification> getNotifications() {
+        return notifications;
     }
 
-    public String getValue() {
-        return value;
+    public NotificationContext getNotificationContext() {
+        return context;
     }
-    // TODO add the missing JSON attributes so it can be parsed
 }

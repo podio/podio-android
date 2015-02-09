@@ -16,6 +16,7 @@
 package com.podio.sdk;
 
 import com.podio.sdk.internal.Utils;
+import com.podio.sdk.json.JsonParser;
 
 import java.util.HashMap;
 

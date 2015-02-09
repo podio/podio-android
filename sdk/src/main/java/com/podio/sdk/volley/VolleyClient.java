@@ -28,7 +28,7 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
-import com.podio.sdk.JsonParser;
+import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.Session;
 import com.podio.sdk.domain.File;

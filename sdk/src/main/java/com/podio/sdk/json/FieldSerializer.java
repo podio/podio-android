@@ -20,21 +20,21 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.json;
 
-/**
- * @author rabie
- */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.podio.sdk.domain.field.Field;
 
-    public String getRichValue() {
-        return rich_value;
+import java.lang.reflect.Type;
+
+
+class FieldSerializer implements JsonSerializer<Field> {
+
+    @Override
+    public JsonElement serialize(Field field, Type type, JsonSerializationContext gsonContext) {
+        return gsonContext.serialize(field, field.getType().getFieldClass());
     }
 
-    public String getValue() {
-        return value;
-    }
-    // TODO add the missing JSON attributes so it can be parsed
 }

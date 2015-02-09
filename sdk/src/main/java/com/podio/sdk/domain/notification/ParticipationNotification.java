@@ -20,21 +20,27 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.notification;
 
 /**
- * @author rabie
+ * This class is used when the notification was of type "participation".
+ *
+ * @author Tobias Lindberg
  */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+public class ParticipationNotification extends Notification {
 
-    public String getRichValue() {
-        return rich_value;
+    private final Data data = null;
+
+    public static class Data {
+
+        private final String status = null;
+
+        public String getStatus() {
+            return status;
+        }
     }
 
-    public String getValue() {
-        return value;
+    public Data getData() {
+        return data;
     }
-    // TODO add the missing JSON attributes so it can be parsed
 }

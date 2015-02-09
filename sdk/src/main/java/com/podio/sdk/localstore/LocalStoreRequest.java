@@ -24,7 +24,7 @@ package com.podio.sdk.localstore;
 import android.content.Context;
 import android.util.LruCache;
 
-import com.podio.sdk.JsonParser;
+import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.internal.CallbackManager;
 

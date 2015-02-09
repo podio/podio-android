@@ -27,7 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.podio.sdk.ApiError;
 import com.podio.sdk.ConnectionError;
-import com.podio.sdk.JsonParser;
+import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.NoResponseError;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;

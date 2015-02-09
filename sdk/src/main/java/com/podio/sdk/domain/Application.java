@@ -1,32 +1,32 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 
 package com.podio.sdk.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.internal.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application {
 
@@ -62,6 +62,8 @@ public class Application {
         private final String description = null;
         private final String external_id = null;
         private final String fivestar_label = null;
+
+        private final Integer icon_id = null;
         private final String icon = null;
         private final String item_name = null;
         private final String name = null;
@@ -117,6 +119,10 @@ public class Application {
 
         public String getIconName() {
             return icon;
+        }
+
+        public Integer getIconId() {
+            return icon_id;
         }
 
         public String getItemName() {
@@ -239,10 +245,9 @@ public class Application {
     }
 
     /**
-     * Returns the configuration settings for this application. If the API
-     * didn't provide a configuration bundle then a default configuration will
-     * be returned.
-     * 
+     * Returns the configuration settings for this application. If the API didn't provide a
+     * configuration bundle then a default configuration will be returned.
+     *
      * @return A configuration bundle. Never null.
      */
     public Configuration getConfiguration() {
@@ -258,9 +263,9 @@ public class Application {
     }
 
     /**
-     * Gets a copy of the fields list for this application. No changes to the
-     * returned list will be reflected back to this applications fields list.
-     * 
+     * Gets a copy of the fields list for this application. No changes to the returned list will be
+     * reflected back to this applications fields list.
+     *
      * @return A list of fields. Never null.
      */
     public List<Field> getFields() {
@@ -312,13 +317,14 @@ public class Application {
     }
 
     /**
-     * Checks whether the list of rights the user has for this application
-     * contains <em>all</em> the given permissions.
-     * 
+     * Checks whether the list of rights the user has for this application contains <em>all</em> the
+     * given permissions.
+     *
      * @param permissions
-     *        The list of permissions to check for.
-     * @return Boolean true if all given permissions are found or no permissions
-     *         are given. Boolean false otherwise.
+     *         The list of permissions to check for.
+     *
+     * @return Boolean true if all given permissions are found or no permissions are given. Boolean
+     * false otherwise.
      */
     public boolean hasRights(Right... permissions) {
         if (rights != null) {

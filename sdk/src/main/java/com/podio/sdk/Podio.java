@@ -27,6 +27,7 @@ import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
 import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.ItemProvider;
+import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.StoreProvider;
 import com.podio.sdk.provider.TaskProvider;
@@ -116,6 +117,11 @@ public class Podio {
      * Enables means of easy operating on the Task API end point.
      */
     public static final TaskProvider task = new TaskProvider();
+
+    /**
+     * Enables means of easy operating on the Notification API end point.
+     */
+    public static final NotificationProvider notification = new NotificationProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
@@ -227,6 +233,7 @@ public class Podio {
         user.setClient(restClient);
         view.setClient(restClient);
         task.setClient(restClient);
+        notification.setClient(restClient);
 
         // Providers that doesn't need a rest client in order to operate.
         // store;

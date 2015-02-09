@@ -20,21 +20,24 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.notification;
+
+import com.podio.sdk.domain.Application;
 
 /**
- * @author rabie
+ * This class is used when the notification context object is of type "app".
+ *
+ * @author Tobias Lindberg
  */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+public class AppNotificationContext extends NotificationContext {
 
-    public String getRichValue() {
-        return rich_value;
+    private final Application data = null;
+
+    public AppNotificationContext() {
+        super();
     }
 
-    public String getValue() {
-        return value;
+    public Application getData() {
+        return data;
     }
-    // TODO add the missing JSON attributes so it can be parsed
 }
