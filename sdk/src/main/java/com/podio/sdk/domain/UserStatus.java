@@ -47,7 +47,6 @@ public class UserStatus {
         return profile;
     }
 
-    //TODO rename this method as it delivers notification inbox count and not message count
     public int getUnreadNotificationsCount() {
         return Utils.getNative(inbox_new, -1);
     }
