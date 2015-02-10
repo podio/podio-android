@@ -30,6 +30,6 @@ public interface Client {
     @Deprecated
     public Request<Void> forceRefreshTokens();
 
-    public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfItem);
+    public <T> Request<T> request(Request.Method method, Filter filter, Object requestData, Class<T> classOfExpectedResult);
 
 }
