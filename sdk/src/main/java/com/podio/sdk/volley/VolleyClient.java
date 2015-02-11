@@ -28,11 +28,11 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
-import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.Session;
 import com.podio.sdk.domain.File;
 import com.podio.sdk.internal.Utils;
+import com.podio.sdk.json.JsonParser;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -40,6 +40,7 @@ import java.util.Set;
 import javax.net.ssl.SSLSocketFactory;
 
 public class VolleyClient implements Client {
+    public static final int DEFAULT_TIMEOUT_MS = 30000;
 
     static class AuthPath extends Filter {
 
@@ -79,7 +80,7 @@ public class VolleyClient implements Client {
         private final String originalAccessToken;
 
         private VolleyRetryPolicy(String referenceAccessToken) {
-            super(0, 1, 0.0f);
+            super(DEFAULT_TIMEOUT_MS, 1, 1.0f);
             this.originalAccessToken = referenceAccessToken;
         }
 
@@ -137,6 +138,11 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
+
+        // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
+        // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
+        // retries and no back-off multiplier for this authentication request.
+        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
         addToRefreshQueue(request);
 
         return request;
@@ -152,6 +158,11 @@ public class VolleyClient implements Client {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
         VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
+
+        // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
+        // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
+        // retries and no back-off multiplier for this authentication request.
+        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
         addToRefreshQueue(request);
 
         return request;
