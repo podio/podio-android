@@ -22,16 +22,16 @@
 package com.podio.sdk.provider;
 
 import com.podio.sdk.Filter;
+import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.NotificationGroup;
-import com.podio.sdk.volley.VolleyProvider;
 
 /**
  * Enables access to the NotificationGroup API end point.
  *
  * @author Tobias Lindberg
  */
-public class NotificationProvider extends VolleyProvider {
+public class NotificationProvider extends Provider {
 
     static class Path extends Filter {
 
