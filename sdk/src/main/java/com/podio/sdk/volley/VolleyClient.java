@@ -40,7 +40,6 @@ import java.util.Set;
 import javax.net.ssl.SSLSocketFactory;
 
 public class VolleyClient implements Client {
-    public static final int DEFAULT_TIMEOUT_MS = 30000;
 
     static class AuthPath extends Filter {
 

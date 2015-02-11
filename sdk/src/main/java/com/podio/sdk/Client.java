@@ -22,6 +22,7 @@
 package com.podio.sdk;
 
 public interface Client {
+    public static final int DEFAULT_TIMEOUT_MS = 30000;
 
     public Request<Void> authenticateWithUserCredentials(String username, String password);
 
