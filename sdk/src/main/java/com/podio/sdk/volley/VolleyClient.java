@@ -36,6 +36,7 @@ import com.podio.sdk.json.JsonParser;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -105,6 +106,7 @@ public class VolleyClient implements Client {
 
                 // Re-authenticate on a prioritized request queue.
                 VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params);
+                reAuthRequest.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
                 addToRefreshQueue(reAuthRequest);
 
                 reAuthRequest.withErrorListener(new Request.ErrorListener() {
@@ -113,7 +115,7 @@ public class VolleyClient implements Client {
                         clearRequestQueue();
                         return true;
                     }
-                }).waitForResult(20);
+                }).waitForResult(TimeUnit.MILLISECONDS.toSeconds(DEFAULT_TIMEOUT_MS));
             }
         }
     }
