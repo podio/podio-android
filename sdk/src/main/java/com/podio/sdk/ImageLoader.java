@@ -18,7 +18,9 @@ package com.podio.sdk;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.LruCache;
 
@@ -46,6 +48,7 @@ import javax.net.ssl.SSLSocketFactory;
  * @author László Urszuly
  */
 public class ImageLoader {
+    private static final String LOCAL_RESOURCE_PREFIX = "local.resource.";
 
     /**
      * The SDK provided image loader callback interface.
@@ -138,51 +141,66 @@ public class ImageLoader {
     private static RequestQueue volleyImageRequestQueue;
 
     /**
-     * The shared cache that is injected in the Volley ImageLoader class.
-     */
-    private static ImageCache imageCache;
-
-    /**
      * The shared, under laying Volley ImageLoader class that will perform the actual work.
      */
     private static com.android.volley.toolbox.ImageLoader imageLoader;
 
     /**
+     * The in-memory image cache that will hold the already loaded images.
+     */
+    private ImageCache imageCache;
+
+    /**
      * Attempts to load the requested image with the given size. If it already exists in the cache,
-     * it will be loaded from there, otherwise a network request will be performed.
+     * it will be loaded from there, otherwise the underlying storage infrastructure ("cloud" or
+     * local file system) will be queried from a separate worker thread.
      * <p/>
      * The given callback interface will be invoked with a null pointer bitmap if the cache doesn't
-     * hold the requested image. The caller can then decide to show some sort of default image or a
-     * progress indication or so. The same callback interface will be called a second time when the
-     * corresponding network request has completed.
+     * hold the requested image yet. The caller can then decide to show some sort of default image
+     * or a progress indication. The same callback interface will be called a second time when the
+     * corresponding storage query has completed.
      * <p/>
-     * If the cache already holds the requested image, the callback will only be called once.
+     * If the cache already holds the requested image, the callback will only be called once and
+     * then with a non-null bitmap.
      *
      * @param url
      *         The url to fetch the bitmap from if it doesn't exist in the cache. The url will also
-     *         serve as a cache key once the bitmap is stored locally.
+     *         serve as a cache key once the bitmap is loaded into memory the first time.
      * @param size
      *         An API defined size notation that can optionally be given. This size will ask for a
-     *         specific, server side pre-scaled bitmap from the API. The image loader will not
-     *         resize any bitmaps.
+     *         specific, server side pre-scaled bitmap from the API.
      * @param listener
-     *         The callback implementation that will be invoked on bitmap or error delivery.
+     *         The callback implementation that will be invoked on bitmap delivery or if an error
+     *         occurs.
      */
-    public synchronized void loadImage(String url, Size size, final ImageListener listener) {
+    public void loadImage(String url, Size size, ImageListener listener) {
         Uri uri = Uri.parse(url);
         Uri requestUri = (size != null && size != Size.UNSPECIFIED) ? Uri.withAppendedPath(uri, size.literal) : uri;
+        String scheme = requestUri.getScheme();
 
-        imageLoader.get(requestUri.toString(), new com.android.volley.toolbox.ImageLoader.ImageListener() {
-            @Override
-            public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
-                listener.onImageReady(response.getBitmap(), isImmediate);
-            }
+        if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+            loadNetworkImage(requestUri.toString(), listener);
+        } else {
+            loadLocalImage(requestUri.toString(), listener);
+        }
+    }
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                listener.onErrorOccurred(parseVolleyError(error));
-            }
-        });
+    /**
+     * Exactly the same behaviour as {@link com.podio.sdk.ImageLoader#loadImage(String,
+     * com.podio.sdk.ImageLoader.Size, com.podio.sdk.ImageLoader.ImageListener)}, but targeting app
+     * specific drawable resources identified by a {@code Context} object and a numeric id rather
+     * than a file system path.
+     *
+     * @param context
+     *         The context to load the drawable resource from (if not already in the cache).
+     * @param resourceId
+     *         The id of the drawable resource to load.
+     * @param listener
+     *         The callback implementation that will be invoked on bitmap delivery or if an error
+     *         occurs.
+     */
+    public void loadImage(Context context, int resourceId, ImageListener listener) {
+        loadDrawableResource(context, resourceId, listener);
     }
 
     /**
@@ -228,7 +246,127 @@ public class ImageLoader {
 
         // Clear out any and all cached images.
         imageCache.evictAll();
-        imageLoader = new com.android.volley.toolbox.ImageLoader(volleyImageRequestQueue, imageCache);
+
+        if (imageLoader == null) {
+            imageLoader = new com.android.volley.toolbox.ImageLoader(volleyImageRequestQueue, imageCache);
+        }
+    }
+
+    /**
+     * Delegates the loading of the requested network image to the Volley image loader
+     * infrastructure, that will handle the entire cache checking and populating etc.
+     *
+     * @param url
+     *         The url to fetch the bitmap from if it doesn't exist in the cache. The url will also
+     *         serve as a cache key once the bitmap is fetched.
+     * @param listener
+     *         The callback implementation that will be invoked on bitmap delivery or if an error
+     *         occurs.
+     */
+    private void loadNetworkImage(String url, final ImageListener listener) {
+        imageLoader.get(url, new com.android.volley.toolbox.ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
+                listener.onImageReady(response.getBitmap(), isImmediate);
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                listener.onErrorOccurred(parseVolleyError(error));
+            }
+        });
+    }
+
+    /**
+     * Returns a previously decoded bitmap from the in-memory cache or tries to decode the local
+     * file on a separate worker thread if not found in the cache. If successfully loaded from the
+     * file system, also adds the bitmap to the in-memory cache.
+     *
+     * @param path
+     *         The local file system path to decode the bitmap from if it doesn't exist in the
+     *         cache. The path will also serve as a cache key once the bitmap is decoded.
+     * @param listener
+     *         The callback implementation that will be invoked on bitmap delivery or if an error
+     *         occurs.
+     */
+    private void loadLocalImage(final String path, final ImageListener listener) {
+        Bitmap bitmap = imageCache.getBitmap(path);
+
+        if (bitmap != null) {
+            listener.onImageReady(bitmap, true);
+            return;
+        }
+
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected void onPreExecute() {
+                listener.onImageReady(null, true);
+            }
+
+            @Override
+            protected Bitmap doInBackground(Void... nothing) {
+                return Utils.notEmpty(path) ?
+                        BitmapFactory.decodeFile(path) :
+                        null;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap == null) {
+                    listener.onErrorOccurred(new PodioError(new NullPointerException("Couldn't load image: " + path)));
+                } else {
+                    imageCache.putBitmap(path, bitmap);
+                    listener.onImageReady(bitmap, false);
+                }
+            }
+        }.execute();
+    }
+
+    /**
+     * Returns a previously decoded bitmap from the in-memory cache or tries to decode the local
+     * drawable resource on a separate worker thread if not found in the cache. If successfully
+     * loaded, also adds the bitmap to the in-memory cache.
+     *
+     * @param context
+     *         The context to load the drawable resource from.
+     * @param id
+     *         The id of the drawable resource to decode if it doesn't already exist in the cache.
+     *         The id will also serve as part of the cache key once the bitmap is decoded.
+     * @param listener
+     *         The callback implementation that will be invoked on bitmap delivery or if an error
+     *         occurs.
+     */
+    private void loadDrawableResource(final Context context, final int id, final ImageListener listener) {
+        Bitmap bitmap = imageCache.getBitmap(LOCAL_RESOURCE_PREFIX + id);
+
+        if (bitmap != null) {
+            listener.onImageReady(bitmap, true);
+            return;
+        }
+
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected void onPreExecute() {
+                listener.onImageReady(null, true);
+            }
+
+            @Override
+            protected Bitmap doInBackground(Void... nothing) {
+                return (context != null && id > 0) ?
+                        BitmapFactory.decodeResource(context.getResources(), id) :
+                        null;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap == null) {
+                    listener.onErrorOccurred(new PodioError(new NullPointerException("Couldn't load resource: " + id)));
+                } else {
+                    imageCache.putBitmap(LOCAL_RESOURCE_PREFIX + id, bitmap);
+                    listener.onImageReady(bitmap, false);
+                }
+            }
+        }.execute();
     }
 
     /**
