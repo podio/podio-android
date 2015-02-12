@@ -174,7 +174,8 @@ public class ImageLoader {
      *         serve as a cache key once the bitmap is loaded into memory the first time.
      * @param size
      *         An API defined size notation that can optionally be given. This size will ask for a
-     *         specific, server side pre-scaled bitmap from the API.
+     *         specific, server side pre-scaled bitmap from the API and is only applicable for
+     *         network resources. When loading a local file, this argument is ignored.
      * @param listener
      *         The callback implementation that will be invoked on bitmap delivery or if an error
      *         occurs.
@@ -183,14 +184,14 @@ public class ImageLoader {
      *         If the url or the image listener is null.
      */
     public void loadImage(final String url, Size size, final ImageListener listener) throws NullPointerException {
-        Uri uri = Uri.parse(url);
-        Uri requestUri = (size != null && size != Size.UNSPECIFIED) ? Uri.withAppendedPath(uri, size.literal) : uri;
-        String scheme = requestUri.getScheme();
+        if (url == null || listener == null) {
+            throw new NullPointerException("Url can not be null");
+        }
 
-        if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
-            loadNetworkImage(requestUri.toString(), listener);
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            loadNetworkImage(url, size, listener);
         } else {
-            loadLocalImage(requestUri.toString(), listener);
+            loadLocalImage(url, listener);
         }
     }
 
@@ -272,8 +273,11 @@ public class ImageLoader {
      *         The callback implementation that will be invoked on bitmap delivery or if an error
      *         occurs.
      */
-    private void loadNetworkImage(final String url, final ImageListener listener) {
-        imageLoader.get(url, new com.android.volley.toolbox.ImageLoader.ImageListener() {
+    private void loadNetworkImage(final String url, Size size, final ImageListener listener) {
+        Uri uri = Uri.parse(url);
+        Uri requestUri = (size != null && size != Size.UNSPECIFIED) ? Uri.withAppendedPath(uri, size.literal) : uri;
+
+        imageLoader.get(requestUri.toString(), new com.android.volley.toolbox.ImageLoader.ImageListener() {
             @Override
             public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
                 listener.onImageReady(response.getBitmap(), url, isImmediate);
