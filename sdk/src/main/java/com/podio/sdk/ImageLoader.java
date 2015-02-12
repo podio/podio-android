@@ -63,11 +63,14 @@ public class ImageLoader {
          *
          * @param bitmap
          *         The requested bitmap or null if no cache-hit.
+         * @param url
+         *         The image identifier that was passed along with the corresponding image load
+         *         request. This can be the url, the file path or the resource id (as a string).
          * @param isFromCache
          *         True if the image was found in (and returned from) the cache, boolean false
          *         otherwise.
          */
-        public void onImageReady(Bitmap bitmap, boolean isFromCache);
+        public void onImageReady(Bitmap bitmap, String url, boolean isFromCache);
 
         /**
          * Called when loading the image failed due to any reason. The error object will hold more
@@ -77,8 +80,11 @@ public class ImageLoader {
          *
          * @param podioError
          *         The cause of the failure.
+         * @param url
+         *         The image identifier that was passed along with the corresponding image load
+         *         request. This can be the url, the file path or the resource id (as a string).
          */
-        public void onErrorOccurred(PodioError podioError);
+        public void onErrorOccurred(PodioError podioError, String url);
     }
 
     /**
@@ -173,7 +179,7 @@ public class ImageLoader {
      *         The callback implementation that will be invoked on bitmap delivery or if an error
      *         occurs.
      */
-    public void loadImage(String url, Size size, ImageListener listener) {
+    public void loadImage(final String url, Size size, final ImageListener listener) {
         Uri uri = Uri.parse(url);
         Uri requestUri = (size != null && size != Size.UNSPECIFIED) ? Uri.withAppendedPath(uri, size.literal) : uri;
         String scheme = requestUri.getScheme();
@@ -199,7 +205,7 @@ public class ImageLoader {
      *         The callback implementation that will be invoked on bitmap delivery or if an error
      *         occurs.
      */
-    public void loadImage(Context context, int resourceId, ImageListener listener) {
+    public void loadImage(Context context, final int resourceId, final ImageListener listener) {
         loadDrawableResource(context, resourceId, listener);
     }
 
@@ -263,16 +269,16 @@ public class ImageLoader {
      *         The callback implementation that will be invoked on bitmap delivery or if an error
      *         occurs.
      */
-    private void loadNetworkImage(String url, final ImageListener listener) {
+    private void loadNetworkImage(final String url, final ImageListener listener) {
         imageLoader.get(url, new com.android.volley.toolbox.ImageLoader.ImageListener() {
             @Override
             public void onResponse(com.android.volley.toolbox.ImageLoader.ImageContainer response, boolean isImmediate) {
-                listener.onImageReady(response.getBitmap(), isImmediate);
+                listener.onImageReady(response.getBitmap(), url, isImmediate);
             }
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                listener.onErrorOccurred(parseVolleyError(error));
+                listener.onErrorOccurred(parseVolleyError(error), url);
             }
         });
     }
@@ -293,14 +299,14 @@ public class ImageLoader {
         Bitmap bitmap = imageCache.getBitmap(path);
 
         if (bitmap != null) {
-            listener.onImageReady(bitmap, true);
+            listener.onImageReady(bitmap, path, true);
             return;
         }
 
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected void onPreExecute() {
-                listener.onImageReady(null, true);
+                listener.onImageReady(null, path, true);
             }
 
             @Override
@@ -313,10 +319,10 @@ public class ImageLoader {
             @Override
             protected void onPostExecute(Bitmap bitmap) {
                 if (bitmap == null) {
-                    listener.onErrorOccurred(new PodioError(new NullPointerException("Couldn't load image: " + path)));
+                    listener.onErrorOccurred(new PodioError(new NullPointerException("Couldn't load image: " + path)), path);
                 } else {
                     imageCache.putBitmap(path, bitmap);
-                    listener.onImageReady(bitmap, false);
+                    listener.onImageReady(bitmap, path, false);
                 }
             }
         }.execute();
@@ -340,14 +346,14 @@ public class ImageLoader {
         Bitmap bitmap = imageCache.getBitmap(LOCAL_RESOURCE_PREFIX + id);
 
         if (bitmap != null) {
-            listener.onImageReady(bitmap, true);
+            listener.onImageReady(bitmap, Integer.toString(id), true);
             return;
         }
 
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected void onPreExecute() {
-                listener.onImageReady(null, true);
+                listener.onImageReady(null, Integer.toString(id), true);
             }
 
             @Override
@@ -360,10 +366,10 @@ public class ImageLoader {
             @Override
             protected void onPostExecute(Bitmap bitmap) {
                 if (bitmap == null) {
-                    listener.onErrorOccurred(new PodioError(new NullPointerException("Couldn't load resource: " + id)));
+                    listener.onErrorOccurred(new PodioError(new NullPointerException("Couldn't load resource: " + id)), Integer.toString(id));
                 } else {
                     imageCache.putBitmap(LOCAL_RESOURCE_PREFIX + id, bitmap);
-                    listener.onImageReady(bitmap, false);
+                    listener.onImageReady(bitmap, Integer.toString(id), false);
                 }
             }
         }.execute();
