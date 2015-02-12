@@ -215,7 +215,11 @@ public class Podio {
     public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
 
-        Uri pushUri = Uri.fromParts(BuildConfig.SCHEME, BuildConfig.PUSH_AUTHORITY, BuildConfig.PUSH_PATH);
+        Uri pushUri = new Uri.Builder()
+                .scheme(BuildConfig.SCHEME)
+                .encodedAuthority(BuildConfig.PUSH_AUTHORITY)
+                .encodedPath(BuildConfig.PUSH_PATH)
+                .build();
         push = new FayePushClient(new VolleyLongPollingTransport(context, pushUri.toString()));
 
         // Providers relying on a rest client in order to operate properly.
