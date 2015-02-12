@@ -178,8 +178,11 @@ public class ImageLoader {
      * @param listener
      *         The callback implementation that will be invoked on bitmap delivery or if an error
      *         occurs.
+     *
+     * @throws NullPointerException
+     *         If the url or the image listener is null.
      */
-    public void loadImage(final String url, Size size, final ImageListener listener) {
+    public void loadImage(final String url, Size size, final ImageListener listener) throws NullPointerException {
         Uri uri = Uri.parse(url);
         Uri requestUri = (size != null && size != Size.UNSPECIFIED) ? Uri.withAppendedPath(uri, size.literal) : uri;
         String scheme = requestUri.getScheme();
