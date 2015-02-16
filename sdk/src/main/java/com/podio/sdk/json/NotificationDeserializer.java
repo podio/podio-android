@@ -26,7 +26,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.notification.Notification;
 
 import java.lang.reflect.Type;
@@ -48,22 +47,18 @@ class NotificationDeserializer implements JsonDeserializer<Notification> {
 
         JsonObject jsonObject = element.getAsJsonObject();
 
-        Notification.Type typeEnum = Notification.Type.undefined;
-        JsonElement fieldType = jsonObject.get("type");
-
-        if (fieldType != null && !fieldType.isJsonNull()) {
-            try {
-                typeEnum = Notification.Type.valueOf(fieldType.getAsString());
-            } catch (IllegalArgumentException e) {
-            }
-        }
-
-        if (typeEnum == Notification.Type.undefined) {
-            // Overwrite the type in the json so we get undefined instead of
-            // null.
-            jsonObject.addProperty("type", Field.Type.undefined.name());
-        }
+        Notification.Type typeEnum = getType(jsonObject.get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, typeEnum.getNotificationClass());
+    }
+
+    private Notification.Type getType(String type) {
+        try {
+            return Notification.Type.valueOf(type);
+        } catch (NullPointerException e) {
+            return Notification.Type.undefined;
+        } catch (IllegalArgumentException e) {
+            return Notification.Type.undefined;
+        }
     }
 }

@@ -27,12 +27,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.podio.sdk.domain.Reference;
 import com.podio.sdk.domain.notification.AppNotificationContext;
 import com.podio.sdk.domain.notification.NotificationContext;
 import com.podio.sdk.domain.notification.UndefinedNotificationContext;
 import com.podio.sdk.internal.DefaultHashMap;
-
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -45,12 +43,11 @@ import java.util.Map;
  */
 class NotificationContextDeserializer implements JsonDeserializer<NotificationContext> {
 
-    private Map<Reference.Type, Class<? extends NotificationContext>> mNotificationContextClassesMap;
+    private Map<com.podio.sdk.domain.Type, Class<? extends NotificationContext>> mNotificationContextClassesMap;
 
     public NotificationContextDeserializer() {
-        mNotificationContextClassesMap = new DefaultHashMap<Reference.Type, Class<? extends NotificationContext>>(UndefinedNotificationContext.class);
-        mNotificationContextClassesMap.put(Reference.Type.app, AppNotificationContext.class);
-        mNotificationContextClassesMap.put(Reference.Type.undefined, UndefinedNotificationContext.class);
+        mNotificationContextClassesMap = new DefaultHashMap<com.podio.sdk.domain.Type, Class<? extends NotificationContext>>(UndefinedNotificationContext.class);
+        mNotificationContextClassesMap.put(com.podio.sdk.domain.Type.app, AppNotificationContext.class);
     }
 
     @Override
@@ -60,22 +57,19 @@ class NotificationContextDeserializer implements JsonDeserializer<NotificationCo
         }
 
         JsonObject jsonObject = element.getAsJsonObject();
-        Reference.Type typeEnum = Reference.Type.undefined;
-        JsonElement fieldType = jsonObject.get("ref").getAsJsonObject().get("type");
-
-        if (fieldType != null && !fieldType.isJsonNull()) {
-            try {
-                typeEnum = Reference.Type.valueOf(fieldType.getAsString());
-            } catch (IllegalArgumentException e) {
-            }
-        }
-
-        if (typeEnum == Reference.Type.undefined) {
-            // Overwrite the type in the json so we get undefined instead of
-            // null.
-            jsonObject.get("ref").getAsJsonObject().addProperty("type", Reference.Type.undefined.name());
-        }
+        com.podio.sdk.domain.Type typeEnum = getType(jsonObject.get("ref").getAsJsonObject().get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, mNotificationContextClassesMap.get(typeEnum));
+    }
+
+
+    private com.podio.sdk.domain.Type getType(String type) {
+        try {
+            return com.podio.sdk.domain.Type.valueOf(type);
+        } catch (NullPointerException e) {
+            return com.podio.sdk.domain.Type.unknown;
+        } catch (IllegalArgumentException e) {
+            return com.podio.sdk.domain.Type.unknown;
+        }
     }
 }

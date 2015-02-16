@@ -26,33 +26,21 @@ import com.google.gson.annotations.SerializedName;
 import com.podio.sdk.internal.Utils;
 
 public class Reference {
-    /**
-     * The field type enumeration. Each field can have exactly one of these type values.
-     */
-    public static enum Type {
-        app, app_revision, app_field, item, bulletin, comment,
-        status, space_member, alert, item_revision, rating, task,
-        task_action, space, org, conversation, message, notification,
-        file, file_service, profile, user, widget, share, form,
-        auth_client, connection, integration, share_install, icon,
-        org_member, hook, tag, embed, question, question_answer,
-        action, contract, invoice, payment, batch, system,
-        space_member_request, linked_account, subscription,
-        label, view, grant, flow, flow_effect, flow_condition,
-        live, condition_set, condition, promotion, location,
-        voting, answer, vote, item_participation, extension,
-        item_transaction, extension_installation, partner, identity,
-        undefined
-    }
 
-    private final Type type = null;
+    private final String type = null;
     @SerializedName("type_name")
     private final String typeName = null;
     private final Long id = null;
     private final String title = null;
 
     public Type getType() {
-        return type;
+        try {
+            return Type.valueOf(type);
+        } catch (NullPointerException e) {
+            return Type.unknown;
+        } catch (IllegalArgumentException e) {
+            return Type.unknown;
+        }
     }
 
     public String getTypeName() {

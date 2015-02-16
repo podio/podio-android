@@ -86,7 +86,7 @@ public abstract class Notification {
     }
 
     private final Long notification_id = null;
-    private final Type type = null;
+    private final String type = null;
     private final Byline created_by = null;
     private final String created_on = null;
     private final String text = null;
@@ -97,7 +97,13 @@ public abstract class Notification {
     }
 
     public Type getType() {
-        return type;
+        try {
+            return Type.valueOf(type);
+        } catch (NullPointerException e) {
+            return Type.undefined;
+        } catch (IllegalArgumentException e) {
+            return Type.undefined;
+        }
     }
 
     public Byline getCreatedBy() {
