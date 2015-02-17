@@ -69,4 +69,15 @@ public class NotificationProvider extends Provider {
         return post(filter,null,Void.class);
 
     }
+
+    /**
+     * Mark the notification as viewed. This will move the notification from the inbox to the viewed archive.
+     * @param notificationId The ID of the notification
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> markNotificationAsViewed(long notificationId) {
+        Path filter = new Path().withId(notificationId).withViewed();
+        return post(filter,null,Void.class);
+
+    }
 }
