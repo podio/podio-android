@@ -72,6 +72,11 @@ public class ConversationProvider extends Provider {
             return this;
         }
 
+        Path withReadFlag() {
+            addPathSegment("read");
+            return this;
+        }
+
         Path withReply(long id) {
             addPathSegment(Long.toString(id, 10));
             addPathSegment("reply");
@@ -171,6 +176,15 @@ public class ConversationProvider extends Provider {
      */
     public Request<Void> markConversationAsRead(long conversationId) {
         Path filter = new Path().withReadFlag(conversationId);
+        return post(filter, null, Void.class);
+    }
+
+    /**
+     * Marks all the users conversations as read.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> markAllConversationsAsRead() {
+        Path filter = new Path().withReadFlag();
         return post(filter, null, Void.class);
     }
 

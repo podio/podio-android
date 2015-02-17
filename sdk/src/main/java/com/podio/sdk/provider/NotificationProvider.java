@@ -43,6 +43,11 @@ public class NotificationProvider extends Provider {
             addPathSegment(Long.toString(id, 10));
             return this;
         }
+
+        Path withViewed(){
+            addPathSegment("viewed");
+            return this;
+        }
     }
 
     /**
@@ -53,5 +58,15 @@ public class NotificationProvider extends Provider {
     public Request<NotificationGroup> getNotification(long id) {
         Path filter = new Path().withId(id);
         return get(filter, NotificationGroup.class);
+    }
+
+    /**
+     * Marks all the users notifications as viewed.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> markAllNotificationsAsViewed() {
+        Path filter = new Path().withViewed();
+        return post(filter,null,Void.class);
+
     }
 }
