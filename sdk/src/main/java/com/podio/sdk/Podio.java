@@ -30,7 +30,6 @@ import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
-import com.podio.sdk.provider.StoreProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
@@ -95,11 +94,6 @@ public class Podio {
      * Enables means of easy operating on the Organization API end point.
      */
     public static final OrganizationProvider organization = new OrganizationProvider();
-
-    /**
-     * Enables means of requesting a handle to a local store manager.
-     */
-    public static final StoreProvider store = new StoreProvider();
 
     /**
      * Enables means of easy operating on the User API end point.
@@ -235,9 +229,6 @@ public class Podio {
         view.setClient(restClient);
         task.setClient(restClient);
         notification.setClient(restClient);
-
-        // Providers that doesn't need a rest client in order to operate.
-        // store;
     }
 
     /**
