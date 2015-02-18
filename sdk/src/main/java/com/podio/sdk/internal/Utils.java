@@ -22,6 +22,10 @@
 
 package com.podio.sdk.internal;
 
+import android.annotation.SuppressLint;
+import android.net.Uri;
+
+import java.io.Closeable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -30,15 +34,22 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import android.annotation.SuppressLint;
-import android.net.Uri;
-
 public class Utils {
     public static final int TRUE = 1;
     public static final int FALSE = 0;
 
     public static long currentTimeSeconds() {
         return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+    }
+
+    public static void closeSilently(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                // Intentionally and silently consume the error.
+            }
+        }
     }
 
     public static String formatDate(Date date) {

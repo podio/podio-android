@@ -24,14 +24,19 @@ import com.podio.sdk.Request;
 import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Store;
 import com.podio.sdk.internal.Utils;
+import com.podio.sdk.json.JsonParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A {@link Store} implementation modeling a memory-cache backed by persistent disk storage. The
@@ -98,6 +103,10 @@ public class LocalStore extends QueueClient implements Store {
             @Override
             protected Void doInBackground(Void... nothing) {
                 store.diskStore = getLocalStoreDirectory(context, name);
+
+                // Copy any memory cache entries that were stored while the disk cache was being
+                // initialized.
+                copyMemoryStoreToDiskStore(store);
                 return null;
             }
         }.execute();
@@ -133,6 +142,43 @@ public class LocalStore extends QueueClient implements Store {
             // We don't know anything about the size, assume worst case scenario.
             return Integer.MAX_VALUE;
         }
+    }
+
+    /**
+     * Writes all entries currently in the memory cache to the disk cache. Note that this method
+     * performs file system operations on the calling thread.
+     *
+     * @param store
+     *         The local store object holding the memory and disk caches.
+     */
+    private static void copyMemoryStoreToDiskStore(LocalStore store) {
+        if (store != null) {
+            Map<Object, Object> snapshot = store.memoryStore.snapshot();
+            Set<Map.Entry<Object, Object>> entries = snapshot.entrySet();
+
+            for (Map.Entry<Object, Object> entry : entries) {
+                FileOutputStream fileOutputStream = null;
+                String fileName;
+
+                try {
+                    String key = entry.getKey().toString();
+                    fileName = URLEncoder.encode(key, Charset.defaultCharset().name());
+                    File file = new File(store.diskStore, fileName);
+                    String json = JsonParser.toJson(entry.getValue());
+                    fileOutputStream = new FileOutputStream(file);
+                    fileOutputStream.write(json.getBytes());
+                } catch (UnsupportedEncodingException e) {
+                    break;
+                } catch (FileNotFoundException e) {
+                    // Intentionally consume this exception.
+                } catch (IOException e) {
+                    // Intentionally consume this exception.
+                } finally {
+                    Utils.closeSilently(fileOutputStream);
+                }
+            }
+        }
+
     }
 
     /**
