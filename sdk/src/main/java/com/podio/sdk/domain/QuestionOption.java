@@ -25,43 +25,21 @@ package com.podio.sdk.domain;
 import com.podio.sdk.internal.Utils;
 
 /**
- * A Java representation of the RatingDTO API domain object.
+ * A Java representation of the QuestionOptionDTO API domain object.
  *
  * @author Tobias Lindberg
  */
-public class Rating {
+public class QuestionOption {
 
-    public static enum RatingType {
-        like,
-        approved,
-        rsvp,
-        fivestar,
-        yesno,
-        thumbs,
-        unknown // Custom value to handle errors.
+    private final Long question_option_id = null;
+
+    private final String text = null;
+
+    public Long getQuestionOptionId() {
+        return Utils.getNative(question_option_id, -1L);
     }
 
-    private final Long rating_id = null;
-
-    private final String type = null;
-
-    private final Integer value = null;
-
-    public Long getRatingId() {
-        return Utils.getNative(rating_id, -1L);
-    }
-
-    public RatingType getType() {
-        try {
-            return RatingType.valueOf(type);
-        } catch (NullPointerException e) {
-            return RatingType.unknown;
-        } catch (IllegalArgumentException e) {
-            return RatingType.unknown;
-        }
-    }
-
-    public Integer getValue() {
-        return value;
+    public String getText() {
+        return text;
     }
 }

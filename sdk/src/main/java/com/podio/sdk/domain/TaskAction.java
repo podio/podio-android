@@ -25,43 +25,43 @@ package com.podio.sdk.domain;
 import com.podio.sdk.internal.Utils;
 
 /**
- * A Java representation of the RatingDTO API domain object.
+ * A Java representation of the TaskActionDTO API domain object.
  *
  * @author Tobias Lindberg
  */
-public class Rating {
+public class TaskAction {
 
-    public static enum RatingType {
-        like,
-        approved,
-        rsvp,
-        fivestar,
-        yesno,
-        thumbs,
+    public static enum TaskActionType {
+        creation,
+        start,
+        stop,
+        assign,
+        complete,
+        incomplete,
+        update_text,
+        update_description,
+        update_due_date,
+        update_private,
+        delete,
+        update_ref,
         unknown // Custom value to handle errors.
     }
 
-    private final Long rating_id = null;
+    private final Long task_action_id = null;
 
     private final String type = null;
 
-    private final Integer value = null;
-
-    public Long getRatingId() {
-        return Utils.getNative(rating_id, -1L);
+    public Long getTaskActionId() {
+        return Utils.getNative(task_action_id, -1L);
     }
 
-    public RatingType getType() {
+    public TaskActionType getType() {
         try {
-            return RatingType.valueOf(type);
+            return TaskActionType.valueOf(type);
         } catch (NullPointerException e) {
-            return RatingType.unknown;
+            return TaskActionType.unknown;
         } catch (IllegalArgumentException e) {
-            return RatingType.unknown;
+            return TaskActionType.unknown;
         }
-    }
-
-    public Integer getValue() {
-        return value;
     }
 }

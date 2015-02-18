@@ -23,6 +23,8 @@
 package com.podio.sdk.domain;
 
 /**
+ * A Java representation of the ItemParticipationDTO API domain object.
+ *
  * @author Tobias Lindberg
  */
 public class ItemParticipation {

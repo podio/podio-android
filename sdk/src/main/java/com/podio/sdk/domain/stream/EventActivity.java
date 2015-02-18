@@ -33,7 +33,27 @@ import java.util.Date;
  * @author Tobias Lindberg
  */
 public abstract class EventActivity {
+
+    public static enum EventType {
+        comment,
+        file,
+        rating,
+        creation,
+        update,
+        task,
+        answer,
+        rsvp,
+        grant,
+        reference,
+        like,
+        vote,
+        participation,
+        file_delete,
+        unknown
+    }
+
     private final String type = null;
+    private final String activity_type = null;
     private final Byline created_by = null;
     private final String created_on = null;
 
@@ -56,6 +76,16 @@ public abstract class EventActivity {
             return ReferenceType.unknown;
         } catch (IllegalArgumentException e) {
             return ReferenceType.unknown;
+        }
+    }
+
+    public EventType getActivityType() {
+        try {
+            return EventType.valueOf(type);
+        } catch (NullPointerException e) {
+            return EventType.unknown;
+        } catch (IllegalArgumentException e) {
+            return EventType.unknown;
         }
     }
 }
