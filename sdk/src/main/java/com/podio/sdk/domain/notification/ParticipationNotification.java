@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain.notification;
 
+import com.podio.sdk.domain.ItemParticipation;
+
 /**
  * This class is used when the notification was of type "participation".
  *
@@ -29,18 +31,9 @@ package com.podio.sdk.domain.notification;
  */
 public class ParticipationNotification extends Notification {
 
-    private final Data data = null;
+    private final ItemParticipation data = null;
 
-    public static class Data {
-
-        private final String status = null;
-
-        public String getStatus() {
-            return status;
-        }
-    }
-
-    public Data getData() {
+    public ItemParticipation getItemParticipation() {
         return data;
     }
 }

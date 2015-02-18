@@ -20,15 +20,23 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.notification;
+package com.podio.sdk.domain;
 
 /**
- * This class is used for all notifications that we are yet to define in the SDK. In most cases the
- * attributes in the super class Notification is sufficient so notifications of this type are still
- * useful to handle.
- *
  * @author Tobias Lindberg
  */
-public class UndefinedNotification extends Notification {
+public class ItemParticipation {
 
+    public enum MeetingParticipantStatus {
+        invited,
+        accepted,
+        declined,
+        tentative
+    }
+
+    private final MeetingParticipantStatus status = null;
+
+    public MeetingParticipantStatus getStatus() {
+        return status;
+    }
 }

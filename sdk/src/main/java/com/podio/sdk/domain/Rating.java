@@ -20,15 +20,46 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain.notification;
+package com.podio.sdk.domain;
+
+import com.podio.sdk.internal.Utils;
 
 /**
- * This class is used for all notification contexts that we are yet to define in the SDK. In most
- * cases the attributes in the super class NotificationContext is sufficient so notifications of
- * this type are still useful to handle.
- *
  * @author Tobias Lindberg
  */
-public class UndefinedNotificationContext extends NotificationContext {
+public class Rating {
 
+    public static enum RatingType {
+        like,
+        approved,
+        rsvp,
+        fivestar,
+        yesno,
+        thumbs,
+        unknown // Custom value to handle errors.
+    }
+
+    private final Long rating_id = null;
+
+    private final String type = null;
+
+    private final Integer value = null;
+
+    public Long getRatingId() {
+        return Utils.getNative(rating_id, -1L);
+    }
+
+    public RatingType getType() {
+        try {
+            return RatingType.valueOf(type);
+        } catch (NullPointerException e) {
+            return RatingType.unknown;
+        } catch (IllegalArgumentException e) {
+            return RatingType.unknown;
+        }
+    }
+
+    public Integer getValue() {
+        return value;
+    }
 }

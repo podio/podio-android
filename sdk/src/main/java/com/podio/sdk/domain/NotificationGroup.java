@@ -27,7 +27,8 @@ import com.podio.sdk.domain.notification.NotificationContext;
 import java.util.List;
 
 /**
- * A Java representation of the NotificationGroup API domain object.
+ * A Java representation of the NotificationContextDTO and NotificationContentDTO API domain
+ * object.
  *
  * @author Tobias Lindberg
  */

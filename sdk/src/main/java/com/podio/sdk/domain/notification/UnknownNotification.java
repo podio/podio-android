@@ -20,36 +20,15 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.notification;
 
-import com.podio.sdk.internal.Utils;
-
-public class Reference {
-
-    private final String type = null;
-    private final Long id = null;
-    private final String title = null;
-
-    public ReferenceType getType() {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
-    }
-
-    /**
-     * @return returns the id of the reference or -1 if for some reason there is no id
-     */
-    public Long getId() {
-        return Utils.getNative(id, -1);
-    }
-
-    public String getTitle() {
-        return title;
-    }
+/**
+ * This class is used for all notifications that we are yet to define in the SDK. In most cases the
+ * attributes in the super class Notification is sufficient so notifications of this type are still
+ * useful to handle.
+ *
+ * @author Tobias Lindberg
+ */
+public class UnknownNotification extends Notification {
 
 }
-

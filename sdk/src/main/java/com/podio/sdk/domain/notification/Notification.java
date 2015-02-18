@@ -36,47 +36,47 @@ public abstract class Notification {
     /**
      * The field type enumeration. Each notification can have exactly one of these type values.
      */
-    public static enum Type {
+    public static enum NotificationType {
         comment(CommentNotification.class),
         rating(RatingNotification.class),
         participation(ParticipationNotification.class),
-        alert(UndefinedNotification.class),
-        team_alert(UndefinedNotification.class),
-        creation(UndefinedNotification.class),
-        update(UndefinedNotification.class),
-        delete(UndefinedNotification.class),
-        message(UndefinedNotification.class),
-        space_invite(UndefinedNotification.class),
-        space_delete(UndefinedNotification.class),
-        bulletin(UndefinedNotification.class),
-        member_reference_add(UndefinedNotification.class),
-        member_reference_remove(UndefinedNotification.class),
-        file(UndefinedNotification.class),
-        role_change(UndefinedNotification.class),
-        conversation_add(UndefinedNotification.class),
-        answer(UndefinedNotification.class),
-        self_kicked_from_space(UndefinedNotification.class),
-        space_create(UndefinedNotification.class),
-        meeting_participant_add(UndefinedNotification.class),
-        meeting_participant_remove(UndefinedNotification.class),
-        reminder(UndefinedNotification.class),
-        batch_process(UndefinedNotification.class),
-        batch_complete(UndefinedNotification.class),
-        space_member_request(UndefinedNotification.class),
-        grant_create(UndefinedNotification.class),
-        grant_delete(UndefinedNotification.class),
-        grant_create_other(UndefinedNotification.class),
-        grant_delete_other(UndefinedNotification.class),
-        reference(UndefinedNotification.class),
-        like(UndefinedNotification.class),
-        vote(UndefinedNotification.class),
-        item_transaction_confirmed(UndefinedNotification.class),
-        file_delete(UndefinedNotification.class),
-        undefined(UndefinedNotification.class);
+        alert(UnknownNotification.class),
+        team_alert(UnknownNotification.class),
+        creation(UnknownNotification.class),
+        update(UnknownNotification.class),
+        delete(UnknownNotification.class),
+        message(UnknownNotification.class),
+        space_invite(UnknownNotification.class),
+        space_delete(UnknownNotification.class),
+        bulletin(UnknownNotification.class),
+        member_reference_add(UnknownNotification.class),
+        member_reference_remove(UnknownNotification.class),
+        file(UnknownNotification.class),
+        role_change(UnknownNotification.class),
+        conversation_add(UnknownNotification.class),
+        answer(UnknownNotification.class),
+        self_kicked_from_space(UnknownNotification.class),
+        space_create(UnknownNotification.class),
+        meeting_participant_add(UnknownNotification.class),
+        meeting_participant_remove(UnknownNotification.class),
+        reminder(UnknownNotification.class),
+        batch_process(UnknownNotification.class),
+        batch_complete(UnknownNotification.class),
+        space_member_request(UnknownNotification.class),
+        grant_create(UnknownNotification.class),
+        grant_delete(UnknownNotification.class),
+        grant_create_other(UnknownNotification.class),
+        grant_delete_other(UnknownNotification.class),
+        reference(UnknownNotification.class),
+        like(UnknownNotification.class),
+        vote(UnknownNotification.class),
+        item_transaction_confirmed(UnknownNotification.class),
+        file_delete(UnknownNotification.class),
+        unknown(UnknownNotification.class); // Custom value to handle errors.
 
         private final Class<? extends Notification> notificationClass;
 
-        private Type(Class<? extends Notification> notificationClass) {
+        private NotificationType(Class<? extends Notification> notificationClass) {
             this.notificationClass = notificationClass;
         }
 
@@ -96,13 +96,13 @@ public abstract class Notification {
         return Utils.getNative(notification_id, -1L);
     }
 
-    public Type getType() {
+    public NotificationType getType() {
         try {
-            return Type.valueOf(type);
+            return NotificationType.valueOf(type);
         } catch (NullPointerException e) {
-            return Type.undefined;
+            return NotificationType.unknown;
         } catch (IllegalArgumentException e) {
-            return Type.undefined;
+            return NotificationType.unknown;
         }
     }
 

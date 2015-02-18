@@ -19,43 +19,90 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+package com.podio.sdk.domain.stream;
 
-package com.podio.sdk.domain;
-
+import com.podio.sdk.domain.Application;
+import com.podio.sdk.domain.Byline;
+import com.podio.sdk.domain.Comment;
+import com.podio.sdk.domain.File;
+import com.podio.sdk.domain.Organization;
+import com.podio.sdk.domain.ReferenceType;
+import com.podio.sdk.domain.Right;
+import com.podio.sdk.domain.Space;
 import com.podio.sdk.internal.Utils;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * @author rabie
+ * A Java representation of the EventContextDTO API domain object. This is a stream v2 object.
+ *
+ * @author Tobias Lindberg
  */
-public class Comment {
-    private final String value = null;
-    private final String rich_value = null;
+public abstract class EventContext {
+
     private final List<File> files = null;
+    private final String type = null;
     private final List<Right> rights = null;
-    private final Long comment_id = null;
+    private final String title = null;
+    private final Application application = null;
+    private final Boolean comments_allowed = null;
+    private final Space space = null;
     private final Byline created_by = null;
     private final String created_on = null;
-    private final Integer like_count = null;
-    private Boolean is_liked = null;
 
-    public String getRichValue() {
-        return rich_value;
+    private final List<Comment> comments = null;
+    private final Organization org = null;
+
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public String getValue() {
-        return value;
+    public Space getSpace() {
+        return space;
+    }
+
+    public Boolean isCommentsAllowed() {
+        return Utils.getNative(comments_allowed, false);
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public List<File> getFiles() {
         return files;
     }
 
+    public Date getCreatedOnDate() {
+        return Utils.parseDateTime(created_on);
+    }
+
+    public String getCreatedOnString() {
+        return created_on;
+    }
+
+    public Byline getCreatedBy() {
+        return created_by;
+    }
+
+    public ReferenceType getType() {
+        try {
+            return ReferenceType.valueOf(type);
+        } catch (NullPointerException e) {
+            return ReferenceType.unknown;
+        } catch (IllegalArgumentException e) {
+            return ReferenceType.unknown;
+        }
+    }
+
     /**
-     * Checks whether the list of rights the user has for this comment contains <em>all</em> the
-     * given permissions.
+     * Checks whether the list of rights the user has for this stream object contains <em>all</em>
+     * the given permissions.
      *
      * @param permissions
      *         The list of permissions to check for.
@@ -77,27 +124,4 @@ public class Comment {
         return false;
     }
 
-    public Long getCommentId() {
-        return Utils.getNative(comment_id, -1L);
-    }
-
-    public Byline getCreatedBy() {
-        return created_by;
-    }
-
-    public Date getCreatedOnDate() {
-        return Utils.parseDateTime(created_on);
-    }
-
-    public String getCreatedOnString() {
-        return created_on;
-    }
-
-    public Integer getLikeCount() {
-        return Utils.getNative(like_count, 0);
-    }
-
-    public Boolean isLiked() {
-        return is_liked;
-    }
 }

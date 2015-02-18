@@ -27,9 +27,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.notification.AppNotificationContext;
 import com.podio.sdk.domain.notification.NotificationContext;
-import com.podio.sdk.domain.notification.UndefinedNotificationContext;
+import com.podio.sdk.domain.notification.UnknownNotificationContext;
 import com.podio.sdk.internal.DefaultHashMap;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -43,11 +44,11 @@ import java.util.Map;
  */
 class NotificationContextDeserializer implements JsonDeserializer<NotificationContext> {
 
-    private Map<com.podio.sdk.domain.Type, Class<? extends NotificationContext>> mNotificationContextClassesMap;
+    private Map<ReferenceType, Class<? extends NotificationContext>> mNotificationContextClassesMap;
 
     public NotificationContextDeserializer() {
-        mNotificationContextClassesMap = new DefaultHashMap<com.podio.sdk.domain.Type, Class<? extends NotificationContext>>(UndefinedNotificationContext.class);
-        mNotificationContextClassesMap.put(com.podio.sdk.domain.Type.app, AppNotificationContext.class);
+        mNotificationContextClassesMap = new DefaultHashMap<ReferenceType, Class<? extends NotificationContext>>(UnknownNotificationContext.class);
+        mNotificationContextClassesMap.put(ReferenceType.app, AppNotificationContext.class);
     }
 
     @Override
@@ -57,19 +58,19 @@ class NotificationContextDeserializer implements JsonDeserializer<NotificationCo
         }
 
         JsonObject jsonObject = element.getAsJsonObject();
-        com.podio.sdk.domain.Type typeEnum = getType(jsonObject.get("ref").getAsJsonObject().get("type").getAsString());
+        ReferenceType referenceType = getType(jsonObject.get("ref").getAsJsonObject().get("type").getAsString());
 
-        return gsonContext.deserialize(jsonObject, mNotificationContextClassesMap.get(typeEnum));
+        return gsonContext.deserialize(jsonObject, mNotificationContextClassesMap.get(referenceType));
     }
 
 
-    private com.podio.sdk.domain.Type getType(String type) {
+    private ReferenceType getType(String type) {
         try {
-            return com.podio.sdk.domain.Type.valueOf(type);
+            return ReferenceType.valueOf(type);
         } catch (NullPointerException e) {
-            return com.podio.sdk.domain.Type.unknown;
+            return ReferenceType.unknown;
         } catch (IllegalArgumentException e) {
-            return com.podio.sdk.domain.Type.unknown;
+            return ReferenceType.unknown;
         }
     }
 }

@@ -19,16 +19,35 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+package com.podio.sdk.domain.stream;
 
-package com.podio.sdk.domain;
-
+import com.podio.sdk.domain.Byline;
+import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.internal.Utils;
 
-public class Reference {
+import java.util.Date;
 
+/**
+ * A Java representation of EventActivityDTO API domain object. This is a stream v2 object.
+ *
+ * @author Tobias Lindberg
+ */
+public abstract class EventActivity {
     private final String type = null;
-    private final Long id = null;
-    private final String title = null;
+    private final Byline created_by = null;
+    private final String created_on = null;
+
+    public Date getCreatedOnDate() {
+        return Utils.parseDateTime(created_on);
+    }
+
+    public String getCreatedOnString() {
+        return created_on;
+    }
+
+    public Byline getCreatedBy() {
+        return created_by;
+    }
 
     public ReferenceType getType() {
         try {
@@ -39,17 +58,4 @@ public class Reference {
             return ReferenceType.unknown;
         }
     }
-
-    /**
-     * @return returns the id of the reference or -1 if for some reason there is no id
-     */
-    public Long getId() {
-        return Utils.getNative(id, -1);
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
 }
-
