@@ -1,65 +1,72 @@
 /*
- * Copyright (C) 2014 Copyright Citrix Systems, Inc. Permission is hereby
- * granted, free of charge, to any person obtaining a copy of this software and
- * associated documentation files (the "Software"), to deal in the Software
- * without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the
- * Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions: The above copyright notice and this
- * permission notice shall be included in all copies or substantial portions of
- * the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
- * EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
- * OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2015 Citrix Systems, Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.podio.sdk.localstore;
 
-import java.io.File;
-import java.util.concurrent.Callable;
-
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.LruCache;
 
 import com.podio.sdk.QueueClient;
 import com.podio.sdk.Request;
 import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Store;
+import com.podio.sdk.internal.Utils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 /**
- * A {@link Store} implementation modeling a memory-cache backed by persistent
- * disk storage. The memory cache heavily relies on the Android {@link LruCache}
- * while the disk store is a basic directory in the internal cache directory of
- * the app. The actual contents are saved as JSON files in sub-directories.
- * <p>
- * The {@link Store} interface enables means of adding, removing, and fetching
- * content to and from the store. Further more the caller can choose to close
- * the store to free up memory, leaving the disk store intact, or even destroy
- * the store, wiping all data from both memory and disk store (but only for the
- * current store, though).
- * <p>
- * What is put in the store is completely up to the developer. There are no
- * constraints nor requirements on the data to have any association to Podio
- * domain objects. The only general requirement is for the <em>key</em> objects
- * to have a constant string representation (the disk store will call the
- * <code>toString()</code> method on them to determine which file to access) and
- * for the <code>value</code> objects to be able to be parsed by the Google Gson
- * library.
- * 
+ * A {@link Store} implementation modeling a memory-cache backed by persistent disk storage. The
+ * memory cache heavily relies on the Android {@link LruCache} while the disk store is a basic
+ * directory in the internal cache directory of the app. The actual contents are saved as JSON files
+ * in sub-directories.
+ * <p/>
+ * The {@link Store} interface enables means of adding, removing, and fetching content to and from
+ * the store. Further more the caller can choose to close the store to free up memory. This will
+ * clear the memory cache but leave the disk store intact. The user can also choose to erase the
+ * store. This will wipe all data from both memory and disk store, but only for the given store.
+ * Finally the user is offered the possibility to erase all disk stores which will wipe the entire
+ * local store directory on the file system.
+ * <p/>
+ * What is put in the store is completely up to the developer. There are no constraints nor
+ * requirements on the data to have any association to Podio domain objects. The only general
+ * requirement is for the key objects to have a constant string representation. Also bare in mind
+ * that the disk store will convert the objects into JSON string notation and persist them as such.
+ * This means that only those parts of your objects will be persisted to disk that can be expressed
+ * as JSON.
+ *
  * @author László Urszuly
  */
 public class LocalStore extends QueueClient implements Store {
+    private static final String LOCAL_STORES_DIRECTORY = "stores";
 
     /**
      * Erases all local stores in the root store folder for this app.
-     * 
+     *
      * @param context
-     *        The context used to find the cache directory for this app.
+     *         The context used to find the cache directory for this app.
      */
     public static Request<Void> eraseAllDiskStores(Context context) {
-        File root = LocalStoreRequest.getRootDirectory(context);
+        String systemCachePath = context.getCacheDir().getPath();
+        File root = new File(systemCachePath + File.separator + LOCAL_STORES_DIRECTORY);
         EraseRequest request = LocalStoreRequest.newEraseRequest(null, root);
         LocalStore store = new LocalStore();
         store.execute(request);
@@ -67,65 +74,105 @@ public class LocalStore extends QueueClient implements Store {
     }
 
     /**
-     * Creates a new instance of this class and configures its initial state.
-     * This is the only way to create and initialize a <code>LocalStore</code>.
-     * 
+     * Creates a new instance of this class and configures its initial state. This is the only way
+     * to create and initialize a <code>LocalStore</code>.
+     *
      * @param context
-     *        Used to fetch the disk storage folder.
+     *         Used to fetch the disk storage folder.
      * @param name
-     *        The name of the store.
+     *         The name of the store.
      * @param maxMemoryInKiloBytes
-     *        The memory size constraint.
-     * @param listener
-     *        The callback implementation through which the store will be
-     *        delivered through.
+     *         The memory size constraint.
      */
-    public static Request<Store> open(Context context, String name, int maxMemoryInKiloBytes) {
+    public static Store open(final Context context, final String name, int maxMemoryInKiloBytes) {
         final LocalStore store = new LocalStore();
 
-        InitMemoryRequest initMemoryStoreRequest = (InitMemoryRequest) LocalStoreRequest
-                .newInitMemoryStoreRequest(maxMemoryInKiloBytes)
-                .withResultListener(new ResultListener<LruCache<Object, Object>>() {
+        store.memoryStore = new LruCache<Object, Object>(maxMemoryInKiloBytes) {
+            @Override
+            protected int sizeOf(Object key, Object value) {
+                return calculateKiloByteSizeOfObject(value);
+            }
+        };
 
-                    @Override
-                    public boolean onRequestPerformed(LruCache<Object, Object> result) {
-                        store.memoryStore = result;
-                        return false;
-                    }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... nothing) {
+                store.diskStore = getLocalStoreDirectory(context, name);
+                return null;
+            }
+        }.execute();
 
-                });
+        return store;
+    }
 
-        InitDiskRequest initDiskStoreRequest = (InitDiskRequest) LocalStoreRequest
-                .newInitDiskStoreRequest(context, name)
-                .withResultListener(new ResultListener<File>() {
+    /**
+     * Writes the object to a {@code ByteArrayOutputStream} and counts the number of bytes in the
+     * output. This value will then be converted to KB and returned as the size of the object.
+     *
+     * @param object
+     *         The object to calculate the size of.
+     *
+     * @return The size of the object expressed in kilobytes.
+     */
+    private static int calculateKiloByteSizeOfObject(Object object) {
+        try {
+            // This will only calculate the size of the object itself. The size of any
+            // referenced objects are not included in that figure.
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(object);
+            objectOutputStream.flush();
 
-                    @Override
-                    public boolean onRequestPerformed(File result) {
-                        store.diskStore = result;
-                        return false;
-                    }
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            objectOutputStream.close();
 
-                });
+            return byteArray.length / 1024;
+        } catch (NullPointerException e) {
+            return 0;
+        } catch (IOException e) {
+            // We don't know anything about the size, assume worst case scenario.
+            return Integer.MAX_VALUE;
+        }
+    }
 
-        LocalStoreRequest<Store> deliverStoreRequest =
-                new LocalStoreRequest<Store>(new Callable<Store>() {
+    /**
+     * Returns the {@code File} handle to a directory corresponding to the given name in the system
+     * cache directory on this device. The {@code name} parameter will be URL encoded prior to any
+     * usage. If no directory is found with the URL encoded {@code name}, then an attempt to create
+     * it will be made. If anything goes wrong null is returned.
+     *
+     * @param context
+     *         The context used to find the cache directory for this app.
+     * @param name
+     *         The name of the store.
+     *
+     * @return A {@code File} handle to the disk-store directory, or null on failure.
+     */
+    private static File getLocalStoreDirectory(Context context, String name) {
+        if (context == null || Utils.isEmpty(name)) {
+            return null;
+        }
 
-                    @Override
-                    public Store call() throws Exception {
-                        return store;
-                    }
+        String directoryName;
 
-                });
+        try {
+            directoryName = URLEncoder.encode(name, Charset.defaultCharset().name());
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
 
-        // Since the thread pool executor is spawning one thread only and it's
-        // backed by a linked blocking queue, it's fair to expect these requests
-        // being addressed in a serialized manner, finishing with the deliver
-        // request.
-        store.execute(initMemoryStoreRequest);
-        store.execute(initDiskStoreRequest);
-        store.execute(deliverStoreRequest);
+        String systemCachePath = context.getCacheDir().getPath();
+        File storesRoot = new File(systemCachePath + File.separator + LOCAL_STORES_DIRECTORY);
+        File diskStore = new File(storesRoot, directoryName);
 
-        return deliverStoreRequest;
+        if (diskStore.exists()) {
+            return diskStore.isDirectory() && diskStore.canWrite() ? diskStore : null;
+        } else if (diskStore.mkdirs()) {
+            return diskStore.canWrite() ? diskStore : null;
+        } else {
+            return null;
+        }
+
     }
 
     /**
@@ -146,12 +193,10 @@ public class LocalStore extends QueueClient implements Store {
     }
 
     /**
-     * Removes all objects in the memory cache. The disk store is left
-     * unaffected.
-     * 
+     * Removes all objects in the memory cache. The disk store is left unaffected.
+     *
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
-     * @see com.podio.sdk.Store#destroy()
      */
     @Override
     public Request<Void> free() {
@@ -161,13 +206,11 @@ public class LocalStore extends QueueClient implements Store {
     }
 
     /**
-     * Destroys this instance of the local store. The in memory cache will be
-     * cleared and all files in the disk store, as well as the store container
-     * itself, will be deleted.
-     * 
+     * Destroys this instance of the local store. The in memory cache will be cleared and all files
+     * in the disk store, as well as the store container itself, will be deleted.
+     *
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
-     * @see com.podio.sdk.Store#destroy()
      */
     @Override
     public Request<Void> erase() {
@@ -189,14 +232,12 @@ public class LocalStore extends QueueClient implements Store {
     }
 
     /**
-     * Retrieves an object with the given key from the local store. If the
-     * object isn't found in memory, and a {@link Class} template is given, it
-     * will be looked for on disk. If it's not found there either, a null
-     * pointer will be returned.
-     * 
+     * Retrieves an object with the given key from the local store. If the object isn't found in
+     * memory, and a {@link Class} template is given, it will be looked for on disk. If it's not
+     * found there either, a null pointer will be returned.
+     *
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
-     * @see com.podio.sdk.Store#get(java.lang.Object, java.lang.Class)
      */
     @Override
     public <T> Request<T> get(Object key, Class<T> classOfValue) throws IllegalStateException {
@@ -206,14 +247,12 @@ public class LocalStore extends QueueClient implements Store {
     }
 
     /**
-     * Removes an object with the given key from the local store. If the removed
-     * value was found in the memory store, then it will be returned, else if it
-     * exists in the disk store and a {@link Class} template is given, the disk
-     * store version will be returned prior to deletion.
-     * 
+     * Removes an object with the given key from the local store. If the removed value was found in
+     * the memory store, then it will be returned, else if it exists in the disk store and a {@link
+     * Class} template is given, the disk store version will be returned prior to deletion.
+     *
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
-     * @see com.podio.sdk.Store#remove(java.lang.Object, java.lang.Class)
      */
     @Override
     public Request<Void> remove(Object key) throws IllegalStateException {
@@ -223,20 +262,36 @@ public class LocalStore extends QueueClient implements Store {
     }
 
     /**
-     * Adds or updates a value with the given key in the local store. If there
-     * already is a value for the given key in the store, it will silently be
-     * overwritten.
-     * 
+     * Adds or updates a value with the given key in the local store. If there already is a value
+     * for the given key in the store, it will silently be overwritten.
+     *
      * @throws IllegalStateException
      *         If neither in-memory store, nor disk store has a valid handle.
-     * @see com.podio.sdk.Store#put(java.lang.Object, java.lang.Object,
-     *      java.lang.Class)
      */
     @Override
     public Request<Void> set(Object key, Object value) throws IllegalStateException {
         SetRequest request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value);
         execute(request);
         return request;
+    }
+
+    /**
+     * Returns whether the disk store is initialized and ready for use. If not, the memory store may
+     * still cache and return any objects, even though the disk store won't.
+     *
+     * @return True if the disk store is ready, false otherwise.
+     */
+    public boolean isDiskStoreReady() {
+        return diskStore != null && diskStore.exists() && diskStore.isDirectory() && diskStore.canWrite();
+    }
+
+    /**
+     * Returns whether the memory store is initialized and ready for use.
+     *
+     * @return True if the memory cache is ready, false otherwise.
+     */
+    public boolean isMemoryStoreReady() {
+        return memoryStore != null && memoryStore.size() < memoryStore.maxSize();
     }
 
 }

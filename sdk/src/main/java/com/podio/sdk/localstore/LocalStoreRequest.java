@@ -1,32 +1,25 @@
 /*
- *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
+ * Copyright (C) 2015 Citrix Systems, Inc
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of
- *  this software and associated documentation files (the "Software"), to deal in
- *  the Software without restriction, including without limitation the rights to
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- *  of the Software, and to permit persons to whom the Software is furnished to
- *  do so, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.podio.sdk.localstore;
 
-import android.content.Context;
 import android.util.LruCache;
 
-import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.Request;
 import com.podio.sdk.internal.CallbackManager;
+import com.podio.sdk.json.JsonParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,31 +96,6 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     }
 
     /**
-     * Creates a new initialization request targeting the disk store, enabling the caller to
-     * initialize the store on a worker thread.
-     *
-     * @param context
-     *         The context from which the cache directory path will be extracted.
-     * @param name
-     *         The name of the store to initialize.
-     *
-     * @return A request ready for being enqueued in a queue.
-     */
-    static InitDiskRequest newInitDiskStoreRequest(Context context, String name) {
-        return new InitDiskRequest(context, name);
-    }
-
-    /**
-     * Creates a new initialization request targeting the in-memory store, enabling the caller to
-     * initialize the store on a worker thread.
-     *
-     * @return A request ready for being enqueued in a queue.
-     */
-    static InitMemoryRequest newInitMemoryStoreRequest(int maxMemoryAsKiloBytes) {
-        return new InitMemoryRequest(maxMemoryAsKiloBytes);
-    }
-
-    /**
      * Creates a new Request for removing a value from the local store.
      *
      * @param memoryStore
@@ -162,20 +130,6 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
     static SetRequest newSetRequest(LruCache<Object, Object> memoryStore, File diskStore,
                                     Object key, Object value) {
         return new SetRequest(memoryStore, diskStore, key, value);
-    }
-
-    /**
-     * Returns the root folder for the disk store. All stores are created in their own sub
-     * directories here under.
-     *
-     * @param context
-     *         The context used to find the cache directory of this app.
-     *
-     * @return The {@link File} object pointing to the root local store folder.
-     */
-    static File getRootDirectory(Context context) {
-        String systemCachePath = context.getCacheDir().getPath();
-        return new File(systemCachePath + File.separator + "stores");
     }
 
     /**
