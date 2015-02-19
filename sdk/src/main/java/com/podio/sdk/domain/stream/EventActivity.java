@@ -28,7 +28,11 @@ import com.podio.sdk.internal.Utils;
 import java.util.Date;
 
 /**
- * A Java representation of EventActivityDTO API domain object. This is a stream v2 object.
+ * This class is the base class for all activities.
+ * <p/>
+ * In most cases all information we are interested in is provided by this class so even if you are
+ * getting activities of type {@link UnknownEventActivity} there is still plenty of information
+ * available in that one.
  *
  * @author Tobias Lindberg
  */
@@ -81,7 +85,7 @@ public abstract class EventActivity {
 
     public EventType getActivityType() {
         try {
-            return EventType.valueOf(type);
+            return EventType.valueOf(activity_type);
         } catch (NullPointerException e) {
             return EventType.unknown;
         } catch (IllegalArgumentException e) {

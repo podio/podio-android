@@ -35,7 +35,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * A Java representation of the EventContextDTO API domain object. This is a stream v2 object.
+ * This class is the base class for all stream objects.
+ * <p/>
+ * In most cases all information we are interested in is provided by this class so even if you are
+ * getting notifications of type {@link UnknownEventContext} there is still plenty of information
+ * available in that one.
  *
  * @author Tobias Lindberg
  */
@@ -52,7 +56,10 @@ public abstract class EventContext {
     private final String created_on = null;
 
     private final List<Comment> comments = null;
+
     private final Organization org = null;
+
+    private List<EventActivity> activity = null;
 
     public List<Comment> getComments() {
         return comments;
@@ -98,6 +105,14 @@ public abstract class EventContext {
         } catch (IllegalArgumentException e) {
             return ReferenceType.unknown;
         }
+    }
+
+    public List<EventActivity> getActivity() {
+        return activity;
+    }
+
+    public Organization getOrg() {
+        return org;
     }
 
     /**
