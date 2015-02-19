@@ -30,6 +30,7 @@ import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
+import com.podio.sdk.provider.StreamProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
@@ -114,6 +115,11 @@ public class Podio {
      * Enables means of easy operating on the Notification API end point.
      */
     public static final NotificationProvider notification = new NotificationProvider();
+
+    /**
+     * Enables means of easy operating on the Stream API end point.
+     */
+    public static final StreamProvider stream = new StreamProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
@@ -229,6 +235,7 @@ public class Podio {
         view.setClient(restClient);
         task.setClient(restClient);
         notification.setClient(restClient);
+        stream.setClient(restClient);
     }
 
     /**
