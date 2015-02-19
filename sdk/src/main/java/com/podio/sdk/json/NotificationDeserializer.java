@@ -26,9 +26,15 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.podio.sdk.domain.notification.CommentNotification;
 import com.podio.sdk.domain.notification.Notification;
+import com.podio.sdk.domain.notification.ParticipationNotification;
+import com.podio.sdk.domain.notification.RatingNotification;
+import com.podio.sdk.domain.notification.UnknownNotification;
+import com.podio.sdk.internal.DefaultHashMap;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * Notifications contains a dynamic "data" part that can have different content depending on the
@@ -38,6 +44,15 @@ import java.lang.reflect.Type;
  * @author Tobias Lindberg
  */
 class NotificationDeserializer implements JsonDeserializer<Notification> {
+
+    private Map<Notification.NotificationType, Class<? extends Notification>> mNotificatinClassesMap;
+
+    public NotificationDeserializer() {
+        mNotificatinClassesMap = new DefaultHashMap<Notification.NotificationType, Class<? extends Notification>>(UnknownNotification.class);
+        mNotificatinClassesMap.put(Notification.NotificationType.comment, CommentNotification.class);
+        mNotificatinClassesMap.put(Notification.NotificationType.rating, RatingNotification.class);
+        mNotificatinClassesMap.put(Notification.NotificationType.participation, ParticipationNotification.class);
+    }
 
     @Override
     public Notification deserialize(JsonElement element, Type type, JsonDeserializationContext gsonContext) throws JsonParseException {
@@ -49,7 +64,7 @@ class NotificationDeserializer implements JsonDeserializer<Notification> {
 
         Notification.NotificationType notificationType = getType(jsonObject.get("type").getAsString());
 
-        return gsonContext.deserialize(jsonObject, notificationType.getNotificationClass());
+        return gsonContext.deserialize(jsonObject, mNotificatinClassesMap.get(notificationType));
     }
 
     private Notification.NotificationType getType(String type) {

@@ -32,6 +32,7 @@ import com.podio.sdk.domain.notification.AppNotificationContext;
 import com.podio.sdk.domain.notification.NotificationContext;
 import com.podio.sdk.domain.notification.UnknownNotificationContext;
 import com.podio.sdk.internal.DefaultHashMap;
+
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -62,7 +63,6 @@ class NotificationContextDeserializer implements JsonDeserializer<NotificationCo
 
         return gsonContext.deserialize(jsonObject, mNotificationContextClassesMap.get(referenceType));
     }
-
 
     private ReferenceType getType(String type) {
         try {

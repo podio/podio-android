@@ -32,6 +32,10 @@ import java.util.List;
 
 /**
  * This class is the base class of all notification contexts.
+ * <p/>
+ * In most cases all information we are interested in is provided by this class so even if you are
+ * getting notification contexes of type {@link UnknownNotificationContext} there is still plenty of
+ * information available in that one.
  *
  * @author Tobias Lindberg
  */

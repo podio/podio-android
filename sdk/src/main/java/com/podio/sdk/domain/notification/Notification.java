@@ -29,6 +29,10 @@ import java.util.Date;
 
 /**
  * This class is the base class for all kinds of notifications.
+ * <p/>
+ * In most cases all information we are interested in is provided by this class so even if you are
+ * getting notifications of type {@link UnknownNotification} there is still plenty of information
+ * available in that one.
  *
  * @author Tobias Lindberg
  */
@@ -37,52 +41,42 @@ public abstract class Notification {
      * The field type enumeration. Each notification can have exactly one of these type values.
      */
     public static enum NotificationType {
-        comment(CommentNotification.class),
-        rating(RatingNotification.class),
-        participation(ParticipationNotification.class),
-        alert(UnknownNotification.class),
-        team_alert(UnknownNotification.class),
-        creation(UnknownNotification.class),
-        update(UnknownNotification.class),
-        delete(UnknownNotification.class),
-        message(UnknownNotification.class),
-        space_invite(UnknownNotification.class),
-        space_delete(UnknownNotification.class),
-        bulletin(UnknownNotification.class),
-        member_reference_add(UnknownNotification.class),
-        member_reference_remove(UnknownNotification.class),
-        file(UnknownNotification.class),
-        role_change(UnknownNotification.class),
-        conversation_add(UnknownNotification.class),
-        answer(UnknownNotification.class),
-        self_kicked_from_space(UnknownNotification.class),
-        space_create(UnknownNotification.class),
-        meeting_participant_add(UnknownNotification.class),
-        meeting_participant_remove(UnknownNotification.class),
-        reminder(UnknownNotification.class),
-        batch_process(UnknownNotification.class),
-        batch_complete(UnknownNotification.class),
-        space_member_request(UnknownNotification.class),
-        grant_create(UnknownNotification.class),
-        grant_delete(UnknownNotification.class),
-        grant_create_other(UnknownNotification.class),
-        grant_delete_other(UnknownNotification.class),
-        reference(UnknownNotification.class),
-        like(UnknownNotification.class),
-        vote(UnknownNotification.class),
-        item_transaction_confirmed(UnknownNotification.class),
-        file_delete(UnknownNotification.class),
-        unknown(UnknownNotification.class); // Custom value to handle errors.
-
-        private final Class<? extends Notification> notificationClass;
-
-        private NotificationType(Class<? extends Notification> notificationClass) {
-            this.notificationClass = notificationClass;
-        }
-
-        public Class<? extends Notification> getNotificationClass() {
-            return notificationClass;
-        }
+        comment,
+        rating,
+        participation,
+        alert,
+        team_alert,
+        creation,
+        update,
+        delete,
+        message,
+        space_invite,
+        space_delete,
+        bulletin,
+        member_reference_add,
+        member_reference_remove,
+        file,
+        role_change,
+        conversation_add,
+        answer,
+        self_kicked_from_space,
+        space_create,
+        meeting_participant_add,
+        meeting_participant_remove,
+        reminder,
+        batch_process,
+        batch_complete,
+        space_member_request,
+        grant_create,
+        grant_delete,
+        grant_create_other,
+        grant_delete_other,
+        reference,
+        like,
+        vote,
+        item_transaction_confirmed,
+        file_delete,
+        unknown // Custom value to handle errors.
     }
 
     private final Long notification_id = null;

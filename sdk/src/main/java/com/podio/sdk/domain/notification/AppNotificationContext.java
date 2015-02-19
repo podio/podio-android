@@ -37,7 +37,7 @@ public class AppNotificationContext extends NotificationContext {
         super();
     }
 
-    public Application getData() {
+    public Application getApp() {
         return data;
     }
 }
