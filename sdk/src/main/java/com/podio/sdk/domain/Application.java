@@ -220,6 +220,7 @@ public class Application {
     private final String url_add = null;
     private final String url_label = null;
     private final User owner = null;
+    private final String item_name = null;
 
     private Application() {
     }
@@ -314,6 +315,10 @@ public class Application {
 
     public String getUrlLabel() {
         return url_label;
+    }
+
+    public String getItemName() {
+        return item_name;
     }
 
     /**
