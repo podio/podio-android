@@ -61,6 +61,20 @@ public abstract class EventContext {
 
     private List<EventActivity> activity = null;
 
+   public static class UserRatings{
+    private Integer like = null;
+
+       public Integer getLike(){
+           return Utils.getNative(like, 0);
+       }
+   }
+
+    private UserRatings user_ratings = null;
+
+    public UserRatings getUserRatings(){
+        return user_ratings;
+    }
+
     public List<Comment> getComments() {
         return comments;
     }
