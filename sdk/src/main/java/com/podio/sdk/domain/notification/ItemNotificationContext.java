@@ -22,18 +22,18 @@
 
 package com.podio.sdk.domain.notification;
 
-import com.podio.sdk.domain.Application;
+import com.podio.sdk.domain.Item;
 
 /**
- * This class is used when the notification context object is of type "app".
+ * This class is used when the notification context object is of type "item".
  *
  * @author Tobias Lindberg
  */
-public class AppNotificationContext extends NotificationContext {
+public class ItemNotificationContext extends NotificationContext {
 
-    private final Application data = null;
+    private final Item data = null;
 
-    public Application getApp() {
+    public Item getItem() {
         return data;
     }
 }
