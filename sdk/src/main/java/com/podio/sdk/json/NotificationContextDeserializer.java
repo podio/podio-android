@@ -29,6 +29,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.notification.AppNotificationContext;
+import com.podio.sdk.domain.notification.ItemNotificationContext;
 import com.podio.sdk.domain.notification.NotificationContext;
 import com.podio.sdk.domain.notification.UnknownNotificationContext;
 import com.podio.sdk.internal.DefaultHashMap;
@@ -50,6 +51,7 @@ class NotificationContextDeserializer implements JsonDeserializer<NotificationCo
     public NotificationContextDeserializer() {
         mNotificationContextClassesMap = new DefaultHashMap<ReferenceType, Class<? extends NotificationContext>>(UnknownNotificationContext.class);
         mNotificationContextClassesMap.put(ReferenceType.app, AppNotificationContext.class);
+        mNotificationContextClassesMap.put(ReferenceType.item, ItemNotificationContext.class);
     }
 
     @Override
