@@ -47,6 +47,7 @@ public abstract class EventContext {
 
     private final List<File> files = null;
     private final String type = null;
+    private final Long id = null;
     private final List<Right> rights = null;
     private final String title = null;
     private final Application application = null;
@@ -61,17 +62,17 @@ public abstract class EventContext {
 
     private List<EventActivity> activity = null;
 
-   public static class UserRatings{
-    private Integer like = null;
+    public static class UserRatings {
+        private Integer like = null;
 
-       public Integer getLike(){
-           return Utils.getNative(like, 0);
-       }
-   }
+        public Integer getLike() {
+            return Utils.getNative(like, 0);
+        }
+    }
 
     private UserRatings user_ratings = null;
 
-    public UserRatings getUserRatings(){
+    public UserRatings getUserRatings() {
         return user_ratings;
     }
 
@@ -109,6 +110,10 @@ public abstract class EventContext {
 
     public Byline getCreatedBy() {
         return created_by;
+    }
+
+    public long getId() {
+        return Utils.getNative(id, -1L);
     }
 
     public ReferenceType getType() {
