@@ -25,7 +25,7 @@ package com.podio.sdk.domain.notification;
 import com.podio.sdk.domain.Comment;
 
 /**
- * This class is used when the notification context is of type "comment".
+ * This class is used when the notification is of type "comment".
  *
  * @author Tobias Lindberg
  */

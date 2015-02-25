@@ -27,6 +27,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.podio.sdk.domain.notification.CommentNotification;
+import com.podio.sdk.domain.notification.GrantNotification;
 import com.podio.sdk.domain.notification.Notification;
 import com.podio.sdk.domain.notification.ParticipationNotification;
 import com.podio.sdk.domain.notification.RatingNotification;
@@ -54,6 +55,7 @@ class NotificationDeserializer implements JsonDeserializer<Notification> {
         mNotificatinClassesMap.put(Notification.NotificationType.rating, RatingNotification.class);
         mNotificatinClassesMap.put(Notification.NotificationType.participation, ParticipationNotification.class);
         mNotificatinClassesMap.put(Notification.NotificationType.vote, VoteNotification.class);
+        mNotificatinClassesMap.put(Notification.NotificationType.grant_create, GrantNotification.class);
     }
 
     @Override

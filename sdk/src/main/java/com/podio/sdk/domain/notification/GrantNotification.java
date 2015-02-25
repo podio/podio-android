@@ -20,32 +20,20 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.notification;
 
-import com.podio.sdk.internal.Utils;
+import com.podio.sdk.domain.Grant;
 
 /**
- * A Java representation of the GrantDTO API domain object.
+ * This class is used when the notification is of type "grant_create".
  *
  * @author Tobias Lindberg
  */
-public class Grant {
+public class GrantNotification extends Notification {
 
-    private final Long grant_id = null;
+    private final Grant data = null;
 
-    private final String message = null;
-
-    public Profile getUser() {
-        return user;
-    }
-
-    private final Profile user = null;
-
-    public long getGrantId() {
-        return Utils.getNative(grant_id, -1L);
-    }
-
-    public String getMessage() {
-        return message;
+    public Grant getGrant() {
+        return data;
     }
 }
