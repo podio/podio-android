@@ -20,48 +20,20 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.domain;
+package com.podio.sdk.domain.notification;
 
-import com.podio.sdk.internal.Utils;
+import com.podio.sdk.domain.Vote;
 
 /**
- * A Java representation of the TaskActionDTO API domain object.
+ * This class is used when the notification is of type "vote".
  *
  * @author Tobias Lindberg
  */
-public class TaskAction {
+public class VoteNotification extends Notification {
 
-    public static enum TaskActionType {
-        creation,
-        start,
-        stop,
-        assign,
-        complete,
-        incomplete,
-        update_text,
-        update_description,
-        update_due_date,
-        update_private,
-        delete,
-        update_ref,
-        unknown // Custom value to handle errors.
-    }
+    private final Vote data = null;
 
-    private final Long task_action_id = null;
-
-    private final String type = null;
-
-    public long getTaskActionId() {
-        return Utils.getNative(task_action_id, -1L);
-    }
-
-    public TaskActionType getType() {
-        try {
-            return TaskActionType.valueOf(type);
-        } catch (NullPointerException e) {
-            return TaskActionType.unknown;
-        } catch (IllegalArgumentException e) {
-            return TaskActionType.unknown;
-        }
+    public Vote getVote() {
+        return data;
     }
 }

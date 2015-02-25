@@ -43,7 +43,7 @@ public class Reference {
     /**
      * @return returns the id of the reference or -1 if for some reason there is no id
      */
-    public Long getId() {
+    public long getId() {
         return Utils.getNative(id, -1);
     }
 

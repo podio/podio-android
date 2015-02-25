@@ -81,7 +81,7 @@ public class Status {
         return false;
     }
 
-    public Long getStatusId() {
+    public long getStatusId() {
         return Utils.getNative(status_id, -1L);
     }
 

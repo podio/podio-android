@@ -77,7 +77,7 @@ public class Comment {
         return false;
     }
 
-    public Long getCommentId() {
+    public long getCommentId() {
         return Utils.getNative(comment_id, -1L);
     }
 

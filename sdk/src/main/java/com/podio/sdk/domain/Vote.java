@@ -25,43 +25,27 @@ package com.podio.sdk.domain;
 import com.podio.sdk.internal.Utils;
 
 /**
- * A Java representation of the TaskActionDTO API domain object.
+ * A Java representation of the VoteDTO API domain object.
  *
  * @author Tobias Lindberg
  */
-public class TaskAction {
+public class Vote {
 
-    public static enum TaskActionType {
-        creation,
-        start,
-        stop,
-        assign,
-        complete,
-        incomplete,
-        update_text,
-        update_description,
-        update_due_date,
-        update_private,
-        delete,
-        update_ref,
-        unknown // Custom value to handle errors.
+    private final Integer rating = null;
+
+    private final Answer answer = null;
+
+    private final Voting voting = null;
+
+    public Integer getRating() {
+        return Utils.getNative(rating, -1);
     }
 
-    private final Long task_action_id = null;
-
-    private final String type = null;
-
-    public long getTaskActionId() {
-        return Utils.getNative(task_action_id, -1L);
+    public Answer getAnswer(){
+        return answer;
     }
 
-    public TaskActionType getType() {
-        try {
-            return TaskActionType.valueOf(type);
-        } catch (NullPointerException e) {
-            return TaskActionType.unknown;
-        } catch (IllegalArgumentException e) {
-            return TaskActionType.unknown;
-        }
+    public Voting getVoting() {
+        return voting;
     }
 }

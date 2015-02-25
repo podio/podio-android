@@ -47,7 +47,7 @@ public class Rating {
 
     private final Integer value = null;
 
-    public Long getRatingId() {
+    public long getRatingId() {
         return Utils.getNative(rating_id, -1L);
     }
 

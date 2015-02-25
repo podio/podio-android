@@ -39,7 +39,7 @@ public class Grant {
 
     private final Profile user = null;
 
-    public Long getGrantId() {
+    public long getGrantId() {
         return Utils.getNative(grant_id, -1L);
     }
 }

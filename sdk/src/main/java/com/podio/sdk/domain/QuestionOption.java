@@ -35,7 +35,7 @@ public class QuestionOption {
 
     private final String text = null;
 
-    public Long getQuestionOptionId() {
+    public long getQuestionOptionId() {
         return Utils.getNative(question_option_id, -1L);
     }
 

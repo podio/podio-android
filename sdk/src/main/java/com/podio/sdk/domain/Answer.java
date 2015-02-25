@@ -25,43 +25,22 @@ package com.podio.sdk.domain;
 import com.podio.sdk.internal.Utils;
 
 /**
- * A Java representation of the TaskActionDTO API domain object.
+ * A Java representation of the AnswerDTO API domain object.
  *
  * @author Tobias Lindberg
  */
-public class TaskAction {
+public class Answer {
 
-    public static enum TaskActionType {
-        creation,
-        start,
-        stop,
-        assign,
-        complete,
-        incomplete,
-        update_text,
-        update_description,
-        update_due_date,
-        update_private,
-        delete,
-        update_ref,
-        unknown // Custom value to handle errors.
+
+    private final String text = null;
+    private final Long answer_id = null;
+
+    public String getText() {
+        return text;
     }
 
-    private final Long task_action_id = null;
-
-    private final String type = null;
-
-    public long getTaskActionId() {
-        return Utils.getNative(task_action_id, -1L);
+    public long getAnswerId() {
+        return Utils.getNative(answer_id,-1L);
     }
 
-    public TaskActionType getType() {
-        try {
-            return TaskActionType.valueOf(type);
-        } catch (NullPointerException e) {
-            return TaskActionType.unknown;
-        } catch (IllegalArgumentException e) {
-            return TaskActionType.unknown;
-        }
-    }
 }

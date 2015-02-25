@@ -31,6 +31,7 @@ import com.podio.sdk.domain.notification.Notification;
 import com.podio.sdk.domain.notification.ParticipationNotification;
 import com.podio.sdk.domain.notification.RatingNotification;
 import com.podio.sdk.domain.notification.UnknownNotification;
+import com.podio.sdk.domain.notification.VoteNotification;
 import com.podio.sdk.internal.DefaultHashMap;
 
 import java.lang.reflect.Type;
@@ -52,6 +53,7 @@ class NotificationDeserializer implements JsonDeserializer<Notification> {
         mNotificatinClassesMap.put(Notification.NotificationType.comment, CommentNotification.class);
         mNotificatinClassesMap.put(Notification.NotificationType.rating, RatingNotification.class);
         mNotificatinClassesMap.put(Notification.NotificationType.participation, ParticipationNotification.class);
+        mNotificatinClassesMap.put(Notification.NotificationType.vote, VoteNotification.class);
     }
 
     @Override
