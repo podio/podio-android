@@ -37,6 +37,7 @@ import com.podio.sdk.domain.stream.RatingEventActivity;
 import com.podio.sdk.domain.stream.TaskActionEventActivity;
 import com.podio.sdk.domain.stream.TaskEventActivity;
 import com.podio.sdk.domain.stream.UnknownEventActivity;
+import com.podio.sdk.domain.stream.VoteEventActivity;
 import com.podio.sdk.internal.DefaultHashMap;
 
 import java.lang.reflect.Type;
@@ -62,6 +63,7 @@ class EventActivityDeserializer implements JsonDeserializer<EventActivity> {
         mEventActivityClassesMap.put(ReferenceType.rating, RatingEventActivity.class);
         mEventActivityClassesMap.put(ReferenceType.task_action, TaskActionEventActivity.class);
         mEventActivityClassesMap.put(ReferenceType.task, TaskEventActivity.class);
+        mEventActivityClassesMap.put(ReferenceType.vote, VoteEventActivity.class);
     }
 
     @Override
