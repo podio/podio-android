@@ -63,18 +63,8 @@ class NotificationContextDeserializer implements JsonDeserializer<NotificationCo
         }
 
         JsonObject jsonObject = element.getAsJsonObject();
-        ReferenceType referenceType = getType(jsonObject.get("ref").getAsJsonObject().get("type").getAsString());
+        ReferenceType referenceType = ReferenceType.getType(jsonObject.get("ref").getAsJsonObject().get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, mNotificationContextClassesMap.get(referenceType));
-    }
-
-    private ReferenceType getType(String type) {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
     }
 }

@@ -31,13 +31,7 @@ public class Reference {
     private final String title = null;
 
     public ReferenceType getType() {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
+        return ReferenceType.getType(type);
     }
 
     /**

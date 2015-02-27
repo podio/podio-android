@@ -60,18 +60,8 @@ class EventContextDeserializer implements JsonDeserializer<EventContext> {
         }
 
         JsonObject jsonObject = element.getAsJsonObject();
-        ReferenceType referenceType = getType(jsonObject.get("type").getAsString());
+        ReferenceType referenceType = ReferenceType.getType(jsonObject.get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, mEventContextClassesMap.get(referenceType));
-    }
-
-    private ReferenceType getType(String type) {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
     }
 }

@@ -87,5 +87,15 @@ public enum ReferenceType {
     vote,
     voting,
     widget,
-    unknown     // Custom value to handle errors.
+    unknown;     // Custom value to handle errors.
+
+    public static ReferenceType getType(String type) {
+        try {
+            return ReferenceType.valueOf(type);
+        } catch (NullPointerException e) {
+            return ReferenceType.unknown;
+        } catch (IllegalArgumentException e) {
+            return ReferenceType.unknown;
+        }
+    }
 }

@@ -53,7 +53,17 @@ public abstract class EventActivity {
         vote,
         participation,
         file_delete,
-        unknown
+        unknown; // Custom value to handle errors.
+
+        public static EventType getActivityType(String activity_type) {
+            try {
+                return EventType.valueOf(activity_type);
+            } catch (NullPointerException e) {
+                return EventType.unknown;
+            } catch (IllegalArgumentException e) {
+                return EventType.unknown;
+            }
+        }
     }
 
     private final String type = null;
@@ -74,22 +84,10 @@ public abstract class EventActivity {
     }
 
     public ReferenceType getType() {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
+        return ReferenceType.getType(type);
     }
 
     public EventType getActivityType() {
-        try {
-            return EventType.valueOf(activity_type);
-        } catch (NullPointerException e) {
-            return EventType.unknown;
-        } catch (IllegalArgumentException e) {
-            return EventType.unknown;
-        }
+        return EventType.getActivityType(activity_type);
     }
 }

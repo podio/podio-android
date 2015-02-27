@@ -117,13 +117,7 @@ public abstract class EventContext {
     }
 
     public ReferenceType getType() {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
+        return ReferenceType.getType(type);
     }
 
     public List<EventActivity> getActivity() {

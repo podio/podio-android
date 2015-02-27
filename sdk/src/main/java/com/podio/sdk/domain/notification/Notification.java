@@ -76,7 +76,17 @@ public abstract class Notification {
         vote,
         item_transaction_confirmed,
         file_delete,
-        unknown // Custom value to handle errors.
+        unknown; // Custom value to handle errors.
+
+        public static NotificationType getType(String type) {
+            try {
+                return NotificationType.valueOf(type);
+            } catch (NullPointerException e) {
+                return NotificationType.unknown;
+            } catch (IllegalArgumentException e) {
+                return NotificationType.unknown;
+            }
+        }
     }
 
     private final Long notification_id = null;
@@ -91,13 +101,7 @@ public abstract class Notification {
     }
 
     public NotificationType getType() {
-        try {
-            return NotificationType.valueOf(type);
-        } catch (NullPointerException e) {
-            return NotificationType.unknown;
-        } catch (IllegalArgumentException e) {
-            return NotificationType.unknown;
-        }
+        return NotificationType.getType(type);
     }
 
     public Byline getCreatedBy() {

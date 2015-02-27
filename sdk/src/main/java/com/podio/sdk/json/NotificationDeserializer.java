@@ -66,18 +66,8 @@ class NotificationDeserializer implements JsonDeserializer<Notification> {
 
         JsonObject jsonObject = element.getAsJsonObject();
 
-        Notification.NotificationType notificationType = getType(jsonObject.get("type").getAsString());
+        Notification.NotificationType notificationType = Notification.NotificationType.getType(jsonObject.get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, mNotificatinClassesMap.get(notificationType));
-    }
-
-    private Notification.NotificationType getType(String type) {
-        try {
-            return Notification.NotificationType.valueOf(type);
-        } catch (NullPointerException e) {
-            return Notification.NotificationType.unknown;
-        } catch (IllegalArgumentException e) {
-            return Notification.NotificationType.unknown;
-        }
     }
 }
