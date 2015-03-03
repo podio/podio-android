@@ -50,7 +50,7 @@ public abstract class EventContext {
     private final Long id = null;
     private final List<Right> rights = null;
     private final String title = null;
-    private final Application application = null;
+    private final Application app = null;
     private final Boolean comments_allowed = null;
     private final Space space = null;
     private final Byline created_by = null;
@@ -89,7 +89,7 @@ public abstract class EventContext {
     }
 
     public Application getApplication() {
-        return application;
+        return app;
     }
 
     public String getTitle() {

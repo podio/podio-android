@@ -31,6 +31,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.stream.EventActivity;
+import com.podio.sdk.domain.stream.FileEventActivity;
 import com.podio.sdk.domain.stream.GrantEventActivity;
 import com.podio.sdk.domain.stream.ItemEventActivity;
 import com.podio.sdk.domain.stream.ItemParticipationEventActivity;
@@ -66,6 +67,7 @@ class EventActivityDeserializerSerializer implements JsonDeserializer<EventActiv
         mEventActivityClassesMap.put(ReferenceType.task_action, TaskActionEventActivity.class);
         mEventActivityClassesMap.put(ReferenceType.task, TaskEventActivity.class);
         mEventActivityClassesMap.put(ReferenceType.vote, VoteEventActivity.class);
+        mEventActivityClassesMap.put(ReferenceType.file, FileEventActivity.class);
     }
 
     @Override
