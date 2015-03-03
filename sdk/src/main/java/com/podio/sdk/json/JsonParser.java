@@ -38,10 +38,10 @@ public class JsonParser {
             .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .registerTypeAdapter(Field.class, new FieldDeserializer())
             .registerTypeAdapter(Field.class, new FieldSerializer())
-            .registerTypeAdapter(Notification.class, new NotificationDeserializer())
-            .registerTypeAdapter(NotificationContext.class, new NotificationContextDeserializer())
-            .registerTypeAdapter(EventContext.class, new EventContextDeserializer())
-            .registerTypeAdapter(EventActivity.class, new EventActivityDeserializer())
+            .registerTypeAdapter(Notification.class, new NotificationDeserializerSerializer())
+            .registerTypeAdapter(NotificationContext.class, new NotificationContextDeserializerSerializer())
+            .registerTypeAdapter(EventContext.class, new EventContextDeserializerSerializer())
+            .registerTypeAdapter(EventActivity.class, new EventActivityDeserializerSerializer())
             .disableHtmlEscaping()
             .create();
 

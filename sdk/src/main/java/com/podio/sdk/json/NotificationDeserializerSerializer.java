@@ -26,6 +26,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.podio.sdk.domain.notification.CommentNotification;
 import com.podio.sdk.domain.notification.GrantNotification;
 import com.podio.sdk.domain.notification.Notification;
@@ -40,16 +42,16 @@ import java.util.Map;
 
 /**
  * Notifications contains a dynamic "data" part that can have different content depending on the
- * type of notifications so we need to have this deserializer to decide what kind of notification we
- * are handling.
+ * type of notifications so we need to have this deserializer/serializer to decide what kind of
+ * notification we are handling.
  *
  * @author Tobias Lindberg
  */
-class NotificationDeserializer implements JsonDeserializer<Notification> {
+class NotificationDeserializerSerializer implements JsonDeserializer<Notification>, JsonSerializer<Notification> {
 
     private Map<Notification.NotificationType, Class<? extends Notification>> mNotificatinClassesMap;
 
-    public NotificationDeserializer() {
+    public NotificationDeserializerSerializer() {
         mNotificatinClassesMap = new DefaultHashMap<Notification.NotificationType, Class<? extends Notification>>(UnknownNotification.class);
         mNotificatinClassesMap.put(Notification.NotificationType.comment, CommentNotification.class);
         mNotificatinClassesMap.put(Notification.NotificationType.rating, RatingNotification.class);
@@ -69,5 +71,10 @@ class NotificationDeserializer implements JsonDeserializer<Notification> {
         Notification.NotificationType notificationType = Notification.NotificationType.getType(jsonObject.get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, mNotificatinClassesMap.get(notificationType));
+    }
+
+    @Override
+    public JsonElement serialize(Notification notification, Type typeOfSrc, JsonSerializationContext gsonContext) {
+        return gsonContext.serialize(notification, mNotificatinClassesMap.get(notification.getType()));
     }
 }

@@ -27,6 +27,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.stream.EventActivity;
 import com.podio.sdk.domain.stream.GrantEventActivity;
@@ -45,16 +47,16 @@ import java.util.Map;
 
 /**
  * EventActivity contains a dynamic "data" part that can have different content depending on the
- * type of activity so we need to have this deserializer to decide what kind of activity we are
- * handling.
+ * type of activity so we need to have this deserializer/serializer to decide what kind of activity
+ * we are handling.
  *
  * @author Tobias Lindberg
  */
-class EventActivityDeserializer implements JsonDeserializer<EventActivity> {
+class EventActivityDeserializerSerializer implements JsonDeserializer<EventActivity>, JsonSerializer<EventActivity> {
 
     private Map<ReferenceType, Class<? extends EventActivity>> mEventActivityClassesMap;
 
-    public EventActivityDeserializer() {
+    public EventActivityDeserializerSerializer() {
         mEventActivityClassesMap = new DefaultHashMap<ReferenceType, Class<? extends EventActivity>>(UnknownEventActivity.class);
         mEventActivityClassesMap.put(ReferenceType.grant, GrantEventActivity.class);
         mEventActivityClassesMap.put(ReferenceType.item, ItemEventActivity.class);
@@ -73,18 +75,13 @@ class EventActivityDeserializer implements JsonDeserializer<EventActivity> {
         }
 
         JsonObject jsonObject = element.getAsJsonObject();
-        ReferenceType referenceType = getType(jsonObject.get("type").getAsString());
+        ReferenceType referenceType = ReferenceType.getType(jsonObject.get("type").getAsString());
 
         return gsonContext.deserialize(jsonObject, mEventActivityClassesMap.get(referenceType));
     }
 
-    private ReferenceType getType(String type) {
-        try {
-            return ReferenceType.valueOf(type);
-        } catch (NullPointerException e) {
-            return ReferenceType.unknown;
-        } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
-        }
+    @Override
+    public JsonElement serialize(EventActivity eventActivity, Type typeOfSrc, JsonSerializationContext gsonContext) {
+        return gsonContext.serialize(eventActivity, mEventActivityClassesMap.get(eventActivity.getType()));
     }
 }
