@@ -73,8 +73,11 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
             if (listener != null) {
                 if (listener.onSessionChanged(accessToken, refreshToken, expires)) {
                     // The callback consumed the event, stop the bubbling.
+                    sessionListeners.clear();
                     return;
                 }
+
+                sessionListeners.remove(listener);
             }
         }
 
