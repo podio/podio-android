@@ -56,10 +56,10 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
 
     void addSessionListener(SessionListener listener, boolean deliverSessionNow) {
         if (listener != null) {
-            sessionListeners.add(listener);
-
             if (deliverSessionNow) {
                 listener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
+            } else {
+                sessionListeners.add(listener);
             }
         }
     }

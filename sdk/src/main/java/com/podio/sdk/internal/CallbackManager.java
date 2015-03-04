@@ -61,20 +61,20 @@ public class CallbackManager<T> {
 
     public void addErrorListener(ErrorListener listener, boolean deliverErrorNow, Throwable error) {
         if (listener != null) {
-            errorListeners.add(listener);
-
             if (deliverErrorNow) {
                 listener.onErrorOccured(error);
+            } else {
+                errorListeners.add(listener);
             }
         }
     }
 
     public void addResultListener(ResultListener<T> listener, boolean deliverResultNow, T result) {
         if (listener != null) {
-            resultListeners.add(listener);
-
             if (deliverResultNow) {
                 listener.onRequestPerformed(result);
+            } else {
+                resultListeners.add(listener);
             }
         }
     }
