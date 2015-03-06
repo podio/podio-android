@@ -25,6 +25,7 @@ package com.podio.sdk.json;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.podio.sdk.domain.TaskAction;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.notification.Notification;
 import com.podio.sdk.domain.notification.NotificationContext;
@@ -42,6 +43,7 @@ public class JsonParser {
             .registerTypeAdapter(NotificationContext.class, new NotificationContextDeserializerSerializer())
             .registerTypeAdapter(EventContext.class, new EventContextDeserializerSerializer())
             .registerTypeAdapter(EventActivity.class, new EventActivityDeserializerSerializer())
+            .registerTypeAdapter(TaskAction.class, new TaskActionDeserializerSerializer())
             .disableHtmlEscaping()
             .create();
 
