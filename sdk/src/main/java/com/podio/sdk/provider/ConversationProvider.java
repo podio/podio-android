@@ -61,6 +61,12 @@ public class ConversationProvider extends Provider {
             return this;
         }
 
+        Path withLeaveFlag(long id) {
+            addPathSegment(Long.toString(id, 10));
+            addPathSegment("leave");
+            return this;
+        }
+
         Path withParticipantsOnly() {
             addQueryParameter("participants", "true");
             return this;
@@ -167,6 +173,19 @@ public class ConversationProvider extends Provider {
     }
 
     /**
+     * Removes the current user from the conversation with the given id.
+     *
+     * @param id
+     *         The id of the conversation to leave.
+     *
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> leaveConversation(long id) {
+        Path filter = new Path().withLeaveFlag(id);
+        return post(filter, null, Void.class);
+    }
+
+    /**
      * Marks the conversation with the given id as "read".
      *
      * @param conversationId
@@ -181,6 +200,7 @@ public class ConversationProvider extends Provider {
 
     /**
      * Marks all the users conversations as read.
+     *
      * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Void> markAllConversationsAsRead() {
