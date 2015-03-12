@@ -27,6 +27,7 @@ import com.podio.sdk.Request;
 import com.podio.sdk.domain.NotificationGroup;
 import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.notification.Notification;
+import com.podio.sdk.domain.notification.NotificationInboxCount;
 
 /**
  * Enables access to the NotificationGroup API end point.
@@ -48,6 +49,13 @@ public class NotificationProvider extends Provider {
 
         public NotificationFilter withViewed(){
             addPathSegment("viewed");
+            return this;
+        }
+
+        public NotificationFilter withInboxNewCount(){
+            addPathSegment("inbox");
+            addPathSegment("new");
+            addPathSegment("count");
             return this;
         }
     }
@@ -203,6 +211,16 @@ public class NotificationProvider extends Provider {
     }
 
     /**
+     * Returns the number of unread notifications for the active user.
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<NotificationInboxCount> getInboxNewCount() {
+        NotificationFilter filter = new NotificationFilter().withInboxNewCount();
+        return get(filter, NotificationInboxCount.class);
+    }
+
+
+    /**
      * Fetches the NotificationGroup with the given id.
      *
      * @return A ticket which the caller can use to identify this request with.
@@ -223,7 +241,6 @@ public class NotificationProvider extends Provider {
     public Request<Void> markAllNotificationsAsViewed() {
         NotificationFilter filter = new NotificationFilter().withViewed();
         return post(filter,null,Void.class);
-
     }
 
     /**
