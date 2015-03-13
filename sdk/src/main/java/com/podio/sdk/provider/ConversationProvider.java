@@ -225,6 +225,19 @@ public class ConversationProvider extends Provider {
     }
 
     /**
+     * Marks the conversation with the given id as "unread".
+     *
+     * @param conversationId
+     *         The id of the conversation.
+     *
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> markConversationAsUnread(long conversationId) {
+        Path filter = new Path().withReadFlag(conversationId);
+        return delete(filter);
+    }
+
+    /**
      * Marks all the users conversations as read.
      *
      * @return A ticket which the caller can use to identify this request with.
