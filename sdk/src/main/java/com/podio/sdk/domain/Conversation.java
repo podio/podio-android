@@ -21,9 +21,9 @@
  */
 package com.podio.sdk.domain;
 
-import java.util.Date;
-
 import com.podio.sdk.internal.Utils;
+
+import java.util.Date;
 
 /**
  * A Java representation of the ConversationDTO API domain object.
@@ -31,6 +31,12 @@ import com.podio.sdk.internal.Utils;
  * @author László Urszuly
  */
 public class Conversation {
+    public static enum Type {
+        direct,
+        group,
+        unknown;
+    }
+
     public static class Reply {
         @SuppressWarnings("unused")
         private final String text;
@@ -229,13 +235,13 @@ public class Conversation {
         return subject;
     }
 
-    public ReferenceType getType() {
+    public Type getType() {
         try {
-            return ReferenceType.valueOf(type);
+            return Type.valueOf(type);
         } catch (NullPointerException e) {
-            return ReferenceType.unknown;
+            return Type.unknown;
         } catch (IllegalArgumentException e) {
-            return ReferenceType.unknown;
+            return Type.unknown;
         }
     }
 
