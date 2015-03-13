@@ -26,6 +26,8 @@ import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Conversation;
 
+import java.util.HashMap;
+
 /**
  * Enables access to the Conversation API end point.
  *
@@ -67,6 +69,13 @@ public class ConversationProvider extends Provider {
             return this;
         }
 
+        Path withMoreParticipants(long id) {
+            addPathSegment(Long.toString(id, 10));
+            addPathSegment("participant");
+            addPathSegment("v2");
+            return this;
+        }
+
         Path withParticipantsOnly() {
             addQueryParameter("participants", "true");
             return this;
@@ -105,12 +114,29 @@ public class ConversationProvider extends Provider {
     }
 
     /**
+     * Adds more profiles to a conversation.
+     *
+     * @param conversationId
+     *         The id of the conversation.
+     * @param participantIds
+     *         The user ids of the profiles to add.
+     *
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> addParticipants(long conversationId, long[] participantIds) {
+        Path filter = new Path().withMoreParticipants(conversationId);
+        HashMap<String, long[]> data = new HashMap<String, long[]>();
+        data.put("participants", participantIds);
+        return post(filter, data, Void.class);
+    }
+
+    /**
      * Creates a new conversation as of the parameters in the given template.
      *
      * @param data
      *         The parameters for the new conversation.
      *
-     * @return A creation result.
+     * @return A ticket which the caller can use to identify this request with.
      */
     public Request<Conversation> createConversation(Conversation.Create data) {
         Path filter = new Path().withCreate();
