@@ -40,9 +40,19 @@ public class Comment {
     private final String created_on = null;
     private final Integer like_count = null;
     private Boolean is_liked = null;
+    private Embed embed = null;
+    private File embed_file = null;
 
     public String getRichValue() {
         return rich_value;
+    }
+
+    public File getEmbedFile() {
+        return embed_file;
+    }
+
+    public Embed getEmbed() {
+        return embed;
     }
 
     public String getValue() {
