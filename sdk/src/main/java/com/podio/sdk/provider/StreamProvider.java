@@ -52,7 +52,7 @@ public class StreamProvider extends Provider {
             return this;
         }
 
-        public StreamFilter withReferenceType(ReferenceType type, long id) {
+        public StreamFilter withReference(ReferenceType type, long id) {
             this.addPathSegment(type.name());
             this.addPathSegment(Long.toString(id, 10));
 
@@ -111,7 +111,7 @@ public class StreamProvider extends Provider {
      */
     public Request<EventContext> getStreamObject(ReferenceType type, long id) {
         StreamFilter filter = new StreamFilter();
-        filter.withReferenceType(type, id);
+        filter.withReference(type, id);
 
         return get(filter, EventContext.class);
     }

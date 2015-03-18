@@ -43,6 +43,20 @@ public class Comment {
     private Embed embed = null;
     private File embed_file = null;
 
+    public static class Create {
+
+        @SuppressWarnings("unused")
+        private final String value;
+
+        @SuppressWarnings("unused")
+        private final long[] file_ids;
+
+        public Create(String value, long[] fileIds){
+            this.value = value;
+            this.file_ids = Utils.notEmpty(fileIds) ? fileIds : new long[0];
+        }
+    }
+
     public String getRichValue() {
         return rich_value;
     }

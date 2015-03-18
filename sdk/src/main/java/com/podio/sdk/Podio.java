@@ -24,6 +24,7 @@ import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ClientProvider;
+import com.podio.sdk.provider.CommentProvider;
 import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
 import com.podio.sdk.provider.FileProvider;
@@ -120,6 +121,11 @@ public class Podio {
      * Enables means of easy operating on the Stream API end point.
      */
     public static final StreamProvider stream = new StreamProvider();
+
+    /**
+     * Enables means of easy operating on the Comment API end point.
+     */
+    public static final CommentProvider comment = new CommentProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
@@ -236,6 +242,7 @@ public class Podio {
         task.setClient(restClient);
         notification.setClient(restClient);
         stream.setClient(restClient);
+        comment.setClient(restClient);
     }
 
     /**
