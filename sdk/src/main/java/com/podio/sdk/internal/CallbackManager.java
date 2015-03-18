@@ -53,6 +53,8 @@ public class CallbackManager<T> {
 
     private final ArrayList<ResultListener<T>> resultListeners;
     private final ArrayList<ErrorListener> errorListeners;
+    private final Object RESULT_LISTENER_LOCK = new Object();
+    private final Object ERROR_LISTENER_LOCK = new Object();
 
     public CallbackManager() {
         this.resultListeners = new ArrayList<ResultListener<T>>();
@@ -64,7 +66,9 @@ public class CallbackManager<T> {
             if (deliverErrorNow) {
                 listener.onErrorOccured(error);
             } else {
-                errorListeners.add(listener);
+                synchronized (ERROR_LISTENER_LOCK) {
+                    errorListeners.add(listener);
+                }
             }
         }
     }
@@ -74,28 +78,34 @@ public class CallbackManager<T> {
             if (deliverResultNow) {
                 listener.onRequestPerformed(result);
             } else {
-                resultListeners.add(listener);
+                synchronized (RESULT_LISTENER_LOCK) {
+                    resultListeners.add(listener);
+                }
             }
         }
     }
 
     public void deliverError(Throwable error) {
-        resultListeners.clear();
+        // We will not be delivering a result -> clear the listener references.
+        synchronized (RESULT_LISTENER_LOCK) {
+            resultListeners.clear();
+        }
 
         if (Utils.isEmpty(errorListeners) && Utils.isEmpty(GLOBAL_ERROR_LISTENERS)) {
             throw new PodioError(error);
         }
 
-        for (ErrorListener listener : errorListeners) {
-            if (listener != null) {
-                if (listener.onErrorOccured(error)) {
-                    // The callback consumed the event, stop the bubbling.
-                    errorListeners.clear();
-                    return;
+        synchronized (ERROR_LISTENER_LOCK) {
+            for (ErrorListener listener : errorListeners) {
+                if (listener != null) {
+                    if (listener.onErrorOccured(error)) {
+                        // The callback consumed the event, stop the bubbling.
+                        break;
+                    }
                 }
-
-                errorListeners.remove(listener);
             }
+
+            errorListeners.clear();
         }
 
         for (ErrorListener listener : GLOBAL_ERROR_LISTENERS) {
@@ -121,18 +131,22 @@ public class CallbackManager<T> {
     }
 
     public void deliverResult(T result) {
-        errorListeners.clear();
+        // We will not be delivering any error -> clear the listener references.
+        synchronized (ERROR_LISTENER_LOCK) {
+            errorListeners.clear();
+        }
 
-        for (ResultListener<T> listener : resultListeners) {
-            if (listener != null) {
-                if (listener.onRequestPerformed(result)) {
-                    // The callback consumed the event, stop the bubbling.
-                    resultListeners.clear();
-                    break;
+        synchronized (RESULT_LISTENER_LOCK) {
+            for (ResultListener<T> listener : resultListeners) {
+                if (listener != null) {
+                    if (listener.onRequestPerformed(result)) {
+                        // The callback consumed the event, stop the bubbling.
+                        break;
+                    }
                 }
-
-                resultListeners.remove(listener);
             }
+
+            resultListeners.clear();
         }
     }
 
@@ -149,19 +163,25 @@ public class CallbackManager<T> {
     }
 
     public ResultListener<T> removeResultListener(ResultListener<T> listener) {
-        int index = resultListeners.indexOf(listener);
+        synchronized (RESULT_LISTENER_LOCK) {
+            if (resultListeners.contains(listener)) {
+                int index = resultListeners.indexOf(listener);
+                return resultListeners.remove(index);
+            }
 
-        return resultListeners.contains(listener) ?
-                resultListeners.remove(index) :
-                null;
+            return null;
+        }
     }
 
     public ErrorListener removeErrorListener(ErrorListener listener) {
-        int index = errorListeners.indexOf(listener);
+        synchronized (ERROR_LISTENER_LOCK) {
+            if (errorListeners.contains(listener)) {
+                int index = errorListeners.indexOf(listener);
+                return errorListeners.remove(index);
+            }
 
-        return errorListeners.contains(listener) ?
-                errorListeners.remove(index) :
-                null;
+            return null;
+        }
     }
 
 }

@@ -49,6 +49,7 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
     }
 
     private final ArrayList<SessionListener> sessionListeners;
+    private final Object SESSION_LISTENER_LOCK = new Object();
 
     VolleyCallbackManager() {
         this.sessionListeners = new ArrayList<SessionListener>();
@@ -59,7 +60,9 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
             if (deliverSessionNow) {
                 listener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
             } else {
-                sessionListeners.add(listener);
+                synchronized (SESSION_LISTENER_LOCK) {
+                    sessionListeners.add(listener);
+                }
             }
         }
     }
@@ -69,16 +72,17 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
         String refreshToken = Session.refreshToken();
         long expires = Session.expires();
 
-        for (SessionListener listener : sessionListeners) {
-            if (listener != null) {
-                if (listener.onSessionChanged(accessToken, refreshToken, expires)) {
-                    // The callback consumed the event, stop the bubbling.
-                    sessionListeners.clear();
-                    return;
+        synchronized (SESSION_LISTENER_LOCK) {
+            for (SessionListener listener : sessionListeners) {
+                if (listener != null) {
+                    if (listener.onSessionChanged(accessToken, refreshToken, expires)) {
+                        // The callback consumed the event, stop the bubbling.
+                        break;
+                    }
                 }
-
-                sessionListeners.remove(listener);
             }
+
+            sessionListeners.clear();
         }
 
         for (SessionListener listener : GLOBAL_SESSION_LISTENERS) {
@@ -92,11 +96,14 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
     }
 
     SessionListener removeSessionListener(SessionListener listener) {
-        int index = sessionListeners.indexOf(listener);
+        synchronized (SESSION_LISTENER_LOCK) {
+            if (sessionListeners.contains(listener)) {
+                int index = sessionListeners.indexOf(listener);
+                return sessionListeners.remove(index);
+            }
 
-        return sessionListeners.contains(listener) ?
-                sessionListeners.remove(index) :
-                null;
+            return null;
+        }
     }
 
 }
