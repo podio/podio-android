@@ -21,7 +21,6 @@ import android.util.LruCache;
 
 import com.podio.sdk.QueueClient;
 import com.podio.sdk.Request;
-import com.podio.sdk.Request.ResultListener;
 import com.podio.sdk.Store;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.json.JsonParser;
@@ -43,14 +42,14 @@ import java.util.Set;
  * memory cache heavily relies on the Android {@link LruCache} while the disk store is a basic
  * directory in the internal cache directory of the app. The actual contents are saved as JSON files
  * in sub-directories.
- * <p/>
+ * <p>
  * The {@link Store} interface enables means of adding, removing, and fetching content to and from
  * the store. Further more the caller can choose to close the store to free up memory. This will
  * clear the memory cache but leave the disk store intact. The user can also choose to erase the
  * store. This will wipe all data from both memory and disk store, but only for the given store.
  * Finally the user is offered the possibility to erase all disk stores which will wipe the entire
  * local store directory on the file system.
- * <p/>
+ * <p>
  * What is put in the store is completely up to the developer. There are no constraints nor
  * requirements on the data to have any association to Podio domain objects. The only general
  * requirement is for the key objects to have a constant string representation. Also bare in mind
@@ -261,17 +260,7 @@ public class LocalStore extends QueueClient implements Store {
     @Override
     public Request<Void> erase() {
         EraseRequest request = (EraseRequest) LocalStoreRequest
-                .newEraseRequest(memoryStore, diskStore)
-                .withResultListener(new ResultListener<Void>() {
-
-                    @Override
-                    public boolean onRequestPerformed(Void nothing) {
-                        memoryStore = null;
-                        diskStore = null;
-                        return false; // Don't consume this event.
-                    }
-
-                });
+                .newEraseRequest(memoryStore, diskStore);
 
         execute(request);
         return request;
