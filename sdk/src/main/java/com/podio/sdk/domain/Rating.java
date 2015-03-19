@@ -41,6 +41,14 @@ public class Rating {
         unknown // Custom value to handle errors.
     }
 
+    public static class Create {
+        int value;
+
+        public Create(int value){
+            this.value = value;
+        }
+    }
+
     private final Long rating_id = null;
 
     private final String type = null;

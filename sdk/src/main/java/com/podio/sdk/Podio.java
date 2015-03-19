@@ -31,6 +31,7 @@ import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.ItemProvider;
 import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
+import com.podio.sdk.provider.RatingProvider;
 import com.podio.sdk.provider.StreamProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
@@ -126,6 +127,11 @@ public class Podio {
      * Enables means of easy operating on the Comment API end point.
      */
     public static final CommentProvider comment = new CommentProvider();
+
+    /**
+     * Enables means of easy operating on the Rating API end point.
+     */
+    public static final RatingProvider rating = new RatingProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
@@ -243,6 +249,7 @@ public class Podio {
         notification.setClient(restClient);
         stream.setClient(restClient);
         comment.setClient(restClient);
+        rating.setClient(restClient);
     }
 
     /**

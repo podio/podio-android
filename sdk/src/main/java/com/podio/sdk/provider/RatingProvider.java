@@ -24,51 +24,74 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
-import com.podio.sdk.domain.Comment;
+import com.podio.sdk.domain.Rating;
 import com.podio.sdk.domain.ReferenceType;
 
 /**
- * Enables access to the Comments API end point.
+ * Enables access to the Ratings API end point.
  *
  * @author Tobias Linderg
  */
-public class CommentProvider extends Provider {
+public class RatingProvider extends Provider {
 
-    static class CommentsFilter extends Filter {
+    static class RatingFilter extends Filter {
 
-        protected CommentsFilter() {
-            super("comment");
+        protected RatingFilter() {
+            super("rating");
         }
 
-        public CommentsFilter withReference(ReferenceType type, long id) {
+        public RatingFilter withReference(ReferenceType type, long id) {
             this.addPathSegment(type.name());
             this.addPathSegment(Long.toString(id, 10));
 
             return this;
         }
 
+        public RatingFilter withRatingType(Rating.RatingType ratingType){
+            this.addPathSegment(ratingType.name());
+
+            return this;
+        }
     }
 
     /**
      *
-     * Create a comment on a reference type with the given id. The request result will deliver the
-     * generated comment.
+     * Create a like on a reference type with the given id. The request result will deliver a rating
+     * object with only rating_id set.
      *
      * @param type
-     *         The reference type of what you are commenting on.
+     *         The reference type of what you are liking.
      * @param id
-     *         The id of the reference type your are commenting on.
-     * @param value
-     *         The comment body.
-     * @param fileIds
-     *         The list of ids of any files attached to the comment.
+     *         The id of the reference type your are liking.
      *
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Comment> createComment(ReferenceType type, long id, String value, long[] fileIds) {
-        CommentsFilter filter = new CommentsFilter();
+    public Request<Rating> createLike(ReferenceType type, long id) {
+        RatingFilter filter = new RatingFilter();
         filter.withReference(type,id);
-        Comment.Create create = new Comment.Create(value, fileIds);
-        return post(filter, create, Comment.class);
+        filter.withRatingType(Rating.RatingType.like);
+        Rating.Create create = new Rating.Create(1);
+
+        return post(filter, create, Rating.class);
+    }
+
+    /**
+     *
+     * Create an unlike on a reference type with the given id. The request result will deliver a rating
+     * object with only rating_id set.
+     *
+     * @param type
+     *         The reference type of what you are unliking.
+     * @param id
+     *         The id of the reference type your are unliking.
+     *
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Void> createUnlike(ReferenceType type, long id) {
+        RatingFilter filter = new RatingFilter();
+        filter.withReference(type,id);
+        filter.withRatingType(Rating.RatingType.like);
+
+        return delete(filter);
     }
 }
