@@ -22,10 +22,10 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.Date;
 import java.util.List;
-
-import com.podio.sdk.internal.Utils;
 
 public class Space {
 
@@ -107,7 +107,7 @@ public class Space {
         return description;
     }
 
-    public long getId() {
+    public long getSpaceId() {
         return Utils.getNative(space_id, -1L);
     }
 
