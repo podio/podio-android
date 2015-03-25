@@ -160,12 +160,12 @@ public class ImageLoader {
      * Attempts to load the requested image with the given size. If it already exists in the cache,
      * it will be loaded from there, otherwise the underlying storage infrastructure ("cloud" or
      * local file system) will be queried from a separate worker thread.
-     * <p/>
+     * <p>
      * The given callback interface will be invoked with a null pointer bitmap if the cache doesn't
      * hold the requested image yet. The caller can then decide to show some sort of default image
      * or a progress indication. The same callback interface will be called a second time when the
      * corresponding storage query has completed.
-     * <p/>
+     * <p>
      * If the cache already holds the requested image, the callback will only be called once and
      * then with a non-null bitmap.
      *
@@ -211,6 +211,32 @@ public class ImageLoader {
      */
     public void loadImage(Context context, final int resourceId, final ImageListener listener) {
         loadDrawableResource(context, resourceId, listener);
+    }
+
+    /**
+     * The synchronous version of {@link com.podio.sdk.ImageLoader#loadImage(android.content.Context,
+     * int, com.podio.sdk.ImageLoader.ImageListener)}. This method doesn't take a callback interface
+     * as it will deliver the result as a return value.
+     *
+     * @param context
+     *         The context to load the drawable resource from (if not already in the cache).
+     * @param resourceId
+     *         The id of the drawable resource to load.
+     *
+     * @return The local drawable resource with the given id as a bitmap or null.
+     */
+    public Bitmap loadImage(Context context, int resourceId) {
+        Bitmap bitmap = imageCache.getBitmap(LOCAL_RESOURCE_PREFIX + resourceId);
+
+        if (bitmap == null) {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
+
+            if (bitmap != null) {
+                imageCache.putBitmap(LOCAL_RESOURCE_PREFIX + resourceId, bitmap);
+            }
+        }
+
+        return bitmap;
     }
 
     /**
