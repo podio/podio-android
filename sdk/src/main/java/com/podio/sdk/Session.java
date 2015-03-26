@@ -31,6 +31,7 @@ public class Session {
 
     private static String accessToken;
     private static String refreshToken;
+    private static String transferToken;
     private static long expires;
 
     public static String accessToken() {
@@ -45,6 +46,10 @@ public class Session {
         return refreshToken;
     }
 
+    public static String transferToken() {
+        return transferToken;
+    }
+
     public static void set(String jsonString) {
         JSONObject jsonObject = null;
 
@@ -52,6 +57,7 @@ public class Session {
             jsonObject = new JSONObject(jsonString);
             accessToken = jsonObject.optString("access_token", null);
             refreshToken = jsonObject.optString("refresh_token", null);
+            transferToken = jsonObject.optString("transfer_token", null);
 
             if (jsonObject.has("expires")) {
                 expires = jsonObject.optLong("expires", 0L);
@@ -71,8 +77,13 @@ public class Session {
     }
 
     public static void set(String accessToken, String refreshToken, long expires) {
+        set(accessToken, refreshToken, null, expires);
+    }
+
+    public static void set(String accessToken, String refreshToken, String transferToken, long expires) {
         Session.accessToken = accessToken;
         Session.refreshToken = refreshToken;
+        Session.transferToken = transferToken;
         Session.expires = expires;
     }
 

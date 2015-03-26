@@ -58,7 +58,7 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
     void addSessionListener(SessionListener listener, boolean deliverSessionNow) {
         if (listener != null) {
             if (deliverSessionNow) {
-                listener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.expires());
+                listener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.transferToken(), Session.expires());
             } else {
                 synchronized (SESSION_LISTENER_LOCK) {
                     sessionListeners.add(listener);
@@ -70,12 +70,13 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
     void deliverSession() {
         String accessToken = Session.accessToken();
         String refreshToken = Session.refreshToken();
+        String transferToken = Session.transferToken();
         long expires = Session.expires();
 
         synchronized (SESSION_LISTENER_LOCK) {
             for (SessionListener listener : sessionListeners) {
                 if (listener != null) {
-                    if (listener.onSessionChanged(accessToken, refreshToken, expires)) {
+                    if (listener.onSessionChanged(accessToken, refreshToken, transferToken, expires)) {
                         // The callback consumed the event, stop the bubbling.
                         break;
                     }
@@ -87,7 +88,7 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
 
         for (SessionListener listener : GLOBAL_SESSION_LISTENERS) {
             if (listener != null) {
-                if (listener.onSessionChanged(accessToken, refreshToken, expires)) {
+                if (listener.onSessionChanged(accessToken, refreshToken, transferToken, expires)) {
                     // The callback consumed the event, stop the bubbling.
                     return;
                 }
