@@ -28,6 +28,8 @@ public interface Client {
 
     public Request<Void> authenticateWithAppCredentials(String appId, String appToken);
 
+    public Request<Void> authenticateWithTransferToken(String transferToken);
+
     @Deprecated
     public Request<Void> forceRefreshTokens();
 

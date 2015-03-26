@@ -48,29 +48,37 @@ public class VolleyClient implements Client {
             super("oauth/token");
         }
 
-        AuthPath withClientCredentials(String clientId, String clientSecret) {
+        AuthPath withUserCredentials(String clientId, String clientSecret, String username, String password) {
             addQueryParameter("client_id", clientId);
             addQueryParameter("client_secret", clientSecret);
-            return this;
-        }
-
-        AuthPath withUserCredentials(String username, String password) {
             addQueryParameter("grant_type", "password");
             addQueryParameter("username", username);
             addQueryParameter("password", password);
             return this;
         }
 
-        AuthPath withAppCredentials(String appId, String appToken) {
+        AuthPath withAppCredentials(String clientId, String clientSecret, String appId, String appToken) {
+            addQueryParameter("client_id", clientId);
+            addQueryParameter("client_secret", clientSecret);
             addQueryParameter("grant_type", "app");
             addQueryParameter("app_id", appId);
             addQueryParameter("app_token", appToken);
             return this;
         }
 
-        AuthPath withRefreshToken(String refreshToken) {
+        AuthPath withRefreshToken(String clientId, String clientSecret, String refreshToken) {
+            addQueryParameter("client_id", clientId);
+            addQueryParameter("client_secret", clientSecret);
             addQueryParameter("grant_type", "refresh_token");
             addQueryParameter("refresh_token", refreshToken);
+            return this;
+        }
+
+        AuthPath withTransferToken(String clientId, String clientSecret, String transerToken) {
+            addQueryParameter("client_id", clientId);
+            addQueryParameter("client_secret", clientSecret);
+            addQueryParameter("grant_type", "transfer_token");
+            addQueryParameter("transfer_token", transerToken);
             return this;
         }
 
@@ -131,42 +139,23 @@ public class VolleyClient implements Client {
 
     @Override
     public Request<Void> authenticateWithUserCredentials(String username, String password) {
-        Uri uri = new AuthPath()
-                .withClientCredentials(clientId, clientSecret)
-                .withUserCredentials(username, password)
-                .buildUri(scheme, authority);
-
-        String url = parseUrl(uri);
-        HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-
-        // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
-        // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
-        // retries and no back-off multiplier for this authentication request.
-        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
-        addToRefreshQueue(request);
-
-        return request;
+        return authenticate(new AuthPath()
+                .withUserCredentials(clientId, clientSecret, username, password)
+                .buildUri(scheme, authority));
     }
 
     @Override
     public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
-        Uri uri = new AuthPath()
-                .withClientCredentials(clientId, clientSecret)
-                .withAppCredentials(appId, appToken)
-                .buildUri(scheme, authority);
+        return authenticate(new AuthPath()
+                .withAppCredentials(clientId, clientSecret, appId, appToken)
+                .buildUri(scheme, authority));
+    }
 
-        String url = parseUrl(uri);
-        HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
-
-        // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
-        // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
-        // retries and no back-off multiplier for this authentication request.
-        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
-        addToRefreshQueue(request);
-
-        return request;
+    @Override
+    public Request<Void> authenticateWithTransferToken(String transferToken) {
+        return authenticate(new AuthPath()
+                .withTransferToken(clientId, clientSecret, transferToken)
+                .buildUri(scheme, authority));
     }
 
     @Override
@@ -269,14 +258,27 @@ public class VolleyClient implements Client {
         }
     }
 
+    protected synchronized Request<Void> authenticate(Uri uri) {
+        String url = parseUrl(uri);
+        HashMap<String, String> params = parseParams(uri);
+        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
+
+        // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
+        // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
+        // retries and no back-off multiplier for this authentication request.
+        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
+        addToRefreshQueue(request);
+
+        return request;
+    }
+
     protected Uri buildAuthUri() {
         Uri result = null;
         String refreshToken = Session.refreshToken();
 
         if (Utils.notEmpty(refreshToken)) {
             result = new AuthPath()
-                    .withClientCredentials(clientId, clientSecret)
-                    .withRefreshToken(refreshToken)
+                    .withRefreshToken(clientId, clientSecret, refreshToken)
                     .buildUri(scheme, authority);
         }
 
