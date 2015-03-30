@@ -17,7 +17,6 @@
 package com.podio.sdk;
 
 import android.content.Context;
-import android.net.Uri;
 
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.SessionListener;
@@ -36,9 +35,6 @@ import com.podio.sdk.provider.StreamProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
-import com.podio.sdk.push.FayePushClient;
-import com.podio.sdk.push.PushClient;
-import com.podio.sdk.push.VolleyLongPollingTransport;
 import com.podio.sdk.volley.VolleyClient;
 import com.podio.sdk.volley.VolleyRequest;
 
@@ -55,8 +51,6 @@ public class Podio {
      * The default request client for the providers.
      */
     protected static VolleyClient restClient = new VolleyClient();
-
-    public static PushClient push;
 
     /**
      * Enables means of easy operating on the Application API end point.
@@ -137,7 +131,7 @@ public class Podio {
      * Enables means of registering global error listeners. These callback implementations apply to
      * <em>all</em> requests until explicitly removed and they are called <em>after</em> any custom
      * callbacks added to a particular request future are called.
-     * <p/>
+     * <p>
      * If a callback chooses to consume a given event, then <em>all</em> further bubbling is
      * aborted, meaning that the event may not reach the global event listener you add here.
      *
@@ -154,7 +148,7 @@ public class Podio {
      * Registers a global session listeners. These callback implementations apply to <em>all</em>
      * requests until explicitly removed and they are called <em>after</em> any custom callbacks
      * added to a particular request future are called.
-     * <p/>
+     * <p>
      * If a callback chooses to consume a given event, then <em>all</em> further bubbling is
      * aborted, meaning that the event may not reach the global event listener you add here.
      *
@@ -226,13 +220,6 @@ public class Podio {
      */
     public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
         restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
-
-        Uri pushUri = new Uri.Builder()
-                .scheme(BuildConfig.SCHEME)
-                .encodedAuthority(BuildConfig.PUSH_AUTHORITY)
-                .encodedPath(BuildConfig.PUSH_PATH)
-                .build();
-        push = new FayePushClient(new VolleyLongPollingTransport(context, pushUri.toString()));
 
         // Providers relying on a rest client in order to operate properly.
         application.setClient(restClient);

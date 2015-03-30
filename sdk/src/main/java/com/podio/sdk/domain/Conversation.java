@@ -31,12 +31,17 @@ import java.util.Date;
  * @author László Urszuly
  */
 public class Conversation {
+
+    /**
+     * Type definition of a conversation.
+     */
     public static enum Type {
-        direct,
-        group,
-        unknown;
+        direct, group, unknown
     }
 
+    /**
+     * The data structure describing the "reply to conversation" content as the API expects it.
+     */
     public static class Reply {
         @SuppressWarnings("unused")
         private final String text;
@@ -54,6 +59,9 @@ public class Conversation {
         }
     }
 
+    /**
+     * The data structure describing the "new conversation" data as the API expects it.
+     */
     public static class Create {
         @SuppressWarnings("unused")
         private final String subject;
@@ -79,6 +87,9 @@ public class Conversation {
         }
     }
 
+    /**
+     * This class describes the conversation event data.
+     */
     public static class Data {
         private final Long message_id = null;
         private final File[] files = null;
@@ -106,12 +117,15 @@ public class Conversation {
         }
     }
 
+    /**
+     * This class describes the conversation event meta data.
+     */
     public static class Event {
         private final Long event_id = null;
         private final Byline created_by = null;
         private final String created_on = null;
         private final String action = null;
-        private final Data data = null;
+        private final Conversation.Data data = null;
 
         public long getEventId() {
             return Utils.getNative(event_id, -1L);
@@ -157,6 +171,243 @@ public class Conversation {
             return data != null ? data.created_on : null;
         }
 
+    }
+
+    /**
+     * This class describes a push event sent by the API when a new event has been created in a
+     * conversation.
+     */
+    public static class PushNewEvent extends PushEvent {
+
+        private static class Settings {
+            private final Boolean sound = null;
+            private final Boolean popup = null;
+        }
+
+        private static class Data {
+            private final Long conversation_id = null;
+            private final Long event_id = null;
+            private final String action = null;
+            private final String text = null;
+            private final Settings settings = null;
+            private final Conversation.Data data = null;
+            private final String created_on = null;
+            private final Byline created_by = null;
+            private final Integer unread_count = null;
+            private final Integer total_unread_count = null;
+        }
+
+        private final PushNewEvent.Data data = null;
+
+        public String action() {
+            return data != null ? data.action : null;
+        }
+
+        public Byline byline() {
+            return data != null ? data.created_by : null;
+        }
+
+        public long conversationId() {
+            return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
+        }
+
+        public Date createdOnDateTime() {
+            return data != null ? Utils.parseDateTime(data.created_on) : null;
+        }
+
+        public String createdOnDateTimeString() {
+            return data != null ? data.created_on : null;
+        }
+
+        public Conversation.Data data() {
+            return data != null ? data.data : null;
+        }
+
+        public boolean doPlaySound() {
+            return data != null && data.settings != null && Utils.getNative(data.settings.sound, false);
+        }
+
+        public boolean doShowPopup() {
+            return data != null && data.settings != null && Utils.getNative(data.settings.popup, false);
+        }
+
+        public long eventId() {
+            return data != null ? Utils.getNative(data.event_id, -1L) : -1L;
+        }
+
+        public String excerpt() {
+            return data != null ? data.text : null;
+        }
+
+        public int unreadMessagesCountInConversation() {
+            return data != null ? Utils.getNative(data.unread_count, -1) : -1;
+        }
+
+        public int unreadMessagesCountInTotal() {
+            return data != null ? Utils.getNative(data.total_unread_count, -1) : -1;
+        }
+
+    }
+
+    /**
+     * This class describes a push event sent by the API when a conversation has been marked as
+     * read.
+     */
+    public static class PushRead extends PushEvent {
+
+        private static class Data {
+            /**
+             * The id of the conversation that was changed.
+             */
+            private final Long conversation_id = null;
+
+            /**
+             * The number of unread events on the conversation.
+             */
+            private final Integer unread_count = null;
+
+            /**
+             * The total number of unread events.
+             */
+            private final Integer total_unread_count = null;
+        }
+
+        private final Data data = null;
+
+        public long conversationId() {
+            return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
+        }
+
+        public int unreadMessagesCountInConversation() {
+            return data != null ? Utils.getNative(data.unread_count, -1) : -1;
+        }
+
+        public int unreadMessagesCountInTotal() {
+            return data != null ? Utils.getNative(data.total_unread_count, -1) : -1;
+        }
+    }
+
+    /**
+     * This class describes a push event sent by the API when all conversations has been marked as
+     * read.
+     */
+    public static class PushReadAll extends PushEvent {
+    }
+
+    /**
+     * This class describes a push event sent by the API when a conversation has been starred.
+     */
+    public static class PushStarred extends PushEvent {
+
+        private static class Data {
+            /**
+             * The id of the conversation that was changed.
+             */
+            private final Long conversation_id = null;
+        }
+
+        private final Data data = null;
+
+        public long conversationId() {
+            return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
+        }
+    }
+
+    /**
+     * This class describes a push event sent by the API when the number of starred conversation has
+     * changed.
+     */
+    public static class PushStarredCount extends PushEvent {
+
+        private static class Data {
+            /**
+             * The number of starred conversation events.
+             */
+            private final Integer count = null;
+        }
+
+        private final Data data = null;
+
+        public int count() {
+            return data != null ? Utils.getNative(data.count, -1) : -1;
+        }
+    }
+
+    /**
+     * This class describes a push event sent by the API when a conversation has been marked as
+     * unread.
+     */
+    public static class PushUnread extends PushEvent {
+
+        private static class Data {
+            /**
+             * The id of the conversation that was changed.
+             */
+            private final Long conversation_id = null;
+
+            /**
+             * The number of unread events on the conversation.
+             */
+            private final Integer unread_count = null;
+
+            /**
+             * The total number of unread events.
+             */
+            private final Integer total_unread_count = null;
+        }
+
+        private final Data data = null;
+
+        public long conversationId() {
+            return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
+        }
+
+        public int unreadMessagesCountInConversation() {
+            return data != null ? Utils.getNative(data.unread_count, -1) : -1;
+        }
+
+        public int unreadMessagesCountInTotal() {
+            return data != null ? Utils.getNative(data.total_unread_count, -1) : -1;
+        }
+    }
+
+    /**
+     * This class describes a push event sent by the API when the number of unread conversations has
+     * changed.
+     */
+    public static class PushUnreadCount extends PushEvent {
+
+        private static class Data {
+            /**
+             * The number of unread conversation events.
+             */
+            private final Integer count = null;
+        }
+
+        private final Data data = null;
+
+        public int count() {
+            return data != null ? Utils.getNative(data.count, -1) : -1;
+        }
+    }
+
+    /**
+     * This class describes a push event sent by the API when a conversation has been unstarred.
+     */
+    public static class PushUnstarred extends PushEvent {
+
+        private static class Data {
+            /**
+             * The id of the conversation that was changed.
+             */
+            private final Long conversation_id = null;
+        }
+
+        private final Data data = null;
+
+        public long conversationId() {
+            return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
+        }
     }
 
     private final Long conversation_id = null;
