@@ -272,7 +272,7 @@ public class Conversation {
             private final Integer total_unread_count = null;
         }
 
-        private final Data data = null;
+        private final PushRead.Data data = null;
 
         public long conversationId() {
             return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
@@ -306,7 +306,7 @@ public class Conversation {
             private final Long conversation_id = null;
         }
 
-        private final Data data = null;
+        private final PushStarred.Data data = null;
 
         public long conversationId() {
             return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
@@ -326,7 +326,7 @@ public class Conversation {
             private final Integer count = null;
         }
 
-        private final Data data = null;
+        private final PushStarredCount.Data data = null;
 
         public int count() {
             return data != null ? Utils.getNative(data.count, -1) : -1;
@@ -356,7 +356,7 @@ public class Conversation {
             private final Integer total_unread_count = null;
         }
 
-        private final Data data = null;
+        private final PushUnread.Data data = null;
 
         public long conversationId() {
             return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;
@@ -384,7 +384,7 @@ public class Conversation {
             private final Integer count = null;
         }
 
-        private final Data data = null;
+        private final PushUnreadCount.Data data = null;
 
         public int count() {
             return data != null ? Utils.getNative(data.count, -1) : -1;
@@ -403,7 +403,7 @@ public class Conversation {
             private final Long conversation_id = null;
         }
 
-        private final Data data = null;
+        private final PushUnstarred.Data data = null;
 
         public long conversationId() {
             return data != null ? Utils.getNative(data.conversation_id, -1L) : -1L;

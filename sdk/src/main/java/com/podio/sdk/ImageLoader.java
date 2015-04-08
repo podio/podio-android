@@ -185,7 +185,7 @@ public class ImageLoader {
      */
     public void loadImage(final String url, Size size, final ImageListener listener) throws NullPointerException {
         if (url == null || listener == null) {
-            throw new NullPointerException("Url can not be null");
+            throw new NullPointerException("Neither url nor listener can be null");
         }
 
         if (url.startsWith("http://") || url.startsWith("https://")) {
