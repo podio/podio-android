@@ -34,6 +34,8 @@ public abstract class PushEvent {
         conversation_unread(Conversation.PushUnread.class),
         conversation_unread_count(Conversation.PushUnreadCount.class),
         conversation_unstarred(Conversation.PushUnstarred.class),
+        typing(PushEventTyping.class),
+        viewing(PushEventViewing.class),
         unknown(null);
 
         private final Class<? extends PushEvent> classOfEvent;
