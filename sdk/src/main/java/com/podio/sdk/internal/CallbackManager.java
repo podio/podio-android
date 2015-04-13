@@ -96,16 +96,21 @@ public class CallbackManager<T> {
         }
 
         synchronized (ERROR_LISTENER_LOCK) {
+            boolean isConsumed = false;
             for (ErrorListener listener : errorListeners) {
                 if (listener != null) {
                     if (listener.onErrorOccured(error)) {
                         // The callback consumed the event, stop the bubbling.
+                        isConsumed = true;
                         break;
                     }
                 }
             }
 
             errorListeners.clear();
+            if (isConsumed) {
+                return;
+            }
         }
 
         for (ErrorListener listener : GLOBAL_ERROR_LISTENERS) {

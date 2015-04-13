@@ -74,16 +74,21 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
         long expires = Session.expires();
 
         synchronized (SESSION_LISTENER_LOCK) {
+            boolean isConsumed = false;
             for (SessionListener listener : sessionListeners) {
                 if (listener != null) {
                     if (listener.onSessionChanged(accessToken, refreshToken, transferToken, expires)) {
                         // The callback consumed the event, stop the bubbling.
+                        isConsumed = true;
                         break;
                     }
                 }
             }
 
             sessionListeners.clear();
+            if (isConsumed) {
+                return;
+            }
         }
 
         for (SessionListener listener : GLOBAL_SESSION_LISTENERS) {
