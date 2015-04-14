@@ -88,7 +88,7 @@ public class VolleyClient implements Client {
         private final String originalAccessToken;
 
         private VolleyRetryPolicy(String referenceAccessToken) {
-            super(DEFAULT_TIMEOUT_MS, 1, 1.0f);
+            super(CLIENT_DEFAULT_TIMEOUT_MS, 1, 1.0f);
             this.originalAccessToken = referenceAccessToken;
         }
 
@@ -114,7 +114,7 @@ public class VolleyClient implements Client {
 
                 // Re-authenticate on a prioritized request queue.
                 VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params);
-                reAuthRequest.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
+                reAuthRequest.setRetryPolicy(new DefaultRetryPolicy(CLIENT_DEFAULT_TIMEOUT_MS, 0, 0));
                 addToRefreshQueue(reAuthRequest);
 
                 reAuthRequest.withErrorListener(new Request.ErrorListener() {
@@ -123,7 +123,7 @@ public class VolleyClient implements Client {
                         clearRequestQueue();
                         return true;
                     }
-                }).waitForResult(TimeUnit.MILLISECONDS.toSeconds(DEFAULT_TIMEOUT_MS));
+                }).waitForResult(TimeUnit.MILLISECONDS.toSeconds(CLIENT_DEFAULT_TIMEOUT_MS));
             }
         }
     }
@@ -266,7 +266,7 @@ public class VolleyClient implements Client {
         // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
         // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
         // retries and no back-off multiplier for this authentication request.
-        request.setRetryPolicy(new DefaultRetryPolicy(DEFAULT_TIMEOUT_MS, 0, 0));
+        request.setRetryPolicy(new DefaultRetryPolicy(CLIENT_DEFAULT_TIMEOUT_MS, 0, 0));
         addToRefreshQueue(request);
 
         return request;
