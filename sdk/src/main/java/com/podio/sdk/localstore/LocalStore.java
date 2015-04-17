@@ -16,7 +16,6 @@
 package com.podio.sdk.localstore;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.LruCache;
 
 import com.podio.sdk.QueueClient;
@@ -59,8 +58,17 @@ import java.util.Set;
  *
  * @author László Urszuly
  */
-public class LocalStore extends QueueClient implements Store {
+public class LocalStore extends QueueClient implements Store, LocalStoreRequest.RuntimeStoreEnabler {
     private static final String LOCAL_STORES_DIRECTORY = "stores";
+
+    interface RuntimeStorePersister {
+
+        void setMemoryStore(LruCache<Object, Object> memoryStore);
+
+        void setDiskStore(File diskStore);
+
+        Object getDiskStoreLock();
+    }
 
     /**
      * Erases all local stores in the root store folder for this app.
@@ -69,9 +77,26 @@ public class LocalStore extends QueueClient implements Store {
      *         The context used to find the cache directory for this app.
      */
     public static Request<Void> eraseAllDiskStores(Context context) {
-        String systemCachePath = context.getCacheDir().getPath();
-        File root = new File(systemCachePath + File.separator + LOCAL_STORES_DIRECTORY);
-        EraseRequest request = LocalStoreRequest.newEraseRequest(null, root);
+        final String systemCachePath = context.getCacheDir().getPath();
+        final File root = new File(systemCachePath + File.separator + LOCAL_STORES_DIRECTORY);
+
+        EraseRequest request = LocalStoreRequest.newEraseRequest(new LocalStoreRequest.RuntimeStoreEnabler() {
+            @Override
+            public LruCache<Object, Object> getMemoryStore() {
+                return null;
+            }
+
+            @Override
+            public File getDiskStore() {
+                return root;
+            }
+
+            @Override
+            public Object getDiskStoreLock() {
+                return new Object();
+            }
+        });
+
         LocalStore store = new LocalStore();
         store.execute(request);
         return request;
@@ -89,27 +114,44 @@ public class LocalStore extends QueueClient implements Store {
      *         The memory size constraint.
      */
     public static Store open(final Context context, final String name, int maxMemoryInKiloBytes) {
+        String directoryName;
+
+        try {
+            directoryName = URLEncoder.encode(name, Charset.defaultCharset().name());
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        String systemCachePath = context.getCacheDir().getPath();
+        String storePath = systemCachePath + File.separator + LOCAL_STORES_DIRECTORY + File.separator + directoryName;
+
         final LocalStore store = new LocalStore();
+        InitRequest request = LocalStoreRequest.newInitRequest(storePath, maxMemoryInKiloBytes,
+                new RuntimeStorePersister() {
+                    @Override
+                    public void setMemoryStore(LruCache<Object, Object> memoryStore) {
+                        // This callback is executed on the worker thread.
+                        store.memoryStore = memoryStore;
+                    }
 
-        store.memoryStore = new LruCache<Object, Object>(maxMemoryInKiloBytes) {
-            @Override
-            protected int sizeOf(Object key, Object value) {
-                return calculateKiloByteSizeOfObject(value);
-            }
-        };
+                    @Override
+                    public void setDiskStore(File diskStore) {
+                        // This callback is executed on the worker thread.
+                        store.diskStore = diskStore;
+                        copyMemoryStoreToDiskStore(store);
+                    }
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... nothing) {
-                store.diskStore = getLocalStoreDirectory(context, name);
+                    @Override
+                    public Object getDiskStoreLock() {
+                        // This callback is executed on the worker thread.
+                        return store.getDiskStoreLock();
+                    }
 
-                // Copy any memory cache entries that were stored while the disk cache was being
-                // initialized.
-                copyMemoryStoreToDiskStore(store);
-                return null;
-            }
-        }.execute();
+                }
 
+        );
+
+        store.execute(request);
         return store;
     }
 
@@ -122,6 +164,7 @@ public class LocalStore extends QueueClient implements Store {
      *
      * @return The size of the object expressed in kilobytes.
      */
+
     private static int calculateKiloByteSizeOfObject(Object object) {
         try {
             // This will only calculate the size of the object itself. The size of any
@@ -220,14 +263,9 @@ public class LocalStore extends QueueClient implements Store {
 
     }
 
-    /**
-     * The in-memory store.
-     */
-    private LruCache<Object, Object> memoryStore;
+    private final Object diskStoreLock;
 
-    /**
-     * The disk store directory.
-     */
+    private LruCache<Object, Object> memoryStore;
     private File diskStore;
 
     /**
@@ -235,6 +273,7 @@ public class LocalStore extends QueueClient implements Store {
      */
     private LocalStore() {
         super(1, 1, 0L);
+        diskStoreLock = new Object();
     }
 
     /**
@@ -259,9 +298,7 @@ public class LocalStore extends QueueClient implements Store {
      */
     @Override
     public Request<Void> erase() {
-        EraseRequest request = (EraseRequest) LocalStoreRequest
-                .newEraseRequest(memoryStore, diskStore);
-
+        EraseRequest request = LocalStoreRequest.newEraseRequest(this);
         execute(request);
         return request;
     }
@@ -276,9 +313,39 @@ public class LocalStore extends QueueClient implements Store {
      */
     @Override
     public <T> Request<T> get(Object key, Class<T> classOfValue) throws IllegalStateException {
-        GetRequest<T> request = LocalStoreRequest.newGetRequest(memoryStore, diskStore, key, classOfValue);
+        GetRequest<T> request = LocalStoreRequest.newGetRequest(this, key, classOfValue);
         execute(request);
         return request;
+    }
+
+    /**
+     * Provides a disk store object.
+     *
+     * @return A reference to the current disk store object.
+     */
+    @Override
+    public File getDiskStore() {
+        return diskStore;
+    }
+
+    /**
+     * Provides a lock to synchronize any disk operations on.
+     *
+     * @return The "Disk-store-ready" lock object.
+     */
+    @Override
+    public Object getDiskStoreLock() {
+        return diskStoreLock;
+    }
+
+    /**
+     * Provides a memory store object.
+     *
+     * @return A reference to the current memory store object.
+     */
+    @Override
+    public LruCache<Object, Object> getMemoryStore() {
+        return memoryStore;
     }
 
     /**
@@ -291,7 +358,7 @@ public class LocalStore extends QueueClient implements Store {
      */
     @Override
     public Request<Void> remove(Object key) throws IllegalStateException {
-        RemoveRequest request = LocalStoreRequest.newRemoveRequest(memoryStore, diskStore, key);
+        RemoveRequest request = LocalStoreRequest.newRemoveRequest(this, key);
         execute(request);
         return request;
     }
@@ -305,7 +372,7 @@ public class LocalStore extends QueueClient implements Store {
      */
     @Override
     public Request<Void> set(Object key, Object value) throws IllegalStateException {
-        SetRequest request = LocalStoreRequest.newSetRequest(memoryStore, diskStore, key, value);
+        SetRequest request = LocalStoreRequest.newSetRequest(this, key, value);
         execute(request);
         return request;
     }

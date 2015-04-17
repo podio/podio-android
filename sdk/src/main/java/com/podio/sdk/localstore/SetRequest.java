@@ -28,68 +28,67 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
- * A specific {@link LocalStoreRequest}, targeting the "store value" operation. This implementation
- * adds a value to both the memory cache as well as the persistent disk storage, silently
- * overwriting any previous values with the same key.
+ * A specific {@link com.podio.sdk.localstore.LocalStoreRequest LocalStoreRequest} implementation,
+ * targeting the "store value" operation. This implementation adds a value to both the memory cache
+ * as well as the disk cache, silently overwriting any previous values with the same key. If the
+ * disk store isn't prepared yet, the disk write request will block until the disk store is ready.
  *
  * @author László Urszuly
  */
 final class SetRequest extends LocalStoreRequest<Void> {
 
     /**
-     * Puts the given value in the memory cache and persists it in the disk store. Any previous
+     * Puts the given value in the memory cache and persists it in the disk store. If the disk store
+     * isn't initialized yet, the disk write operation will block until it's prepared. Any previous
      * values are silently overwritten.
      *
-     * @param memoryStore
-     *         The memory cache.
-     * @param diskStore
-     *         The disk store.
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
      * @param key
      *         The key of the value to store.
      * @param value
      *         The value to store.
      *
-     * @return The currently store object (may be null if the value couldn't be properly stored).
-     *
      * @throws IOException
      *         If the file system operation fails for some reason.
      */
-    private static final void setValue(LruCache<Object, Object> memoryStore, File diskStore, Object key, Object value) throws IOException {
-        // Update memory
-        if (memoryStore != null) {
-            memoryStore.put(key, value);
+    private static void setValue(final RuntimeStoreEnabler storeEnabler, Object key, Object value) throws IOException {
+        LruCache<Object, Object> memoryStore = storeEnabler.getMemoryStore();
+        if (memoryStore == null) {
+            throw new IllegalStateException("You're trying to write content to a closed store.");
         }
 
-        // Update disk.
-        if (isWritableDirectory(diskStore)) {
-            String fileName = getFileName(key);
-            File file = new File(diskStore, fileName);
-            writeObjectToDisk(file, value);
+        memoryStore.put(key, value);
+
+        // Update disk. Make sure we wait for the disk store to be ready before we start accessing
+        // it.
+        synchronized (storeEnabler.getDiskStoreLock()) {
+            File diskStore = storeEnabler.getDiskStore();
+            if (isWritableDirectory(diskStore)) {
+                String fileName = getFileName(key);
+                File file = new File(diskStore, fileName);
+                writeObjectToDisk(file, value);
+            }
         }
     }
 
     /**
      * Creates a new request for storing a given value.
      *
-     * @param memoryStore
-     *         The in-memory store.
-     * @param diskStore
-     *         The file handle to the disk store directory.
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
      * @param key
      *         The key of the value.
      * @param value
      *         The value to store.
      */
-    SetRequest(final LruCache<Object, Object> memoryStore, final File diskStore, final Object key, final Object value) {
+    SetRequest(final RuntimeStoreEnabler storeEnabler, final Object key, final Object value) {
         super(new Callable<Void>() {
-
             @Override
             public Void call() throws Exception {
-                validateState(memoryStore, diskStore);
-                setValue(memoryStore, diskStore, key, value);
+                setValue(storeEnabler, key, value);
                 return null;
             }
-
         });
     }
 }

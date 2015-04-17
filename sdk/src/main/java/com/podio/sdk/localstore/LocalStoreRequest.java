@@ -46,6 +46,28 @@ import java.util.concurrent.TimeoutException;
  */
 class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 
+    interface RuntimeStoreEnabler {
+
+        LruCache<Object, Object> getMemoryStore();
+
+        File getDiskStore();
+
+        Object getDiskStoreLock();
+
+    }
+
+    /**
+     * Creates a new Request for destroying the local store. The request will not deliver anything.
+     *
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
+     *
+     * @return A request ready for being enqueued in a queue.
+     */
+    static EraseRequest newEraseRequest(RuntimeStoreEnabler storeEnabler) {
+        return new EraseRequest(storeEnabler);
+    }
+
     /**
      * Creates a new Request for clearing the memory store. The disk store is not affected by this.
      * The request will not deliver anything.
@@ -54,35 +76,17 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *         The memory store to clear and close.
      *
      * @return A request ready for being enqueued in a queue.
-     *
-     * @see com.podio.sdk.localstore.LocalStoreRequest#newEraseRequest(LruCache, File)
      */
     static FreeRequest newFreeRequest(LruCache<Object, Object> memoryStore) {
         return new FreeRequest(memoryStore);
     }
 
     /**
-     * Creates a new Request for destroying the local store. The request will not deliver anything.
-     *
-     * @param memoryStore
-     *         The in-memory store.
-     * @param diskStore
-     *         The file handle to the disk store directory.
-     *
-     * @return A request ready for being enqueued in a queue.
-     */
-    static EraseRequest newEraseRequest(LruCache<Object, Object> memoryStore, File diskStore) {
-        return new EraseRequest(memoryStore, diskStore);
-    }
-
-    /**
      * Creates a new Request for retrieving a value from the local store. The request will deliver
      * the requested object, or a null-pointer if no object is found by the given key.
      *
-     * @param memoryStore
-     *         The in-memory store.
-     * @param diskStore
-     *         The file handle to the disk store directory.
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
      * @param key
      *         The key of the value.
      * @param classOfValue
@@ -90,25 +94,38 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *
      * @return A request ready for being enqueued in a queue.
      */
-    static <E> GetRequest<E> newGetRequest(LruCache<Object, Object> memoryStore,
-                                           File diskStore, Object key, Class<E> classOfValue) {
-        return new GetRequest<E>(memoryStore, diskStore, key, classOfValue);
+    static <E> GetRequest<E> newGetRequest(RuntimeStoreEnabler storeEnabler, Object key, Class<E> classOfValue) {
+        return new GetRequest<E>(storeEnabler, key, classOfValue);
+    }
+
+    /**
+     * Creates a new Request for initializing the memory and disk stores for a local store.
+     *
+     * @param path
+     *         The absolute path of the local store to initialize.
+     * @param maxMemoryInKiloBytes
+     *         The maximum allowed size of the memory cache.
+     * @param storePersister
+     *         The callback interface to deliver created stores through.
+     *
+     * @return A request ready for being enqueued in a queue.
+     */
+    static InitRequest newInitRequest(String path, int maxMemoryInKiloBytes, LocalStore.RuntimeStorePersister storePersister) {
+        return new InitRequest(path, maxMemoryInKiloBytes, storePersister);
     }
 
     /**
      * Creates a new Request for removing a value from the local store.
      *
-     * @param memoryStore
-     *         The in-memory store.
-     * @param diskStore
-     *         The file handle to the disk store directory.
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
      * @param key
      *         The key of the value.
      *
      * @return A request ready for being enqueued in a queue.
      */
-    static RemoveRequest newRemoveRequest(LruCache<Object, Object> memoryStore, File diskStore, Object key) {
-        return new RemoveRequest(memoryStore, diskStore, key);
+    static RemoveRequest newRemoveRequest(RuntimeStoreEnabler storeEnabler, Object key) {
+        return new RemoveRequest(storeEnabler, key);
     }
 
     /**
@@ -116,10 +133,8 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      * if an overwrite has occurred, or a null-pointer if no object is previously stored by the
      * given key.
      *
-     * @param memoryStore
-     *         The in-memory store.
-     * @param diskStore
-     *         The file handle to the disk store directory.
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
      * @param key
      *         The key of the value.
      * @param value
@@ -127,9 +142,8 @@ class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
      *
      * @return A request ready for being enqueued in a queue.
      */
-    static SetRequest newSetRequest(LruCache<Object, Object> memoryStore, File diskStore,
-                                    Object key, Object value) {
-        return new SetRequest(memoryStore, diskStore, key, value);
+    static SetRequest newSetRequest(RuntimeStoreEnabler storeEnabler, Object key, Object value) {
+        return new SetRequest(storeEnabler, key, value);
     }
 
     /**

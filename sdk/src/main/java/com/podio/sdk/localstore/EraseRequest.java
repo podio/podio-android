@@ -27,13 +27,13 @@ import java.io.File;
 import java.util.concurrent.Callable;
 
 /**
- * A specific {@link LocalStoreRequest}, targeting the "destroy store" operation. This
- * implementation clears the memory cache and wipes all files from the persistent disk store that
- * belongs to this very store, leaving other stores intact. This class also removes the actual store
- * sub directory from the file system.
+ * A specific {@link com.podio.sdk.localstore.LocalStoreRequest LocalStoreRequest} implementation,
+ * targeting the "destroy store" operation. This implementation clears the memory cache and wipes
+ * all files from the disk cache that belongs to this very store, leaving other stores intact. If
+ * the disk store isn't prepared yet, the disk write request will block until the disk store is
+ * ready. This class also removes the actual store sub directory from the file system.
  *
  * @author László Urszuly
- * @see .com.podio.sdk.localstore.InitDiskRequest
  */
 final class EraseRequest extends LocalStoreRequest<Void> {
 
@@ -50,7 +50,8 @@ final class EraseRequest extends LocalStoreRequest<Void> {
     }
 
     /**
-     * Removes all files in the given directory and tries to remove the directory as well.
+     * Recursively removes all files in the given directory and tries to remove the directory as
+     * well.
      *
      * @param diskStore
      *         The disk cache to clear.
@@ -74,21 +75,23 @@ final class EraseRequest extends LocalStoreRequest<Void> {
     /**
      * Creates a new Request for destroying the local store. The request will not deliver anything.
      *
-     * @param memoryStore
-     *         The in-memory store.
-     * @param diskStore
-     *         The file handle to the disk store directory.
+     * @param storeEnabler
+     *         The callback that will provide the memory and disk stores.
      */
-    EraseRequest(final LruCache<Object, Object> memoryStore, final File diskStore) {
+    EraseRequest(final RuntimeStoreEnabler storeEnabler) {
         super(new Callable<Void>() {
-
             @Override
             public Void call() throws Exception {
-                destroyMemoryStore(memoryStore);
-                destroyDiskStore(diskStore);
+                destroyMemoryStore(storeEnabler.getMemoryStore());
+
+                // We have to synchronize at this point as the destroyDiskStore method is recursive
+                // and we would otherwise cause a deadlock if synchronizing on the same lock inside
+                // the method itself.
+                synchronized (storeEnabler.getDiskStoreLock()) {
+                    destroyDiskStore(storeEnabler.getDiskStore());
+                }
                 return null;
             }
-
         });
     }
 
