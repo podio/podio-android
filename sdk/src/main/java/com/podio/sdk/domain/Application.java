@@ -25,21 +25,50 @@ package com.podio.sdk.domain;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.internal.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Application {
 
-    public static enum Status {
-        active, inactive, deleted, undefined
+    public enum Status {
+        active, inactive, deleted, undefined;
+
+        public static Status fromString(String string) {
+            try {
+                return Status.valueOf(string);
+            } catch (IllegalArgumentException e) {
+                return Status.undefined;
+            } catch (NullPointerException e) {
+                return Status.undefined;
+            }
+        }
     }
 
-    public static enum Type {
-        standard, meeting, undefined
+    public enum Type {
+        standard, meeting, undefined;
+
+        public static Type fromString(String string) {
+            try {
+                return Type.valueOf(string);
+            } catch (IllegalArgumentException e) {
+                return Type.undefined;
+            } catch (NullPointerException e) {
+                return Type.undefined;
+            }
+        }
     }
 
-    public static enum View {
-        badge, calendar, card, stream, table, undefined
+    public enum View {
+        badge, calendar, card, stream, table, undefined;
+
+        public static View fromString(String string) {
+            try {
+                return View.valueOf(string);
+            } catch (IllegalArgumentException e) {
+                return View.undefined;
+            } catch (NullPointerException e) {
+                return View.undefined;
+            }
+        }
     }
 
     public static class Configuration {
@@ -62,8 +91,6 @@ public class Application {
         private final String description = null;
         private final String external_id = null;
         private final String fivestar_label = null;
-
-        private final Integer icon_id = null;
         private final String icon = null;
         private final String item_name = null;
         private final String name = null;
@@ -71,8 +98,8 @@ public class Application {
         private final String thumbs_label = null;
         private final String usage = null;
         private final String yesno_label = null;
-        private final Type type = null;
-        private final View default_view = null;
+        private final String type = null;
+        private final String default_view = null;
 
         private Configuration() {
         }
@@ -102,7 +129,7 @@ public class Application {
         }
 
         public View getDefaultViewType() {
-            return default_view != null ? default_view : View.undefined;
+            return View.fromString(default_view);
         }
 
         public String getDescription() {
@@ -119,10 +146,6 @@ public class Application {
 
         public String getIconName() {
             return icon;
-        }
-
-        public Integer getIconId() {
-            return icon_id;
         }
 
         public String getItemName() {
@@ -146,7 +169,7 @@ public class Application {
         }
 
         public Type getType() {
-            return type != null ? type : Type.undefined;
+            return Type.fromString(type);
         }
 
         public String getUsageInfo() {
@@ -201,17 +224,17 @@ public class Application {
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
     private final Configuration config = null;
+    private final Field[] fields = null;
+    private final List<String> rights = null;
     private final Long current_revision = null;
     private final Long original_revision = null;
     private final Long app_id = null;
     private final Long default_view_id = null;
     private final Long original = null;
     private final Long space_id = null;
+    private final Profile owner = null;
     private final Space space = null;
-    // private final Integration integration = null;
-    private final List<Field> fields = null;
-    private final List<Right> rights = null;
-    private final Status status = null;
+    private final String status = null;
     private final String link = null;
     private final String link_add = null;
     private final String mailbox = null;
@@ -219,8 +242,6 @@ public class Application {
     private final String url = null;
     private final String url_add = null;
     private final String url_label = null;
-    private final User owner = null;
-    private final String item_name = null;
 
     private Application() {
     }
@@ -247,9 +268,9 @@ public class Application {
 
     /**
      * Returns the configuration settings for this application. If the API didn't provide a
-     * configuration bundle then a default configuration will be returned.
+     * configuration object then a default configuration will be returned.
      *
-     * @return A configuration bundle. Never null.
+     * @return A configuration object. Never null.
      */
     public Configuration getConfiguration() {
         return config != null ? config : new Configuration();
@@ -264,13 +285,13 @@ public class Application {
     }
 
     /**
-     * Gets a copy of the fields list for this application. No changes to the returned list will be
-     * reflected back to this applications fields list.
+     * Returns the singular name of this app (e.g. when creating a new item) as defined in the
+     * configuration object. This is a convenience method.
      *
-     * @return A list of fields. Never null.
+     * @return The singular name of this app.
      */
-    public List<Field> getFields() {
-        return fields != null ? new ArrayList<Field>(fields) : new ArrayList<Field>();
+    public String getItemName() {
+        return config != null ? config.getItemName() : null;
     }
 
     public String getLink() {
@@ -281,6 +302,16 @@ public class Application {
         return mailbox;
     }
 
+    /**
+     * Returns the name of this App as defined in the configuration object. This is a convenience
+     * method.
+     *
+     * @return The name of this app.
+     */
+    public String getName() {
+        return config != null ? config.getName() : null;
+    }
+
     public long getOriginAppId() {
         return Utils.getNative(original, -1L);
     }
@@ -289,7 +320,7 @@ public class Application {
         return Utils.getNative(original_revision, -1L);
     }
 
-    public User getOwner() {
+    public Profile getOwner() {
         return owner;
     }
 
@@ -302,11 +333,30 @@ public class Application {
     }
 
     public Status getStatus() {
-        return status != null ? status : Status.undefined;
+        return Status.fromString(status);
+    }
+
+    /**
+     * Gets a copy of the immutable array of fields for this application.
+     *
+     * @return A list of fields. Never null.
+     */
+    public Field[] getTemplate() {
+        return fields != null ? fields : new Field[0];
     }
 
     public String getToken() {
         return token;
+    }
+
+    /**
+     * Returns the {@link com.podio.sdk.domain.Application.Type Type} of this app as defined in the
+     * configuration object. This is a convenience method.
+     *
+     * @return The type of this app.
+     */
+    public Type getType() {
+        return config != null ? config.getType() : Type.undefined;
     }
 
     public String getUrl() {
@@ -315,10 +365,6 @@ public class Application {
 
     public String getUrlLabel() {
         return url_label;
-    }
-
-    public String getItemName() {
-        return item_name;
     }
 
     /**
@@ -331,7 +377,7 @@ public class Application {
      * @return Boolean true if all given permissions are found or no permissions are given. Boolean
      * false otherwise.
      */
-    public boolean hasRights(Right... permissions) {
+    public boolean hasAllRights(Right... permissions) {
         if (rights != null) {
             for (Right permission : permissions) {
                 if (!rights.contains(permission)) {
@@ -340,6 +386,29 @@ public class Application {
             }
 
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether the list of rights the user has for this application contains <em>any</em> of
+     * the given permissions. The method doesn't say anything about which of the given permissions
+     * match the test.
+     *
+     * @param permissions
+     *         The list of any single permission to check for.
+     *
+     * @return Boolean true if any of the given permissions match user rights. Boolean false
+     * otherwise.
+     */
+    public boolean hasAnyRights(Right... permissions) {
+        if (rights != null) {
+            for (Right permission : permissions) {
+                if (rights.contains(permission)) {
+                    return true;
+                }
+            }
         }
 
         return false;

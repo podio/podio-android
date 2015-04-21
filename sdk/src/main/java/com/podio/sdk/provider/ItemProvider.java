@@ -25,8 +25,6 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
-import com.podio.sdk.Request.ResultListener;
-import com.podio.sdk.Request.SessionListener;
 import com.podio.sdk.domain.Item;
 
 /**
@@ -93,9 +91,10 @@ public class ItemProvider extends Provider {
          * @param value
          *         The constraint value.
          *
-         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         * @return This instance of the ItemFilterProvider, to enable convenient chaining.
          *
-         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long)
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long, long)
          */
         public ItemFilterProvider onConstraint(String key, Object value) {
             filterData.addConstraint(key, value);
@@ -109,9 +108,10 @@ public class ItemProvider extends Provider {
          *         True if the API should remember this filter for you, otherwise false. Defaults to
          *         true.
          *
-         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         * @return This instance of the ItemFilterProvider, to enable convenient chaining.
          *
-         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long)
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long, long)
          */
         public ItemFilterProvider onDoRemember(boolean doRemember) {
             filterData.setDoRemember(doRemember);
@@ -127,9 +127,10 @@ public class ItemProvider extends Provider {
          * @param offset
          *         The zero-based offset of the first item in the span to fetch.
          *
-         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         * @return This instance of the ItemFilterProvider, to enable convenient chaining.
          *
-         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long)
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long, long)
          */
         public ItemFilterProvider onSpan(int maxCount, int offset) {
             filterData.setLimit(maxCount);
@@ -145,9 +146,10 @@ public class ItemProvider extends Provider {
          * @param doSortDescending
          *         True for a descending sort order, false for an ascending.
          *
-         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         * @return This instance of the ItemFilterProvider, to enable convenient chaining.
          *
-         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long)
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long, long)
          */
         public ItemFilterProvider onSortOrder(String fieldName, boolean doSortDescending) {
             filterData.setOrderByField(fieldName, doSortDescending);
@@ -162,9 +164,10 @@ public class ItemProvider extends Provider {
          * @param sortNullLast
          *         true if null values should be in the end, false otherwise.
          *
-         * @return This instance of the {@link ItemFilterProvider}, to enable convenient chaining.
+         * @return This instance of the ItemFilterProvider, to enable convenient chaining.
          *
-         * @see {@link ItemFilterProvider#get(int, ResultListener, ErrorListener, SessionListener)}
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long)
+         * @see com.podio.sdk.provider.ItemProvider.ItemFilterProvider#get(long, long)
          */
         public ItemFilterProvider onSortNullLast(boolean sortNullLast) {
             filterData.setSortNullLast(sortNullLast);
@@ -174,10 +177,10 @@ public class ItemProvider extends Provider {
 
         /**
          * Fetches a set of filtered items for the application with the given id.
-         * <p/>
+         * <p>
          * If no filter data has been configured, then the default filter will be used, with a
          * behavior as the API sees fit.
-         * <p/>
+         * <p>
          * Note that, while the other methods in this class are optional, this method must be called
          * in order for the filtered request to take place
          *
@@ -185,11 +188,6 @@ public class ItemProvider extends Provider {
          *         The id of the parent application.
          *
          * @return A ticket which the caller can use to identify this request with.
-         *
-         * @see {@link ItemFilterProvider#onConstraint(String, Object)}
-         * @see {@link ItemFilterProvider#onRemember(boolean)}
-         * @see {@link ItemFilterProvider#onSpan(int)}
-         * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
          */
         public Request<Item.FilterResult> get(long applicationId) {
             Path filter = new Path().withApplicationIdFilter(applicationId);
@@ -199,10 +197,10 @@ public class ItemProvider extends Provider {
         /**
          * Fetches a set of filtered items for the application with the given id and a given
          * view_id.
-         * <p/>
+         * <p>
          * If no filter data has been configured, then the default filter will be used, with a
          * behavior as the API sees fit.
-         * <p/>
+         * <p>
          * Note that, while the other methods in this class are optional, this method must be called
          * in order for the filtered request to take place
          *
@@ -212,11 +210,6 @@ public class ItemProvider extends Provider {
          *         The id of the view.
          *
          * @return A ticket which the caller can use to identify this request with.
-         *
-         * @see {@link ItemFilterProvider#onConstraint(String, Object)}
-         * @see {@link ItemFilterProvider#onRemember(boolean)}
-         * @see {@link ItemFilterProvider#onSpan(int)}
-         * @see {@link ItemFilterProvider#onSortOrder(String, boolean)}
          */
         public Request<Item.FilterResult> get(long applicationId, long viewId) {
             Path filter = new Path().withApplicationAndViewIdFilter(applicationId, viewId);

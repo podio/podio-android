@@ -1,28 +1,29 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 
 package com.podio.sdk.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -197,7 +198,7 @@ public class Item implements Pushable {
     private final Long item_id = null;
     private final Long revision = null;
     private final List<Field> fields;
-    private final List<Right> rights = null;
+    private final List<String> rights = null;
     private final List<String> tags = null;
     private final Space space = null;
     private final String created_on = null;
@@ -220,17 +221,20 @@ public class Item implements Pushable {
     }
 
     /**
-     * Creates a new, empty {@link Item} with the fields from the given
-     * application template.
-     * 
+     * Creates a new, empty {@link Item} with the fields from the given application template.
+     *
      * @param application
-     *        The application to use as a template.
+     *         The application to use as a template.
      */
     public Item(Application application) {
         this();
 
         if (application != null) {
-            this.fields.addAll(application.getFields());
+            Field[] template = application.getTemplate();
+
+            if (Utils.notEmpty(template)) {
+                this.fields.addAll(Arrays.asList(template));
+            }
         }
     }
 
@@ -256,13 +260,13 @@ public class Item implements Pushable {
     }
 
     /**
-     * Tries to set the given value to the field with the given name on this
-     * item.
-     * 
+     * Tries to set the given value to the field with the given name on this item.
+     *
      * @param field
-     *        The external id of the field.
+     *         The external id of the field.
      * @param value
-     *        The field type specific domain object describing the new value.
+     *         The field type specific domain object describing the new value.
+     *
      * @throws FieldTypeMismatchException
      *         If the passed value doesn't match the field with the given name.
      */
@@ -287,9 +291,9 @@ public class Item implements Pushable {
     }
 
     /**
-     * The same as {@link Item#addValue(String, Object)} but with some
-     * convenience validation of the value (replaces null with empty string).
-     * 
+     * The same as {@link Item#addValue(String, Object)} but with some convenience validation of the
+     * value (replaces null with empty string).
+     *
      * @throws FieldTypeMismatchException
      * @see {@link Item#addValue(String, Object)}
      */
@@ -308,7 +312,7 @@ public class Item implements Pushable {
 
     /**
      * Gets the end date of the calendar event as a Java Date object.
-     * 
+     *
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getCreatedDate() {
@@ -337,7 +341,7 @@ public class Item implements Pushable {
 
     /**
      * Gets the last event date of the item as a Java Date object.
-     * 
+     *
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getLastEventDate() {
@@ -373,16 +377,16 @@ public class Item implements Pushable {
     }
 
     /**
-     * Tries to return a value for the given field. The value may or may not
-     * have been verified by server. If you only want to get values that have
-     * been verified by the server you should call the
-     * {@link Item#getVerifiedValue(String)} method instead.
-     * 
+     * Tries to return a value for the given field. The value may or may not have been verified by
+     * server. If you only want to get values that have been verified by the server you should call
+     * the {@link com.podio.sdk.domain.Item#getVerifiedValue(String, int) getVerifiedValue()} method
+     * instead.
+     *
      * @param field
-     *        The external id of the field you wish to fetch the value for.
+     *         The external id of the field you wish to fetch the value for.
      * @param index
-     *        The index of the value you wish to get (fields can have multiple
-     *        values, you know).
+     *         The index of the value you wish to get (fields can have multiple values, you know).
+     *
      * @return A Object representation of the value for the field or null.
      */
     public Object getValue(String field, int index) {
@@ -410,12 +414,12 @@ public class Item implements Pushable {
 
     /**
      * Tries to return an API verified value for the given field.
-     * 
+     *
      * @param field
-     *        The external id of the field you wish to fetch the value for.
+     *         The external id of the field you wish to fetch the value for.
      * @param index
-     *        The index of the value you wish to get (fields can have multiple
-     *        values, you know).
+     *         The index of the value you wish to get (fields can have multiple values, you know).
+     *
      * @return A Object representation of the value for the field or null.
      */
     public Object getVerifiedValue(String field, int index) {
@@ -435,13 +439,14 @@ public class Item implements Pushable {
     }
 
     /**
-     * Checks whether the list of rights the user has for this application
-     * contains <em>all</em> the given permissions.
-     * 
+     * Checks whether the list of rights the user has for this application contains <em>all</em> the
+     * given permissions.
+     *
      * @param permissions
-     *        The list of permissions to check for.
-     * @return Boolean true if all given permissions are found or no permissions
-     *         are given. Boolean false otherwise.
+     *         The list of permissions to check for.
+     *
+     * @return Boolean true if all given permissions are found or no permissions are given. Boolean
+     * false otherwise.
      */
     public boolean hasRights(Right... permissions) {
         if (rights != null) {
@@ -466,13 +471,13 @@ public class Item implements Pushable {
     }
 
     /**
-     * Tries to clear the given value from the field with the given name on this
-     * item.
-     * 
+     * Tries to clear the given value from the field with the given name on this item.
+     *
      * @param field
-     *        The external id of the field.
+     *         The external id of the field.
      * @param value
-     *        The field type specific domain object describing the new value.
+     *         The field type specific domain object describing the new value.
+     *
      * @throws FieldTypeMismatchException
      *         If the passed value doesn't match the field with the given name.
      */
@@ -499,9 +504,10 @@ public class Item implements Pushable {
 
     /**
      * Looks for the field with with given external id in the list of fields.
-     * 
+     *
      * @param externalId
-     *        The external id of the field to find.
+     *         The external id of the field to find.
+     *
      * @return The field domain object if found, or null.
      */
     private Field findField(String externalId, List<Field> source) {
