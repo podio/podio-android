@@ -92,6 +92,7 @@ public class Application {
         private final String external_id = null;
         private final String fivestar_label = null;
         private final String icon = null;
+        private final Integer icon_id = null;
         private final String item_name = null;
         private final String name = null;
         private final String rsvp_label = null;
@@ -146,6 +147,10 @@ public class Application {
 
         public String getIconName() {
             return icon;
+        }
+
+        public Integer getIconId(){
+            return icon_id;
         }
 
         public String getItemName() {
