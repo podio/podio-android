@@ -451,7 +451,7 @@ public class Item implements Pushable {
     public boolean hasRights(Right... permissions) {
         if (rights != null) {
             for (Right permission : permissions) {
-                if (!rights.contains(permission)) {
+                if (!rights.contains(permission.name())) {
                     return false;
                 }
             }
