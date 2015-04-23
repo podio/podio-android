@@ -385,7 +385,7 @@ public class Application {
     public boolean hasAllRights(Right... permissions) {
         if (rights != null) {
             for (Right permission : permissions) {
-                if (!rights.contains(permission)) {
+                if (!rights.contains(permission.name())) {
                     return false;
                 }
             }
@@ -410,7 +410,7 @@ public class Application {
     public boolean hasAnyRights(Right... permissions) {
         if (rights != null) {
             for (Right permission : permissions) {
-                if (rights.contains(permission)) {
+                if (rights.contains(permission.name())) {
                     return true;
                 }
             }
