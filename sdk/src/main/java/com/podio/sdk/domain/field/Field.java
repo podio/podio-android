@@ -1,31 +1,31 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 
 package com.podio.sdk.domain.field;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -35,7 +35,7 @@ public abstract class Field implements Pushable {
     /**
      * The field status enumeration. Each field can have exactly one of these
      * status values.
-     * 
+     *
      * @author László Urszuly
      */
     public static enum Status {
@@ -45,7 +45,7 @@ public abstract class Field implements Pushable {
     /**
      * The field type enumeration. Each field can have exactly one of these type
      * values.
-     * 
+     *
      * @author Christian Holm
      */
     public static enum Type {
@@ -84,7 +84,7 @@ public abstract class Field implements Pushable {
     /**
      * Creates a client side field instance. This field is not automatically
      * sent to the API.
-     * 
+     *
      * @param externalId
      *        The desired external id for this field. The API reserves the right
      *        of ignoring this hint.
@@ -114,7 +114,7 @@ public abstract class Field implements Pushable {
     /**
      * Tries to locally add the given value to the current field. The changes
      * are NOT updated on the servers by this method call.
-     * 
+     *
      * @param value
      *        The value domain object to set.
      * @throws FieldTypeMismatchException
@@ -126,7 +126,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the external id of this field.
-     * 
+     *
      * @return A textual id.
      */
     public String getExternalId() {
@@ -135,7 +135,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the Podio id of this field.
-     * 
+     *
      * @return A numeric id.
      */
     public long getFieldId() {
@@ -144,7 +144,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the label of this field.
-     * 
+     *
      * @return The user-facing name of this field.
      */
     public String getLabel() {
@@ -153,7 +153,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the status of this field.
-     * 
+     *
      * @return An enumeration value, describing the field status.
      */
     public Status getStatus() {
@@ -162,7 +162,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the type of this field.
-     * 
+     *
      * @return An enumeration value, describing the field type.
      */
     public Type getType() {
@@ -171,7 +171,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the value at the given position for this field.
-     * 
+     *
      * @return A value object specific for this field type.
      */
     public Object getValue(int index) {
@@ -180,7 +180,7 @@ public abstract class Field implements Pushable {
 
     /**
      * Returns the number of values for this field.
-     * 
+     *
      * @return The size of the values list.
      */
     public int valuesCount() {
@@ -190,7 +190,7 @@ public abstract class Field implements Pushable {
     /**
      * Tries to locally clear the given value from the current field. The
      * changes are NOT updated on the servers by this method call.
-     * 
+     *
      * @param value
      *        The value domain object to clear.
      * @throws FieldTypeMismatchException
@@ -202,9 +202,25 @@ public abstract class Field implements Pushable {
 
     /**
      * Get the values that can be pushed back to the API.
-     * 
+     *
      * @return A field specific list of values.
      */
     protected abstract List<? extends Pushable> getPushables();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Field field = (Field) o;
+
+        if (!field_id.equals(field.field_id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return field_id.hashCode();
+    }
 }
