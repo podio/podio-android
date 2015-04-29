@@ -22,12 +22,21 @@
 package com.podio.sdk.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.podio.sdk.internal.Utils;
 
 public class Organization {
+
+    public static enum ContractStatus {
+        none, partial, full, undefined
+    }
+
+    public static enum PriceTier {
+        basic, plus, premium, undefined
+    }
 
     public static enum Role {
         admin, regular, light, undefined
@@ -45,34 +54,66 @@ public class Organization {
         free, sponsored, premium, undefined
     }
 
-    private final Integer rank = null;
-    private final Integer user_limit = null;
+    private final Boolean allow_add_space = null;
+    private final Boolean premium = null;
+    private final File image = null;
     private final Integer grants_count = null;
+    private final Integer rank = null;
+    private final Integer segment_size = null;
+    private final Integer user_limit = null;
+    private final List<String> rights = null;
     private final Long logo = null;
+    private final Long leadinator_item_id = null;
     private final Long org_id = null;
     private final Long sales_agent_id = null;
-    private final List<String> domains = null;
-    private final List<Right> rights = null;
-    private final List<Space> spaces = null;
-    private final Role role = null;
-    private final Segment segment = null;
-    private final Status status = null;
+    private final Space[] spaces = null;
+    private final String contract_status = null;
     private final String created_on = null;
     private final String name = null;
+    private final String role = null;
+    private final String segment = null;
+    private final String status = null;
+    private final String tier = null;
+    private final String type = null;
     private final String url = null;
     private final String url_label = null;
-    private final Type type = null;
-    private final User created_by = null;
+    private final String[] domains = null;
+    private final Profile created_by = null;
+    private final Profile sales_agent = null;
 
-    public User getCreatedByUser() {
+    public boolean doAllowCreateNewSpace() {
+        return allow_add_space;
+    }
+
+    public List<Space> getActiveSpaces() {
+        ArrayList<Space> activeSpaces = new ArrayList<Space>();
+        for (Space space : getAllSpaces()) {
+            if (space.isArchived()) {
+                continue;
+            }
+            activeSpaces.add(space);
+        }
+        return activeSpaces;
+    }
+
+    public List<Space> getAllSpaces() {
+        return Utils.notEmpty(spaces) ? Arrays.asList(spaces) : new ArrayList<Space>();
+    }
+
+    public ContractStatus getContractStatus() {
+        try {
+            return ContractStatus.valueOf(contract_status);
+        } catch (NullPointerException e) {
+            return ContractStatus.undefined;
+        } catch (IllegalArgumentException e) {
+            return ContractStatus.undefined;
+        }
+    }
+
+    public Profile getCreatedBy() {
         return created_by;
     }
 
-    /**
-     * Gets the end date of the calendar event as a Java Date object.
-     *
-     * @return A date object, or null if the date couldn't be parsed.
-     */
     public Date getCreatedDate() {
         return Utils.parseDateTime(created_on);
     }
@@ -82,11 +123,23 @@ public class Organization {
     }
 
     public List<String> getDomains() {
-        return domains != null ? new ArrayList<String>(domains) : new ArrayList<String>();
+        return Utils.notEmpty(domains) ? Arrays.asList(domains) : new ArrayList<String>();
+    }
+
+    public int getGrantCount() {
+        return Utils.getNative(grants_count, 0);
     }
 
     public long getId() {
         return Utils.getNative(org_id, -1L);
+    }
+
+    public File getImage() {
+        return image;
+    }
+
+    public long getLeadinatorItemId() {
+        return Utils.getNative(leadinator_item_id, -1L);
     }
 
     public long getLogoId() {
@@ -101,12 +154,18 @@ public class Organization {
         return Utils.getNative(rank, 0);
     }
 
-    public int getGrantCount() {
-        return Utils.getNative(grants_count, 0);
+    public Role getRole() {
+        try {
+            return Role.valueOf(role);
+        } catch (NullPointerException e) {
+            return Role.undefined;
+        } catch (IllegalArgumentException e) {
+            return Role.undefined;
+        }
     }
 
-    public Role getRole() {
-        return role != null ? role : Role.undefined;
+    public Profile getSalesAgent() {
+        return sales_agent;
     }
 
     public long getSalesAgentId() {
@@ -114,34 +173,47 @@ public class Organization {
     }
 
     public Segment getSegment() {
-        return segment != null ? segment : Segment.undefined;
-    }
-
-    /**
-     *
-     * @return returns all non-archived workspaces
-     */
-    public List<Space> getActiveSpaces() {
-        ArrayList<Space> activeSpaces = new ArrayList<Space>();
-        for(Space space :getAllSpaces()){
-            if(space.isArchived()){
-                continue;
-            }
-            activeSpaces.add(space);
+        try {
+            return Segment.valueOf(segment);
+        } catch (NullPointerException e) {
+            return Segment.undefined;
+        } catch (IllegalArgumentException e) {
+            return Segment.undefined;
         }
-        return activeSpaces;
     }
 
-    public List<Space>  getAllSpaces(){
-        return spaces != null ? new ArrayList<Space>(spaces) : new ArrayList<Space>();
+    public int getSegmentSize() {
+        return Utils.getNative(segment_size, -1);
     }
 
     public Status getStatus() {
-        return status != null ? status : Status.undefined;
+        try {
+            return Status.valueOf(status);
+        } catch (NullPointerException e) {
+            return Status.undefined;
+        } catch (IllegalArgumentException e) {
+            return Status.undefined;
+        }
+    }
+
+    public PriceTier getTier() {
+        try {
+            return PriceTier.valueOf(tier);
+        } catch (NullPointerException e) {
+            return PriceTier.undefined;
+        } catch (IllegalArgumentException e) {
+            return PriceTier.undefined;
+        }
     }
 
     public Type getType() {
-        return type != null ? type : Type.undefined;
+        try {
+            return Type.valueOf(type);
+        } catch (NullPointerException e) {
+            return Type.undefined;
+        } catch (IllegalArgumentException e) {
+            return Type.undefined;
+        }
     }
 
     public String getUrl() {
@@ -157,26 +229,61 @@ public class Organization {
     }
 
     /**
-     * Checks whether the list of rights the user has for this application
-     * contains <em>all</em> the given permissions.
+     * Checks whether the list of rights the user has for this Organization contains <em>all</em>
+     * the given permissions.
      *
-     * @param permissions
-     *        The list of permissions to check for.
-     * @return Boolean true if all given permissions are found or no permissions
-     *         are given. Boolean false otherwise.
+     * @param rights
+     *         The list of permissions to check for.
+     *
+     * @return Boolean true if all given permissions are granted for this Organization. Boolean
+     * false otherwise.
      */
-    public boolean hasRights(Right... permissions) {
-        if (rights != null) {
-            for (Right permission : permissions) {
-                if (!rights.contains(permission)) {
+    public boolean hasAllRights(Right... rights) {
+        if (Utils.isEmpty(this.rights) && Utils.isEmpty(rights)) {
+            // The user has no rights and wants to verify that.
+            return true;
+        }
+
+        if (Utils.notEmpty(this.rights) && Utils.notEmpty(rights)) {
+            for (Right right : rights) {
+                if (!this.rights.contains(right.name())) {
                     return false;
                 }
             }
-
             return true;
         }
 
         return false;
     }
 
+    /**
+     * Checks whether the list of rights the user has for this Organization contains <em>any</em> of
+     * the given permissions.
+     *
+     * @param rights
+     *         The list of permissions to check any single one for.
+     *
+     * @return Boolean true if any given permission is granted for this Organization. Boolean false
+     * otherwise.
+     */
+    public boolean hasAnyRights(Right... rights) {
+        if (Utils.isEmpty(this.rights) && Utils.isEmpty(rights)) {
+            // The user has no rights and wants to verify that.
+            return true;
+        }
+
+        if (Utils.notEmpty(this.rights) && Utils.notEmpty(rights)) {
+            for (Right right : rights) {
+                if (this.rights.contains(right.name())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isPremium() {
+        return Utils.getNative(premium, false);
+    }
 }

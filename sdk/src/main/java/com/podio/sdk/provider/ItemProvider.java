@@ -227,10 +227,10 @@ public class ItemProvider extends Provider {
      *
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Item.PushResult> create(long applicationId, Item item) {
+    public Request<Item.CreateResult> create(long applicationId, Item item) {
         Path filter = new Path().withApplicationId(applicationId);
-        Item.PushData data = item.getPushData();
-        return post(filter, data, Item.PushResult.class);
+        Item.CreateData data = item.getCreateData();
+        return post(filter, data, Item.CreateResult.class);
     }
 
     /**
@@ -265,10 +265,11 @@ public class ItemProvider extends Provider {
      *
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<Item.PushResult> update(long itemId, Item item) {
+    public Request<Item.CreateResult> update(long itemId, Item item) {
+        // TODO: Consider a mirror "ChangeData" + "ChangeResult" implementation to avoid confusion.
         Path filter = new Path().withItemId(itemId);
-        Item.PushData data = item.getPushData();
-        return put(filter, data, Item.PushResult.class);
+        Item.CreateData data = item.getCreateData();
+        return put(filter, data, Item.CreateResult.class);
     }
 
 }

@@ -31,12 +31,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.podio.sdk.domain.field.Field;
-import com.podio.sdk.domain.field.FieldTypeMismatchException;
-import com.podio.sdk.domain.field.Pushable;
 import com.podio.sdk.internal.Utils;
 
-public class Item implements Pushable {
-
+public class Item {
+    /**
+     * A class describing the filter for the client side search request.
+     */
     public static class FilterData {
         public static final transient int DEFAULT_LIMIT = 20;
         public static final transient int DEFAULT_OFFSET = 0;
@@ -55,7 +55,7 @@ public class Item implements Pushable {
             this.limit = DEFAULT_LIMIT;
             this.offset = DEFAULT_OFFSET;
             this.remember = true;
-            sort_nulls_last = false;
+            this.sort_nulls_last = false;
         }
 
         public void addConstraint(String key, Object value) {
@@ -123,6 +123,9 @@ public class Item implements Pushable {
         }
     }
 
+    /**
+     * A class representing the result given by the API when a items are being filtered.
+     */
     public static class FilterResult {
         private final Integer total = null;
         private final Integer filtered = null;
@@ -141,14 +144,24 @@ public class Item implements Pushable {
         }
     }
 
-    public static class PushData {
+    /**
+     * A class representing the new item the client wants to create.
+     */
+    public static class CreateData {
         @SuppressWarnings("unused")
-        private String external_id;
-        private Map<String, Object> fields;
+        private final String external_id;
+        @SuppressWarnings("unused")
+        private final Map<String, Object> fields;
+        @SuppressWarnings("unused")
+        private final List<Long> file_ids;
+        @SuppressWarnings("unused")
+        private final List<String> tags;
 
-        private PushData(String externalId) {
+        private CreateData(String externalId) {
             this.external_id = externalId;
             this.fields = new HashMap<String, Object>();
+            this.file_ids = new ArrayList<Long>();
+            this.tags = new ArrayList<String>();
         }
 
         private void setValues(String field, Object values) {
@@ -156,9 +169,20 @@ public class Item implements Pushable {
                 fields.put(field, values);
             }
         }
+
+        private void addFileId(long fileId) {
+            file_ids.add(fileId);
+        }
+
+        private void addTag(String tag) {
+            tags.add(tag);
+        }
     }
 
-    public static class PushResult {
+    /**
+     * A class representing the result given by the API when a new item is created.
+     */
+    public static class CreateResult {
         private final Long item_id = null;
         private final Long revision = null;
         private final String title = null;
@@ -176,6 +200,9 @@ public class Item implements Pushable {
         }
     }
 
+    /**
+     * A class representing an Excerpt of the item.
+     */
     public static class Excerpt {
         private final String label = null;
         private final String text = null;
@@ -192,28 +219,59 @@ public class Item implements Pushable {
     private final Application app = null;
     private final Boolean pinned = null;
     private final Boolean subscribed = null;
-    private final Excerpt excerpt = null;
+    private final Byline created_by = null;
+    private final Comment[] comments = null;
     private final Double priority = null;
+    private final Excerpt excerpt = null;
+    private final File[] files = null;
+    private final Grant grant = null;
+    private final Integer comment_count = null;
+    private final Integer file_count = null;
+    private final Integer grant_count = null;
+    private final Integer like_count = null;
     private final Integer subscribed_count = null;
-    private final Long item_id = null;
-    private final Long revision = null;
     private final List<Field> fields;
     private final List<String> rights = null;
-    private final List<String> tags = null;
+    private final Long app_item_id = null;
+    private final Long item_id = null;
+    private final Long revision = null;
+    private final Push push = null;
     private final Space space = null;
     private final String created_on = null;
     private final String external_id;
     private final String last_event_on = null;
     private final String link = null;
     private final String title = null;
-    private final Byline created_by = null;
+    private final String[] tags = null;
+
+    // These attributes are defined in the API source code,
+    // but not supported by the SDK right now.
+    //private final Object linked_account_id = null;
+    //private final Object linked_account_data = null;
+    //private final Object participants = null;
+    //private final Object recurrence = null;
+    //private final Object app_item_id_formatted = null;
+    //private final Object is_liked = null;
+    //private final Object ratings = null;
+    //private final Object revisions = null;
+    //private final Object initial_revision = null;
+    //private final Object current_revisiion = null;
+    //private final Object values = null;
+    //private final Object ref = null;
+    //private final Object refs = null;
+    //private final Object user_ratings = null;
+    //private final Object invite = null;
+    //private final Object reminder = null;
+    //private final Object presence = null;
+    //private final Object created_via = null;
+    //private final Object activity = null;
 
     // This member should not be included in any JSON built from this class,
     // hence the 'transient' keyword.
-    private transient final HashMap<String, List<Object>> data = new HashMap<String, List<Object>>();
+    private transient final HashMap<String, List<Field.Value>> unverifiedFieldValues = new HashMap<String, List<Field.Value>>();
 
     /**
-     * Creates a new, empty {@link Item} with no fields.
+     * Creates a new, empty Item with no fields.
      */
     public Item() {
         this.external_id = null;
@@ -221,7 +279,7 @@ public class Item implements Pushable {
     }
 
     /**
-     * Creates a new, empty {@link Item} with the fields from the given application template.
+     * Creates a new, empty Item with the fields from the given application template.
      *
      * @param application
      *         The application to use as a template.
@@ -238,25 +296,49 @@ public class Item implements Pushable {
         }
     }
 
-    @Override
-    public PushData getPushData() {
-        PushData pushData = new PushData(external_id);
+    /**
+     * Constructs a data structure which describes the changes to an item in a way so that the API
+     * understands it.
+     *
+     * @return The change data structure.
+     */
+    public CreateData getCreateData() {
+        CreateData createData = new CreateData(external_id);
 
         for (Field field : fields) {
             if (field != null) {
-                Object data = field.getPushData();
+                Object data = field.getCreateData();
 
                 if (data != null) {
-                    pushData.setValues(field.getExternalId(), data);
+                    createData.setValues(field.getExternalId(), data);
                 }
             }
         }
 
-        for (Entry<String, List<Object>> entry : data.entrySet()) {
-            pushData.setValues(entry.getKey(), entry.getValue());
+        // Iterate over our unknown field types and blindly trust that the associated values match
+        // the field. The server will do a validation and throw an error response back at us if they
+        // don't match.
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            List<Field.Value> values = entry.getValue();
+
+            if (Utils.notEmpty(key) && Utils.notEmpty(values)) {
+                ArrayList<Map<String, Object>> createDataValues = new ArrayList<Map<String, Object>>();
+
+                // Build "createData" objects for each value associated with the current field.
+                for (Field.Value value : values) {
+                    Map<String, Object> data = value != null ? value.getCreateData() : null;
+
+                    if (data != null) {
+                        createDataValues.add(data);
+                    }
+                }
+
+                createData.setValues(entry.getKey(), createDataValues);
+            }
         }
 
-        return pushData;
+        return createData;
     }
 
     /**
@@ -266,44 +348,38 @@ public class Item implements Pushable {
      *         The external id of the field.
      * @param value
      *         The field type specific domain object describing the new value.
-     *
-     * @throws FieldTypeMismatchException
-     *         If the passed value doesn't match the field with the given name.
      */
-    public void addValue(String field, Object value) throws FieldTypeMismatchException {
+    public void addValue(String field, Field.Value value) {
         Field f = findField(field, fields);
 
         if (f != null) {
             f.addValue(value);
         } else {
-            HashMap<String, Object> newValue = new HashMap<String, Object>();
-            newValue.put("value", value);
-
-            List<Object> values = data.get(field);
+            List<Field.Value> values = unverifiedFieldValues.get(field);
 
             if (values == null) {
-                values = new ArrayList<Object>();
-                data.put(field, values);
+                values = new ArrayList<Field.Value>();
+                unverifiedFieldValues.put(field, values);
             }
 
-            values.add(newValue);
+            values.add(value);
         }
-    }
-
-    /**
-     * The same as {@link Item#addValue(String, Object)} but with some convenience validation of the
-     * value (replaces null with empty string).
-     *
-     * @throws FieldTypeMismatchException
-     * @see {@link Item#addValue(String, Object)}
-     */
-    public void addValue(String field, String value) throws FieldTypeMismatchException {
-        String actualData = Utils.isEmpty(value) ? "" : value;
-        addValue(field, (Object) actualData);
     }
 
     public Application getApplication() {
         return app;
+    }
+
+    public long getApplicationItemId() {
+        return Utils.getNative(app_item_id, -1L);
+    }
+
+    public int getCommentCount() {
+        return Utils.getNative(comment_count, -1);
+    }
+
+    public List<Comment> getComments() {
+        return Utils.notEmpty(comments) ? Arrays.asList(comments) : Arrays.asList(new Comment[0]);
     }
 
     public Byline getCreatedBy() {
@@ -332,7 +408,23 @@ public class Item implements Pushable {
     }
 
     public List<Field> getFields() {
-        return fields != null ? new ArrayList<Field>(fields) : new ArrayList<Field>();
+        return Utils.notEmpty(fields) ? new ArrayList<Field>(fields) : new ArrayList<Field>();
+    }
+
+    public int getFileCount() {
+        return Utils.getNative(file_count, -1);
+    }
+
+    public List<File> getFiles() {
+        return Utils.notEmpty(files) ? Arrays.asList(files) : Arrays.asList(new File[0]);
+    }
+
+    public Grant getGrant() {
+        return grant;
+    }
+
+    public int getGrantCount() {
+        return Utils.getNative(grant_count, -1);
     }
 
     public long getId() {
@@ -352,24 +444,32 @@ public class Item implements Pushable {
         return last_event_on;
     }
 
-    public String getLink() {
-        return link;
+    public int getLikeCount() {
+        return Utils.getNative(like_count, -1);
     }
 
-    public int getNumberOfSubscriptions() {
-        return Utils.getNative(subscribed_count, 0);
+    public String getLink() {
+        return link;
     }
 
     public double getPriority() {
         return Utils.getNative(priority, 0.0d);
     }
 
+    public Push getPushMetaData() {
+        return push;
+    }
+
     public long getRevisionId() {
         return Utils.getNative(revision, -1L);
     }
 
+    public int getSubscribedCount() {
+        return Utils.getNative(subscribed_count, 0);
+    }
+
     public List<String> getTags() {
-        return tags != null ? new ArrayList<String>(tags) : new ArrayList<String>();
+        return Utils.notEmpty(tags) ? Arrays.asList(tags) : Arrays.asList(new String[0]);
     }
 
     public String getTitle() {
@@ -377,34 +477,31 @@ public class Item implements Pushable {
     }
 
     /**
-     * Tries to return a value for the given field. The value may or may not have been verified by
-     * server. If you only want to get values that have been verified by the server you should call
-     * the {@link com.podio.sdk.domain.Item#getVerifiedValue(String, int) getVerifiedValue()} method
-     * instead.
+     * Tries to return a value for the given field within this item. The value may or may not have
+     * been prior verified by the API. If you only want to get values that have been verified by the
+     * server you should call the {@link com.podio.sdk.domain.Item#getVerifiedValue(String, int)
+     * getVerifiedValue(String, int)} method instead.
      *
      * @param field
      *         The external id of the field you wish to fetch the value for.
      * @param index
      *         The index of the value you wish to get (fields can have multiple values, you know).
      *
-     * @return A Object representation of the value for the field or null.
+     * @return A generic {@link com.podio.sdk.domain.field.Field.Value Field.Value} representation
+     * of the value for the field, or null if no field could be found with the given external id.
+     * The caller is responsible for typecasting into any appropriate subclass implementation.
      */
-    public Object getValue(String field, int index) {
+    public Field.Value getValue(String field, int index) {
         if (Utils.notEmpty(field)) {
             Field f = findField(field, fields);
 
             if (f != null) {
                 return f.getValue(index);
             } else {
-                List<Object> values = data.get(field);
+                List<Field.Value> values = unverifiedFieldValues.get(field);
 
-                if (values != null) {
-                    @SuppressWarnings("unchecked")
-                    HashMap<String, Object> value = (HashMap<String, Object>) values.get(index);
-
-                    if (value != null) {
-                        return value.get("value");
-                    }
+                if (Utils.notEmpty(values)) {
+                    return values.get(index);
                 }
             }
         }
@@ -413,50 +510,137 @@ public class Item implements Pushable {
     }
 
     /**
-     * Tries to return an API verified value for the given field.
+     * Returns all values for the given field within this item. The value may or may not have been
+     * prior verified by the API. If you only want to get values that have been verified by the
+     * server you should call the {@link com.podio.sdk.domain.Item#getVerifiedValues(String)
+     * getVerifiedValues(String)} method instead.
      *
      * @param field
      *         The external id of the field you wish to fetch the value for.
-     * @param index
-     *         The index of the value you wish to get (fields can have multiple values, you know).
      *
-     * @return A Object representation of the value for the field or null.
+     * @return A list of generic {@link com.podio.sdk.domain.field.Field.Value Field.Value} objects,
+     * representing the values for the field, or an empty list (never null) if no field was found
+     * with the given external id. The caller is responsible for typecasting any items into any
+     * appropriate subclass implementation.
      */
-    public Object getVerifiedValue(String field, int index) {
+    public List<Field.Value> getValues(String field) {
+        List<Field.Value> values = null;
+
+        if (Utils.notEmpty(field)) {
+            Field f = findField(field, fields);
+            values = f != null ? f.getValues() : unverifiedFieldValues.get(field);
+        }
+
+        return values != null ? values : new ArrayList<Field.Value>(0);
+    }
+
+    /**
+     * Returns a value for the given API verified field.
+     *
+     * @param field
+     *         The external id of the field to fetch the value for.
+     * @param index
+     *         The index of the value to get.
+     *
+     * @return A generic {@link com.podio.sdk.domain.field.Field.Value Field.Value} representation
+     * of the value for the field, or null if no field could be found with the given external id.
+     * The caller is responsible for typecasting into any appropriate subclass implementation.
+     */
+    public Field.Value getVerifiedValue(String field, int index) {
+        Field f = null;
+
+        if (Utils.notEmpty(field)) {
+            f = findField(field, fields);
+        }
+
+        return f != null ? f.getValue(index) : null;
+    }
+
+    /**
+     * Returns all values for the given API verified field.
+     *
+     * @param field
+     *         The external id of the field to fetch the value for.
+     *
+     * @return A list of generic {@link com.podio.sdk.domain.field.Field.Value Field.Value} objects,
+     * representing the values for the field, or an empty list (never null) if no field was found
+     * with the given external id. The caller is responsible for typecasting any items into any
+     * appropriate subclass implementation.
+     */
+    public List<Field.Value> getVerifiedValues(String field) {
+        List<Field.Value> values = null;
+
         if (Utils.notEmpty(field)) {
             Field f = findField(field, fields);
 
-            if (f != null) {
-                return f.getValue(index);
+            if (field != null) {
+                values = f.getValues();
             }
         }
 
-        return null;
+        return values != null ? values : new ArrayList<Field.Value>(0);
     }
 
-    public Space getWorkspace() {
+    /**
+     * Returns the workspace the app of this item lives in.
+     *
+     * @return The {@link com.podio.sdk.domain.Space Space} domain object representation for the
+     * parent app.
+     */
+    public Space getSpace() {
         return space;
     }
 
     /**
-     * Checks whether the list of rights the user has for this application contains <em>all</em> the
-     * given permissions.
+     * Checks whether the list of rights the user has for this Organization contains <em>all</em>
+     * the given permissions.
      *
-     * @param permissions
+     * @param rights
      *         The list of permissions to check for.
      *
-     * @return Boolean true if all given permissions are found or no permissions are given. Boolean
+     * @return Boolean true if all given permissions are granted for this Organization. Boolean
      * false otherwise.
      */
-    public boolean hasRights(Right... permissions) {
-        if (rights != null) {
-            for (Right permission : permissions) {
-                if (!rights.contains(permission.name())) {
+    public boolean hasAllRights(Right... rights) {
+        if (Utils.isEmpty(this.rights) && Utils.isEmpty(rights)) {
+            // The user has no rights and wants to verify that.
+            return true;
+        }
+
+        if (Utils.notEmpty(this.rights) && Utils.notEmpty(rights)) {
+            for (Right right : rights) {
+                if (!this.rights.contains(right.name())) {
                     return false;
                 }
             }
-
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether the list of rights the user has for this Organization contains <em>any</em> of
+     * the given permissions.
+     *
+     * @param rights
+     *         The list of permissions to check any single one for.
+     *
+     * @return Boolean true if any given permission is granted for this Organization. Boolean false
+     * otherwise.
+     */
+    public boolean hasAnyRights(Right... rights) {
+        if (Utils.isEmpty(this.rights) && Utils.isEmpty(rights)) {
+            // The user has no rights and wants to verify that.
+            return true;
+        }
+
+        if (Utils.notEmpty(this.rights) && Utils.notEmpty(rights)) {
+            for (Right right : rights) {
+                if (this.rights.contains(right.name())) {
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -471,58 +655,45 @@ public class Item implements Pushable {
     }
 
     /**
-     * Tries to clear the given value from the field with the given name on this item.
+     * Removes the given value from the field with the given name on this item.
      *
      * @param field
      *         The external id of the field.
      * @param value
      *         The field type specific domain object describing the new value.
-     *
-     * @throws FieldTypeMismatchException
-     *         If the passed value doesn't match the field with the given name.
      */
-    public void removeValue(String field, Object value) throws FieldTypeMismatchException {
+    public void removeValue(String field, Field.Value value) {
         Field f = findField(field, fields);
 
         if (f != null) {
             f.removeValue(value);
         } else {
-            List<Object> values = data.get(field);
+            List<Field.Value> values = unverifiedFieldValues.get(field);
 
-            if (values != null) {
-                for (Object o : values) {
-                    @SuppressWarnings("unchecked")
-                    HashMap<String, Object> v = (HashMap<String, Object>) o;
-
-                    if (v.get("value").equals(value)) {
-                        values.remove(o);
-                    }
-                }
+            if (Utils.notEmpty(values)) {
+                values.remove(value);
             }
         }
     }
 
     /**
-     * Looks for the field with with given external id in the list of fields.
+     * Looks for a field with with a known external id in a collection of fields.
      *
      * @param externalId
      *         The external id of the field to find.
+     * @param source
+     *         The collection of fields to search in.
      *
-     * @return The field domain object if found, or null.
+     * @return The field domain object if found, otherwise null.
      */
     private Field findField(String externalId, List<Field> source) {
-        if (Utils.isEmpty(externalId)) {
-            throw new IllegalArgumentException("externalId cannot be empty");
-        }
-
-        if (source != null) {
+        if (Utils.notEmpty(externalId) && Utils.notEmpty(source)) {
             for (Field field : source) {
                 if (field != null && externalId.equals(field.getExternalId())) {
                     return field;
                 }
             }
         }
-
         return null;
     }
 }
