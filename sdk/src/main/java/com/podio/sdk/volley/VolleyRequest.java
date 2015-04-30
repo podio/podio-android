@@ -230,7 +230,12 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
             if (Utils.notEmpty(errorJson) && responseCode > 0) {
                 error = new ApiError(errorJson, responseCode, volleyError);
             } else {
-                error = new PodioError(volleyError);
+                try {
+                    error = new PodioError(volleyError);
+                } catch (Exception e) {
+                    error = new PodioError("Unknown Error");
+                    error.setStackTrace(e.getStackTrace());
+                }
             }
         }
 
