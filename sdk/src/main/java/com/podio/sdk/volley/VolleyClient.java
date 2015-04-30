@@ -183,16 +183,9 @@ public class VolleyClient implements Client {
     @Override
     public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfResult) {
         String url = filter.buildUri(scheme, authority).toString();
+        String body = item != null ? JsonParser.toJson(item) : null;
 
-        VolleyRequest<T> request;
-
-        if (method == Request.Method.POST && item instanceof File.PushData) {
-            request = VolleyRequest.newUploadRequest(url, (File.PushData) item, classOfResult);
-        } else {
-            String body = item != null ? JsonParser.toJson(item) : null;
-            request = VolleyRequest.newRequest(method, url, body, classOfResult);
-        }
-
+        VolleyRequest<T> request = VolleyRequest.newRequest(method, url, body, classOfResult);
         request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
         addToRequestQueue(request);
 

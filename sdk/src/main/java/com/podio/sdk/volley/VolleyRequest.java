@@ -31,93 +31,16 @@ import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.NoResponseError;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;
-import com.podio.sdk.domain.File;
 import com.podio.sdk.internal.Utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
-
-    private static final class Multipart {
-        private final String boundary;
-        private final File.PushData file;
-
-        private Multipart(File.PushData file) {
-            this.boundary = UUID.randomUUID().toString().replaceAll("[^A-Za-z0-9 ]", "");
-            this.file = file;
-        }
-
-        private byte[] constructBody() throws IOException {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            char[] crlf = { 13, 10 };
-
-            byte[] bytes = new StringBuilder()
-                    /* boundary */
-                    .append(crlf)
-                    .append(crlf)
-                    .append("--")
-                    .append(boundary)
-                    /* file name part */
-                    .append(crlf)
-                    .append("Content-Disposition: form-data; name=\"filename\"")
-                    .append(crlf)
-                    .append("Content-Type: text/plain; charset=\"utf-8\"")
-                    .append(crlf)
-                    .append(crlf)
-                    .append(file.getName())
-                    /* boundary */
-                    .append(crlf)
-                    .append("--")
-                    .append(boundary)
-                    /* source part */
-                    .append(crlf)
-                    .append("Content-Disposition: form-data; name=\"source\"; filename=\"")
-                    .append(file.getFile().getName())
-                    .append("\"")
-                    .append(crlf)
-                    .append("Content-Type: ")
-                    .append(file.getMimeType())
-                    .append(crlf)
-                    .append("Content-Transfer-Encoding: binary")
-                    .append(crlf)
-                    .append(crlf).toString().getBytes();
-
-            // Write the multipart data to the byte array stream.
-            byteArrayOutputStream.write(bytes, 0, bytes.length);
-
-            // Write the file content to the byte array stream.
-            byte[] buffer = new byte[1024];
-            int readCount;
-            FileInputStream fileInputStream = new FileInputStream(file.getFile());
-
-            while ((readCount = fileInputStream.read(buffer, 0, buffer.length)) > 0) {
-                byteArrayOutputStream.write(buffer, 0, readCount);
-            }
-
-            fileInputStream.close();
-
-            // Write the closing boundary to the byte array stream.
-            bytes = new StringBuilder()
-                    .append(crlf)
-                    .append("--")
-                    .append(boundary)
-                    .append("--")
-                    .append(crlf).toString().getBytes();
-
-            byteArrayOutputStream.write(bytes, 0, bytes.length);
-
-            return byteArrayOutputStream.toByteArray();
-        }
-    }
 
     public static ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
         return VolleyCallbackManager.addGlobalErrorListener(errorListener);
@@ -152,29 +75,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
-
-        return request;
-    }
-
-    static <E> VolleyRequest<E> newUploadRequest(String url, File.PushData file, Class<E> classOfResult) {
-        Multipart multipart = new Multipart(file);
-
-        byte[] body;
-
-        try {
-            body = multipart.constructBody();
-        } catch (IOException e) {
-            body = null;
-        }
-
-        int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
-        int contentLength = body != null ? body.length : 0;
-
-        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
-        request.contentType = "multipart/form-data; boundary=\"" + multipart.boundary + "\"";
-        request.headers.put("Content-Length", Integer.toString(contentLength, 10));
-        request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
-        request.body = body;
 
         return request;
     }
