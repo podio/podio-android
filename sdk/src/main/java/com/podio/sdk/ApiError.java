@@ -90,11 +90,7 @@ public class ApiError extends PodioError {
         this.statusCode = statusCode;
 
         if (Utils.notEmpty(json)) {
-            try {
-                errorBundle = JsonParser.fromJson(json, ErrorBundle.class);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Couldn't parse API error json: " + json, e);
-            }
+            errorBundle = JsonParser.fromJson(json, ErrorBundle.class);
         }
     }
 

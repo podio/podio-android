@@ -25,6 +25,7 @@ package com.podio.sdk.json;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.podio.sdk.domain.TaskAction;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.notification.Notification;
@@ -48,7 +49,13 @@ public class JsonParser {
             .create();
 
     public static <T> T fromJson(String json, Class<T> classOfResult) {
-        return GSON.fromJson(json, classOfResult);
+        try {
+            return GSON.fromJson(json, classOfResult);
+        } catch (JsonSyntaxException e) {
+            throw new JsonSyntaxException("Couldn't parse API error json: " + json, e);
+        } catch (IllegalStateException e) {
+            throw new IllegalStateException("Couldn't parse API error json: " + json, e);
+        }
     }
 
     public static <T> String toJson(T item) {
