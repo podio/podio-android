@@ -42,58 +42,6 @@ import java.util.concurrent.TimeUnit;
 
 public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Request<T> {
 
-    public static ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
-        return VolleyCallbackManager.addGlobalErrorListener(errorListener);
-    }
-
-    public static SessionListener addGlobalSessionListener(SessionListener sessionListener) {
-        return VolleyCallbackManager.addGlobalSessionListener(sessionListener);
-    }
-
-    public static ErrorListener removeGlobalErrorListener(ErrorListener errorListener) {
-        return VolleyCallbackManager.addGlobalErrorListener(errorListener);
-    }
-
-    public static SessionListener removeGlobalSessionListener(SessionListener sessionListener) {
-        return VolleyCallbackManager.removeGlobalSessionListener(sessionListener);
-    }
-
-    static <E> VolleyRequest<E> newRequest(com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
-        int volleyMethod = parseMethod(method);
-
-        VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
-        request.contentType = "application/json; charset=UTF-8";
-        request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
-        request.body = Utils.notEmpty(body) ? body.getBytes() : null;
-
-        return request;
-    }
-
-    static VolleyRequest<Void> newAuthRequest(String url, Map<String, String> params) {
-        int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
-
-        VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
-        request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
-        request.params.putAll(params);
-
-        return request;
-    }
-
-    protected static int parseMethod(com.podio.sdk.Request.Method method) {
-        switch (method) {
-            case DELETE:
-                return com.android.volley.Request.Method.DELETE;
-            case GET:
-                return com.android.volley.Request.Method.GET;
-            case POST:
-                return com.android.volley.Request.Method.POST;
-            case PUT:
-                return com.android.volley.Request.Method.PUT;
-            default:
-                return com.android.volley.Request.Method.GET;
-        }
-    }
-
     private final VolleyCallbackManager<T> callbackManager;
 
     private final Class<T> classOfResult;
@@ -108,12 +56,14 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private boolean isDone;
     private boolean isAuthRequest;
     private boolean hasSessionChanged;
+    private Session session;
 
-    protected VolleyRequest(int method, String url, Class<T> resultType, boolean isAuthRequest) {
+    protected VolleyRequest(GlobalListenerManager<SessionListener> globalsessionListenerManager, Session session,int method, String url, Class<T> resultType, boolean isAuthRequest) {
         super(method, url, null);
         setShouldCache(false);
 
-        this.callbackManager = new VolleyCallbackManager<T>();
+        this.session = session;
+        this.callbackManager = new VolleyCallbackManager<>(globalsessionListenerManager, session);
         this.classOfResult = resultType;
 
         this.headers = new HashMap<String, String>();
@@ -154,7 +104,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        String accessToken = Session.accessToken();
+        String accessToken = session.accessToken();
 
         if (!isAuthRequest && Utils.notEmpty(accessToken)) {
             headers.put("Authorization", "Bearer " + accessToken);
@@ -207,7 +157,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
         if (params.containsKey("refresh_token")) {
-            String refreshToken = Session.refreshToken();
+            String refreshToken = session.refreshToken();
             params.put("refresh_token", refreshToken);
         }
 
@@ -258,7 +208,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
             String json = new String(networkResponse.data, charSet);
 
             if (isAuthRequest) {
-                Session.set(json);
+                session.set(json);
                 hasSessionChanged = true;
                 result = null;
                 response = Response.success(null, cacheHeaders);
@@ -282,16 +232,40 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return response;
     }
 
-    public ErrorListener removeErrorListener(ErrorListener errorListener) {
-        return callbackManager.removeErrorListener(errorListener);
+   static <E> VolleyRequest<E> newRequest(GlobalListenerManager<SessionListener> globalsessionListenerManager, Session session, com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
+        int volleyMethod = parseMethod(method);
+
+        VolleyRequest<E> request = new VolleyRequest<E>(globalsessionListenerManager,session,volleyMethod, url, classOfResult, false);
+        request.contentType = "application/json; charset=UTF-8";
+        request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
+        request.body = Utils.notEmpty(body) ? body.getBytes() : null;
+
+        return request;
     }
 
-    public ResultListener<T> removeResultListener(ResultListener<T> resultListener) {
-        return callbackManager.removeResultListener(resultListener);
+    static VolleyRequest<Void> newAuthRequest(GlobalListenerManager<SessionListener> globalsessionListenerManager, Session session, String url, Map<String, String> params) {
+        int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
+
+        VolleyRequest<Void> request = new VolleyRequest<Void>(globalsessionListenerManager,session,volleyMethod, url, null, true);
+        request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
+        request.params.putAll(params);
+
+        return request;
     }
 
-    public SessionListener removeSessionListener(SessionListener sessionListener) {
-        return callbackManager.removeSessionListener(sessionListener);
+    static protected int parseMethod(com.podio.sdk.Request.Method method) {
+        switch (method) {
+            case DELETE:
+                return com.android.volley.Request.Method.DELETE;
+            case GET:
+                return com.android.volley.Request.Method.GET;
+            case POST:
+                return com.android.volley.Request.Method.POST;
+            case PUT:
+                return com.android.volley.Request.Method.PUT;
+            default:
+                return com.android.volley.Request.Method.GET;
+        }
     }
 
     private String getResponseBody(NetworkResponse networkResponse) {

@@ -36,7 +36,6 @@ import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
 import com.podio.sdk.provider.ViewProvider;
 import com.podio.sdk.volley.VolleyClient;
-import com.podio.sdk.volley.VolleyRequest;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -47,85 +46,86 @@ import javax.net.ssl.SSLSocketFactory;
  * @author László Urszuly
  */
 public class Podio {
+    private Session session;
     /**
      * The default request client for the providers.
      */
-    protected static VolleyClient restClient = new VolleyClient();
+    protected VolleyClient restClient;
 
     /**
      * Enables means of easy operating on the Application API end point.
      */
-    public static final ApplicationProvider application = new ApplicationProvider();
+    public final ApplicationProvider application = new ApplicationProvider();
 
     /**
      * Enables means of easy operating on the Calendar API end point.
      */
-    public static final CalendarProvider calendar = new CalendarProvider();
+    public final CalendarProvider calendar = new CalendarProvider();
 
     /**
      * Enables means of easy operating on the {@link ContactProvider} API end point.
      */
-    public static final ContactProvider contact = new ContactProvider();
+    public final ContactProvider contact = new ContactProvider();
 
     /**
      * Enables means of easy operating on the Conversation API end point.
      */
-    public static final ConversationProvider conversation = new ConversationProvider();
+    public final ConversationProvider conversation = new ConversationProvider();
 
     /**
      * Enables means of easy authentication.
      */
-    public static final ClientProvider client = new ClientProvider();
+    public final ClientProvider client = new ClientProvider();
 
     /**
      * Enables means of easy operating on the File API end point.
      */
-    public static final FileProvider file = new FileProvider();
+    public final FileProvider file = new FileProvider();
 
     /**
      * Enables means of easy operating on the Item API end point.
      */
-    public static final ItemProvider item = new ItemProvider();
+    public final ItemProvider item = new ItemProvider();
 
     /**
      * Enables means of easy operating on the Organization API end point.
      */
-    public static final OrganizationProvider organization = new OrganizationProvider();
+    public final OrganizationProvider organization = new OrganizationProvider();
 
     /**
      * Enables means of easy operating on the User API end point.
      */
-    public static final UserProvider user = new UserProvider();
+    public final UserProvider user = new UserProvider();
 
     /**
      * Enables means of easy operating on the View API end point.
      */
-    public static final ViewProvider view = new ViewProvider();
+    public final ViewProvider view = new ViewProvider();
 
     /**
      * Enables means of easy operating on the Task API end point.
      */
-    public static final TaskProvider task = new TaskProvider();
+    public final TaskProvider task = new TaskProvider();
 
     /**
      * Enables means of easy operating on the Notification API end point.
      */
-    public static final NotificationProvider notification = new NotificationProvider();
+    public final NotificationProvider notification = new NotificationProvider();
 
     /**
      * Enables means of easy operating on the Stream API end point.
      */
-    public static final StreamProvider stream = new StreamProvider();
+    public final StreamProvider stream = new StreamProvider();
 
     /**
      * Enables means of easy operating on the Comment API end point.
      */
-    public static final CommentProvider comment = new CommentProvider();
+    public final CommentProvider comment = new CommentProvider();
 
     /**
      * Enables means of easy operating on the Rating API end point.
      */
-    public static final RatingProvider rating = new RatingProvider();
+    public final RatingProvider rating = new RatingProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
@@ -140,8 +140,8 @@ public class Podio {
      *
      * @return The registered listener on success, null otherwise.
      */
-    public static ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
-        return VolleyRequest.addGlobalErrorListener(errorListener);
+    public ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
+        return restClient.addGlobalErrorListener(errorListener);
     }
 
     /**
@@ -157,8 +157,8 @@ public class Podio {
      *
      * @return The registered listener on success, null otherwise.
      */
-    public static SessionListener addGlobalSessionListener(SessionListener sessionListener) {
-        return VolleyRequest.addGlobalSessionListener(sessionListener);
+    public SessionListener addGlobalSessionListener(SessionListener sessionListener) {
+        return restClient.addGlobalSessionListener(sessionListener);
     }
 
     /**
@@ -170,8 +170,8 @@ public class Podio {
      * @return The listener that has just been unregistered, or null if the listener couldn't be
      * found.
      */
-    public static ErrorListener removeGlobalErrorListener(ErrorListener errorListener) {
-        return VolleyRequest.removeGlobalErrorListener(errorListener);
+    public ErrorListener removeGlobalErrorListener(ErrorListener errorListener) {
+        return restClient.removeGlobalErrorListener(errorListener);
     }
 
     /**
@@ -183,8 +183,8 @@ public class Podio {
      * @return The listener that has just been unregistered, or null if the listener couldn't be
      * found.
      */
-    public static SessionListener removeGlobalSessionListener(SessionListener sessionListener) {
-        return VolleyRequest.removeGlobalSessionListener(sessionListener);
+    public SessionListener removeGlobalSessionListener(SessionListener sessionListener) {
+        return restClient.removeGlobalSessionListener(sessionListener);
     }
 
     /**
@@ -197,29 +197,16 @@ public class Podio {
      * @param clientSecret
      *         The corresponding Podio client secret.
      *
-     * @see Podio#setup(Context, String, String, String, String, SSLSocketFactory)
      */
-    public static void setup(Context context, String clientId, String clientSecret) {
-        setup(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null);
+    public Podio(Context context, String clientId, String clientSecret) {
+        init(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null);
     }
 
-    /**
-     * Initializes the Podio SDK with the given client credentials. This method MUST be called
-     * before any other request is made.
-     *
-     * @param context
-     *         The context to initialize the cache database and network clients in.
-     * @param authority
-     *         The host the SDK will target with its requests.
-     * @param clientId
-     *         The pre-shared Podio client id.
-     * @param clientSecret
-     *         The corresponding Podio client secret.
-     * @param sslSocketFactory
-     *         Optional custom SSL socket factory to use in the HTTP requests.
-     */
-    public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
-        restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
+    private void init(Context context, String scheme, String apiAuthority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
+        session = new Session();
+        restClient = new VolleyClient(session);
+
+        restClient.setup(context, scheme, apiAuthority, clientId, clientSecret, sslSocketFactory);
 
         // Providers relying on a rest client in order to operate properly.
         application.setClient(restClient);
@@ -240,6 +227,25 @@ public class Podio {
     }
 
     /**
+     * Initializes the Podio SDK with the given client credentials. This method MUST be called
+     * before any other request is made.
+     *
+     * @param context
+     *         The context to initialize the cache database and network clients in.
+     * @param authority
+     *         The host the SDK will target with its requests.
+     * @param clientId
+     *         The pre-shared Podio client id.
+     * @param clientSecret
+     *         The corresponding Podio client secret.
+     * @param sslSocketFactory
+     *         Optional custom SSL socket factory to use in the HTTP requests.
+     */
+    public Podio(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
+        init(context,scheme,authority,clientId,clientSecret,sslSocketFactory);
+    }
+
+    /**
      * Restores a previously created Podio session. Even though the access token may have expired,
      * the refresh token can be used to get a new access token. The idea here is to enable the
      * caller to persist the session and avoid an unnecessary re-authentication. NOTE! The server
@@ -253,8 +259,8 @@ public class Podio {
      * @param expires
      *         The previously stored expire time stamp (in seconds).
      */
-    public static void restoreSession(String accessToken, String refreshToken, long expires) {
-        Session.set(accessToken, refreshToken, expires);
+    public void restoreSession(String accessToken, String refreshToken, long expires) {
+        session.set(accessToken, refreshToken, expires);
     }
 
 }

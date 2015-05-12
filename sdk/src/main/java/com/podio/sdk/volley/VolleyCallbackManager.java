@@ -28,39 +28,23 @@ import com.podio.sdk.internal.CallbackManager;
 import java.util.ArrayList;
 
 final class VolleyCallbackManager<T> extends CallbackManager<T> {
-    static final ArrayList<SessionListener> GLOBAL_SESSION_LISTENERS;
-
-    static {
-        GLOBAL_SESSION_LISTENERS = new ArrayList<SessionListener>();
-    }
-
-    static SessionListener addGlobalSessionListener(SessionListener sessionListener) {
-        return sessionListener != null && GLOBAL_SESSION_LISTENERS.add(sessionListener) ?
-                sessionListener :
-                null;
-    }
-
-    static SessionListener removeGlobalSessionListener(SessionListener sessionListener) {
-        int index = GLOBAL_SESSION_LISTENERS.indexOf(sessionListener);
-
-        return GLOBAL_SESSION_LISTENERS.contains(sessionListener) ?
-                GLOBAL_SESSION_LISTENERS.remove(index) :
-                null;
-    }
-
+    private final Session session;
     private final ArrayList<SessionListener> sessionListeners;
-    private final Object SESSION_LISTENER_LOCK = new Object();
+    private final Object sessionListenerLock = new Object();
+    private final GlobalListenerManager<SessionListener> globalsessionListenerManager;
 
-    VolleyCallbackManager() {
+    VolleyCallbackManager(GlobalListenerManager<SessionListener> globalsessionListenerManager, Session session) {
+        this.globalsessionListenerManager = globalsessionListenerManager;
+        this.session = session;
         this.sessionListeners = new ArrayList<SessionListener>();
     }
 
     void addSessionListener(SessionListener listener, boolean deliverSessionNow) {
         if (listener != null) {
             if (deliverSessionNow) {
-                listener.onSessionChanged(Session.accessToken(), Session.refreshToken(), Session.transferToken(), Session.expires());
+                listener.onSessionChanged(session.accessToken(), session.refreshToken(), session.transferToken(), session.expires());
             } else {
-                synchronized (SESSION_LISTENER_LOCK) {
+                synchronized (sessionListenerLock) {
                     sessionListeners.add(listener);
                 }
             }
@@ -68,12 +52,12 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
     }
 
     void deliverSession() {
-        String accessToken = Session.accessToken();
-        String refreshToken = Session.refreshToken();
-        String transferToken = Session.transferToken();
-        long expires = Session.expires();
+        String accessToken = session.accessToken();
+        String refreshToken = session.refreshToken();
+        String transferToken = session.transferToken();
+        long expires = session.expires();
 
-        synchronized (SESSION_LISTENER_LOCK) {
+        synchronized (sessionListenerLock) {
             boolean isConsumed = false;
             for (SessionListener listener : sessionListeners) {
                 if (listener != null) {
@@ -91,7 +75,7 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
             }
         }
 
-        for (SessionListener listener : GLOBAL_SESSION_LISTENERS) {
+        for (SessionListener listener : globalsessionListenerManager.getGlobalErrorListeners()) {
             if (listener != null) {
                 if (listener.onSessionChanged(accessToken, refreshToken, transferToken, expires)) {
                     // The callback consumed the event, stop the bubbling.
@@ -102,7 +86,7 @@ final class VolleyCallbackManager<T> extends CallbackManager<T> {
     }
 
     SessionListener removeSessionListener(SessionListener listener) {
-        synchronized (SESSION_LISTENER_LOCK) {
+        synchronized (sessionListenerLock) {
             if (sessionListeners.contains(listener)) {
                 int index = sessionListeners.indexOf(listener);
                 return sessionListeners.remove(index);

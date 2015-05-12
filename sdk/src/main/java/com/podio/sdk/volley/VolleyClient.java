@@ -30,7 +30,6 @@ import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.Session;
-import com.podio.sdk.domain.File;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.json.JsonParser;
 
@@ -100,7 +99,7 @@ public class VolleyClient implements Client {
             // If the access token has changed since this request was originally executed (say, as a
             // result of an other request refreshing it), the 401 status isn't necessarily valid any
             // more, hence, we should only re-authenticate if our access token is intact.
-            if (error instanceof AuthFailureError && accessToken.equals(Session.accessToken())) {
+            if (error instanceof AuthFailureError && accessToken.equals(session.accessToken())) {
                 Uri uri = buildAuthUri();
 
                 if (uri == null) {
@@ -113,7 +112,7 @@ public class VolleyClient implements Client {
                 HashMap<String, String> params = parseParams(uri);
 
                 // Re-authenticate on a prioritized request queue.
-                VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params);
+                VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(globalSessionListenerManager,session, url, params);
                 reAuthRequest.setRetryPolicy(new DefaultRetryPolicy(CLIENT_DEFAULT_TIMEOUT_MS, 0, 0));
                 addToRefreshQueue(reAuthRequest);
 
@@ -128,68 +127,48 @@ public class VolleyClient implements Client {
         }
     }
 
+    private Session session;
+
     protected String clientId;
     protected String clientSecret;
     protected String scheme;
     protected String authority;
 
     // All implementations and instances will share these request queues.
-    private static RequestQueue volleyRequestQueue;
-    private static RequestQueue volleyRefreshQueue;
+    private RequestQueue volleyRequestQueue;
+    private RequestQueue volleyRefreshQueue;
+    private GlobalListenerManager<Request.ErrorListener> globalErrorListenerManager;
+    private GlobalListenerManager<Request.SessionListener> globalSessionListenerManager;
 
-    @Override
-    public Request<Void> authenticateWithUserCredentials(String username, String password) {
-        return authenticate(new AuthPath()
-                .withUserCredentials(clientId, clientSecret, username, password)
-                .buildUri(scheme, authority));
+    public VolleyClient(Session session) {
+        this.session = session;
+        this.globalErrorListenerManager = new GlobalListenerManager<Request.ErrorListener>();
+        this.globalSessionListenerManager = new GlobalListenerManager<Request.SessionListener>();
     }
 
-    @Override
-    public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
-        return authenticate(new AuthPath()
-                .withAppCredentials(clientId, clientSecret, appId, appToken)
-                .buildUri(scheme, authority));
+    protected GlobalListenerManager<Request.SessionListener> getGlobalSessionListenerManager() {
+        return globalSessionListenerManager;
     }
 
-    @Override
-    public Request<Void> authenticateWithTransferToken(String transferToken) {
-        return authenticate(new AuthPath()
-                .withTransferToken(clientId, clientSecret, transferToken)
-                .buildUri(scheme, authority));
+    protected Session getSession() {
+        return session;
     }
 
-    @Override
-    @Deprecated
-    public Request<Void> forceRefreshTokens() {
-        // Prepare to re-authenticate.
-        Uri uri = buildAuthUri();
-
-        // Opt out if we can't re-authenticate.
-        if (uri == null) {
-            clearRequestQueue();
-            return null;
-        }
-
-        String url = parseUrl(uri);
-        HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> authRequest = VolleyRequest.newAuthRequest(url, params);
-
-        // Re-authenticate on a prioritized request queue.
-        addToRefreshQueue(authRequest);
-
-        return authRequest;
+    public Request.ErrorListener addGlobalErrorListener(Request.ErrorListener errorListener) {
+        return globalErrorListenerManager.addGlobalListener(errorListener);
     }
 
-    @Override
-    public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfResult) {
-        String url = filter.buildUri(scheme, authority).toString();
-        String body = item != null ? JsonParser.toJson(item) : null;
+    public Request.SessionListener addGlobalSessionListener(Request.SessionListener sessionListener) {
+        return globalSessionListenerManager.addGlobalListener(sessionListener);
 
-        VolleyRequest<T> request = VolleyRequest.newRequest(method, url, body, classOfResult);
-        request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
-        addToRequestQueue(request);
+    }
 
-        return request;
+    public Request.ErrorListener removeGlobalErrorListener(Request.ErrorListener errorListener) {
+        return globalErrorListenerManager.removeGlobalListener(errorListener);
+    }
+
+    public Request.SessionListener removeGlobalSessionListener(Request.SessionListener sessionListener) {
+        return globalSessionListenerManager.removeGlobalListener(sessionListener);
     }
 
     public synchronized void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
@@ -254,7 +233,7 @@ public class VolleyClient implements Client {
     protected synchronized Request<Void> authenticate(Uri uri) {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
+        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(globalSessionListenerManager, session, url, params);
 
         // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
         // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero
@@ -267,7 +246,7 @@ public class VolleyClient implements Client {
 
     protected Uri buildAuthUri() {
         Uri result = null;
-        String refreshToken = Session.refreshToken();
+        String refreshToken = session.refreshToken();
 
         if (Utils.notEmpty(refreshToken)) {
             result = new AuthPath()
@@ -321,6 +300,61 @@ public class VolleyClient implements Client {
         }
 
         return url;
+    }
+
+    @Override
+    public Request<Void> authenticateWithUserCredentials(String username, String password) {
+        return authenticate(new AuthPath()
+                .withUserCredentials(clientId, clientSecret, username, password)
+                .buildUri(scheme, authority));
+    }
+
+    @Override
+    public Request<Void> authenticateWithAppCredentials(String appId, String appToken) {
+        return authenticate(new AuthPath()
+                .withAppCredentials(clientId, clientSecret, appId, appToken)
+                .buildUri(scheme, authority));
+    }
+
+    @Override
+    public Request<Void> authenticateWithTransferToken(String transferToken) {
+        return authenticate(new AuthPath()
+                .withTransferToken(clientId, clientSecret, transferToken)
+                .buildUri(scheme, authority));
+    }
+
+    @Override
+    @Deprecated
+    public Request<Void> forceRefreshTokens() {
+        // Prepare to re-authenticate.
+        Uri uri = buildAuthUri();
+
+        // Opt out if we can't re-authenticate.
+        if (uri == null) {
+            clearRequestQueue();
+            return null;
+        }
+
+        String url = parseUrl(uri);
+        HashMap<String, String> params = parseParams(uri);
+        VolleyRequest<Void> authRequest = VolleyRequest.newAuthRequest(globalSessionListenerManager, session, url, params);
+
+        // Re-authenticate on a prioritized request queue.
+        addToRefreshQueue(authRequest);
+
+        return authRequest;
+    }
+
+    @Override
+    public <T> Request<T> request(Request.Method method, Filter filter, Object item, Class<T> classOfResult) {
+        String url = filter.buildUri(scheme, authority).toString();
+        String body = item != null ? JsonParser.toJson(item) : null;
+
+        VolleyRequest<T> request = VolleyRequest.newRequest(globalSessionListenerManager, session, method, url, body, classOfResult);
+        request.setRetryPolicy(new VolleyRetryPolicy(session.accessToken()));
+        addToRequestQueue(request);
+
+        return request;
     }
 
 }

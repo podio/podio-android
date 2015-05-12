@@ -27,38 +27,22 @@ import android.os.Looper;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.ResultListener;
+import com.podio.sdk.volley.GlobalListenerManager;
 
 import java.util.ArrayList;
 
 public class CallbackManager<T> {
-    private static final ArrayList<ErrorListener> GLOBAL_ERROR_LISTENERS;
-
-    static {
-        GLOBAL_ERROR_LISTENERS = new ArrayList<ErrorListener>();
-    }
-
-    public static ErrorListener addGlobalErrorListener(ErrorListener errorListener) {
-        return errorListener != null && GLOBAL_ERROR_LISTENERS.add(errorListener) ?
-                errorListener :
-                null;
-    }
-
-    public static ErrorListener removeGlobalErrorListener(ErrorListener errorListener) {
-        int index = GLOBAL_ERROR_LISTENERS.indexOf(errorListener);
-
-        return GLOBAL_ERROR_LISTENERS.contains(errorListener) ?
-                GLOBAL_ERROR_LISTENERS.remove(index) :
-                null;
-    }
-
-    private final ArrayList<ResultListener<T>> resultListeners;
-    private final ArrayList<ErrorListener> errorListeners;
+    private final ArrayList<ResultListener<T>> resultListeners =new ArrayList<ResultListener<T>>();
+    private final ArrayList<ErrorListener> errorListeners = new ArrayList<ErrorListener>();
     private final Object RESULT_LISTENER_LOCK = new Object();
     private final Object ERROR_LISTENER_LOCK = new Object();
+    private GlobalListenerManager<ErrorListener> globalErrorListenerManager;
+
+    public CallbackManager(GlobalListenerManager<ErrorListener> globalErrorListenerManager) {
+        this.globalErrorListenerManager = globalErrorListenerManager;
+    }
 
     public CallbackManager() {
-        this.resultListeners = new ArrayList<ResultListener<T>>();
-        this.errorListeners = new ArrayList<ErrorListener>();
     }
 
     public void addErrorListener(ErrorListener listener, boolean deliverErrorNow, Throwable error) {
@@ -91,7 +75,7 @@ public class CallbackManager<T> {
             resultListeners.clear();
         }
 
-        if (Utils.isEmpty(errorListeners) && Utils.isEmpty(GLOBAL_ERROR_LISTENERS)) {
+        if (Utils.isEmpty(errorListeners) && Utils.isEmpty(globalErrorListenerManager.getGlobalErrorListeners())) {
             throw new PodioError(error);
         }
 
@@ -113,7 +97,7 @@ public class CallbackManager<T> {
             }
         }
 
-        for (ErrorListener listener : GLOBAL_ERROR_LISTENERS) {
+        for (ErrorListener listener : globalErrorListenerManager.getGlobalErrorListeners()) {
             if (listener != null) {
                 if (listener.onErrorOccured(error)) {
                     // The callback consumed the event, stop the bubbling.

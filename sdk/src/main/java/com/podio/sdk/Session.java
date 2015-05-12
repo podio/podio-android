@@ -29,28 +29,28 @@ import org.json.JSONObject;
 
 public class Session {
 
-    private static String accessToken;
-    private static String refreshToken;
-    private static String transferToken;
-    private static long expires;
+    private String accessToken;
+    private String refreshToken;
+    private String transferToken;
+    private long expires;
 
-    public static String accessToken() {
+    public String accessToken() {
         return accessToken;
     }
 
-    public static long expires() {
+    public long expires() {
         return expires;
     }
 
-    public static String refreshToken() {
+    public String refreshToken() {
         return refreshToken;
     }
 
-    public static String transferToken() {
+    public String transferToken() {
         return transferToken;
     }
 
-    public static void set(String jsonString) {
+    public void set(String jsonString) {
         JSONObject jsonObject = null;
 
         try {
@@ -76,17 +76,14 @@ public class Session {
         }
     }
 
-    public static void set(String accessToken, String refreshToken, long expires) {
+    public void set(String accessToken, String refreshToken, long expires) {
         set(accessToken, refreshToken, null, expires);
     }
 
-    public static void set(String accessToken, String refreshToken, String transferToken, long expires) {
-        Session.accessToken = accessToken;
-        Session.refreshToken = refreshToken;
-        Session.transferToken = transferToken;
-        Session.expires = expires;
-    }
-
-    private Session() {
+    public void set(String accessToken, String refreshToken, String transferToken, long expires) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.transferToken = transferToken;
+        this.expires = expires;
     }
 }
