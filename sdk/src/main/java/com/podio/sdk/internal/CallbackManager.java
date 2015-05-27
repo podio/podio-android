@@ -64,7 +64,7 @@ public class CallbackManager<T> {
     public void addErrorListener(ErrorListener listener, boolean deliverErrorNow, Throwable error) {
         if (listener != null) {
             if (deliverErrorNow) {
-                listener.onErrorOccured(error);
+                listener.onErrorOccurred(error);
             } else {
                 synchronized (ERROR_LISTENER_LOCK) {
                     errorListeners.add(listener);
@@ -99,7 +99,7 @@ public class CallbackManager<T> {
             boolean isConsumed = false;
             for (ErrorListener listener : errorListeners) {
                 if (listener != null) {
-                    if (listener.onErrorOccured(error)) {
+                    if (listener.onErrorOccurred(error)) {
                         // The callback consumed the event, stop the bubbling.
                         isConsumed = true;
                         break;
@@ -115,7 +115,7 @@ public class CallbackManager<T> {
 
         for (ErrorListener listener : GLOBAL_ERROR_LISTENERS) {
             if (listener != null) {
-                if (listener.onErrorOccured(error)) {
+                if (listener.onErrorOccurred(error)) {
                     // The callback consumed the event, stop the bubbling.
                     return;
                 }

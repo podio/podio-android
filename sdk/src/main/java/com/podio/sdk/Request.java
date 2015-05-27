@@ -44,7 +44,7 @@ public interface Request<T> {
          *
          * @return Boolean flag whether the event is to be consumed or not by this implementation.
          */
-        public boolean onErrorOccured(Throwable cause);
+        public boolean onErrorOccurred(Throwable cause);
 
     }
 
@@ -96,7 +96,13 @@ public interface Request<T> {
 
     }
 
-    public T waitForResult(long maxSeconds);
+    /**
+     * Make sure to catch any thrown PodioError
+     * @param maxSeconds
+     * @return
+     * @throws PodioError
+     */
+    public T waitForResult(long maxSeconds) throws PodioError;
 
     public Request<T> withResultListener(ResultListener<T> contentListener);
 

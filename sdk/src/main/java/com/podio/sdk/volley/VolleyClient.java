@@ -119,7 +119,7 @@ public class VolleyClient implements Client {
 
                 reAuthRequest.withErrorListener(new Request.ErrorListener() {
                     @Override
-                    public boolean onErrorOccured(Throwable cause) {
+                    public boolean onErrorOccurred(Throwable cause) {
                         clearRequestQueue();
                         return true;
                     }
