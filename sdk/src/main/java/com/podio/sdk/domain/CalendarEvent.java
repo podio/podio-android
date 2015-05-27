@@ -1,29 +1,29 @@
 /*
  *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy of
+ *  this software and associated documentation files (the "Software"), to deal in
+ *  the Software without restriction, including without limitation the rights to
+ *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is furnished to
  *  do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in all 
+ *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
 package com.podio.sdk.domain;
 
-import java.util.Date;
-
 import com.podio.sdk.internal.Utils;
+
+import java.util.Date;
 
 /**
  * @author Tobias Lindberg
@@ -39,37 +39,11 @@ public class CalendarEvent {
     private final String title = null;
     private final String description = null;
     private final String location = null;
-    private final App app = null;
-
-    public static class App {
-
-        private final String name = null;
-        private final Space space = null;
-
-        public static class Space {
-            private final String name = null;
-        }
-
-        /**
-         * @return returns null if the user don't have access permission to the
-         *         space
-         */
-        public String getWorkspaceName() {
-            if (space == null) {
-                return null;
-            }
-            return space.name;
-        }
-
-        public String getAppName() {
-            return name;
-        }
-
-    }
+    private final Application app = null;
 
     /**
      * Gets the end date of the calendar event as a Java Date object.
-     * 
+     *
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getEndDate() {
@@ -82,7 +56,7 @@ public class CalendarEvent {
 
     /**
      * Gets the start date of the calendar event as a Java Date object.
-     * 
+     *
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getStartDate() {
@@ -128,19 +102,8 @@ public class CalendarEvent {
         return location;
     }
 
-    /**
-     * Warning! Use this method with caution.
-     * 
-     * @return returns the name of the workspace or null if the user doesn't
-     *         have access permission to the workspace which this calendar event
-     *         is part of.
-     */
-    public String getWorkspaceName() {
-        return app.getWorkspaceName();
-    }
-
-    public String getAppName() {
-        return app.getAppName();
+    public Application getApp(){
+        return app;
     }
 
     public boolean isBusy() {
