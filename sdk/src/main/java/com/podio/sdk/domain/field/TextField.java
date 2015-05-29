@@ -136,9 +136,7 @@ public class TextField extends Field<TextField.Value> {
 
     @Override
     public void addValue(Value value) {
-        if (values != null && !values.contains(value)) {
-            values.add(value);
-        }
+            values.add(0,value);
     }
 
     @Override
