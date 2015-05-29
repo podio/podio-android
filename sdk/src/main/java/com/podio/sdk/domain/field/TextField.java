@@ -136,6 +136,8 @@ public class TextField extends Field<TextField.Value> {
 
     @Override
     public void addValue(Value value) {
+            //text field do not support multiple values
+            values.clear();
             values.add(0,value);
     }
 
