@@ -22,16 +22,16 @@
 
 package com.podio.sdk.domain.field;
 
+import com.podio.sdk.domain.File;
+import com.podio.sdk.domain.Right;
+import com.podio.sdk.internal.Utils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.podio.sdk.domain.File;
-import com.podio.sdk.domain.Right;
-import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -276,10 +276,6 @@ public class ContactField extends Field<ContactField.Value> {
         public boolean hasAnyRights(Right... rights) {
             return value != null ? value.hasAnyRights(rights) : false;
         }
-    }
-
-    public static enum Rights {
-        delete, view, update, undefined
     }
 
     public static enum Type {

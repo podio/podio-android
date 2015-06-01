@@ -28,6 +28,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.podio.sdk.domain.field.Field;
 
 import java.lang.reflect.Type;
@@ -36,7 +38,7 @@ import java.lang.reflect.Type;
 // According to Google documentation it's the preferred way of
 // (de)serializing JSON as it's more efficient and has a smaller memory
 // footprint.
-class FieldDeserializer implements JsonDeserializer<Field> {
+class FieldDeserializerSerializer implements JsonDeserializer<Field>, JsonSerializer<Field> {
 
     @Override
     public Field deserialize(JsonElement element, Type type, JsonDeserializationContext gsonContext) throws JsonParseException {
@@ -70,4 +72,10 @@ class FieldDeserializer implements JsonDeserializer<Field> {
 
         return gsonContext.deserialize(jsonObject, typeEnum.getFieldClass());
     }
+
+    @Override
+    public JsonElement serialize(Field field, Type type, JsonSerializationContext gsonContext) {
+        return gsonContext.serialize(field, field.getType().getFieldClass());
+    }
+
 }

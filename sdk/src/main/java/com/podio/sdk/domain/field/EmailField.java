@@ -30,24 +30,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The Podio Text field domain object.
+ * The Podio Email field domain object.
  *
- * @author László Urszuly
+ * @author Tobias Lindberg
  */
-public class TextField extends Field<TextField.Value> {
+public class EmailField extends Field<EmailField.Value> {
     /**
-     * This class describes the particular settings of a Text field configuration.
+     * This class describes the particular settings of a Email field configuration.
      *
-     * @author László Urszuly
+     * @author Tobias Lindberg
      */
     private static class Settings {
-        private final String size = null;
+        private final Boolean include_in_bcc = null;
+        private final Boolean include_in_cc = null;
     }
 
     /**
-     * This class describes the specific configuration of a Text field.
+     * This class describes the specific configuration of a Email field.
      *
-     * @author László Urszuly
+     * @author Tobias Lindberg
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -57,91 +58,91 @@ public class TextField extends Field<TextField.Value> {
             return default_value;
         }
 
-        public Size getSize() {
-            try {
-                return Size.valueOf(settings.size);
-            } catch (NullPointerException e) {
-                return Size.undefined;
-            } catch (IllegalArgumentException e) {
-                return Size.undefined;
-            }
+        public boolean isIncludeInBcc() {
+            return Utils.getNative(settings.include_in_bcc, false);
+        }
+
+        public boolean isIncludeInCc() {
+            return Utils.getNative(settings.include_in_cc, false);
         }
     }
 
+    public static enum Type {
+        work, home, other, undefined
+    }
+
     /**
-     * This class describes a Text field value.
+     * This class describes a Email field value.
      *
-     * @author László Urszuly
+     * @author Tobias Lindberg
      */
     public static class Value extends Field.Value {
+        private final String type;
         private final String value;
 
-        public Value(String value) {
+        public Value(Type type, String value) {
+            this.type = type.name();
             this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Value) {
-                Value other = (Value) o;
-
-                if (other.value != null) {
-                    return other.value.equals(this.value);
-                }
-            }
-
-            return false;
         }
 
         @Override
         public Map<String, Object> getCreateData() {
             HashMap<String, Object> data = null;
 
-            if (Utils.notEmpty(value)) {
+            if (Utils.notEmpty(value) && Utils.notEmpty(type)) {
                 data = new HashMap<String, Object>();
                 data.put("value", value);
+                data.put("type", type);
             }
 
             return data;
-        }
-
-        @Override
-        public int hashCode() {
-            return value != null ? value.hashCode() : 0;
         }
 
         public String getValue() {
             return value;
         }
 
-    }
+        public Type getType() {
+            try {
+                return Type.valueOf(type);
+            } catch (NullPointerException e) {
+                return Type.undefined;
+            } catch (IllegalArgumentException e) {
+                return Type.undefined;
+            }
+        }
 
-    /**
-     * The values for the named sizes a text field can have.
-     *
-     * @author László Urszuly
-     */
-    public static enum Size {
-        large, small, undefined
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Value value1 = (Value) o;
+
+            if (getType() != value1.getType()) return false;
+            return value.equals(value1.value);
+
+        }
     }
 
     // Private fields.
     private final Configuration config = null;
     private final ArrayList<Value> values;
 
-    public TextField(String externalId) {
+    public EmailField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }
 
     @Override
     public void addValue(Value value) {
-        if(values != null && !values.contains(value)) {
-            //text field do not support multiple values
-            values.clear();
-            if(!value.getValue().isEmpty()) {
-                values.add(0, value);
-            }
+        if (values != null && !values.contains(value)) {
+            values.add(value);
         }
     }
 

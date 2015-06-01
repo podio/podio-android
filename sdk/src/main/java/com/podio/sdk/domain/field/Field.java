@@ -22,11 +22,11 @@
 
 package com.podio.sdk.domain.field;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -142,7 +142,9 @@ public abstract class Field<T extends Field.Value> {
         number(NumberField.class),
         progress(ProgressField.class),
         text(TextField.class),
-        undefined(null);
+        email(EmailField.class),
+        phone(PhoneField.class),
+        undefined(UndefinedField.class);
 
         private final Class<? extends Field> fieldClass;
 

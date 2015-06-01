@@ -20,21 +20,46 @@
  *  SOFTWARE.
  */
 
-package com.podio.sdk.json;
+package com.podio.sdk.domain.field;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.podio.sdk.domain.field.Field;
+import java.util.List;
 
-import java.lang.reflect.Type;
-
-
-class FieldSerializer implements JsonSerializer<Field> {
-
-    @Override
-    public JsonElement serialize(Field field, Type type, JsonSerializationContext gsonContext) {
-        return gsonContext.serialize(field, field.getType().getFieldClass());
+/**
+ * Fall back Podio field when new fields are introduced and we want to not get a null pointer
+ * exception in the parsing.
+ *
+ * @author Tobias Lindberg
+ */
+public class UndefinedField extends Field<Field.Value> {
+    
+    public UndefinedField(String externalId) {
+        super(externalId);
     }
 
+    @Override
+    public void addValue(Value value) {
+    }
+
+    @Override
+    public Value getValue(int index) {
+        return null;
+    }
+
+    @Override
+    public List<Value> getValues() {
+        return null;
+    }
+
+    @Override
+    public void removeValue(Value value) {
+    }
+
+    @Override
+    public int valuesCount() {
+        return 0;
+    }
+
+    public Configuration getConfiguration() {
+        return null;
+    }
 }
