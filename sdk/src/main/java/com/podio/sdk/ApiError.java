@@ -15,10 +15,9 @@
  */
 package com.podio.sdk;
 
+import com.google.gson.JsonObject;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.json.JsonParser;
-
-import java.util.HashMap;
 
 /**
  * This class represents a server side error returned by the Podio API. These errors are fully
@@ -48,7 +47,7 @@ public class ApiError extends PodioError {
      * @author László Urszuly
      */
     private static final class ErrorBundle {
-        private final HashMap<String, String> error_parameters = null;
+        private final JsonObject error_parameters = null;
         private final String error_detail = null;
         private final Boolean error_propagate = null;
         private final ErrorRequest request = null;
@@ -131,7 +130,8 @@ public class ApiError extends PodioError {
     }
 
     /**
-     * Returns the {@code error_parameter} with the given name as a string.
+     * Returns the {@code error_parameter} with the given name as a string. Note that if there is an
+     * array behind the parameter this will likely crash.
      *
      * @param key
      *         The name of the parameter.
@@ -139,7 +139,7 @@ public class ApiError extends PodioError {
      * @return String or null.
      */
     public String getErrorParameter(String key) {
-        return errorBundle != null && errorBundle.error_parameters != null ? errorBundle.error_parameters.get(key) : null;
+        return errorBundle != null && errorBundle.error_parameters != null ? errorBundle.error_parameters.get(key).getAsString() : null;
     }
 
     /**
@@ -211,7 +211,7 @@ public class ApiError extends PodioError {
      * @return Boolean.
      */
     public boolean hasErrorParameter(String key) {
-        return errorBundle != null && errorBundle.error_parameters != null && errorBundle.error_parameters.containsKey(key);
+        return errorBundle != null && errorBundle.error_parameters != null && errorBundle.error_parameters.has(key);
     }
 
     /**
