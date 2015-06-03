@@ -136,12 +136,11 @@ public class TextField extends Field<TextField.Value> {
 
     @Override
     public void addValue(Value value) {
-        if(values != null && !values.contains(value)) {
-            //text field do not support multiple values
+        if (values != null && !values.contains(value)) {
+            //text field do not support multiple values so
+            // that is why we clear the values on each method call
             values.clear();
-            if(!value.getValue().isEmpty()) {
-                values.add(0, value);
-            }
+            values.add(0, value);
         }
     }
 
