@@ -123,6 +123,12 @@ public class ImageField extends Field<ImageField.Value> {
     }
 
     @Override
+    public void setValues(List<Value> values) {
+        this.values.clear();
+        this.values.addAll(values);
+    }
+
+    @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
             values.add(value);

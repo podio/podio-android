@@ -217,6 +217,13 @@ public class DateField extends Field<DateField.Value> {
         this.values = new ArrayList<Value>();
     }
 
+
+    @Override
+    public void setValues(List<Value> values) {
+        this.values.clear();
+        this.values.addAll(values);
+    }
+
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {

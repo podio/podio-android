@@ -31,9 +31,14 @@ import java.util.List;
  * @author Tobias Lindberg
  */
 public class UndefinedField extends Field<Field.Value> {
-    
+
     public UndefinedField(String externalId) {
         super(externalId);
+    }
+
+
+    @Override
+    public void setValues(List<Value> values) {
     }
 
     @Override

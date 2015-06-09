@@ -264,6 +264,7 @@ public abstract class Field<T extends Field.Value> {
      */
     public abstract void addValue(T value);
 
+    public abstract void setValues(List<T> values);
     /**
      * Returns the value at the given position for this field.
      *

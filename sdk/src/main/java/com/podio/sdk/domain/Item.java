@@ -34,6 +34,7 @@ import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.internal.Utils;
 
 public class Item {
+
     /**
      * A class describing the filter for the client side search request.
      */
@@ -339,6 +340,16 @@ public class Item {
         }
 
         return createData;
+    }
+
+    public void addValues(String field, List<Field.Value> fieldValues) {
+        Field f = findField(field, fields);
+
+        if (f != null) {
+            f.setValues(fieldValues);
+        } else {
+            unverifiedFieldValues.put(field, new ArrayList<Field.Value>(fieldValues));
+        }
     }
 
     /**
