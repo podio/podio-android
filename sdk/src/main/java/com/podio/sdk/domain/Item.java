@@ -22,6 +22,9 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.internal.Utils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.podio.sdk.domain.field.Field;
-import com.podio.sdk.internal.Utils;
 
 public class Item {
 
@@ -323,7 +323,7 @@ public class Item {
             String key = entry.getKey();
             List<Field.Value> values = entry.getValue();
 
-            if (Utils.notEmpty(key) && Utils.notEmpty(values)) {
+            if (Utils.notEmpty(key) && values != null) {
                 ArrayList<Map<String, Object>> createDataValues = new ArrayList<Map<String, Object>>();
 
                 // Build "createData" objects for each value associated with the current field.
