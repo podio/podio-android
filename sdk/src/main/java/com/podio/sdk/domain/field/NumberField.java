@@ -68,8 +68,12 @@ public class NumberField extends Field<NumberField.Value> {
     public static class Value extends Field.Value {
         private final String value;
 
-        public Value(double value) {
-            this.value = Double.toString(value);
+        public Value(Double value) {
+            if (value != null) {
+                this.value = Double.toString(value);
+            } else {
+                this.value = null;
+            }
         }
 
         @Override
