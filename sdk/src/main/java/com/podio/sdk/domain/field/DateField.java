@@ -205,7 +205,7 @@ public class DateField extends Field<DateField.Value> {
     }
 
     public static enum State {
-        disabled, enabled, undefined
+        disabled, enabled, required, undefined
     }
 
     // Private fields.
@@ -217,7 +217,6 @@ public class DateField extends Field<DateField.Value> {
         this.values = new ArrayList<Value>();
     }
 
-
     @Override
     public void setValues(List<Value> values) {
         this.values.clear();
@@ -227,7 +226,8 @@ public class DateField extends Field<DateField.Value> {
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
-            values.add(value);
+            values.clear();
+            values.add(0, value);
         }
     }
 
