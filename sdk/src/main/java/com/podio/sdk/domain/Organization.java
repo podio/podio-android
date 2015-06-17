@@ -115,7 +115,7 @@ public class Organization {
     }
 
     public Date getCreatedDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getCreatedDateString() {

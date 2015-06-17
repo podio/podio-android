@@ -122,7 +122,7 @@ public class ReferenceField extends Field<ReferenceField.Value> {
         }
 
         public Date getCreationDate() {
-            return Utils.parseDateTime(created_on);
+            return Utils.parseDateTimeUtc(created_on);
         }
 
         public String getCreationDateString() {

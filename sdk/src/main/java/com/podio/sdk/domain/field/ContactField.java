@@ -156,7 +156,7 @@ public class ContactField extends Field<ContactField.Value> {
         }
 
         public Date getLastSeenDate() {
-            return Utils.parseDateTime(last_seen_on);
+            return Utils.parseDateTimeUtc(last_seen_on);
         }
 
         public String getLink() {

@@ -113,7 +113,7 @@ public abstract class Notification {
     }
 
     public Date getCreatedDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getText() {

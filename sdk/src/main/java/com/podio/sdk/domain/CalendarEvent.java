@@ -47,7 +47,7 @@ public class CalendarEvent {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getEndDate() {
-        return Utils.parseDateTime(end_utc);
+        return Utils.parseDateTimeUtc(end_utc);
     }
 
     public String getEndDateString() {
@@ -61,7 +61,7 @@ public class CalendarEvent {
      */
     public Date getStartDate() {
 
-        return Utils.parseDateTime(start_utc);
+        return Utils.parseDateTimeUtc(start_utc);
     }
 
     /**

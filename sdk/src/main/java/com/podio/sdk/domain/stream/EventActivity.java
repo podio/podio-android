@@ -72,7 +72,7 @@ public abstract class EventActivity {
     private final String created_on = null;
 
     public Date getCreatedOnDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getCreatedOnString() {

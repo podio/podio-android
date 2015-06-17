@@ -101,7 +101,7 @@ public abstract class EventContext {
     }
 
     public Date getCreatedOnDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getCreatedOnString() {

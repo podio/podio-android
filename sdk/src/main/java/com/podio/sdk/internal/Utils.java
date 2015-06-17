@@ -54,7 +54,7 @@ public class Utils {
 
     public static String formatDate(Date date) {
         try {
-            return getSimpleDateFormat("yyyy-MM-dd").format(date);
+            return getUtcSimpleDateFormat("yyyy-MM-dd").format(date);
         } catch (NullPointerException e) {
             return null;
         } catch (IllegalArgumentException e) {
@@ -64,7 +64,7 @@ public class Utils {
 
     public static String formatDateTime(Date dateTime) {
         try {
-            return getSimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
+            return getUtcSimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
         } catch (NullPointerException e) {
             return null;
         } catch (IllegalArgumentException e) {
@@ -181,9 +181,15 @@ public class Utils {
         return result.toString();
     }
 
-    public static Date parseDateTime(String dateTime) {
+    /**
+     * Takes a date and a time in utc.
+     *
+     * @param dateTime
+     * @return
+     */
+    public static Date parseDateTimeUtc(String dateTime) {
         try {
-            return getSimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
+            return getUtcSimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
         } catch (NullPointerException e) {
             return null;
         } catch (IllegalArgumentException e) {
@@ -193,9 +199,15 @@ public class Utils {
         }
     }
 
-    public static Date parseDate(String date) {
+    /**
+     * Takes a date in utc.
+     *
+     * @param date
+     * @return
+     */
+    public static Date parseDateUtc(String date) {
         try {
-            return getSimpleDateFormat("yyyy-MM-dd").parse(date);
+            return getUtcSimpleDateFormat("yyyy-MM-dd").parse(date);
         } catch (NullPointerException e) {
             return null;
         } catch (IllegalArgumentException e) {
@@ -205,9 +217,69 @@ public class Utils {
         }
     }
 
-    public static Date parseTime(String time) {
+    /**
+     * Takes time in utc.
+     *
+     * @param time
+     * @return
+     */
+    public static Date parseTimeUtc(String time) {
         try {
-            return getSimpleDateFormat("HH:mm:ss").parse(time);
+            return getUtcSimpleDateFormat("HH:mm:ss").parse(time);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Takes date and time in the device default timezone.
+     *
+     * @param dateTime
+     * @return
+     */
+    public static Date parseDateTimeDefault(String dateTime) {
+        try {
+            return getDefaultSimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Takes date in the device default timezone.
+     *
+     * @param date
+     * @return
+     */
+    public static Date parseDateDefault(String date) {
+        try {
+            return getDefaultSimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Takes time in the device default timezone.
+     *
+     * @param time
+     * @return
+     */
+    public static Date parseTimeDefault(String time) {
+        try {
+            return getDefaultSimpleDateFormat("HH:mm:ss").parse(time);
         } catch (NullPointerException e) {
             return null;
         } catch (IllegalArgumentException e) {
@@ -218,8 +290,16 @@ public class Utils {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private static SimpleDateFormat getSimpleDateFormat(String pattern) {
+    private static SimpleDateFormat getUtcSimpleDateFormat(String pattern) {
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        simpleDateFormat.setTimeZone(timeZone);
+        return simpleDateFormat;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private static SimpleDateFormat getDefaultSimpleDateFormat(String pattern) {
+        TimeZone timeZone = TimeZone.getDefault();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         simpleDateFormat.setTimeZone(timeZone);
         return simpleDateFormat;

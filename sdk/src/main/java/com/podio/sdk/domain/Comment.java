@@ -24,7 +24,6 @@ package com.podio.sdk.domain;
 
 import com.podio.sdk.internal.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +77,7 @@ public class Comment {
     }
 
     public Date getCreatedOnDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getCreatedOnString() {

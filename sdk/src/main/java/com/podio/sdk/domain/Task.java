@@ -97,9 +97,9 @@ public class Task {
      */
     public Date getDueOn() {
         if (hasDueTime()) {
-            return Utils.parseDateTime(due_on);
+            return Utils.parseDateTimeUtc(due_on);
         } else {
-            return Utils.parseDate(due_on);
+            return Utils.parseDateUtc(due_on);
         }
     }
 

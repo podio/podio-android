@@ -403,7 +403,7 @@ public class Item {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getCreatedDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getCreatedDateString() {
@@ -448,7 +448,7 @@ public class Item {
      * @return A date object, or null if the date couldn't be parsed.
      */
     public Date getLastEventDate() {
-        return Utils.parseDateTime(last_event_on);
+        return Utils.parseDateTimeUtc(last_event_on);
     }
 
     public String getLastEventDateString() {

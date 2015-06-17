@@ -155,67 +155,89 @@ public class DateField extends Field<DateField.Value> {
         }
 
         /**
+         * @return returns true if you have a utc start date.
+         */
+        public boolean hasStartDateUtc(){
+            return start_date_utc != null;
+        }
+
+        /**
+         * @return returns true if you have a utc end date.
+         */
+        public boolean hasEndDateUtc(){
+            return end_date_utc != null;
+        }
+
+        /**
          * @return returns true if you can rely on having a start time component in
          *         the UTC start date Date object, otherwise false.
          */
-        public boolean hasStartTime(){
-            return start_time != null;
+        public boolean hasStartTimeUtc(){
+            return start_time_utc != null;
         }
 
         /**
          * @return returns true if you can rely on having a end time component in
          *         the UTC end date Date object, otherwise false.
          */
-        public boolean hasEndTime(){
-            return end_time != null;
+        public boolean hasEndTimeUtc(){
+            return end_time_utc != null;
         }
 
         public Date getEndDateTime() {
-            return Utils.parseDateTime(end);
+            return Utils.parseDateTimeDefault(end);
         }
 
         public Date getEndDate() {
-            return Utils.parseDate(end_date);
+            return Utils.parseDateDefault(end_date);
         }
 
         public Date getEndDateUtc() {
-            return Utils.parseDate(end_date_utc);
+            return Utils.parseDateUtc(end_date_utc);
         }
 
         public Date getEndTime() {
-            return Utils.parseTime(end_time);
+            return Utils.parseTimeDefault(end_time);
         }
 
         public Date getEndTimeUtc() {
-            return Utils.parseTime(end_time_utc);
+            return Utils.parseTimeUtc(end_time_utc);
         }
 
         public Date getEndUtc() {
-            return Utils.parseDateTime(end_utc);
+            if(hasEndTimeUtc()) {
+                return Utils.parseDateTimeUtc(end_utc);
+            } else {
+                return Utils.parseDateUtc(end_utc);
+            }
         }
 
         public Date getStartDateTime() {
-            return Utils.parseDateTime(start);
+            return Utils.parseDateTimeUtc(start);
         }
 
         public Date getStartDate() {
-            return Utils.parseDate(start_date);
+            return Utils.parseDateDefault(start_date);
         }
 
         public Date getStartDateUtc() {
-            return Utils.parseDate(start_date_utc);
+            return Utils.parseDateUtc(start_date_utc);
         }
 
         public Date getStartTime() {
-            return Utils.parseTime(start_time);
+            return Utils.parseTimeDefault(start_time);
         }
 
         public Date getStartTimeUtc() {
-            return Utils.parseTime(start_time_utc);
+            return Utils.parseTimeUtc(start_time_utc);
         }
 
         public Date getStartUtc() {
-            return Utils.parseDateTime(start_utc);
+            if(hasStartTimeUtc()) {
+                return Utils.parseDateTimeUtc(start_utc);
+            } else {
+                return Utils.parseDateUtc(start_utc);
+            }
         }
 
     }

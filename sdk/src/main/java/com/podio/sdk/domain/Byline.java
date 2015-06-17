@@ -68,7 +68,7 @@ public class Byline {
     }
 
     public Date getLastSeenDate() {
-        return Utils.parseDateTime(last_seen_on);
+        return Utils.parseDateTimeUtc(last_seen_on);
     }
 
     public String getLastSeenDateString() {

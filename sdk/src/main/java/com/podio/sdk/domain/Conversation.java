@@ -105,7 +105,7 @@ public class Conversation {
         }
 
         public Date getCreatedOnDateTime() {
-            return Utils.parseDateTime(created_on);
+            return Utils.parseDateTimeUtc(created_on);
         }
 
         public String getCreatedOnDateTimeString() {
@@ -140,7 +140,7 @@ public class Conversation {
         }
 
         public Date getCreatedDate() {
-            return Utils.parseDateTime(created_on);
+            return Utils.parseDateTimeUtc(created_on);
         }
 
         public String getCreatedDateString() {
@@ -164,7 +164,7 @@ public class Conversation {
         }
 
         public Date getMessageCreatedDate() {
-            return data != null ? Utils.parseDateTime(data.created_on) : null;
+            return data != null ? Utils.parseDateTimeUtc(data.created_on) : null;
         }
 
         public String getMessageCreatedDateString() {
@@ -212,7 +212,7 @@ public class Conversation {
         }
 
         public Date createdOnDateTime() {
-            return data != null ? Utils.parseDateTime(data.created_on) : null;
+            return data != null ? Utils.parseDateTimeUtc(data.created_on) : null;
         }
 
         public String createdOnDateTimeString() {
@@ -431,7 +431,7 @@ public class Conversation {
     }
 
     public Date getCreatedDate() {
-        return Utils.parseDateTime(created_on);
+        return Utils.parseDateTimeUtc(created_on);
     }
 
     public String getCreatedDateString() {
@@ -459,7 +459,7 @@ public class Conversation {
     }
 
     public Date getLastEventDate() {
-        return Utils.parseDateTime(last_event_on);
+        return Utils.parseDateTimeUtc(last_event_on);
     }
 
     public String getLastEventDateString() {
