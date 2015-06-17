@@ -154,6 +154,22 @@ public class DateField extends Field<DateField.Value> {
             return (s1 + s2).hashCode();
         }
 
+        /**
+         * @return returns true if you can rely on having a start time component in
+         *         the UTC start date Date object, otherwise false.
+         */
+        public boolean hasStartTime(){
+            return start_time != null;
+        }
+
+        /**
+         * @return returns true if you can rely on having a end time component in
+         *         the UTC end date Date object, otherwise false.
+         */
+        public boolean hasEndTime(){
+            return end_time != null;
+        }
+
         public Date getEndDateTime() {
             return Utils.parseDateTime(end);
         }
