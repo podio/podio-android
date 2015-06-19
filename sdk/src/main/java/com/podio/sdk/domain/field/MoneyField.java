@@ -132,7 +132,8 @@ public class MoneyField extends Field<MoneyField.Value> {
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
-            values.add(value);
+            values.clear();
+            values.add(0, value);
         }
     }
 
