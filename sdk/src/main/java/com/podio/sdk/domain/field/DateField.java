@@ -94,44 +94,47 @@ public class DateField extends Field<DateField.Value> {
         private final String end_date_utc = null;
         private final String end_time = null;
         private final String end_time_utc = null;
-        private final String end_utc = null;
+        private final String end_utc;
         private final String start;
         private final String start_date = null;
         private final String start_date_utc = null;
         private final String start_time = null;
         private final String start_time_utc = null;
-        private final String start_utc = null;
+        private final String start_utc;
 
         public Value(Date start) {
             this(start, null);
         }
 
         public Value(Date start, Date end) {
-            this.start = start != null ? Utils.formatDateTime(start) : null;
-            this.end = end != null ? Utils.formatDateTime(end) : null;
+            this.start = start != null ? Utils.formatDateTimeDefault(start) : null;
+            this.end = end != null ? Utils.formatDateTimeDefault(end) : null;
+            start_utc = null;
+            end_utc = null;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Value) {
-                Value other = (Value) o;
-
-                boolean equalStart = other.start != null && other.start.equals(this.start)
-                        || other.start == null && this.start == null;
-                boolean equalEnd = other.end != null && other.end.equals(this.end)
-                        || other.end == null && this.end == null;
-
-                return equalStart && equalEnd;
+        public Value(Date start, boolean startHasTime, Date end, boolean endHasTime) {
+            this.start = null;
+            this.end = null;
+            if (startHasTime) {
+                this.start_utc = start != null ? Utils.formatDateTimeUtc(start) : null;
+            } else {
+                this.start_utc = start != null ? Utils.formatDateDefault(start) : null;
             }
 
-            return false;
+            if (endHasTime) {
+                this.end_utc = end != null ? Utils.formatDateTimeUtc(end): null;
+            } else {
+                this.end_utc = end != null ? Utils.formatDateDefault(end) : null;
+            }
         }
 
         @Override
         public Map<String, Object> getCreateData() {
             HashMap<String, Object> data = null;
 
-            if (Utils.notEmpty(start) || Utils.notEmpty(end)) {
+            if (Utils.notEmpty(start) || Utils.notEmpty(end)
+                    || Utils.notEmpty(start_utc) || Utils.notEmpty(end_utc)) {
                 data = new HashMap<String, Object>();
 
                 if (Utils.notEmpty(start)) {
@@ -141,46 +144,46 @@ public class DateField extends Field<DateField.Value> {
                 if (Utils.notEmpty(end)) {
                     data.put("end", end);
                 }
+
+                if (Utils.notEmpty(start_utc)) {
+                    data.put("start_utc", start_utc);
+                }
+
+                if (Utils.notEmpty(end_utc)) {
+                    data.put("end_utc", end_utc);
+                }
             }
 
             return data;
         }
 
-        @Override
-        public int hashCode() {
-            String s1 = start != null ? start : "";
-            String s2 = end != null ? end : "";
-
-            return (s1 + s2).hashCode();
-        }
-
         /**
          * @return returns true if you have a utc start date.
          */
-        public boolean hasStartDateUtc(){
+        public boolean hasStartDateUtc() {
             return start_date_utc != null;
         }
 
         /**
          * @return returns true if you have a utc end date.
          */
-        public boolean hasEndDateUtc(){
+        public boolean hasEndDateUtc() {
             return end_date_utc != null;
         }
 
         /**
-         * @return returns true if you can rely on having a start time component in
-         *         the UTC start date Date object, otherwise false.
+         * @return returns true if you can rely on having a start time component in the UTC start
+         * date Date object, otherwise false.
          */
-        public boolean hasStartTimeUtc(){
+        public boolean hasStartTimeUtc() {
             return start_time_utc != null;
         }
 
         /**
-         * @return returns true if you can rely on having a end time component in
-         *         the UTC end date Date object, otherwise false.
+         * @return returns true if you can rely on having a end time component in the UTC end date
+         * Date object, otherwise false.
          */
-        public boolean hasEndTimeUtc(){
+        public boolean hasEndTimeUtc() {
             return end_time_utc != null;
         }
 
@@ -205,7 +208,7 @@ public class DateField extends Field<DateField.Value> {
         }
 
         public Date getEndUtc() {
-            if(hasEndTimeUtc()) {
+            if (hasEndTimeUtc()) {
                 return Utils.parseDateTimeUtc(end_utc);
             } else {
                 return Utils.parseDateUtc(end_utc);
@@ -233,13 +236,60 @@ public class DateField extends Field<DateField.Value> {
         }
 
         public Date getStartUtc() {
-            if(hasStartTimeUtc()) {
+            if (hasStartTimeUtc()) {
                 return Utils.parseDateTimeUtc(start_utc);
             } else {
                 return Utils.parseDateUtc(start_utc);
             }
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Value value = (Value) o;
+
+            if (end != null ? !end.equals(value.end) : value.end != null) return false;
+            if (end_date != null ? !end_date.equals(value.end_date) : value.end_date != null)
+                return false;
+            if (end_date_utc != null ? !end_date_utc.equals(value.end_date_utc) : value.end_date_utc != null)
+                return false;
+            if (end_time != null ? !end_time.equals(value.end_time) : value.end_time != null)
+                return false;
+            if (end_time_utc != null ? !end_time_utc.equals(value.end_time_utc) : value.end_time_utc != null)
+                return false;
+            if (end_utc != null ? !end_utc.equals(value.end_utc) : value.end_utc != null)
+                return false;
+            if (start != null ? !start.equals(value.start) : value.start != null) return false;
+            if (start_date != null ? !start_date.equals(value.start_date) : value.start_date != null)
+                return false;
+            if (start_date_utc != null ? !start_date_utc.equals(value.start_date_utc) : value.start_date_utc != null)
+                return false;
+            if (start_time != null ? !start_time.equals(value.start_time) : value.start_time != null)
+                return false;
+            if (start_time_utc != null ? !start_time_utc.equals(value.start_time_utc) : value.start_time_utc != null)
+                return false;
+            return !(start_utc != null ? !start_utc.equals(value.start_utc) : value.start_utc != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = end != null ? end.hashCode() : 0;
+            result = 31 * result + (end_date != null ? end_date.hashCode() : 0);
+            result = 31 * result + (end_date_utc != null ? end_date_utc.hashCode() : 0);
+            result = 31 * result + (end_time != null ? end_time.hashCode() : 0);
+            result = 31 * result + (end_time_utc != null ? end_time_utc.hashCode() : 0);
+            result = 31 * result + (end_utc != null ? end_utc.hashCode() : 0);
+            result = 31 * result + (start != null ? start.hashCode() : 0);
+            result = 31 * result + (start_date != null ? start_date.hashCode() : 0);
+            result = 31 * result + (start_date_utc != null ? start_date_utc.hashCode() : 0);
+            result = 31 * result + (start_time != null ? start_time.hashCode() : 0);
+            result = 31 * result + (start_time_utc != null ? start_time_utc.hashCode() : 0);
+            result = 31 * result + (start_utc != null ? start_utc.hashCode() : 0);
+            return result;
+        }
     }
 
     public static enum State {

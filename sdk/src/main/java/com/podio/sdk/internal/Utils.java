@@ -52,7 +52,7 @@ public class Utils {
         }
     }
 
-    public static String formatDate(Date date) {
+    public static String formatDateUtc(Date date) {
         try {
             return getUtcSimpleDateFormat("yyyy-MM-dd").format(date);
         } catch (NullPointerException e) {
@@ -62,9 +62,29 @@ public class Utils {
         }
     }
 
-    public static String formatDateTime(Date dateTime) {
+    public static String formatDateTimeUtc(Date dateTime) {
         try {
             return getUtcSimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public static String formatDateDefault(Date date) {
+        try {
+            return getDefaultSimpleDateFormat("yyyy-MM-dd").format(date);
+        } catch (NullPointerException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public static String formatDateTimeDefault(Date dateTime) {
+        try {
+            return getDefaultSimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTime);
         } catch (NullPointerException e) {
             return null;
         } catch (IllegalArgumentException e) {

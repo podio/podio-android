@@ -80,7 +80,7 @@ public class TaskProvider extends Provider {
          * @return
          */
         public GetTaskFilter dueDate(Date from, Date to) {
-            this.addQueryParameter("due_date", Utils.formatDate(from) + "-" + Utils.formatDate(to));
+            this.addQueryParameter("due_date", Utils.formatDateUtc(from) + "-" + Utils.formatDateUtc(to));
             return this;
         }
 
