@@ -211,7 +211,7 @@ public class DateField extends Field<DateField.Value> {
             if (hasEndTimeUtc()) {
                 return Utils.parseDateTimeUtc(end_utc);
             } else {
-                return Utils.parseDateUtc(end_utc);
+                return Utils.parseDateDefault(end_utc);
             }
         }
 
@@ -239,7 +239,7 @@ public class DateField extends Field<DateField.Value> {
             if (hasStartTimeUtc()) {
                 return Utils.parseDateTimeUtc(start_utc);
             } else {
-                return Utils.parseDateUtc(start_utc);
+                return Utils.parseDateDefault(start_utc);
             }
         }
 
