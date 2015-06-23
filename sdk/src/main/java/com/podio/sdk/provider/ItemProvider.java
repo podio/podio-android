@@ -177,10 +177,10 @@ public class ItemProvider extends Provider {
 
         /**
          * Fetches a set of filtered items for the application with the given id.
-         * <p>
+         * <p/>
          * If no filter data has been configured, then the default filter will be used, with a
          * behavior as the API sees fit.
-         * <p>
+         * <p/>
          * Note that, while the other methods in this class are optional, this method must be called
          * in order for the filtered request to take place
          *
@@ -197,10 +197,10 @@ public class ItemProvider extends Provider {
         /**
          * Fetches a set of filtered items for the application with the given id and a given
          * view_id.
-         * <p>
+         * <p/>
          * If no filter data has been configured, then the default filter will be used, with a
          * behavior as the API sees fit.
-         * <p>
+         * <p/>
          * Note that, while the other methods in this class are optional, this method must be called
          * in order for the filtered request to take place
          *
@@ -233,26 +233,9 @@ public class ItemProvider extends Provider {
         return post(filter, data, Item.CreateResult.class);
     }
 
-    /**
-     * Enables filtered request of items.
-     *
-     * @return An ItemFilterProvider enabling the caller to configure the filter details.
-     */
-    public ItemFilterProvider filter() {
-        return new ItemFilterProvider();
-    }
-
-    /**
-     * Fetches the single item with the given id.
-     *
-     * @param itemId
-     *         The id of the item to fetch.
-     *
-     * @return A ticket which the caller can use to identify this request with.
-     */
-    public Request<Item> get(long itemId) {
+    public Request<Void> delete(long itemId) {
         Path filter = new Path().withItemId(itemId);
-        return get(filter, Item.class);
+        return delete(filter);
     }
 
     /**
@@ -270,6 +253,28 @@ public class ItemProvider extends Provider {
         Path filter = new Path().withItemId(itemId);
         Item.CreateData data = item.getCreateData();
         return put(filter, data, Item.CreateResult.class);
+    }
+
+    /**
+     * Fetches the single item with the given id.
+     *
+     * @param itemId
+     *         The id of the item to fetch.
+     *
+     * @return A ticket which the caller can use to identify this request with.
+     */
+    public Request<Item> get(long itemId) {
+        Path filter = new Path().withItemId(itemId);
+        return get(filter, Item.class);
+    }
+
+    /**
+     * Enables filtered request of items.
+     *
+     * @return An ItemFilterProvider enabling the caller to configure the filter details.
+     */
+    public ItemFilterProvider filter() {
+        return new ItemFilterProvider();
     }
 
 }
