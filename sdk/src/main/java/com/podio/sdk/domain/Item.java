@@ -23,6 +23,7 @@
 package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
 
 import java.util.ArrayList;
@@ -244,6 +245,7 @@ public class Item {
     private final String link = null;
     private final String title = null;
     private final String[] tags = null;
+    private final EventContext.UserRatings user_ratings = null;
 
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
@@ -260,7 +262,6 @@ public class Item {
     //private final Object values = null;
     //private final Object ref = null;
     //private final Object refs = null;
-    //private final Object user_ratings = null;
     //private final Object invite = null;
     //private final Object reminder = null;
     //private final Object presence = null;
@@ -600,6 +601,14 @@ public class Item {
      */
     public Space getSpace() {
         return space;
+    }
+
+    /**
+     *
+     * @return returns the ratings of the active user on the object.
+     */
+    public EventContext.UserRatings getUserRatings(){
+        return user_ratings;
     }
 
     /**
