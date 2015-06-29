@@ -22,12 +22,12 @@
 
 package com.podio.sdk.domain.field;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -55,15 +55,15 @@ public class DurationField extends Field<DurationField.Value> {
             return default_value;
         }
 
-        public boolean hasAllFieldTypes(FieldType... fieldTypes) {
-            if ((settings == null || Utils.isEmpty(settings.fields)) && Utils.isEmpty(fieldTypes)) {
+        public boolean hasAllSettingsFieldTypes(SettingFieldType... settingFieldTypes) {
+            if ((settings == null || Utils.isEmpty(settings.fields)) && Utils.isEmpty(settingFieldTypes)) {
                 // This field has no field types and the user wants to verify that.
                 return true;
             }
 
-            if ((settings != null && Utils.notEmpty(settings.fields)) && Utils.notEmpty(fieldTypes)) {
-                for (FieldType fieldType : fieldTypes) {
-                    if (!settings.fields.contains(fieldType.name())) {
+            if ((settings != null && Utils.notEmpty(settings.fields)) && Utils.notEmpty(settingFieldTypes)) {
+                for (SettingFieldType settingFieldType : settingFieldTypes) {
+                    if (!settings.fields.contains(settingFieldType.name())) {
                         return false;
                     }
                 }
@@ -73,18 +73,10 @@ public class DurationField extends Field<DurationField.Value> {
             return false;
         }
 
-        public boolean hasAnyFieldType(FieldType... fieldTypes) {
-            if ((settings == null || Utils.isEmpty(settings.fields)) && Utils.isEmpty(fieldTypes)) {
-                // This field has no field types and the user wants to verify that.
-                return true;
-            }
+        public boolean hasSettingsFieldType(SettingFieldType settingFieldType) {
 
-            if ((settings != null && Utils.notEmpty(settings.fields)) && Utils.notEmpty(fieldTypes)) {
-                for (FieldType fieldType : fieldTypes) {
-                    if (settings.fields.contains(fieldType.name())) {
-                        return true;
-                    }
-                }
+            if ((settings != null && Utils.notEmpty(settings.fields)) && settingFieldType != null) {
+                return settings.fields.contains(settingFieldType.name());
             }
 
             return false;
@@ -97,17 +89,17 @@ public class DurationField extends Field<DurationField.Value> {
      * @author László Urszuly
      */
     public static class Value extends Field.Value {
-        private final Long value;
+        private final Integer value;
 
-        public Value(long value) {
-            this.value = value;
+        public Value(int value) {
+            this.value = value != -1 ? value : null;
         }
 
         @Override
         public boolean equals(Object o) {
             if (o instanceof Value) {
                 Value other = (Value) o;
-                return Utils.getNative(other.value, -1L) == Utils.getNative(this.value, -1L);
+                return Utils.getNative(other.value, -1) == Utils.getNative(this.value, -1);
             }
 
             return false;
@@ -130,13 +122,18 @@ public class DurationField extends Field<DurationField.Value> {
             return value != null ? value.hashCode() : 0;
         }
 
-        public long getDuration() {
-            return Utils.getNative(value, 0L);
+        /**
+         * Will return -1 if not set.
+         *
+         * @return
+         */
+        public int getDuration() {
+            return Utils.getNative(value, -1);
         }
     }
 
-    public static enum FieldType {
-        hours, minutes, seconds, undefined
+    public static enum SettingFieldType {
+        days, hours, minutes, seconds
     }
 
     // Private fields.
@@ -148,7 +145,6 @@ public class DurationField extends Field<DurationField.Value> {
         this.values = new ArrayList<Value>();
     }
 
-
     @Override
     public void setValues(List<Value> values) {
         this.values.clear();
@@ -158,7 +154,10 @@ public class DurationField extends Field<DurationField.Value> {
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
-            values.add(value);
+            //duration field do not support multiple values so
+            // that is why we clear the values on each method call
+            values.clear();
+            values.add(0, value);
         }
     }
 
