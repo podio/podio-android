@@ -91,6 +91,10 @@ public class DurationField extends Field<DurationField.Value> {
     public static class Value extends Field.Value {
         private final Integer value;
 
+        /**
+         *
+         * @param value -1 if not set.
+         */
         public Value(int value) {
             this.value = value != -1 ? value : null;
         }
