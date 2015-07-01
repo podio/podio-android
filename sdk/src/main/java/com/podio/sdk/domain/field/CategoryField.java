@@ -26,13 +26,13 @@
 
 package com.podio.sdk.domain.field;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
@@ -64,11 +64,16 @@ public class CategoryField extends Field<CategoryField.Value> {
 
         /**
          * Returns the display state of this field.
-         *
-         * @return A status string.
+         * @return
          */
-        public String getDisplay() {
-            return settings != null ? settings.display : null;
+        public Display getDisplay() {
+            try {
+                return Display.valueOf(settings.display);
+            } catch (NullPointerException e) {
+                return Display.undefined;
+            } catch (IllegalArgumentException e) {
+                return Display.undefined;
+            }
         }
 
         /**
@@ -91,6 +96,10 @@ public class CategoryField extends Field<CategoryField.Value> {
         }
     }
 
+    public static enum Display {
+        inline, list, dropdown, undefined
+    }
+
     /**
      * This class describes a Category option.
      *
@@ -109,12 +118,17 @@ public class CategoryField extends Field<CategoryField.Value> {
         /**
          * Returns the status of this category option.
          *
-         * @return The status string.
+         * @return An enumeration value, describing the category status.
          */
-        public String getStatus() {
-            return status;
+        public Status getStatus() {
+            try {
+                return Status.valueOf(status);
+            } catch (NullPointerException e) {
+                return Status.undefined;
+            } catch (IllegalArgumentException e) {
+                return Status.undefined;
+            }
         }
-
         /**
          * Returns the name of this category option.
          *
@@ -141,6 +155,22 @@ public class CategoryField extends Field<CategoryField.Value> {
         public long getId() {
             return Utils.getNative(id, -1L);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Data data = (Data) o;
+
+            return id.equals(data.id);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return id.hashCode();
+        }
     }
 
     /**
@@ -157,24 +187,6 @@ public class CategoryField extends Field<CategoryField.Value> {
 
         public Value(long optionId) {
             this.value = new Data(optionId);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Value) {
-                Value other = (Value) o;
-
-                if (other.value != null && this.value != null) {
-                    return other.value.getId() == this.value.getId();
-                }
-            }
-
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return value != null ? value.hashCode() : 0;
         }
 
         @Override
@@ -211,7 +223,7 @@ public class CategoryField extends Field<CategoryField.Value> {
         /**
          * {@inheritDoc Data#getStatus()}
          */
-        public String getStatus() {
+        public Status getStatus() {
             return value != null ? value.getStatus() : null;
         }
 
@@ -220,6 +232,22 @@ public class CategoryField extends Field<CategoryField.Value> {
          */
         public String getText() {
             return value != null ? value.getText() : null;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Value value1 = (Value) o;
+
+            return value.equals(value1.value);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
     }
 
