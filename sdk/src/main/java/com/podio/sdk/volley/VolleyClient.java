@@ -30,7 +30,6 @@ import com.podio.sdk.Client;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.Session;
-import com.podio.sdk.domain.File;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.json.JsonParser;
 
@@ -121,7 +120,7 @@ public class VolleyClient implements Client {
                     @Override
                     public boolean onErrorOccurred(Throwable cause) {
                         clearRequestQueue();
-                        return true;
+                        return false;
                     }
                 }).waitForResult(TimeUnit.MILLISECONDS.toSeconds(CLIENT_DEFAULT_TIMEOUT_MS));
             }
