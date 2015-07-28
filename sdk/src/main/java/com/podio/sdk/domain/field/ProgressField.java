@@ -116,7 +116,8 @@ public class ProgressField extends Field<ProgressField.Value> {
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
-            values.add(value);
+            values.clear();
+            values.add(0,value);
         }
     }
 
