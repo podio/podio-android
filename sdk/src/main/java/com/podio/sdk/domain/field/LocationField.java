@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * @author László Urszuly
  */
-public class MapField extends Field<MapField.Value> {
+public class LocationField extends Field<LocationField.Value> {
     /**
      * This class describes the particular settings of a Map field configuration.
      *
@@ -61,19 +61,41 @@ public class MapField extends Field<MapField.Value> {
      * @author László Urszuly
      */
     public static class Value extends Field.Value {
-        private final Double lat = null;
-        private final Double lng = null;
-        private final String city = null;
-        private final String country = null;
-        private final String formatted = null;
-        private final String postal_code = null;
-        private final String state = null;
-        private final String street_name = null;
-        private final String street_number = null;
+        private final String formatted;
+        private final String street_number;
+        private final String street_name;
+        private final String postal_code;
+        private final String city;
+        private final String state;
+        private final String country;
+        private final Double lat;
+        private final Double lng;
         private final String value;
 
         public Value(String value) {
             this.value = value;
+            this.formatted = null;
+            this.street_number = null;
+            this.street_name = null;
+            this.postal_code = null;
+            this.city = null;
+            this.state = null;
+            this.country = null;
+            this.lat = null;
+            this.lng = null;
+        }
+
+        public Value(String formatted, String street_number, String street_name, String postal_code, String city, String state, String country, Double lat, Double lng){
+            this.formatted = formatted;
+            this.street_number = street_number;
+            this.street_name = street_name;
+            this.postal_code = postal_code;
+            this.city = city;
+            this.state = state;
+            this.country = country;
+            this.lat = lat;
+            this.lng = lng;
+            this.value = null;
         }
 
         @Override
@@ -106,11 +128,11 @@ public class MapField extends Field<MapField.Value> {
             return this.value != null ? this.value.hashCode() : 0;
         }
 
-        public double getLatitude() {
+        public double getLat() {
             return Utils.getNative(lat, 0.0D);
         }
 
-        public double getLongitude() {
+        public double getLng() {
             return Utils.getNative(lng, 0.0D);
         }
 
@@ -122,7 +144,7 @@ public class MapField extends Field<MapField.Value> {
             return country;
         }
 
-        public String getFormattedLocation() {
+        public String getFormatted() {
             return formatted;
         }
 
@@ -151,7 +173,7 @@ public class MapField extends Field<MapField.Value> {
     private final Configuration config = null;
     private final ArrayList<Value> values;
 
-    public MapField(String externalId) {
+    public LocationField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }
@@ -165,6 +187,7 @@ public class MapField extends Field<MapField.Value> {
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
+            values.clear();
             values.add(value);
         }
     }

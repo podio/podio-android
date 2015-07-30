@@ -21,6 +21,8 @@
  */
 package com.podio.sdk.domain;
 
+import com.podio.sdk.internal.Utils;
+
 public class Address {
 
     private final String formatted = null;
@@ -61,11 +63,11 @@ public class Address {
         return state;
     }
 
-    public Double getLat() {
-        return lat;
+    public double getLat() {
+        return Utils.getNative(lat, 0.0D);
     }
 
-    public Double getLng() {
-        return lng;
+    public double getLng() {
+        return Utils.getNative(lng, 0.0D);
     }
 }

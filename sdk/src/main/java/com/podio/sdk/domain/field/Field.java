@@ -137,7 +137,7 @@ public abstract class Field<T extends Field.Value> {
         duration(DurationField.class),
         embed(LinkField.class),
         image(ImageField.class),
-        location(MapField.class),
+        location(LocationField.class),
         money(MoneyField.class),
         number(NumberField.class),
         progress(ProgressField.class),
