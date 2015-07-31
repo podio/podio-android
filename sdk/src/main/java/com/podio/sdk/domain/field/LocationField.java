@@ -39,6 +39,16 @@ public class LocationField extends Field<LocationField.Value> {
      * @author László Urszuly
      */
     private static class Settings {
+        private final Boolean structured = null;
+        private final Boolean has_map = null;
+
+        public boolean isStructured() {
+            return Utils.getNative(structured, false);
+        }
+
+        public boolean getHasMap() {
+            return Utils.getNative(has_map, false);
+        }
     }
 
     /**
@@ -71,6 +81,7 @@ public class LocationField extends Field<LocationField.Value> {
         private final Double lat;
         private final Double lng;
         private final String value;
+        private final Boolean map_in_sync;
 
         public Value(String value) {
             this.value = value;
@@ -83,6 +94,7 @@ public class LocationField extends Field<LocationField.Value> {
             this.country = null;
             this.lat = null;
             this.lng = null;
+            this.map_in_sync = null;
         }
 
         public Value(String formatted, String street_number, String street_name, String postal_code, String city, String state, String country, Double lat, Double lng){
@@ -96,6 +108,7 @@ public class LocationField extends Field<LocationField.Value> {
             this.lat = lat;
             this.lng = lng;
             this.value = null;
+            this.map_in_sync = null;
         }
 
         @Override
@@ -128,12 +141,20 @@ public class LocationField extends Field<LocationField.Value> {
             return this.value != null ? this.value.hashCode() : 0;
         }
 
+        /**
+         *
+         * @return The latitude or Double.MIN_VALUE if the value is not set.
+         */
         public double getLat() {
-            return Utils.getNative(lat, 0.0D);
+            return Utils.getNative(lat, Double.MIN_VALUE);
         }
 
+        /**
+         *
+         * @return The longitude or Double.MIN_VALUE if the value is not set.
+         */
         public double getLng() {
-            return Utils.getNative(lng, 0.0D);
+            return Utils.getNative(lng, Double.MIN_VALUE);
         }
 
         public String getCity() {
@@ -166,6 +187,10 @@ public class LocationField extends Field<LocationField.Value> {
 
         public String getValue() {
             return value;
+        }
+
+        public boolean isMapInSync(){
+            return Utils.getNative(map_in_sync, false);
         }
     }
 

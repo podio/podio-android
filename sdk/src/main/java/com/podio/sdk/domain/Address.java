@@ -63,11 +63,19 @@ public class Address {
         return state;
     }
 
+    /**
+     *
+     * @return The latitude or Double.MIN_VALUE if the value is not set.
+     */
     public double getLat() {
-        return Utils.getNative(lat, 0.0D);
+        return Utils.getNative(lat, Double.MIN_VALUE);
     }
 
+    /**
+     *
+     * @return The longitude or Double.MIN_VALUE if the value is not set.
+     */
     public double getLng() {
-        return Utils.getNative(lng, 0.0D);
+        return Utils.getNative(lng, Double.MIN_VALUE);
     }
 }
