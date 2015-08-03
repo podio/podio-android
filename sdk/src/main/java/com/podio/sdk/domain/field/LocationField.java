@@ -97,7 +97,7 @@ public class LocationField extends Field<LocationField.Value> {
             this.map_in_sync = null;
         }
 
-        public Value(String formatted, String street_number, String street_name, String postal_code, String city, String state, String country, Double lat, Double lng){
+        public Value(String formatted, String street_number, String street_name, String postal_code, String city, String state, String country, Double lat, Double lng, boolean mapInSync){
             this.formatted = formatted;
             this.street_number = street_number;
             this.street_name = street_name;
@@ -107,8 +107,8 @@ public class LocationField extends Field<LocationField.Value> {
             this.country = country;
             this.lat = lat;
             this.lng = lng;
-            this.value = null;
-            this.map_in_sync = null;
+            this.value = formatted;
+            this.map_in_sync = mapInSync;
         }
 
         @Override
