@@ -39,7 +39,11 @@ public class NumberField extends Field<NumberField.Value> {
      * @author László Urszuly
      */
     private static class Settings {
-        private final Integer decimals = null;
+        private Integer decimals = null;
+
+        public Settings(Integer decimals) {
+            this.decimals = decimals;
+        }
     }
 
     /**
@@ -49,7 +53,11 @@ public class NumberField extends Field<NumberField.Value> {
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
-        private final Settings settings = null;
+        private Settings settings = null;
+
+        public Configuration(Settings settings) {
+            this.settings = settings;
+        }
 
         public Value getDefaultValue() {
             return default_value;
@@ -113,12 +121,23 @@ public class NumberField extends Field<NumberField.Value> {
     }
 
     // Private fields.
-    private final Configuration config = null;
+    private Configuration config = null;
     private final ArrayList<Value> values;
 
     public NumberField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
+    }
+
+    public NumberField(CalculationField calculationField) {
+        super(calculationField);
+
+        config = new Configuration(new Settings(calculationField.getConfiguration().getNumberOfDecimals()));
+
+        this.values = new ArrayList<>();
+        for (Field.Value calcValue : calculationField.getValues()) {
+            this.values.add((NumberField.Value)calcValue);
+        }
     }
 
     @Override

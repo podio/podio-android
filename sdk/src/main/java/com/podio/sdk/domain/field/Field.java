@@ -32,6 +32,7 @@ import java.util.Map;
  * @author László Urszuly
  */
 public abstract class Field<T extends Field.Value> {
+
     /**
      * This class describes the common properties of a field value. Specific fields may have more
      * properties, in which case they will themselves define an extended version fo this class.
@@ -148,7 +149,7 @@ public abstract class Field<T extends Field.Value> {
 
         private final Class<? extends Field> fieldClass;
 
-        private Type(Class<? extends Field> fieldClass) {
+        Type(Class<? extends Field> fieldClass) {
             this.fieldClass = fieldClass;
         }
 
@@ -157,11 +158,11 @@ public abstract class Field<T extends Field.Value> {
         }
     }
 
-    private final Long field_id = null;
-    private final String external_id;
-    private final String label = null;
-    private final String status = null;
-    private final String type = null;
+    private Long field_id = null;
+    private String external_id = null;
+    private String label = null;
+    private String status = null;
+    private String type = null;
 
     /**
      * Creates a client side field instance. This field is not automatically sent to the API.
@@ -172,6 +173,13 @@ public abstract class Field<T extends Field.Value> {
      */
     public Field(String externalId) {
         this.external_id = externalId;
+    }
+
+    public Field(CalculationField calculationField) {
+        this.status = calculationField.getStatus().name();
+        this.type = calculationField.getType().name();
+        this.field_id = calculationField.getFieldId();
+        this.label = calculationField.getLabel();
     }
 
     /**
@@ -265,6 +273,7 @@ public abstract class Field<T extends Field.Value> {
     public abstract void addValue(T value);
 
     public abstract void setValues(List<T> values);
+
     /**
      * Returns the value at the given position for this field.
      *

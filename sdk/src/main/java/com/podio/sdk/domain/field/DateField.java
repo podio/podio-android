@@ -22,6 +22,8 @@
 
 package com.podio.sdk.domain.field;
 
+import android.util.Log;
+
 import com.podio.sdk.internal.Utils;
 
 import java.util.ArrayList;
@@ -40,9 +42,14 @@ public class DateField extends Field<DateField.Value> {
      * @author László Urszuly
      */
     private static class Settings {
-        private final Boolean calendar = null;
+        private Boolean calendar = null;
         private final String end = null;
-        private final String time = null;
+        private String time = null;
+
+        public Settings(Boolean calendar, String time){
+            this.calendar = calendar;
+            this.time = time;
+        }
     }
 
     /**
@@ -52,7 +59,12 @@ public class DateField extends Field<DateField.Value> {
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
-        private final Settings settings = null;
+        private Settings settings = null;
+
+
+        public Configuration(Settings settings) {
+            this.settings = settings;
+        }
 
         public Value getDefaultValue() {
             return default_value;
@@ -96,11 +108,11 @@ public class DateField extends Field<DateField.Value> {
         private final String end_time_utc = null;
         private final String end_utc;
         private final String start;
-        private final String start_date = null;
-        private final String start_date_utc = null;
-        private final String start_time = null;
-        private final String start_time_utc = null;
-        private final String start_utc;
+        private String start_date = null;
+        private String start_date_utc = null;
+        private String start_time = null;
+        private String start_time_utc = null;
+        private String start_utc;
 
         public Value(Date start) {
             this(start, null);
@@ -297,12 +309,23 @@ public class DateField extends Field<DateField.Value> {
     }
 
     // Private fields.
-    private final Configuration config = null;
+    private Configuration config = null;
     private final ArrayList<Value> values;
 
     public DateField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
+    }
+
+    public DateField(CalculationField calculationField){
+        super(calculationField);
+
+        this.config = new Configuration(new Settings(calculationField.getConfiguration().isCalendar(),calculationField.getConfiguration().getTimeState()));
+        this.values = new ArrayList<>();
+        for (Field.Value calcValue : calculationField.getValues()) {
+            this.values.add((DateField.Value)calcValue);
+        }
+
     }
 
     @Override

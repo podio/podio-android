@@ -51,7 +51,11 @@ public class TextField extends Field<TextField.Value> {
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
-        private final Settings settings = null;
+        private Settings settings = null;
+
+        public Configuration() {
+            settings = new Settings();
+        }
 
         public Value getDefaultValue() {
             return default_value;
@@ -126,12 +130,22 @@ public class TextField extends Field<TextField.Value> {
     }
 
     // Private fields.
-    private final Configuration config = null;
-    private final ArrayList<Value> values;
+    private Configuration config = null;
+    private ArrayList<Value> values;
 
     public TextField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
+    }
+
+    public TextField(CalculationField calculationField) {
+        super(calculationField);
+
+        config = new Configuration();
+        this.values = new ArrayList<>();
+        for (Field.Value calcValue : calculationField.getValues()) {
+            this.values.add((TextField.Value)calcValue);
+        }
     }
 
     @Override

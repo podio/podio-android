@@ -36,7 +36,6 @@ public class UndefinedField extends Field<Field.Value> {
         super(externalId);
     }
 
-
     @Override
     public void setValues(List<Value> values) {
     }
