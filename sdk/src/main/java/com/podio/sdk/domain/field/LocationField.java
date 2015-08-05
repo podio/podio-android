@@ -100,6 +100,8 @@ public class LocationField extends Field<LocationField.Value> {
         }
 
         public Value(String formatted, String value, String street_address, String postal_code, String city, String state, String country, Double lat, Double lng, boolean mapInSync){
+            this.formatted = formatted;
+            this.value = value;
             this.street_address = street_address;
             this.postal_code = postal_code;
             this.city = city;
@@ -108,8 +110,6 @@ public class LocationField extends Field<LocationField.Value> {
             this.lat = lat;
             this.lng = lng;
             this.map_in_sync = mapInSync;
-            this.formatted = formatted;
-            this.value = value;
         }
 
         @Override
@@ -132,6 +132,15 @@ public class LocationField extends Field<LocationField.Value> {
             if (Utils.notEmpty(value)) {
                 data = new HashMap<String, Object>();
                 data.put("value", value);
+                data.put("formatted", formatted);
+                data.put("street_address", street_address);
+                data.put("postal_code", postal_code);
+                data.put("city", city);
+                data.put("state", state);
+                data.put("country", country);
+                data.put("lat",lat);
+                data.put("lng", lng);
+                data.put("map_in_sync", map_in_sync);
             }
 
             return data;
