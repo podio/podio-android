@@ -38,7 +38,7 @@ public class LocationField extends Field<LocationField.Value> {
      *
      * @author László Urszuly
      */
-    private static class Settings {
+    public static class Settings {
         private final Boolean structured = null;
         private final Boolean has_map = null;
 
@@ -63,6 +63,10 @@ public class LocationField extends Field<LocationField.Value> {
         public Value getDefaultValue() {
             return default_value;
         }
+
+        public Settings getSettings(){
+            return settings;
+        }
     }
 
     /**
@@ -72,8 +76,7 @@ public class LocationField extends Field<LocationField.Value> {
      */
     public static class Value extends Field.Value {
         private final String formatted;
-        private final String street_number;
-        private final String street_name;
+        private final String street_address;
         private final String postal_code;
         private final String city;
         private final String state;
@@ -86,8 +89,7 @@ public class LocationField extends Field<LocationField.Value> {
         public Value(String value) {
             this.value = value;
             this.formatted = null;
-            this.street_number = null;
-            this.street_name = null;
+            this.street_address = null;
             this.postal_code = null;
             this.city = null;
             this.state = null;
@@ -97,18 +99,17 @@ public class LocationField extends Field<LocationField.Value> {
             this.map_in_sync = null;
         }
 
-        public Value(String formatted, String street_number, String street_name, String postal_code, String city, String state, String country, Double lat, Double lng, boolean mapInSync){
-            this.formatted = formatted;
-            this.street_number = street_number;
-            this.street_name = street_name;
+        public Value(String formatted, String value, String street_address, String postal_code, String city, String state, String country, Double lat, Double lng, boolean mapInSync){
+            this.street_address = street_address;
             this.postal_code = postal_code;
             this.city = city;
             this.state = state;
             this.country = country;
             this.lat = lat;
             this.lng = lng;
-            this.value = formatted;
             this.map_in_sync = mapInSync;
+            this.formatted = formatted;
+            this.value = value;
         }
 
         @Override
@@ -177,12 +178,8 @@ public class LocationField extends Field<LocationField.Value> {
             return state;
         }
 
-        public String getStreetName() {
-            return street_name;
-        }
-
-        public String getStreetNumber() {
-            return street_number;
+        public String getStreetAddress() {
+            return street_address;
         }
 
         public String getValue() {
