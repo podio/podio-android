@@ -26,6 +26,7 @@ import com.podio.sdk.provider.ClientProvider;
 import com.podio.sdk.provider.CommentProvider;
 import com.podio.sdk.provider.ContactProvider;
 import com.podio.sdk.provider.ConversationProvider;
+import com.podio.sdk.provider.EmbedProvider;
 import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.GrantProvider;
 import com.podio.sdk.provider.ItemProvider;
@@ -135,6 +136,11 @@ public class Podio {
      * Enables means of easy operating on the Location API end point.
      */
     public static final LocationProvider location = new LocationProvider();
+
+    /**
+     * Enables means of easy operating on the Embed API end point.
+     */
+    public static final EmbedProvider embed = new EmbedProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
@@ -248,6 +254,7 @@ public class Podio {
         rating.setClient(restClient);
         grant.setClient(restClient);
         location.setClient(restClient);
+        embed.setClient(restClient);
     }
 
     /**
