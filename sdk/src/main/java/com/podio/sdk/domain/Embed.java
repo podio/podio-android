@@ -34,7 +34,7 @@ public class Embed {
     }
 
     public static class Create {
-        private String url;
+        private final String url;
 
         public Create(String url) {
             this.url = url;

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author László Urszuly
@@ -58,15 +59,15 @@ public class LinkField extends Field<LinkField.Value> {
     }
 
     /**
-     * This class describes the Link value data.
+     * This class describes a Link field value.
      *
      * @author László Urszuly
      */
-    public static class Data {
+    public static class Value extends Field.Value {
+        private Embed embed = null;
         private final File file = null;
-        private final Embed embed;
 
-        public Data(String url) {
+        public Value(String url) {
             this.embed = new Embed(url);
         }
 
@@ -77,58 +78,28 @@ public class LinkField extends Field<LinkField.Value> {
         public Embed getEmbed() {
             return embed;
         }
-    }
-
-    /**
-     * This class describes a Link field value.
-     *
-     * @author László Urszuly
-     */
-    public static class Value extends Field.Value {
-        private final Data value;
-
-        public Value(Data value) {
-            this.value = value;
-        }
-
-        public Value(String url) {
-            this.value = new Data(url);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Value) {
-                Value other = (Value) o;
-
-                if (other.value != null && other.value.embed != null && this.value != null && this.value.embed != null && this.value.embed.getUrl() != null) {
-                    return this.value.embed.getUrl().equals(other.value.embed.getUrl());
-                }
-            }
-
-            return false;
-        }
 
         @Override
         public Map<String, Object> getCreateData() {
             HashMap<String, Object> data = null;
 
-            if (value != null) {
-                if (value.embed != null) {
-                    String url = value.embed.getUrl();
+            if (embed != null || file != null) {
+                data = new HashMap<String, Object>();
+            }
 
-                    if (Utils.notEmpty(url)) {
-                        data = new HashMap<String, Object>();
-                        data.put("value", url);
-                    }
+            if (embed != null) {
+                long embedId = embed.getId();
+
+                if (embedId > 0L) {
+                    data.put("embed", embedId);
                 }
+            }
 
-                if (data == null && value.file != null) {
-                    long id = value.file.getId();
+            if (file != null) {
+                long id = file.getId();
 
-                    if (id > 0L) {
-                        data = new HashMap<String, Object>();
-                        data.put("value", id);
-                    }
+                if (id > 0L) {
+                    data.put("value", file.getId());
                 }
             }
 
@@ -136,16 +107,22 @@ public class LinkField extends Field<LinkField.Value> {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Value value = (Value) o;
+
+            if (embed != null ? !embed.equals(value.embed) : value.embed != null) return false;
+            return !(file != null ? !file.equals(value.file) : value.file != null);
+
+        }
+
+        @Override
         public int hashCode() {
-            return (value != null && value.embed != null) ? value.embed.hashCode() : (value.file != null) ? value.file.hashCode() : 0;
-        }
-
-        public File getFile() {
-            return value != null ? value.getFile() : null;
-        }
-
-        public Embed getEmbed() {
-            return value != null ? value.getEmbed() : null;
+            int result = embed != null ? embed.hashCode() : 0;
+            result = 31 * result + (file != null ? file.hashCode() : 0);
+            return result;
         }
     }
 
