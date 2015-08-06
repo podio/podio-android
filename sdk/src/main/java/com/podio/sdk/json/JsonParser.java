@@ -30,6 +30,7 @@ import com.podio.sdk.domain.TaskAction;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.notification.Notification;
 import com.podio.sdk.domain.notification.NotificationContext;
+import com.podio.sdk.domain.reference.ReferenceGroup;
 import com.podio.sdk.domain.stream.EventActivity;
 import com.podio.sdk.domain.stream.EventContext;
 
@@ -44,6 +45,7 @@ public class JsonParser {
             .registerTypeAdapter(EventContext.class, new EventContextDeserializerSerializer())
             .registerTypeAdapter(EventActivity.class, new EventActivityDeserializerSerializer())
             .registerTypeAdapter(TaskAction.class, new TaskActionDeserializerSerializer())
+            .registerTypeAdapter(ReferenceGroup.class, new ReferenceGroupDeserializerSerializer())
             .disableHtmlEscaping()
             .create();
 
