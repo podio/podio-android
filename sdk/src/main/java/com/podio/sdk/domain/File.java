@@ -23,6 +23,22 @@ import com.podio.sdk.internal.Utils;
  */
 public class File {
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        File file = (File) o;
+
+        return !(file_id != null ? !file_id.equals(file.file_id) : file.file_id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return file_id != null ? file_id.hashCode() : 0;
+    }
+
     public static class PushData {
         private final java.io.File file;
         private final String name;

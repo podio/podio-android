@@ -62,11 +62,12 @@ public class LinkField extends Field<LinkField.Value> {
      * @author László Urszuly
      */
     public static class Value extends Field.Value {
-        private Embed embed = null;
-        private final File file = null;
+        private final Embed embed;
+        private final File file;
 
-        public Value(String url) {
-            this.embed = new Embed(url);
+        public Value(Embed embed, File file) {
+            this.embed = embed;
+            this.file = file;
         }
 
         public File getFile() {

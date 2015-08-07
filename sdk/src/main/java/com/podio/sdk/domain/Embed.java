@@ -29,6 +29,22 @@ import com.podio.sdk.internal.Utils;
  */
 public class Embed {
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Embed embed = (Embed) o;
+
+        return !(embed_id != null ? !embed_id.equals(embed.embed_id) : embed.embed_id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return embed_id != null ? embed_id.hashCode() : 0;
+    }
+
     public static enum Type {
         link, undefined
     }
