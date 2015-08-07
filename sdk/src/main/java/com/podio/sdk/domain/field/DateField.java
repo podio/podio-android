@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain.field;
 
-import android.util.Log;
-
 import com.podio.sdk.internal.Utils;
 
 import java.util.ArrayList;
@@ -357,6 +355,11 @@ public class DateField extends Field<DateField.Value> {
         if (values != null && values.contains(value)) {
             values.remove(value);
         }
+    }
+
+    @Override
+    public void clearValues() {
+        values.clear();
     }
 
     @Override

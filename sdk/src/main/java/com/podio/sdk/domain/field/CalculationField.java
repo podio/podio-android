@@ -182,6 +182,11 @@ public class CalculationField extends Field<Field.Value> {
     }
 
     @Override
+    public void clearValues() {
+        values.clear();
+    }
+
+    @Override
     public int valuesCount() {
         return values != null ? values.size() : 0;
     }

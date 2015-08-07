@@ -155,6 +155,11 @@ public class MoneyField extends Field<MoneyField.Value> {
     }
 
     @Override
+    public void clearValues() {
+        values.clear();
+    }
+
+    @Override
     public int valuesCount() {
         return values != null ? values.size() : 0;
     }

@@ -59,6 +59,11 @@ public class UndefinedField extends Field<Field.Value> {
     }
 
     @Override
+    public void clearValues() {
+
+    }
+
+    @Override
     public int valuesCount() {
         return 0;
     }

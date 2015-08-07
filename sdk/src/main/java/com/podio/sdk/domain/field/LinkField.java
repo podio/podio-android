@@ -24,13 +24,11 @@ package com.podio.sdk.domain.field;
 
 import com.podio.sdk.domain.Embed;
 import com.podio.sdk.domain.File;
-import com.podio.sdk.internal.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author László Urszuly
@@ -163,6 +161,11 @@ public class LinkField extends Field<LinkField.Value> {
         if (values != null && values.contains(value)) {
             values.remove(value);
         }
+    }
+
+    @Override
+    public void clearValues() {
+        values.clear();
     }
 
     @Override

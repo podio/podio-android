@@ -139,6 +139,11 @@ public class ProgressField extends Field<ProgressField.Value> {
     }
 
     @Override
+    public void clearValues() {
+        values.clear();
+    }
+
+    @Override
     public int valuesCount() {
         return values != null ? values.size() : 0;
     }

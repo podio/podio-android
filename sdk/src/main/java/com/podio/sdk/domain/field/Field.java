@@ -304,6 +304,12 @@ public abstract class Field<T extends Field.Value> {
      */
     public abstract void removeValue(T value);
 
+    /**
+     * Clears the values array and thus make it an empty array. Useful when user clears the field.
+     * The changes are NOT updated on the servers by this method call.
+     */
+    public abstract void clearValues();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -273,6 +273,11 @@ public class ReferenceField extends Field<ReferenceField.Value> {
     }
 
     @Override
+    public void clearValues() {
+        values.clear();
+    }
+
+    @Override
     public int valuesCount() {
         return values != null ? values.size() : 0;
     }

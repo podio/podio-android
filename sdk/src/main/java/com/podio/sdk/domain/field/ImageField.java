@@ -22,13 +22,13 @@
 
 package com.podio.sdk.domain.field;
 
+import com.podio.sdk.domain.File;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.podio.sdk.domain.File;
 
 /**
  * @author László Urszuly
@@ -150,6 +150,11 @@ public class ImageField extends Field<ImageField.Value> {
         if (values != null && values.contains(value)) {
             values.remove(value);
         }
+    }
+
+    @Override
+    public void clearValues() {
+        values.clear();
     }
 
     @Override
