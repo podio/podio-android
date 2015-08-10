@@ -21,10 +21,10 @@
  */
 package com.podio.sdk.domain;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.Date;
 import java.util.List;
-
-import com.podio.sdk.internal.Utils;
 
 public class Profile {
     private final Long user_id = null;
@@ -50,32 +50,6 @@ public class Profile {
     private final String zip = null;               // -> ContactAPI, not in ProfileDTO
     private final String city = null;              // -> ContactAPI, not in ProfileDTO
     private final String country = null;           // -> ContactAPI, not in ProfileDTO
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Profile)) {
-            return false;
-        }
-
-        Profile other = (Profile) o;
-        long pid1 = Utils.getNative(profile_id, -1);
-        long uid1 = Utils.getNative(user_id, -1);
-        long pid2 = other.getId();
-        long uid2 = other.getUserId();
-
-        return (pid1 == pid2 && pid1 != -1) || (uid1 == uid2 && uid1 != -1);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 29;
-        int result = 1;
-
-        result = prime * result + (user_id != null ? user_id.hashCode() : 0);
-        result = prime * result + (profile_id != null ? profile_id.hashCode() : 0);
-
-        return result;
-    }
 
     public String getAbout() {
         return about;
@@ -181,4 +155,19 @@ public class Profile {
         return rights != null && rights.contains(permission.name());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Profile profile = (Profile) o;
+
+        return profile_id.equals(profile.profile_id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return profile_id.hashCode();
+    }
 }

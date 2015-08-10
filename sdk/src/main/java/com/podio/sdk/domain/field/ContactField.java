@@ -22,13 +22,10 @@
 
 package com.podio.sdk.domain.field;
 
-import com.podio.sdk.domain.File;
-import com.podio.sdk.domain.Right;
-import com.podio.sdk.internal.Utils;
+import com.podio.sdk.domain.Profile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,216 +67,53 @@ public class ContactField extends Field<ContactField.Value> {
     }
 
     /**
-     * This class describes the Contact value data.
-     *
-     * @author László Urszuly
-     */
-    public static class Data {
-        private final File image = null;
-        private final Long org_id = null;
-        private final Long profile_id = null;
-        private final Long space_id = null;
-        private final Long user_id;
-        private final String[] mail = null;
-        private final List<String> rights = null;
-        private final String external_id = null;
-        private final String last_seen_on = null;
-        private final String link = null;
-        private final String name = null;
-        private final String type = null;
-
-        public Data(long contactId) {
-            this.user_id = contactId;
-        }
-
-        public File getImageData() {
-            return image;
-        }
-
-        public long getOrganizationId() {
-            return Utils.getNative(org_id, -1L);
-        }
-
-        public long getProfileId() {
-            return Utils.getNative(profile_id, -1L);
-        }
-
-        public long getSpaceId() {
-            return Utils.getNative(space_id, -1L);
-        }
-
-        public long getUserId() {
-            return Utils.getNative(user_id, -1L);
-        }
-
-        public List<String> getEmailAddresses() {
-            return Arrays.asList(mail);
-        }
-
-        public boolean hasAllRights(Right... rights) {
-            if (Utils.isEmpty(this.rights) && Utils.isEmpty(rights)) {
-                // The user has no rights and wants to verify that.
-                return true;
-            }
-
-            if (Utils.notEmpty(this.rights) && Utils.notEmpty(rights)) {
-                for (Right right : rights) {
-                    if (!this.rights.contains(right.name())) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            return false;
-        }
-
-        public boolean hasAnyRights(Right... rights) {
-            if (Utils.isEmpty(this.rights) && Utils.isEmpty(rights)) {
-                // The user has no rights and wants to verify that.
-                return true;
-            }
-
-            if (Utils.notEmpty(this.rights) && Utils.notEmpty(rights)) {
-                for (Right right : rights) {
-                    if (this.rights.contains(right.name())) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public String getExternalId() {
-            return external_id;
-        }
-
-        public Date getLastSeenDate() {
-            return Utils.parseDateTimeUtc(last_seen_on);
-        }
-
-        public String getLink() {
-            return link;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Type getType() {
-            try {
-                return Type.valueOf(type);
-            } catch (NullPointerException e) {
-                return Type.undefined;
-            } catch (IllegalArgumentException e) {
-                return Type.undefined;
-            }
-        }
-    }
-
-    /**
      * This class describes a Contact field value.
      *
      * @author László Urszuly
      */
     public static class Value extends Field.Value {
-        private final Data value;
+        private final Profile value;
 
-        public Value(Data contact) {
+        public Value(Profile contact) {
             this.value = contact;
-        }
-
-        public Value(long contactId) {
-            this.value = new Data(contactId);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof Value) {
-                Value other = (Value) o;
-
-                if (other.value != null && this.value != null) {
-                    return other.value.getUserId() == this.value.getUserId();
-                }
-            }
-
-            return false;
         }
 
         @Override
         public Map<String, Object> getCreateData() {
             HashMap<String, Object> data = null;
-            long userId = getUserId();
+            long profileId = value != null ? value.getId() : 0L;
 
-            if (userId > 0L) {
+            if (profileId > 0L) {
                 data = new HashMap<String, Object>();
-                data.put("value", userId);
+                data.put("value", profileId);
             }
 
             return data;
-        }
-
-        @Override
-        public int hashCode() {
-            return value != null ? (int) value.getUserId() : 0;
-        }
-
-        public List<String> getEmailAddresses() {
-            return value != null ? value.getEmailAddresses() : new ArrayList<String>();
         }
 
         public String getExternalId() {
             return value != null ? value.getExternalId() : null;
         }
 
-        public File getImageData() {
-            return value != null ? value.getImageData() : null;
+        public Profile getProfile(){
+            return value;
         }
 
-        public Date getLastSeenDate() {
-            return value != null ? value.getLastSeenDate() : null;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Value value1 = (Value) o;
+
+            return !(value != null ? !value.equals(value1.value) : value1.value != null);
+
         }
 
-        public String getLink() {
-            return value != null ? value.getLink() : null;
+        @Override
+        public int hashCode() {
+            return value != null ? value.hashCode() : 0;
         }
-
-        public String getName() {
-            return value != null ? value.getName() : null;
-        }
-
-        public long getOrganizationId() {
-            return value != null ? value.getOrganizationId() : -1L;
-        }
-
-        public long getProfileId() {
-            return value != null ? value.getProfileId() : -1L;
-        }
-
-        public long getSpaceId() {
-            return value != null ? value.getSpaceId() : -1L;
-        }
-
-        public Type getType() {
-            return value != null ? value.getType() : Type.undefined;
-        }
-
-        public long getUserId() {
-            return value != null ? value.getUserId() : -1L;
-        }
-
-        public boolean hasAllRights(Right... rights) {
-            return value != null ? value.hasAllRights(rights) : false;
-        }
-
-        public boolean hasAnyRights(Right... rights) {
-            return value != null ? value.hasAnyRights(rights) : false;
-        }
-    }
-
-    public static enum Type {
-        user, space, undefined
     }
 
     // Private fields
