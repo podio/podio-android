@@ -21,7 +21,8 @@
  */
 package com.podio.sdk.domain.reference;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The base class of all reference groups when performing a reference search.
@@ -64,13 +65,16 @@ public abstract class ReferenceGroup {
         }
 
         private final Target target;
-        private final String text;
+        private String text;
         private final Integer limit;
 
-        public ReferenceTarget(Target target, String text, int limit) {
+        public ReferenceTarget(Target target, int limit) {
             this.target = target;
-            this.text = text;
             this.limit = limit;
+        }
+
+        public void setText(String text){
+            this.text = text;
         }
     }
 
@@ -83,19 +87,35 @@ public abstract class ReferenceGroup {
 
         public static class TargetParams {
             private final Long field_id;
-            private final List<Long> not_item_ids;
+            private Set<Long> not_item_ids;
 
-            public TargetParams(long field_id, List<Long> not_item_ids) {
+            public TargetParams(long field_id) {
                 this.field_id = field_id;
-                this.not_item_ids = not_item_ids;
+                not_item_ids = new HashSet<>();
+            }
+
+            public void setNotItemIds(Set<Long> notItemIds){
+                this.not_item_ids = notItemIds;
+            }
+
+            public void addNotItemId(long itemId){
+                not_item_ids.add(itemId);
             }
         }
 
         private final TargetParams target_params;
 
-        ItemFieldReferenceTarget(String text, int limit, long field_id, List<Long> notItemIds) {
-            super(Target.item_field, text, limit);
-            target_params = new TargetParams(field_id, notItemIds);
+        ItemFieldReferenceTarget(int limit, long field_id) {
+            super(Target.item_field, limit);
+            target_params = new TargetParams(field_id);
+        }
+
+        public void setNotItemIds(Set<Long> notItemIds){
+            target_params.setNotItemIds(notItemIds);
+        }
+
+        public void addNotItemId(long itemId){
+            target_params.addNotItemId(itemId);
         }
     }
 
@@ -114,8 +134,8 @@ public abstract class ReferenceGroup {
 
         private final TargetParams target_params;
 
-        TaskResponsibledReferenceTarget(String text, int limit, long task_id) {
-            super(Target.task_responsible, text, limit);
+        TaskResponsibledReferenceTarget(int limit, long task_id) {
+            super(Target.task_responsible, limit);
             target_params = new TargetParams(task_id);
         }
     }

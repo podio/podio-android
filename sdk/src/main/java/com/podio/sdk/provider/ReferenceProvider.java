@@ -54,10 +54,10 @@ public class ReferenceProvider extends Provider {
      *
      * @return A ticket which the caller can use to identify this request with.
      */
-    public Request<ReferenceGroup> createConversation(ReferenceGroup.ReferenceTarget referenceTarget) {
+    public Request<ReferenceGroup[]> referenceSearch(ReferenceGroup.ReferenceTarget referenceTarget) {
         Path filter = new Path().withSearch();
 
-        return post(filter, referenceTarget, ReferenceGroup.class);
+        return post(filter, referenceTarget, ReferenceGroup[].class);
     }
 
 }
