@@ -41,7 +41,7 @@ public class ContactField extends Field<ContactField.Value> {
      */
     private static class Settings {
         private final String type = null;
-        private final Type[] valid_types = null;
+        private final String[] valid_types = null;
     }
 
     /**
@@ -50,6 +50,21 @@ public class ContactField extends Field<ContactField.Value> {
      * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
+
+        public enum Type {
+            space_contacts, space_users, all_users, undefined;
+
+            public static Type fromString(String string) {
+                try {
+                    return Type.valueOf(string);
+                } catch (IllegalArgumentException e) {
+                    return Type.undefined;
+                } catch (NullPointerException e) {
+                    return Type.undefined;
+                }
+            }
+        }
+
         private final Value default_value = null;
         private final Settings settings = null;
 
@@ -57,12 +72,12 @@ public class ContactField extends Field<ContactField.Value> {
             return default_value;
         }
 
-        public String getType() {
-            return settings != null ? settings.type : null;
+        public Type getType() {
+            return settings != null ? Type.fromString(settings.type) : Type.undefined;
         }
 
-        public List<Type> getValidTypes() {
-            return settings != null && settings.valid_types != null ? Arrays.asList(settings.valid_types) : Arrays.asList(new Type[0]);
+        public List<String> getValidTypes() {
+            return settings != null && settings.valid_types != null ? Arrays.asList(settings.valid_types) : Arrays.asList(new String[0]);
         }
     }
 
@@ -95,7 +110,7 @@ public class ContactField extends Field<ContactField.Value> {
             return value != null ? value.getExternalId() : null;
         }
 
-        public Profile getProfile(){
+        public Profile getProfile() {
             return value;
         }
 
@@ -124,7 +139,6 @@ public class ContactField extends Field<ContactField.Value> {
         super(externalId);
         this.values = new ArrayList<Value>();
     }
-
 
     @Override
     public void setValues(List<Value> values) {
