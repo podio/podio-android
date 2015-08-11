@@ -76,6 +76,10 @@ public abstract class ReferenceGroup {
         public void setText(String text){
             this.text = text;
         }
+
+        public Target getTarget(){
+            return target;
+        }
     }
 
     // TODO There are more reference targets with their own unique TargetParams.
