@@ -74,7 +74,7 @@ public class Space {
     //private final Object is_overdue = null;
     //private final Object org_id = null;
     //private final Object push = null;
-    //private final Object member_count = null;
+    private final Integer member_count = null;
     //private final Object last_activity_on = null;
     //private final Object top_members = null;
     //private final Object app_count = null;
@@ -238,5 +238,9 @@ public class Space {
 
     public boolean isTop() {
         return Utils.getNative(top, false);
+    }
+
+    public int getMemberCount(){
+        return Utils.getNative(member_count, 0);
     }
 }

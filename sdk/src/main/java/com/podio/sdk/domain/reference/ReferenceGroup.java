@@ -21,6 +21,8 @@
  */
 package com.podio.sdk.domain.reference;
 
+import com.podio.sdk.internal.Utils;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,7 +57,7 @@ public abstract class ReferenceGroup {
     /**
      * Default Reference target post object.
      */
-    public static class ReferenceTarget {
+    public static class ReferenceTarget{
         public enum Target {
             task_responsible,
             alert,
@@ -79,6 +81,10 @@ public abstract class ReferenceGroup {
 
         public Target getTarget(){
             return target;
+        }
+
+        public int getLimit(){
+            return Utils.getNative(limit, 0);
         }
     }
 
@@ -105,6 +111,10 @@ public abstract class ReferenceGroup {
             public void addNotItemId(long itemId){
                 not_item_ids.add(itemId);
             }
+
+            public void removeNotItemId(long itemId){
+                not_item_ids.remove(not_item_ids);
+            }
         }
 
         private final TargetParams target_params;
@@ -120,6 +130,10 @@ public abstract class ReferenceGroup {
 
         public void addNotItemId(long itemId){
             target_params.addNotItemId(itemId);
+        }
+
+        public void removeNotItemId(long itemId){
+            target_params.removeNotItemId(itemId);
         }
     }
 
