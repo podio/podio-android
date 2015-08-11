@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * @author László Urszuly
  */
-public class ReferenceField extends Field<ReferenceField.Value> {
+public class RelationshipField extends Field<RelationshipField.Value> {
     /**
      * This class describes the particular settings of a Reference field configuration.
      *
@@ -122,7 +122,7 @@ public class ReferenceField extends Field<ReferenceField.Value> {
     private final Configuration config = null;
     private final ArrayList<Value> values;
 
-    public ReferenceField(String externalId) {
+    public RelationshipField(String externalId) {
         super(externalId);
         this.values = new ArrayList<Value>();
     }

@@ -130,7 +130,7 @@ public abstract class Field<T extends Field.Value> {
      * @author Christian Holm
      */
     public static enum Type {
-        app(ReferenceField.class),
+        app(RelationshipField.class),
         calculation(CalculationField.class),
         category(CategoryField.class),
         contact(ContactField.class),
