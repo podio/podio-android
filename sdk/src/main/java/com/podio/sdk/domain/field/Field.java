@@ -50,15 +50,37 @@ public abstract class Field<T extends Field.Value> {
      * @author László Urszuly
      */
     public static abstract class Configuration {
+
+        public enum Mapping {
+            space_contacts, meeting_participants, meeting_agenda, meeting_time, undefined;
+
+            public static Mapping fromString(String string) {
+                try {
+                    return Mapping.valueOf(string);
+                } catch (IllegalArgumentException e) {
+                    return Mapping.undefined;
+                } catch (NullPointerException e) {
+                    return Mapping.undefined;
+                }
+            }
+        }
+
         private final Integer delta = null;
         private final String description = null;
         private final String label = null;
         private final Boolean hidden = null;
         private final Boolean required = null;
         private final Boolean visible = null;
+        private final String mapping = null;
 
-        // FIXME: Was ist das "mapping"?
-        // public final Mapping mapping = null;
+        /**
+         * Returns the mapping of this field.
+         *
+         * @return the mapping
+         */
+        public Mapping getMapping() {
+            return Mapping.fromString(mapping);
+        }
 
         /**
          * Returns the description of this field.
