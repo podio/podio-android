@@ -36,9 +36,19 @@ public class ItemParticipation {
         tentative
     }
 
-    private final MeetingParticipantStatus status = null;
+    private final String status;
+
+    public ItemParticipation(MeetingParticipantStatus meetingParticipantStatus) {
+        this.status = meetingParticipantStatus.name();
+    }
 
     public MeetingParticipantStatus getStatus() {
-        return status;
+        try {
+            return MeetingParticipantStatus.valueOf(status);
+        } catch (NullPointerException e) {
+            return MeetingParticipantStatus.invited;
+        } catch (IllegalArgumentException e) {
+            return MeetingParticipantStatus.invited;
+        }
     }
 }
