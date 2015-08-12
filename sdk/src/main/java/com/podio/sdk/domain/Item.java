@@ -246,12 +246,12 @@ public class Item {
     private final String title = null;
     private final String[] tags = null;
     private final EventContext.UserRatings user_ratings = null;
+    private final HashMap<Long, ItemParticipation> participants = null;
 
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
     //private final Object linked_account_id = null;
     //private final Object linked_account_data = null;
-    //private final Object participants = null;
     //private final Object recurrence = null;
     //private final Object app_item_id_formatted = null;
     //private final Object is_liked = null;
@@ -388,6 +388,16 @@ public class Item {
 
     public int getCommentCount() {
         return Utils.getNative(comment_count, -1);
+    }
+
+    /**
+     * Returns a mapping of profile ids and their RSVP status.
+     *
+     * @return the participants or null if this item {@link com.podio.sdk.domain.Application.Type}
+     * isn't a "meeting"
+     */
+    public HashMap<Long, ItemParticipation> getParticipants() {
+        return participants == null? null: new HashMap<>(participants);
     }
 
     public List<Comment> getComments() {
@@ -604,10 +614,9 @@ public class Item {
     }
 
     /**
-     *
      * @return returns the ratings of the active user on the object.
      */
-    public EventContext.UserRatings getUserRatings(){
+    public EventContext.UserRatings getUserRatings() {
         return user_ratings;
     }
 
