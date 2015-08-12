@@ -26,6 +26,7 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Item;
+import com.podio.sdk.domain.ItemParticipation;
 
 /**
  * Enables access to the item API end point.
@@ -63,6 +64,12 @@ public class ItemProvider extends Provider {
 
         Path withItemId(long itemId) {
             addPathSegment(Long.toString(itemId, 10));
+            return this;
+        }
+
+        Path withParticipation(long itemId){
+            addPathSegment(Long.toString(itemId, 10));
+            addPathSegment("participation");
             return this;
         }
 
@@ -275,6 +282,11 @@ public class ItemProvider extends Provider {
      */
     public ItemFilterProvider filter() {
         return new ItemFilterProvider();
+    }
+
+    public Request<ItemParticipation> setParticipation(long itemId, ItemParticipation itemParticipation ){
+        Path filter = new Path().withParticipation(itemId);
+        return put(filter,itemParticipation,ItemParticipation.class);
     }
 
 }
