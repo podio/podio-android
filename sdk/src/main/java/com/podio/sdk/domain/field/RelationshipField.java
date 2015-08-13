@@ -44,7 +44,20 @@ public class RelationshipField extends Field<RelationshipField.Value> {
     private static class Settings {
         private final Boolean multiple = null;
         private final Application[] apps = null;
-        private final Long[] referencable_types = null;
+        private final ViewApplication[] referenced_apps = null;
+        private final Long[] referenceable_types = null;
+    }
+
+    public static class ViewApplication {
+        private final Long view_id = null;
+        private final Application app = null;
+        public long getViewId(){
+            return Utils.getNative(view_id, -1L);
+        }
+
+        public Application getApp() {
+            return app;
+        }
     }
 
     /**
@@ -64,12 +77,16 @@ public class RelationshipField extends Field<RelationshipField.Value> {
             return settings != null && settings.apps != null ? Arrays.asList(settings.apps) : Arrays.asList(new Application[0]);
         }
 
+        public List<ViewApplication> getViewApps() {
+            return settings != null && settings.referenced_apps != null ? Arrays.asList(settings.referenced_apps) : Arrays.asList(new ViewApplication[0]);
+        }
+
         public List<Long> getReferencableTypes() {
-            return settings != null && settings.referencable_types != null ? Arrays.asList(settings.referencable_types) : Arrays.asList(new Long[0]);
+            return settings != null && settings.referenceable_types != null ? Arrays.asList(settings.referenceable_types) : Arrays.asList(new Long[0]);
         }
 
         public boolean isMultiple() {
-            return settings != null && Utils.getNative(settings.multiple, false);
+            return settings != null && Utils.getNative(settings.multiple, true);
         }
     }
 

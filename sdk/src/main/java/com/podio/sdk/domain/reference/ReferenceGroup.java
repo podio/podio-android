@@ -119,7 +119,7 @@ public abstract class ReferenceGroup {
 
         private final TargetParams target_params;
 
-        ItemFieldReferenceTarget(int limit, long field_id) {
+        public ItemFieldReferenceTarget(int limit, long field_id) {
             super(Target.item_field, limit);
             target_params = new TargetParams(field_id);
         }
