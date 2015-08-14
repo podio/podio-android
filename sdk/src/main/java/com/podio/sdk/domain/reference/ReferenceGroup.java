@@ -113,7 +113,7 @@ public abstract class ReferenceGroup {
             }
 
             public void removeNotItemId(long itemId){
-                not_item_ids.remove(not_item_ids);
+                not_item_ids.remove(itemId);
             }
         }
 
