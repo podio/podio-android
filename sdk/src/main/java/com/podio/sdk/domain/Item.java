@@ -397,7 +397,20 @@ public class Item {
      * isn't a "meeting"
      */
     public HashMap<Long, ItemParticipation> getParticipants() {
-        return participants == null? null: new HashMap<>(participants);
+        return participants == null ? null : new HashMap<>(participants);
+    }
+
+    /**
+     * Use this method to update the RSVP status of a profile (e.g. your own RSVP status). This
+     * method is handy for updating a cached version of the item after doing a "set participation"
+     * API call. With this method you don't need to ask the API for a fresh version of the item in
+     * order to make sure a cached version is up to date.
+     *
+     * @param profileId
+     * @param itemParticipation
+     */
+    public void putParticipant(long profileId, ItemParticipation itemParticipation) {
+        participants.put(profileId, itemParticipation);
     }
 
     public List<Comment> getComments() {
