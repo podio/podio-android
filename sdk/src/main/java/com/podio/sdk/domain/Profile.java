@@ -28,14 +28,14 @@ import java.util.List;
 
 public class Profile {
     private final Long user_id = null;
-    private final Long profile_id = null;
+    private final Long profile_id;
     private final Long org_id = null;
     private final Long space_id = null;
     private final String external_id = null;
     private final String last_seen_on = null;
-    private final String type = null; // See the "Type" enum.
+    private final String type = null;
     private final String link = null;
-    private final List<String> rights = null; // See the "Right" enum.
+    private final List<String> rights = null;
     private final Push push = null;
     private final File image = null;
 
@@ -51,12 +51,22 @@ public class Profile {
     private final String city = null;              // -> ContactAPI, not in ProfileDTO
     private final String country = null;           // -> ContactAPI, not in ProfileDTO
 
+    /**
+     * Use this constructor to create a profile object that you want to upload a workspace contact
+     * or member to the API in e.g. the create item API call (if it contains a contact field)
+     *
+     * @param profileId
+     */
+    public Profile(long profileId) {
+        this.profile_id = profileId;
+    }
+
     public String getAbout() {
         return about;
     }
 
-    public String getType() {
-        return type;
+    public ReferenceType getType() {
+        return ReferenceType.getType(type);
     }
 
     public String[] getEmailAddresses() {
@@ -144,11 +154,12 @@ public class Profile {
     }
 
     /**
-     * Checks whether the list of rights the user has for this domain object
-     * contains the given permission.
+     * Checks whether the list of rights the user has for this domain object contains the given
+     * permission.
      *
      * @param permission
-     *        The permission to verify.
+     *         The permission to verify.
+     *
      * @return True if the given permission is granted, false otherwise.
      */
     public boolean hasRight(Right permission) {

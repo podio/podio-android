@@ -23,6 +23,7 @@
 package com.podio.sdk.domain.field;
 
 import com.podio.sdk.domain.Profile;
+import com.podio.sdk.domain.Space;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,20 +88,102 @@ public class ContactField extends Field<ContactField.Value> {
      * @author László Urszuly
      */
     public static class Value extends Field.Value {
-        private final Profile value;
 
-        public Value(Profile contact) {
-            this.value = contact;
+        protected static abstract class CreateData {
+            protected String type;
+
+            /**
+             * Enumerates the supported types of contacts that can be added to a contact field
+             */
+            enum CreateDataTypes {
+                user, profile, space
+            }
+
+            protected CreateData() {
+                //do nothing
+            }
+
+            public CreateData(CreateDataTypes type) {
+                this.type = type.name();
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                CreateData that = (CreateData) o;
+
+                return !(type != null ? !type.equals(that.type) : that.type != null);
+
+            }
+
+            @Override
+            public int hashCode() {
+                return type != null ? type.hashCode() : 0;
+            }
+        }
+
+        protected static class ContactCreateData extends CreateData {
+            private long id;
+
+            public ContactCreateData(long id, CreateData.CreateDataTypes type) {
+                super(type);
+                this.id = id;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                if (!super.equals(o)) return false;
+
+                ContactCreateData that = (ContactCreateData) o;
+
+                return id == that.id;
+
+            }
+
+            @Override
+            public int hashCode() {
+                int result = super.hashCode();
+                result = 31 * result + (int) (id ^ (id >>> 32));
+                return result;
+            }
+        }
+
+        private final Profile value = null;
+        protected CreateData createData;
+
+        protected Value() {
+            //do nothing
+        }
+
+        /**
+         * Create a contact field value based on a profile object
+         *
+         * @param profile
+         */
+        public Value(Profile profile) {
+            createData = new ContactCreateData(profile.getId(), CreateData.CreateDataTypes.profile);
+        }
+
+        /**
+         * Create a contact field value based on a space object
+         *
+         * @param space
+         */
+        public Value(Space space) {
+            createData = new ContactCreateData(space.getSpaceId(), CreateData.CreateDataTypes.space);
         }
 
         @Override
         public Map<String, Object> getCreateData() {
             HashMap<String, Object> data = null;
-            long profileId = value != null ? value.getId() : 0L;
 
-            if (profileId > 0L) {
+            if (createData != null) {
                 data = new HashMap<String, Object>();
-                data.put("value", profileId);
+                data.put("value", createData);
             }
 
             return data;
@@ -121,13 +204,16 @@ public class ContactField extends Field<ContactField.Value> {
 
             Value value1 = (Value) o;
 
-            return !(value != null ? !value.equals(value1.value) : value1.value != null);
+            if (value != null ? !value.equals(value1.value) : value1.value != null) return false;
+            return !(createData != null ? !createData.equals(value1.createData) : value1.createData != null);
 
         }
 
         @Override
         public int hashCode() {
-            return value != null ? value.hashCode() : 0;
+            int result = value != null ? value.hashCode() : 0;
+            result = 31 * result + (createData != null ? createData.hashCode() : 0);
+            return result;
         }
     }
 
