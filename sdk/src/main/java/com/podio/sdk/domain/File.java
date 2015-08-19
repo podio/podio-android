@@ -23,22 +23,6 @@ import com.podio.sdk.internal.Utils;
  */
 public class File {
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        File file = (File) o;
-
-        return !(file_id != null ? !file_id.equals(file.file_id) : file.file_id != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return file_id != null ? file_id.hashCode() : 0;
-    }
-
     public static class PushData {
         private final java.io.File file;
         private final String name;
@@ -64,7 +48,7 @@ public class File {
     }
 
     private final Long file_id;
-    private final Integer size;
+    private final Long size;
     private final String description;
     private final String hosted_by;
     private final String hosted_by_humanized_name;
@@ -125,12 +109,28 @@ public class File {
         return perma_link;
     }
 
-    public int getSize() {
-        return Utils.getNative(size, 0);
+    public long getSize() {
+        return Utils.getNative(size, 0L);
     }
 
     public String getThumbnailLink() {
         return thumbnail_link;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        File file = (File) o;
+
+        return !(file_id != null ? !file_id.equals(file.file_id) : file.file_id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return file_id != null ? file_id.hashCode() : 0;
     }
 
 }
