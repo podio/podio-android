@@ -27,6 +27,7 @@ import com.podio.sdk.domain.Space;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,11 +153,11 @@ public class ContactField extends Field<ContactField.Value> {
             }
         }
 
-        private final Profile value = null;
+        private final Profile value;
         protected CreateData createData;
 
         protected Value() {
-            //do nothing
+            value = null;
         }
 
         /**
@@ -165,6 +166,7 @@ public class ContactField extends Field<ContactField.Value> {
          * @param profile
          */
         public Value(Profile profile) {
+            this.value = profile;
             createData = new ContactCreateData(profile.getId(), CreateData.CreateDataTypes.profile);
         }
 
@@ -174,16 +176,20 @@ public class ContactField extends Field<ContactField.Value> {
          * @param space
          */
         public Value(Space space) {
+            value = null;
             createData = new ContactCreateData(space.getSpaceId(), CreateData.CreateDataTypes.space);
         }
 
         @Override
         public Map<String, Object> getCreateData() {
-            HashMap<String, Object> data = null;
+            HashMap<String, Object> data = new HashMap<String, Object>();
 
             if (createData != null) {
-                data = new HashMap<String, Object>();
                 data.put("value", createData);
+            } else if (value != null) {
+                data.put("value", value.getId());
+            } else {
+                data = null;
             }
 
             return data;
@@ -205,6 +211,9 @@ public class ContactField extends Field<ContactField.Value> {
             Value value1 = (Value) o;
 
             if (value != null ? !value.equals(value1.value) : value1.value != null) return false;
+
+            //in this case we don't care to check on the create data
+            if(value.equals(value1.value)) return true;
             return !(createData != null ? !createData.equals(value1.createData) : value1.createData != null);
 
         }
