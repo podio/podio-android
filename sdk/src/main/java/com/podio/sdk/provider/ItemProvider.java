@@ -67,7 +67,7 @@ public class ItemProvider extends Provider {
             return this;
         }
 
-        Path withParticipation(long itemId){
+        Path withParticipation(long itemId) {
             addPathSegment(Long.toString(itemId, 10));
             addPathSegment("participation");
             return this;
@@ -284,9 +284,8 @@ public class ItemProvider extends Provider {
         return new ItemFilterProvider();
     }
 
-    public Request<ItemParticipation> setParticipation(long itemId, ItemParticipation itemParticipation ){
+    public Request<ItemParticipation> setParticipation(long itemId, ItemParticipation itemParticipation) {
         Path filter = new Path().withParticipation(itemId);
-        return put(filter,itemParticipation,ItemParticipation.class);
+        return put(filter, itemParticipation, ItemParticipation.class);
     }
-
 }

@@ -247,6 +247,7 @@ public class Item {
     private final String[] tags = null;
     private final EventContext.UserRatings user_ratings = null;
     private final HashMap<Long, ItemParticipation> participants = null;
+    private final ItemReferenceCount[] refs = null;
 
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
@@ -261,7 +262,6 @@ public class Item {
     //private final Object current_revisiion = null;
     //private final Object values = null;
     //private final Object ref = null;
-    //private final Object refs = null;
     //private final Object invite = null;
     //private final Object reminder = null;
     //private final Object presence = null;
@@ -415,6 +415,10 @@ public class Item {
 
     public List<Comment> getComments() {
         return Utils.notEmpty(comments) ? Arrays.asList(comments) : Arrays.asList(new Comment[0]);
+    }
+
+    public List<ItemReferenceCount> getReferenceCounts() {
+        return Utils.notEmpty(refs) ? Arrays.asList(refs) : Arrays.asList(new ItemReferenceCount[0]);
     }
 
     public Byline getCreatedBy() {
