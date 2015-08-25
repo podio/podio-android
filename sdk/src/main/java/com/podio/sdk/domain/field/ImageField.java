@@ -106,6 +106,10 @@ public class ImageField extends Field<ImageField.Value> {
             return data;
         }
 
+        public File getFile(){
+            return value;
+        }
+
         @Override
         public int hashCode() {
             return value != null ? value.hashCode() : 0;

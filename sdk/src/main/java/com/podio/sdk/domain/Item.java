@@ -225,7 +225,7 @@ public class Item {
     private final Comment[] comments = null;
     private final Double priority = null;
     private final Excerpt excerpt = null;
-    private final File[] files = null;
+    private final File[] files;
     private final Grant grant = null;
     private final Integer comment_count = null;
     private final Integer file_count = null;
@@ -278,6 +278,16 @@ public class Item {
     public Item() {
         this.external_id = null;
         this.fields = new ArrayList<Field>();
+        this.files = null;
+    }
+
+    /**
+     * Creates a new, empty Item with no fields.
+     */
+    public Item(File[] files) {
+        this.external_id = null;
+        this.fields = new ArrayList<Field>();
+        this.files = files;
     }
 
     /**
@@ -314,6 +324,11 @@ public class Item {
                 if (data != null) {
                     createData.setValues(field.getExternalId(), data);
                 }
+            }
+        }
+        if(files != null) {
+            for (File file : files) {
+                createData.addFileId(file.getId());
             }
         }
 
