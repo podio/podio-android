@@ -213,9 +213,9 @@ public class ContactField extends Field<ContactField.Value> {
             if (value != null ? !value.equals(value1.value) : value1.value != null) return false;
 
             //in this case we don't care to check on the create data
-            if(value.equals(value1.value)) return true;
-            return !(createData != null ? !createData.equals(value1.createData) : value1.createData != null);
+            if(value != null && value1.value != null && value.equals(value1.value)) return true;
 
+            return !(createData != null ? !createData.equals(value1.createData) : value1.createData != null);
         }
 
         @Override
