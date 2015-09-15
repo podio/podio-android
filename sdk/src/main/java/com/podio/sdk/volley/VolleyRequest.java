@@ -25,13 +25,14 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.google.gson.JsonSyntaxException;
 import com.podio.sdk.ApiError;
 import com.podio.sdk.ConnectionError;
-import com.podio.sdk.json.JsonParser;
 import com.podio.sdk.NoResponseError;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;
 import com.podio.sdk.internal.Utils;
+import com.podio.sdk.json.JsonParser;
 
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
@@ -228,14 +229,13 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
             int responseCode = getResponseCode(volleyError.networkResponse);
 
             if (Utils.notEmpty(errorJson) && responseCode > 0) {
-                error = new ApiError(errorJson, responseCode, volleyError);
-            } else {
                 try {
-                    error = new PodioError(volleyError);
-                } catch (Exception e) {
-                    error = new PodioError("Unknown Error");
-                    error.setStackTrace(e.getStackTrace());
+                    error = new ApiError(errorJson, responseCode, volleyError);
+                } catch (JsonSyntaxException jsonSyntaxException) {
+                    handleNoneJsonError(volleyError);
                 }
+            } else {
+                handleNoneJsonError(volleyError);
             }
         }
 
@@ -244,6 +244,15 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         }
 
         return volleyError;
+    }
+
+    private void handleNoneJsonError(VolleyError volleyError) {
+        try {
+            error = new PodioError(volleyError);
+        } catch (Exception e) {
+            error = new PodioError("Unknown Error");
+            error.setStackTrace(e.getStackTrace());
+        }
     }
 
     @Override
