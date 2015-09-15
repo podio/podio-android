@@ -232,10 +232,10 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
                 try {
                     error = new ApiError(errorJson, responseCode, volleyError);
                 } catch (JsonSyntaxException jsonSyntaxException) {
-                    handleNoneJsonError(volleyError);
+                    handleNoneJsonError(volleyError, responseCode);
                 }
             } else {
-                handleNoneJsonError(volleyError);
+                handleNoneJsonError(volleyError, responseCode);
             }
         }
 
@@ -246,9 +246,13 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return volleyError;
     }
 
-    private void handleNoneJsonError(VolleyError volleyError) {
+    private void handleNoneJsonError(VolleyError volleyError, int responseCode) {
         try {
-            error = new PodioError(volleyError);
+            if(responseCode > 0) {
+                error = new PodioError(volleyError, responseCode);
+            } else {
+                error = new PodioError(volleyError);
+            }
         } catch (Exception e) {
             error = new PodioError("Unknown Error");
             error.setStackTrace(e.getStackTrace());
