@@ -22,8 +22,6 @@
 
 package com.podio.sdk.domain;
 
-import com.podio.sdk.domain.field.Field;
-
 public class ItemReferenceCount {
 
     private int count;
