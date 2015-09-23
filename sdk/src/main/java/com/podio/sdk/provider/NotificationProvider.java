@@ -36,7 +36,7 @@ import com.podio.sdk.domain.notification.NotificationInboxCount;
  */
 public class NotificationProvider extends Provider {
 
-    private static class NotificationFilter extends Filter {
+    public static class NotificationFilter extends Filter {
 
         protected NotificationFilter() {
             super("notification");
