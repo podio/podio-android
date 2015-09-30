@@ -142,6 +142,10 @@ public class ApiError extends PodioError {
         return errorBundle != null && errorBundle.error_parameters != null ? errorBundle.error_parameters.get(key).getAsString() : null;
     }
 
+    public String getErrorBundleJsonString() {
+        return errorBundle != null ? JsonParser.toJson(errorBundle) : null;
+    }
+
     /**
      * Returns the {@code error_parameter} with the given name as an integer.
      *
