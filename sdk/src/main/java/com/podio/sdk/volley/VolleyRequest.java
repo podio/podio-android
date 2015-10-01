@@ -28,6 +28,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.JsonSyntaxException;
 import com.podio.sdk.ApiError;
 import com.podio.sdk.ConnectionError;
+import com.podio.sdk.NetworkError;
 import com.podio.sdk.NoResponseError;
 import com.podio.sdk.PodioError;
 import com.podio.sdk.Session;
@@ -35,7 +36,6 @@ import com.podio.sdk.internal.Utils;
 import com.podio.sdk.json.JsonParser;
 
 import java.io.UnsupportedEncodingException;
-import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -220,10 +220,12 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         // This method is executed on the worker thread. It's "safe" to perform
         // JSON parsing here.
 
-        if (volleyError instanceof NoConnectionError && volleyError.getCause() instanceof UnknownHostException) {
+        if (volleyError instanceof NoConnectionError) {
             error = new ConnectionError(volleyError);
         } else if (volleyError instanceof TimeoutError) {
             error = new NoResponseError(volleyError);
+        } else if (volleyError instanceof com.android.volley.NetworkError) {
+            error = new NetworkError(volleyError);
         } else {
             String errorJson = getResponseBody(volleyError.networkResponse);
             int responseCode = getResponseCode(volleyError.networkResponse);
@@ -248,7 +250,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     private void handleNoneJsonError(VolleyError volleyError, int responseCode) {
         try {
-            if(responseCode > 0) {
+            if (responseCode > 0) {
                 error = new PodioError(volleyError, responseCode);
             } else {
                 error = new PodioError(volleyError);
