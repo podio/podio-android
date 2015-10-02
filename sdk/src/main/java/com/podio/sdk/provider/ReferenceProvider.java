@@ -24,6 +24,7 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
+import com.podio.sdk.domain.Reference;
 import com.podio.sdk.domain.reference.ReferenceGroup;
 
 /**
@@ -41,7 +42,16 @@ public class ReferenceProvider extends Provider {
 
         Path withSearch() {
             addPathSegment("search");
+            return this;
+        }
 
+        Path withResolve() {
+            addPathSegment("resolve");
+            return this;
+        }
+
+        Path withUrl(String url) {
+            addQueryParameter("url", url);
             return this;
         }
     }
@@ -56,8 +66,12 @@ public class ReferenceProvider extends Provider {
      */
     public Request<ReferenceGroup[]> referenceSearch(ReferenceGroup.ReferenceTarget referenceTarget) {
         Path filter = new Path().withSearch();
-
         return post(filter, referenceTarget, ReferenceGroup[].class);
+    }
+
+    public Request<Reference> resolveURL(String url) {
+        Path filter = new Path().withResolve().withUrl(url);
+        return get(filter, Reference.class);
     }
 
 }

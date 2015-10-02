@@ -26,6 +26,7 @@ import com.podio.sdk.internal.Utils;
 
 public class Reference {
 
+    private final String data = null;
     private final String type = null;
     private final Long id = null;
     private final String title = null;
@@ -43,6 +44,10 @@ public class Reference {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getData(){
+        return data;
     }
 
 }
