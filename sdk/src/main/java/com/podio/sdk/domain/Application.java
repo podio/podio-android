@@ -22,12 +22,13 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.internal.Utils;
 
 import java.util.List;
 
-public class Application {
+public class Application implements Data{
 
     public enum Status {
         active, inactive, deleted, undefined;

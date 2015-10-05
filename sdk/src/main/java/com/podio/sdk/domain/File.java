@@ -16,12 +16,13 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 
 /**
  * @author László Urszuly
  */
-public class File {
+public class File implements Data{
 
     public static class PushData {
         private final java.io.File file;

@@ -22,6 +22,7 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Item {
+public class Item implements Data {
 
     /**
      * A class describing the filter for the client side search request.

@@ -1,6 +1,7 @@
 package com.podio.sdk.domain;
 
 import com.google.gson.annotations.SerializedName;
+import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.provider.TaskProvider.GetTaskFilter.Grouping;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 /**
  * @author rabie
  */
-public class Task {
+public class Task implements Data {
 
     private final Long task_id = null;
     private final String due_date = null;

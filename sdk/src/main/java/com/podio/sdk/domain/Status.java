@@ -22,6 +22,7 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 
 import java.util.Date;
@@ -32,7 +33,7 @@ import java.util.List;
  *
  * @author Tobias Lindberg
  */
-public class Status {
+public class Status implements Data{
     private final Long status_id = null;
     private final String created_on = null;
     private final String value = null;

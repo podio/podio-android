@@ -22,12 +22,13 @@
 
 package com.podio.sdk.domain;
 
+import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 
 import java.util.Date;
 import java.util.List;
 
-public class Space {
+public class Space implements Data{
 
     public static enum Privacy {
         open, closed, undefined
