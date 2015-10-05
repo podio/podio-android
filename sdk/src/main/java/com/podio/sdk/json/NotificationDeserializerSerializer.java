@@ -49,15 +49,15 @@ import java.util.Map;
  */
 class NotificationDeserializerSerializer implements JsonDeserializer<Notification>, JsonSerializer<Notification> {
 
-    private Map<Notification.NotificationType, Class<? extends Notification>> mNotificatinClassesMap;
+    private Map<Notification.NotificationType, Class<? extends Notification>> mNotificationClassesMap;
 
     public NotificationDeserializerSerializer() {
-        mNotificatinClassesMap = new DefaultHashMap<Notification.NotificationType, Class<? extends Notification>>(UnknownNotification.class);
-        mNotificatinClassesMap.put(Notification.NotificationType.comment, CommentNotification.class);
-        mNotificatinClassesMap.put(Notification.NotificationType.rating, RatingNotification.class);
-        mNotificatinClassesMap.put(Notification.NotificationType.participation, ParticipationNotification.class);
-        mNotificatinClassesMap.put(Notification.NotificationType.vote, VoteNotification.class);
-        mNotificatinClassesMap.put(Notification.NotificationType.grant_create, GrantNotification.class);
+        mNotificationClassesMap = new DefaultHashMap<Notification.NotificationType, Class<? extends Notification>>(UnknownNotification.class);
+        mNotificationClassesMap.put(Notification.NotificationType.comment, CommentNotification.class);
+        mNotificationClassesMap.put(Notification.NotificationType.rating, RatingNotification.class);
+        mNotificationClassesMap.put(Notification.NotificationType.participation, ParticipationNotification.class);
+        mNotificationClassesMap.put(Notification.NotificationType.vote, VoteNotification.class);
+        mNotificationClassesMap.put(Notification.NotificationType.grant_create, GrantNotification.class);
     }
 
     @Override
@@ -70,11 +70,11 @@ class NotificationDeserializerSerializer implements JsonDeserializer<Notificatio
 
         Notification.NotificationType notificationType = Notification.NotificationType.getType(jsonObject.get("type").getAsString());
 
-        return gsonContext.deserialize(jsonObject, mNotificatinClassesMap.get(notificationType));
+        return gsonContext.deserialize(jsonObject, mNotificationClassesMap.get(notificationType));
     }
 
     @Override
     public JsonElement serialize(Notification notification, Type typeOfSrc, JsonSerializationContext gsonContext) {
-        return gsonContext.serialize(notification, mNotificatinClassesMap.get(notification.getType()));
+        return gsonContext.serialize(notification, mNotificationClassesMap.get(notification.getType()));
     }
 }
