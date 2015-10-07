@@ -25,7 +25,6 @@ import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.DataReference;
-import com.podio.sdk.domain.Reference;
 import com.podio.sdk.domain.reference.ReferenceGroup;
 
 /**

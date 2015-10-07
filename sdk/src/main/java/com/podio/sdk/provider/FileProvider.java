@@ -36,7 +36,7 @@ public class FileProvider extends Provider {
     }
 
     /**
-     * Fetches the currently logged in user data.
+     * Uploads a new file
      *
      * @return A ticket which the caller can use to identify this request with.
      */
