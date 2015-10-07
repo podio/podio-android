@@ -25,6 +25,7 @@ package com.podio.sdk.domain;
 import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,28 @@ import java.util.List;
  * @author Tobias Lindberg
  */
 public class Status implements Data{
+
+    /**
+     * A class representing the new status message the client wants to create
+     */
+    public static class PushData {
+        private final String value;
+        private final List<Long> file_ids;
+
+        public PushData(String value, List<Long> fileIds){
+            this.value = value;
+            this.file_ids = new ArrayList<>(fileIds);
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public List<Long> getFileIds() {
+            return file_ids;
+        }
+    }
+
     private final Long status_id = null;
     private final String created_on = null;
     private final String value = null;

@@ -35,6 +35,7 @@ import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.RatingProvider;
 import com.podio.sdk.provider.ReferenceProvider;
+import com.podio.sdk.provider.StatusProvider;
 import com.podio.sdk.provider.StreamProvider;
 import com.podio.sdk.provider.TaskProvider;
 import com.podio.sdk.provider.UserProvider;
@@ -131,6 +132,9 @@ public class Podio {
      */
     public static final RatingProvider rating = new RatingProvider();
 
+    /**
+     * Enables means of easy operating on the Grant API end point.
+     */
     public static final GrantProvider grant = new GrantProvider();
 
     /**
@@ -149,10 +153,15 @@ public class Podio {
     public static final ReferenceProvider reference = new ReferenceProvider();
 
     /**
+     * Enables means of easy operating on the Status API end point.
+     */
+    public static final StatusProvider status = new StatusProvider();
+
+    /**
      * Enables means of registering global error listeners. These callback implementations apply to
      * <em>all</em> requests until explicitly removed and they are called <em>after</em> any custom
      * callbacks added to a particular request future are called.
-     * <p>
+     * <p/>
      * If a callback chooses to consume a given event, then <em>all</em> further bubbling is
      * aborted, meaning that the event may not reach the global event listener you add here.
      *
@@ -169,7 +178,7 @@ public class Podio {
      * Registers a global session listeners. These callback implementations apply to <em>all</em>
      * requests until explicitly removed and they are called <em>after</em> any custom callbacks
      * added to a particular request future are called.
-     * <p>
+     * <p/>
      * If a callback chooses to consume a given event, then <em>all</em> further bubbling is
      * aborted, meaning that the event may not reach the global event listener you add here.
      *
@@ -262,6 +271,7 @@ public class Podio {
         location.setClient(restClient);
         embed.setClient(restClient);
         reference.setClient(restClient);
+        status.setClient(restClient);
     }
 
     /**
