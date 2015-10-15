@@ -287,7 +287,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         } catch (OutOfMemoryError e) {
 
             String dataSize = "\nnetworkResponse body size: " + (networkResponse.data == null ? "0" : networkResponse.data.length + "");
-            String moreInfoOnCrash = e.getMessage() + "\nclassOfResult: " + classOfResult + "\nurl: " + getUrl() + dataSize;
+            String moreInfoOnCrash = e.getMessage() + "\nclassOfResult: " + classOfResult + "\nurl: " + getOriginUrl() + dataSize;
             OutOfMemoryError exceptionWithMoreInfo = new OutOfMemoryError(moreInfoOnCrash);
             exceptionWithMoreInfo.setStackTrace(e.getStackTrace());
             throw exceptionWithMoreInfo;
