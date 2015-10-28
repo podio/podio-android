@@ -35,8 +35,6 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
-    public static final int TRUE = 1;
-    public static final int FALSE = 0;
 
     public static long currentTimeSeconds() {
         return TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
