@@ -24,30 +24,6 @@ import com.podio.sdk.internal.Utils;
  */
 public class File implements Data{
 
-    public static class PushData {
-        private final java.io.File file;
-        private final String name;
-        private final String mimeType;
-
-        public PushData(java.io.File file, String name, String mimeType) {
-            this.file = file;
-            this.name = name;
-            this.mimeType = mimeType;
-        }
-
-        public java.io.File getFile() {
-            return file;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getMimeType() {
-            return mimeType;
-        }
-    }
-
     private final Long file_id;
     private final Long size;
     private final String description;
