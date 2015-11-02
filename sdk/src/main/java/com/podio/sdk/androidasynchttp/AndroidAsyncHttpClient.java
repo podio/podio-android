@@ -76,6 +76,7 @@ public class AndroidAsyncHttpClient implements Client {
         this.authority = authority;
 
         client = new AsyncHttpClient();
+        client.setTimeout(CLIENT_DEFAULT_TIMEOUT_MS);
         if (sslSocketFactory != null) {
             client.setSSLSocketFactory(sslSocketFactory);
         }

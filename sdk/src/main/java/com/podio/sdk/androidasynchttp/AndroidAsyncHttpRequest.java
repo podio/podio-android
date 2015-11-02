@@ -46,7 +46,6 @@ import cz.msebera.android.httpclient.message.BasicHeader;
  */
 public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionListener {
     private long TEN_MINUTES = 600000;
-    private static final String CONTENT_TYPE = "application/json; charset=UTF-8";
 
     private AsyncHttpClient client;
     private Context context;
@@ -123,7 +122,8 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
             RequestParams params = new RequestParams();
             params.put("source", file);
             params.put("filename", file.getName());
-            client.post(context, url, getHeaders(), params, CONTENT_TYPE, new BaseJsonHttpResponseHandler<T>() {
+            client.post(context, url, getHeaders(), params, null
+                    , new BaseJsonHttpResponseHandler<T>() {
 
                 @Override
                 protected T parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
@@ -160,6 +160,7 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
             });
         } catch (FileNotFoundException e) {
             error = new PodioError(e);
+            deliverError();
         }
     }
 
