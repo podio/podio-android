@@ -167,7 +167,8 @@ public abstract class Field<T extends Field.Value> {
         text(TextField.class),
         email(EmailField.class),
         phone(PhoneField.class),
-        undefined(UndefinedField.class);
+        undefined(UndefinedField.class),
+        tag(OrganisationTagField.class);
 
         private final Class<? extends Field> fieldClass;
 

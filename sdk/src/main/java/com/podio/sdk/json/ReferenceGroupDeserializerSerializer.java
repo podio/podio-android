@@ -31,6 +31,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.podio.sdk.domain.reference.AppReferenceGroup;
 import com.podio.sdk.domain.reference.AppsReferenceGroup;
+import com.podio.sdk.domain.reference.OrganisationTagReferenceGroup;
 import com.podio.sdk.domain.reference.ProfilesReferenceGroup;
 import com.podio.sdk.domain.reference.ReferenceGroup;
 import com.podio.sdk.domain.reference.SpaceContactsSpaceMembersReferenceGroup;
@@ -62,6 +63,7 @@ class ReferenceGroupDeserializerSerializer implements JsonDeserializer<Reference
         referenceGroupNameClassesMap.put(ReferenceGroup.ReferenceGroupName.profiles, ProfilesReferenceGroup.class);
         referenceGroupNameClassesMap.put(ReferenceGroup.ReferenceGroupName.tasks, TasksReferenceGroup.class);
         referenceGroupNameClassesMap.put(ReferenceGroup.ReferenceGroupName.apps, AppsReferenceGroup.class);
+        referenceGroupNameClassesMap.put(ReferenceGroup.ReferenceGroupName.tag_field, OrganisationTagReferenceGroup.class);
     }
 
     @Override

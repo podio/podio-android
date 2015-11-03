@@ -41,6 +41,7 @@ public abstract class ReferenceGroup {
         space_members,
         tasks,
         apps,
+        tag_field,
         unknown;
 
         public static ReferenceGroupName getReferenceGroupName(String name) {
