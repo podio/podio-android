@@ -59,12 +59,13 @@ public abstract class ReferenceGroup {
      * Default Reference target post object.
      */
     public static class ReferenceTarget{
+
         public enum Target {
             task_responsible,
             alert,
             conversation,
             grant,
-            item_field; // TODO Add the missing targets.
+            item_field // TODO Add the missing targets.
         }
 
         private final Target target;

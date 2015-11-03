@@ -129,7 +129,7 @@ public class OrganisationTagField extends Field<OrganisationTagField.Value> {
     @Override
     public void addValue(Value value) {
         if (values != null && !values.contains(value)) {
-            values.add(0, value);
+            values.add(value);
         }
     }
 
