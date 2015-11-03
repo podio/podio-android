@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
 import cz.msebera.android.httpclient.message.BasicHeader;
 
@@ -57,6 +58,7 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
     private T result;
     private boolean isDone;
     private PodioError error;
+    private boolean attemptedReauth;
 
     @Override
     public T waitForResult(long maxSeconds) throws PodioError {
@@ -99,25 +101,30 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
         this.file = file;
         this.classOfResult = resultType;
         this.callbackManager = new CallbackManager();
-        if (isSessionAboutToExpire()) {
-            Podio.client.forceRefreshTokens().withSessionListener(this);
-        } else {
-            performRequest(client, context, url, file);
-        }
+        this.attemptedReauth = false;
     }
 
     private boolean isSessionAboutToExpire() {
-        return System.currentTimeMillis() > (Session.expires() - TEN_MINUTES);
+        return System.currentTimeMillis() > (Session.expires()*1000L - TEN_MINUTES);
     }
 
     @Override
     public boolean onSessionChanged(String authToken, String refreshToken, String transferToken, long expires) {
-        performRequest(client, context, url, file);
+        runRequest();
 
         return false;
     }
 
-    public void performRequest(AsyncHttpClient client, Context context, String url, File file) {
+    public void performRequest() {
+        if (isSessionAboutToExpire() && !attemptedReauth) {
+            attemptedReauth = true;
+            Podio.client.forceRefreshTokens().withSessionListener(this);
+        } else {
+            runRequest();
+        }
+    }
+
+    private void runRequest() {
         try {
             RequestParams params = new RequestParams();
             params.put("source", file);
@@ -144,18 +151,23 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, T errorResponse) {
-                    if (throwable instanceof ConnectTimeoutException || throwable instanceof SocketTimeoutException) {
-                        error = new NoResponseError(throwable);
-                    } else if (rawJsonData != null) {
-                        try {
-                            error = new ApiError(rawJsonData, statusCode, throwable);
-                        } catch (JsonSyntaxException jsonSyntaxException) {
-                            error = new PodioError(throwable);
-                        }
+                    if (statusCode == HttpStatus.SC_UNAUTHORIZED && !attemptedReauth) {
+                        attemptedReauth = true;
+                        Podio.client.forceRefreshTokens().withSessionListener(AndroidAsyncHttpRequest.this);
                     } else {
-                        error = new ConnectionError(throwable);
+                        if (throwable instanceof ConnectTimeoutException || throwable instanceof SocketTimeoutException) {
+                            error = new NoResponseError(throwable);
+                        } else if (rawJsonData != null) {
+                            try {
+                                error = new ApiError(rawJsonData, statusCode, throwable);
+                            } catch (JsonSyntaxException jsonSyntaxException) {
+                                error = new PodioError(throwable);
+                            }
+                        } else {
+                            error = new ConnectionError(throwable);
+                        }
+                        deliverError();
                     }
-                    deliverError();
                 }
             });
         } catch (FileNotFoundException e) {
