@@ -64,7 +64,9 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
         request.contentType = "application/json; charset=UTF-8";
-        request.headers.put("User-agent",userAgent);
+        if (userAgent != null) {
+            request.headers.put("User-agent", userAgent);
+        }
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
         request.body = Utils.notEmpty(body) ? body.getBytes() : null;
 
@@ -75,7 +77,9 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
 
         VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
-        request.headers.put("User-agent",userAgent);
+        if (userAgent != null) {
+            request.headers.put("User-agent", userAgent);
+        }
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
