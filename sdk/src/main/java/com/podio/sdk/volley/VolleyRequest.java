@@ -59,21 +59,24 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return VolleyCallbackManager.removeGlobalSessionListener(sessionListener);
     }
 
-    static <E> VolleyRequest<E> newRequest(com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
+    static <E> VolleyRequest<E> newRequest(String userAgent, com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
         int volleyMethod = parseMethod(method);
 
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
         request.contentType = "application/json; charset=UTF-8";
+        request.headers.put("User-agent",userAgent);
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
         request.body = Utils.notEmpty(body) ? body.getBytes() : null;
 
         return request;
     }
 
-    static VolleyRequest<Void> newAuthRequest(String url, Map<String, String> params) {
+    static VolleyRequest<Void> newAuthRequest(String userAgent, String url, Map<String, String> params) {
         int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
 
         VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
+        request.headers.put("User-agent",userAgent);
+        request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
 
@@ -98,7 +101,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private final VolleyCallbackManager<T> callbackManager;
 
     private final Class<T> classOfResult;
-
     protected HashMap<String, String> headers;
     protected HashMap<String, String> params;
     protected String contentType;

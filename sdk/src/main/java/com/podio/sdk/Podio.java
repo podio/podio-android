@@ -230,11 +230,11 @@ public class Podio {
      * @param clientSecret
      *         The corresponding Podio client secret.
      *
-     * @see Podio#setup(Context, String, String, String, String, SSLSocketFactory,
+     * @see Podio#setup(Context, String, String, String, String, String, SSLSocketFactory,
      * cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory)
      */
     public static void setup(Context context, String clientId, String clientSecret) {
-        setup(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null, null);
+        setup(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null, null, null);
     }
 
     /**
@@ -249,14 +249,16 @@ public class Podio {
      *         The pre-shared Podio client id.
      * @param clientSecret
      *         The corresponding Podio client secret.
+     * @param userAgent
+     *         Optional user agent.
      * @param volleySslSocketFactory
      *         Optional custom SSL socket factory to use in the HTTP requests.
      * @param androidAsyncHttpSslSocketFactory
      *         Optional custom SSL sockey factory to use for uploading files.
      */
-    public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory volleySslSocketFactory, cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory androidAsyncHttpSslSocketFactory) {
-        volleytRestClient.setup(context, scheme, authority, clientId, clientSecret, volleySslSocketFactory);
-        androidAsyncHttpRestClient.setup(context, scheme, authority, androidAsyncHttpSslSocketFactory);
+    public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, String userAgent, SSLSocketFactory volleySslSocketFactory, cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory androidAsyncHttpSslSocketFactory) {
+        volleytRestClient.setup(context, scheme, authority, clientId, clientSecret, userAgent, volleySslSocketFactory);
+        androidAsyncHttpRestClient.setup(context, scheme, authority, userAgent, androidAsyncHttpSslSocketFactory);
         // Providers relying on a rest client in order to operate properly.
         application.setClient(volleytRestClient);
         calendar.setClient(volleytRestClient);

@@ -70,13 +70,16 @@ public class AndroidAsyncHttpClient implements Client {
         return request;
     }
 
-    public synchronized void setup(Context context, String scheme, String authority, SSLSocketFactory sslSocketFactory) {
+    public synchronized void setup(Context context, String scheme, String authority, String userAgent, SSLSocketFactory sslSocketFactory) {
         this.context = context;
         this.scheme = scheme;
         this.authority = authority;
 
         client = new AsyncHttpClient();
         client.setTimeout(CLIENT_DEFAULT_TIMEOUT_MS);
+        if (userAgent != null) {
+            client.setUserAgent(userAgent);
+        }
         if (sslSocketFactory != null) {
             client.setSSLSocketFactory(sslSocketFactory);
         }
