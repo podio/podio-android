@@ -6,7 +6,6 @@ import com.android.volley.VolleyError;
 /**
  * This class represents a generic client side error with an undefined or unknown cause.
  *
- * @author László Urszuly
  */
 public class PodioError extends RuntimeException {
 

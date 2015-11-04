@@ -6,7 +6,6 @@ import com.podio.sdk.domain.Item;
 /**
  * This class is used when the notification context object is of type "item".
  *
- * @author Tobias Lindberg
  */
 public class ItemNotificationContext extends NotificationContext {
 

@@ -2,7 +2,6 @@
 package com.podio.sdk.domain;
 
 /**
- * @author László Urszuly
  */
 public enum Right {
     add_advanced_flow,

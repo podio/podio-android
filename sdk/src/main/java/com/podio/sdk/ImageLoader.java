@@ -30,7 +30,6 @@ import javax.net.ssl.SSLSocketFactory;
  * any image from any url (doesn't have to be one from a Podio CDN). This implementation relies
  * heavily on the Android Volley Image Loader implementation.
  *
- * @author László Urszuly
  */
 public class ImageLoader {
     private static final String LOCAL_RESOURCE_PREFIX = "local.resource.";

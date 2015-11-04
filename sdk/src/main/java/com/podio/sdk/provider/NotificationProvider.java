@@ -12,7 +12,6 @@ import com.podio.sdk.domain.notification.NotificationInboxCount;
 /**
  * Enables access to the NotificationGroup API end point.
  *
- * @author Tobias Lindberg
  */
 public class NotificationProvider extends Provider {
 
@@ -49,7 +48,6 @@ public class NotificationProvider extends Provider {
      * This builder class is used in order to specify which parameters to send in our API request
      * for notifications
      *
-     * @author rabie
      */
     public static class GetNotificationFilter extends Filter {
 

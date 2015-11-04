@@ -10,7 +10,6 @@ import com.podio.sdk.domain.ItemParticipation;
 /**
  * Enables access to the item API end point.
  *
- * @author László Urszuly
  */
 public class ItemProvider extends Provider {
 
@@ -57,7 +56,6 @@ public class ItemProvider extends Provider {
     /**
      * Enables a forced set of methods to be called in order to be able to filter items.
      *
-     * @author László Urszuly
      */
     public class ItemFilterProvider {
         private final Item.FilterData filterData;

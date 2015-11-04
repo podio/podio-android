@@ -10,7 +10,6 @@ import com.podio.sdk.domain.stream.EventContext;
 /**
  * Enables access to the stream API end point.
  *
- * @author Tobias Lindberg
  */
 public class StreamProvider extends Provider {
 

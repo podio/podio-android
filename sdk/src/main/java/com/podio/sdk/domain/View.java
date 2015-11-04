@@ -11,7 +11,6 @@ import com.podio.sdk.internal.Utils;
  * Domain object representing saved app views that you can use to filter your
  * app item lists.
  *
- * @author Tobias Lindberg
  */
 public class View {
 

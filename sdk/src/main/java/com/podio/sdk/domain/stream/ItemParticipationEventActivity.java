@@ -5,7 +5,6 @@ import com.podio.sdk.domain.ItemParticipation;
 /**
  * This class is used when the activity is of type "item_participation".
  *
- * @author Tobias Lindberg
  */
 public class ItemParticipationEventActivity extends EventActivity {
 

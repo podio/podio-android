@@ -42,7 +42,6 @@ import java.util.Set;
  * This means that only those parts of your objects will be persisted to disk that can be expressed
  * as JSON.
  *
- * @author László Urszuly
  */
 public class LocalStore extends QueueClient implements Store, LocalStoreRequest.RuntimeStoreEnabler {
     private static final String LOCAL_STORES_DIRECTORY = "stores";

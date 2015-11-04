@@ -10,7 +10,6 @@ import com.podio.sdk.domain.ReferenceType;
 /**
  * Enables access to the Ratings API end point.
  *
- * @author Tobias Linderg
  */
 public class RatingProvider extends Provider {
 

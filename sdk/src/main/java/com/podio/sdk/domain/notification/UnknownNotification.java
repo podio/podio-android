@@ -6,7 +6,6 @@ package com.podio.sdk.domain.notification;
  * attributes in the super class {@link Notification} is sufficient so notifications of this type
  * are still useful to handle.
  *
- * @author Tobias Lindberg
  */
 public class UnknownNotification extends Notification {
 

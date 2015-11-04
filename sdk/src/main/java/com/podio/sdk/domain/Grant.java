@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * A Java representation of the GrantDTO API domain object.
  *
- * @author Tobias Lindberg
  */
 public class Grant {
     private final Application app = null;

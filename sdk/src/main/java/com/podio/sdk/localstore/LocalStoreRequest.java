@@ -28,7 +28,6 @@ import java.util.concurrent.TimeoutException;
  * @param <T>
  *         The type of data handled by a given request. This only applies to the "get" operation.
  *
- * @author László Urszuly
  */
 class LocalStoreRequest<T> extends FutureTask<T> implements Request<T> {
 

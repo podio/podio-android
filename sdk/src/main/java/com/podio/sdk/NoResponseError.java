@@ -5,7 +5,6 @@ package com.podio.sdk;
  * This class represents a client side error caused by a request not delivering a response in a
  * timely manner.
  *
- * @author László Urszuly
  */
 public class NoResponseError extends PodioError {
 

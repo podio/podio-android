@@ -6,7 +6,6 @@ import com.podio.sdk.domain.Application;
 /**
  * This class is used when the notification context object is of type "app".
  *
- * @author Tobias Lindberg
  */
 public class AppNotificationContext extends NotificationContext {
 

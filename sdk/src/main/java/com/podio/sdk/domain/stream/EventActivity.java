@@ -14,7 +14,6 @@ import java.util.Date;
  * getting activities of type {@link UnknownEventActivity} there is still plenty of information
  * available in that one.
  *
- * @author Tobias Lindberg
  */
 public abstract class EventActivity {
 

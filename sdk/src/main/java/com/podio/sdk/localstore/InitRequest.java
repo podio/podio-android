@@ -19,7 +19,6 @@ import java.util.concurrent.Callable;
  * value, it tries to fetch it from there and put it in the memory cache before returning it to the
  * caller.
  *
- * @author László Urszuly
  */
 final class InitRequest extends LocalStoreRequest<Void> {
 

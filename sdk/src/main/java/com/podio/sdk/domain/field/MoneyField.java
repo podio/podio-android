@@ -8,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class MoneyField extends Field<MoneyField.Value> {
     /**
      * This class describes the particular settings of a Money field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private final String[] allowed_currencies = null;
@@ -23,7 +21,6 @@ public class MoneyField extends Field<MoneyField.Value> {
     /**
      * This class describes the specific configuration of a Money field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -41,7 +38,6 @@ public class MoneyField extends Field<MoneyField.Value> {
     /**
      * This class describes a Money field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final String currency;

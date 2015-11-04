@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * When the reference search group name is "spaces" you will get this object.
  *
- * @author Tobias Lindberg
  */
 public class SpacesReferenceGroup extends ReferenceGroup{
     private final List<Space> contents = null;

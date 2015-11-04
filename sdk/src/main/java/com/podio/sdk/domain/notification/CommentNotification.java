@@ -6,7 +6,6 @@ import com.podio.sdk.domain.Comment;
 /**
  * This class is used when the notification is of type "comment".
  *
- * @author Tobias Lindberg
  */
 public class CommentNotification extends Notification {
 

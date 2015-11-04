@@ -6,7 +6,6 @@ import com.podio.sdk.domain.ItemParticipation;
 /**
  * This class is used when the notification was of type "participation".
  *
- * @author Tobias Lindberg
  */
 public class ParticipationNotification extends Notification {
 

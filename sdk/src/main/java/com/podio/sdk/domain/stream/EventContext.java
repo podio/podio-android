@@ -21,7 +21,6 @@ import java.util.List;
  * getting notifications of type {@link UnknownEventContext} there is still plenty of information
  * available in that one.
  *
- * @author Tobias Lindberg
  */
 public abstract class EventContext {
 

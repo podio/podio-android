@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
  * targeting the "close store" operation. This implementation simply clears the memory cache while
  * leaving the persistent disk store untouched.
  *
- * @author László Urszuly
  */
 final class FreeRequest extends LocalStoreRequest<Void> {
 

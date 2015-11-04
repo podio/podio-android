@@ -13,7 +13,6 @@ import java.util.Date;
 /**
  * Enables access to the Calendar API end point.
  *
- * @author Tobias Lindberg
  */
 public class CalendarProvider extends Provider {
 

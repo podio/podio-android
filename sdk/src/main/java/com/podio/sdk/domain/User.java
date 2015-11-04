@@ -8,7 +8,6 @@ import com.podio.sdk.internal.Utils;
 /**
  * A Java representation of the UserDTO API domain object.
  *
- * @author László Urszuly
  */
 public class User {
 
@@ -23,7 +22,6 @@ public class User {
     /**
      * A Java implementation of the UserMailDTO domain object.
      *
-     * @author László Urszuly
      */
     public static class Email {
         private final Boolean disabled = null;

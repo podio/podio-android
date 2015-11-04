@@ -9,7 +9,6 @@ import java.util.Set;
 /**
  * The base class of all reference groups when performing a reference search.
  *
- * @author Tobias Lindberg
  */
 public abstract class ReferenceGroup {
 

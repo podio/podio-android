@@ -11,14 +11,12 @@ import java.util.Map;
 /**
  * The Podio Phone field domain object.
  *
- * @author Tobias Lindberg
  */
 public class PhoneField extends Field<PhoneField.Value> {
 
     /**
      * This class describes the specific configuration of a Phone field.
      *
-     * @author Tobias Lindberg
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -35,7 +33,6 @@ public class PhoneField extends Field<PhoneField.Value> {
     /**
      * This class describes a Phone field value.
      *
-     * @author Tobias Lindberg
      */
     public static class Value extends Field.Value {
         private final String type;

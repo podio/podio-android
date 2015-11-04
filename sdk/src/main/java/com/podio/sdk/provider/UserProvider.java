@@ -11,7 +11,6 @@ import com.podio.sdk.domain.UserStatus;
 /**
  * Enables access to the User API end point.
  *
- * @author László Urszuly
  */
 public class UserProvider extends Provider {
 

@@ -6,7 +6,6 @@ import com.podio.sdk.internal.Utils;
 /**
  * A Java representation of the RatingDTO API domain object.
  *
- * @author Tobias Lindberg
  */
 public class Rating {
 

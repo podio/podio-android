@@ -11,13 +11,11 @@ import java.util.Map;
 /**
  * The Podio Text field domain object.
  *
- * @author László Urszuly
  */
 public class TextField extends Field<TextField.Value> {
     /**
      * This class describes the particular settings of a Text field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private final String size = null;
@@ -26,7 +24,6 @@ public class TextField extends Field<TextField.Value> {
     /**
      * This class describes the specific configuration of a Text field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -54,7 +51,6 @@ public class TextField extends Field<TextField.Value> {
     /**
      * This class describes a Text field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final String value;
@@ -102,7 +98,6 @@ public class TextField extends Field<TextField.Value> {
     /**
      * The values for the named sizes a text field can have.
      *
-     * @author László Urszuly
      */
     public static enum Size {
         large, small, undefined

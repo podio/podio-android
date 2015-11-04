@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class ProgressField extends Field<ProgressField.Value> {
     /**
      * This class describes the particular settings of a Progress field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
     }
@@ -23,7 +21,6 @@ public class ProgressField extends Field<ProgressField.Value> {
     /**
      * This class describes the specific configuration of a Progress field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -37,7 +34,6 @@ public class ProgressField extends Field<ProgressField.Value> {
     /**
      * This class describes a Progress field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final Integer value;

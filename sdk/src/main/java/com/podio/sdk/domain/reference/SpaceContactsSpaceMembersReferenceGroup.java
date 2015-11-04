@@ -10,7 +10,6 @@ import java.util.List;
  * When the reference search group name is "space_contacts" or "space_members" you will get this
  * object.
  *
- * @author Tobias Lindberg
  */
 public class SpaceContactsSpaceMembersReferenceGroup extends ReferenceGroup {
     private final Space data = null;

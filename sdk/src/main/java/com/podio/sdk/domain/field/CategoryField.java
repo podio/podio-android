@@ -10,13 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class CategoryField extends Field<CategoryField.Value> {
     /**
      * This class describes the particular settings of a Category field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private final String display = null;
@@ -27,7 +25,6 @@ public class CategoryField extends Field<CategoryField.Value> {
     /**
      * This class describes the specific configuration of a Category field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -78,7 +75,6 @@ public class CategoryField extends Field<CategoryField.Value> {
     /**
      * This class describes a Category option.
      *
-     * @author László Urszuly
      */
     public static class Data {
         private final String status = null;
@@ -151,7 +147,6 @@ public class CategoryField extends Field<CategoryField.Value> {
     /**
      * This class describes a Category field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final Data value;

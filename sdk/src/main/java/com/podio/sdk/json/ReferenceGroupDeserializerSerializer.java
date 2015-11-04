@@ -28,7 +28,6 @@ import java.util.Map;
  * depending on the name of the group so we need to have this deserializer/serializer to decide what
  * kind of group we are handling.
  *
- * @author Tobias Lindberg
  */
 class ReferenceGroupDeserializerSerializer implements JsonDeserializer<ReferenceGroup>, JsonSerializer<ReferenceGroup> {
 

@@ -13,7 +13,6 @@ import java.util.concurrent.Callable;
  * the disk store isn't prepared yet, the disk write request will block until the disk store is
  * ready. This class also removes the actual store sub directory from the file system.
  *
- * @author László Urszuly
  */
 final class EraseRequest extends LocalStoreRequest<Void> {
 

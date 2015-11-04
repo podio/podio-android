@@ -11,14 +11,12 @@ import java.util.Map;
 /**
  * The Podio Organization Tag field domain object.
  *
- * @author rabie
  */
 public class OrganisationTagField extends Field<OrganisationTagField.Value> {
 
     /**
      * This class describes the particular settings of an Organization Tag field.
      *
-     * @author rabie
      */
     private static class Settings {
 
@@ -27,7 +25,6 @@ public class OrganisationTagField extends Field<OrganisationTagField.Value> {
     /**
      * This class describes the specific configuration of an Organization Tag field.
      *
-     * @author rabie
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -46,7 +43,6 @@ public class OrganisationTagField extends Field<OrganisationTagField.Value> {
     /**
      * This class describes an Organization Tag field value.
      *
-     * @author rabie
      */
     public static class Value extends Field.Value {
         private final String value;

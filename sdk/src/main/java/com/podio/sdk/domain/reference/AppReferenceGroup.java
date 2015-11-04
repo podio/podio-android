@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * When the reference search group name is "app" you will get this object.
  *
- * @author Tobias Lindberg
  */
 public class AppReferenceGroup extends ReferenceGroup {
     private final Application data = null;

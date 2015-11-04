@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class LocationField extends Field<LocationField.Value> {
     /**
      * This class describes the particular settings of a Map field configuration.
      *
-     * @author László Urszuly
      */
     public static class Settings {
         private final Boolean structured = null;
@@ -33,7 +31,6 @@ public class LocationField extends Field<LocationField.Value> {
     /**
      * This class describes the specific configuration of a Map field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -51,7 +48,6 @@ public class LocationField extends Field<LocationField.Value> {
     /**
      * This class describes a Map field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final String formatted;

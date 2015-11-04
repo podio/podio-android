@@ -8,7 +8,6 @@ import com.podio.sdk.domain.Embed;
 /**
  * * This class provides methods to access {@link com.podio.sdk.domain.Embed} objects from the API.
  *
- * @author rabie
  */
 public class EmbedProvider extends Provider {
 

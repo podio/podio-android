@@ -8,7 +8,6 @@ public abstract class PushEvent {
     /**
      * All supported event types.
      *
-     * @author László Urszuly
      */
     public static enum Type {
         conversation_event(Conversation.PushNewEvent.class),
@@ -37,7 +36,6 @@ public abstract class PushEvent {
     /**
      * A helper class, describing an arbitrary reference.
      *
-     * @author László Urszuly
      */
     protected static class Reference {
         private final String type = null;

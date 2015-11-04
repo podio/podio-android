@@ -25,7 +25,6 @@ import java.util.Map;
  * type of notifications so we need to have this deserializer/serializer to decide what kind of
  * notification we are handling.
  *
- * @author Tobias Lindberg
  */
 class NotificationDeserializerSerializer implements JsonDeserializer<Notification>, JsonSerializer<Notification> {
 

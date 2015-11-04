@@ -8,7 +8,6 @@ import com.podio.sdk.domain.ReferenceType;
 /**
  * Enables access to the Grants API end point.
  *
- * @author rabie
  */
 public class GrantProvider extends Provider {
 

@@ -10,7 +10,6 @@ public interface Request<T> {
     /**
      * Callback interface for error events.
      *
-     * @author László Urszuly
      */
     public interface ErrorListener {
 
@@ -31,7 +30,6 @@ public interface Request<T> {
     /**
      * Callback interface for successfully executed request events.
      *
-     * @author László Urszuly
      */
     public interface ResultListener<E> {
 
@@ -52,7 +50,6 @@ public interface Request<T> {
     /**
      * Callback interface for session change events.
      *
-     * @author László Urszuly
      */
     public interface SessionListener {
 

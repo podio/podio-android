@@ -7,7 +7,6 @@ import java.util.List;
  * Fall back Podio field when new fields are introduced and we want to not get a null pointer
  * exception in the parsing.
  *
- * @author Tobias Lindberg
  */
 public class UndefinedField extends Field<Field.Value> {
 
