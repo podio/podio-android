@@ -4,7 +4,6 @@ package com.podio.sdk;
 /**
  * This class represents a network error when trying to perform the request.
  *
- * @author Tobias Lindberg
  */
 public class NetworkError extends PodioError {
 

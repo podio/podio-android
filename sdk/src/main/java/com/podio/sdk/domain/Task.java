@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * @author rabie
  */
 public class Task implements Data {
 

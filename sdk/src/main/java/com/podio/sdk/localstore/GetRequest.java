@@ -15,7 +15,6 @@ import java.util.concurrent.Callable;
  * disk store is ready and contains a value, it tries to fetch it from there and put it in the
  * memory cache before returning it to the caller.
  *
- * @author László Urszuly
  */
 final class GetRequest<T> extends LocalStoreRequest<T> {
 

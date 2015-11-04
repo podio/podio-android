@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author rabie
  */
 public class Comment {
     private final Boolean is_liked = null;

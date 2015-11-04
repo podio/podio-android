@@ -9,7 +9,6 @@ import com.podio.sdk.domain.View;
 /**
  * Enables access to the view API end point.
  *
- * @author Tobias Lindberg
  */
 public class ViewProvider extends Provider {
 

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public abstract class Field<T extends Field.Value> {
 
@@ -16,7 +15,6 @@ public abstract class Field<T extends Field.Value> {
      * This class describes the common properties of a field value. Specific fields may have more
      * properties, in which case they will themselves define an extended version fo this class.
      *
-     * @author László Urszuly
      */
     public static abstract class Value {
         public abstract Map<String, Object> getCreateData();
@@ -26,7 +24,6 @@ public abstract class Field<T extends Field.Value> {
      * This class describes the common configuration of a field. Specific fields may have more
      * options, in which case they will themselves define an extended version of this class.
      *
-     * @author László Urszuly
      */
     public static abstract class Configuration {
 
@@ -119,7 +116,6 @@ public abstract class Field<T extends Field.Value> {
     /**
      * The field status enumeration. Each field can have exactly one of these status values.
      *
-     * @author László Urszuly
      */
     public static enum Status {
         active, deleted, undefined
@@ -128,7 +124,6 @@ public abstract class Field<T extends Field.Value> {
     /**
      * The field type enumeration. Each field can have exactly one of these type values.
      *
-     * @author Christian Holm
      */
     public static enum Type {
         app(RelationshipField.class),

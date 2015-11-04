@@ -10,13 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class DateField extends Field<DateField.Value> {
     /**
      * This class describes the particular settings of a Date field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private Boolean calendar = null;
@@ -32,7 +30,6 @@ public class DateField extends Field<DateField.Value> {
     /**
      * This class describes the specific configuration of a Date field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -75,7 +72,6 @@ public class DateField extends Field<DateField.Value> {
     /**
      * This class describes a Date field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final String end;

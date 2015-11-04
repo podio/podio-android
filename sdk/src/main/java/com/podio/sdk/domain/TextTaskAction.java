@@ -5,7 +5,6 @@ package com.podio.sdk.domain;
  * A Java representation of the TaskActionDTO API domain object when the action type is of any type
  * but "assign".
  *
- * @author Tobias Lindberg
  */
 public class TextTaskAction extends TaskAction{
 

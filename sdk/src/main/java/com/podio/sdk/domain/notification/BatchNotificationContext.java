@@ -6,7 +6,6 @@ import com.podio.sdk.domain.Batch;
 /**
  * This class is used when the notification context object is of type "batch_process" or "batch_complete".
  *
- * @author Tobias Lindberg
  */
 public class BatchNotificationContext extends NotificationContext {
 

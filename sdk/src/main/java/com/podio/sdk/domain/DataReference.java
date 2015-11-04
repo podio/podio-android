@@ -13,7 +13,6 @@ import com.podio.sdk.json.DataReferenceDeserializer;
  *
  * This is of course not the ideal solution
  *
- * @author rabie
  */
 public class DataReference {
     private final String title;

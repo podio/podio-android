@@ -16,7 +16,6 @@ import java.util.List;
  * getting notification contexes of type {@link UnknownNotificationContext} there is still plenty of
  * information available in that one.
  *
- * @author Tobias Lindberg
  */
 public abstract class NotificationContext {
 

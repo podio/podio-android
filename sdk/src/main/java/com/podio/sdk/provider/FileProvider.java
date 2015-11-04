@@ -9,7 +9,6 @@ import com.podio.sdk.domain.File;
 /**
  * This class provides methods to access Files API area.
  *
- * @author László Urszuly
  */
 public class FileProvider extends Provider {
 

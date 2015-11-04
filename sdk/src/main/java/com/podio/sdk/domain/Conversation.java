@@ -8,7 +8,6 @@ import java.util.Date;
 /**
  * A Java representation of the ConversationDTO API domain object.
  *
- * @author László Urszuly
  */
 public class Conversation {
 

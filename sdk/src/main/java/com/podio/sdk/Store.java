@@ -4,7 +4,6 @@ package com.podio.sdk;
 /**
  * Definition of capabilities for a Store object.
  * 
- * @author László Urszuly
  */
 public interface Store {
 

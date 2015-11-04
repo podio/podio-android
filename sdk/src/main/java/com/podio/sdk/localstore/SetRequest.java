@@ -13,7 +13,6 @@ import java.util.concurrent.Callable;
  * as well as the disk cache, silently overwriting any previous values with the same key. If the
  * disk store isn't prepared yet, the disk write request will block until the disk store is ready.
  *
- * @author László Urszuly
  */
 final class SetRequest extends LocalStoreRequest<Void> {
 

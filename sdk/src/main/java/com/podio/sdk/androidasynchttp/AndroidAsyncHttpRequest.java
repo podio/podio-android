@@ -29,7 +29,6 @@ import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
 import cz.msebera.android.httpclient.message.BasicHeader;
 
 /**
- * @author Tobias Lindberg
  */
 public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionListener {
     private long TEN_MINUTES = 600000;

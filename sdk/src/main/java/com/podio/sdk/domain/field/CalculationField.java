@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author László Urszuly
  */
 public class CalculationField extends Field<Field.Value> {
 
@@ -44,7 +43,6 @@ public class CalculationField extends Field<Field.Value> {
     /**
      * This class describes the particular settings of a calculation field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private final Integer decimals = null;
@@ -63,7 +61,6 @@ public class CalculationField extends Field<Field.Value> {
     /**
      * This class describes the specific configuration of a calculation field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;

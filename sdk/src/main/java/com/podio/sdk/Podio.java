@@ -35,7 +35,6 @@ import javax.net.ssl.SSLSocketFactory;
  * Enables easy access to the Podio API with a basic configuration which should be suitable for most
  * third party developers.
  *
- * @author László Urszuly
  */
 public class Podio {
     /**

@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * When the reference search group name is "tasks" you will get this object.
  *
- * @author Tobias Lindberg
  */
 public class TasksReferenceGroup extends ReferenceGroup{
     private final List<Task> contents = null;

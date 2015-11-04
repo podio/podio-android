@@ -6,7 +6,6 @@ import com.podio.sdk.internal.Utils;
 /**
  * A Java representation of the TaskActionDTO API domain object.
  *
- * @author Tobias Lindberg
  */
 public abstract class TaskAction {
 

@@ -7,7 +7,6 @@ import com.podio.sdk.internal.Utils;
  * This class describes a push event sent by the API when someone is typing text on a target
  * object.
  *
- * @author László Urszuly
  */
 public class PushEventTyping extends PushEvent {
 

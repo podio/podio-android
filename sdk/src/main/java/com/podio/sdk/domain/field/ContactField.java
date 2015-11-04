@@ -11,13 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class ContactField extends Field<ContactField.Value> {
     /**
      * This class describes the particular settings of a Contact field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private final String type = null;
@@ -27,7 +25,6 @@ public class ContactField extends Field<ContactField.Value> {
     /**
      * This class describes the specific configuration of a Contact field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
 
@@ -64,7 +61,6 @@ public class ContactField extends Field<ContactField.Value> {
     /**
      * This class describes a Contact field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
 

@@ -10,13 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class LinkField extends Field<LinkField.Value> {
     /**
      * This class describes the particular settings of a Link field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
     }
@@ -24,7 +22,6 @@ public class LinkField extends Field<LinkField.Value> {
     /**
      * This class describes the specific configuration of a Link field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -38,7 +35,6 @@ public class LinkField extends Field<LinkField.Value> {
     /**
      * This class describes a Link field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final Embed embed;

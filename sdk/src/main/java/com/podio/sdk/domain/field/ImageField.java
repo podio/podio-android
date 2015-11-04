@@ -10,13 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author László Urszuly
  */
 public class ImageField extends Field<ImageField.Value> {
     /**
      * This class describes the particular settings of an Image field configuration.
      *
-     * @author László Urszuly
      */
     private static class Settings {
         private final String[] allowed_mimetypes = null;
@@ -25,7 +23,6 @@ public class ImageField extends Field<ImageField.Value> {
     /**
      * This class describes the specific configuration of an Image field.
      *
-     * @author László Urszuly
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -43,7 +40,6 @@ public class ImageField extends Field<ImageField.Value> {
     /**
      * This class describes an Image field value.
      *
-     * @author László Urszuly
      */
     public static class Value extends Field.Value {
         private final File value;

@@ -5,7 +5,6 @@ package com.podio.sdk.domain.stream;
  * attributes in the super class EventContext} is sufficient so stream objects of this type are
  * still useful to handle.
  *
- * @author Tobias Lindberg
  */
 public class UnknownEventContext extends EventContext {
 }

@@ -10,7 +10,6 @@ import java.util.List;
  * A Java representation of the NotificationContextDTO and NotificationContentDTO API domain
  * object.
  *
- * @author Tobias Lindberg
  */
 public class NotificationGroup {
 

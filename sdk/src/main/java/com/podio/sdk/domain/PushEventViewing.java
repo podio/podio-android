@@ -6,7 +6,6 @@ import com.podio.sdk.internal.Utils;
 /**
  * This class describes a push event sent by the API when someone is viewing a target object.
  *
- * @author László Urszuly
  */
 public class PushEventViewing extends PushEvent {
 

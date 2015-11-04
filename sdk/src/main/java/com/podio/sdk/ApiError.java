@@ -10,14 +10,12 @@ import com.podio.sdk.json.JsonParser;
  * the client request. Examples of issues can be missing permissions, expired authentication or
  * invalid client requests (like asking for the eleventh item in a list of ten).
  *
- * @author László Urszuly
  */
 public class ApiError extends PodioError {
 
     /**
      * Sub object of the ErrorBundle class.
      *
-     * @author László Urszuly
      */
     private static final class ErrorRequest {
         private final String url = null;
@@ -29,7 +27,6 @@ public class ApiError extends PodioError {
      * The very Podio error domain model as sent by the API. This class is used to isolate the
      * object layout and not have the PodioError exception being directly dependent of it.
      *
-     * @author László Urszuly
      */
     private static final class ErrorBundle {
         private final JsonObject error_parameters = null;

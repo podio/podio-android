@@ -6,7 +6,6 @@ import com.podio.sdk.internal.Utils;
 import java.util.Date;
 
 /**
- * @author Tobias Lindberg
  */
 public class CalendarEvent {
     private final Long ref_id = null;

@@ -9,7 +9,6 @@ import com.podio.sdk.domain.Organization;
 /**
  * Enables access to the organization API end point.
  *
- * @author László Urszuly
  */
 public class OrganizationProvider extends Provider {
 

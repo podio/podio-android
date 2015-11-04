@@ -10,7 +10,6 @@ import com.podio.sdk.domain.ReferenceType;
 /**
  * Enables access to the Comments API end point.
  *
- * @author Tobias Linderg
  */
 public class CommentProvider extends Provider {
 

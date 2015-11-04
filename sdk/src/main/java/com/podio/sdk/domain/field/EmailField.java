@@ -11,13 +11,11 @@ import java.util.Map;
 /**
  * The Podio Email field domain object.
  *
- * @author Tobias Lindberg
  */
 public class EmailField extends Field<EmailField.Value> {
     /**
      * This class describes the particular settings of a Email field configuration.
      *
-     * @author Tobias Lindberg
      */
     private static class Settings {
         private final Boolean include_in_bcc = null;
@@ -27,7 +25,6 @@ public class EmailField extends Field<EmailField.Value> {
     /**
      * This class describes the specific configuration of a Email field.
      *
-     * @author Tobias Lindberg
      */
     public static class Configuration extends Field.Configuration {
         private final Value default_value = null;
@@ -53,7 +50,6 @@ public class EmailField extends Field<EmailField.Value> {
     /**
      * This class describes a Email field value.
      *
-     * @author Tobias Lindberg
      */
     public static class Value extends Field.Value {
         private final String type;

@@ -10,7 +10,6 @@ import com.podio.sdk.internal.Utils;
 /**
  * Enables access to the Conversation API end point.
  *
- * @author László Urszuly
  */
 public class ContactProvider extends Provider {
     public static enum ContactType {

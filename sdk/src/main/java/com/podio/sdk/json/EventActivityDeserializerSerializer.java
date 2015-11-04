@@ -30,7 +30,6 @@ import java.util.Map;
  * type of activity so we need to have this deserializer/serializer to decide what kind of activity
  * we are handling.
  *
- * @author Tobias Lindberg
  */
 class EventActivityDeserializerSerializer implements JsonDeserializer<EventActivity>, JsonSerializer<EventActivity> {
 

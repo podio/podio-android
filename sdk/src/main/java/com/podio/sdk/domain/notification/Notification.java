@@ -13,7 +13,6 @@ import java.util.Date;
  * getting notifications of type {@link UnknownNotification} there is still plenty of information
  * available in that one.
  *
- * @author Tobias Lindberg
  */
 public abstract class Notification {
     /**

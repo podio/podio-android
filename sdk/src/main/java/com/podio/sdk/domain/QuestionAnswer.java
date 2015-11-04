@@ -6,7 +6,6 @@ import com.podio.sdk.internal.Utils;
 /**
  * A Java representation of the QuestionAnswerDTO API domain object.
  *
- * @author Tobias Lindberg
  */
 public class QuestionAnswer {
 

@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * Enables access to the Status API end point.
  *
- * @author rabie
  */
 public class StatusProvider extends Provider {
 

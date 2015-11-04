@@ -11,7 +11,6 @@ import java.util.Date;
 /**
  * This class provides methods to access {@link Task} objects from the API.
  *
- * @author rabie
  */
 public class TaskProvider extends Provider {
 
@@ -206,7 +205,6 @@ public class TaskProvider extends Provider {
          * This enum is used to query the Podio API for a set of tasks ordered based on a certain
          * grouping
          *
-         * @author rabie
          */
         public static enum Grouping {
 

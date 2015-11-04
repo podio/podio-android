@@ -6,7 +6,6 @@ import com.podio.sdk.domain.Rating;
 /**
  * This class is used when the notification is of type "rating".
  *
- * @author Tobias Lindberg
  */
 public class RatingNotification extends Notification {
 

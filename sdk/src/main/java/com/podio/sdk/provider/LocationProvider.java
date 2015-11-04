@@ -9,7 +9,6 @@ import com.podio.sdk.domain.Address;
 /**
  * Enables access to the location API end point.
  *
- * @author Tobias Lindberg
  */
 public class LocationProvider extends Provider {
 

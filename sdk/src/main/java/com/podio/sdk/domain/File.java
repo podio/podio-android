@@ -5,7 +5,6 @@ import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 
 /**
- * @author László Urszuly
  */
 public class File implements Data{
 

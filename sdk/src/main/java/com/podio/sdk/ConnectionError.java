@@ -5,7 +5,6 @@ package com.podio.sdk;
  * This class represents a client side error caused by an invalid connection state (typically
  * DISCONNECTED, CONNECTING or DISCONNECTING).
  *
- * @author László Urszuly
  */
 public class ConnectionError extends PodioError {
 

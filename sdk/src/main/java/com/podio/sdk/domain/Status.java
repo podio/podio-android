@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * A Java representation of the StatusDTO API domain object.
  *
- * @author Tobias Lindberg
  */
 public class Status implements Data{
 

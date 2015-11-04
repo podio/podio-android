@@ -9,7 +9,6 @@ import com.podio.sdk.Request;
  * A Provider implementation that offers means of authenticating with the Podio API. This provider
  * doesn't provide any content, but rather the login service.
  *
- * @author László Urszuly
  */
 public class ClientProvider extends Provider {
 

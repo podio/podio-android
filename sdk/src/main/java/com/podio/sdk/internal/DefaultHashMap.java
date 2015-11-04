@@ -7,7 +7,6 @@ import java.util.HashMap;
  * The purpose of this map is to be able to define a default value when there is no corresponding
  * key.
  *
- * @author Tobias Lindberg
  */
 public class DefaultHashMap<K, V> extends HashMap<K, V> {
 

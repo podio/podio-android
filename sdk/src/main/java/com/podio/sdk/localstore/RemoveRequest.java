@@ -12,7 +12,6 @@ import java.util.concurrent.Callable;
  * silently removes a value from both the memory cache as well as the disk cache. If the disk store
  * isn't prepared yet, the disk write request will block until the disk store is ready.
  *
- * @author László Urszuly
  */
 final class RemoveRequest extends LocalStoreRequest<Void> {
 
