@@ -5,7 +5,6 @@ package com.podio.sdk.domain.stream;
  * attributes in the super class {@link EventActivity} is sufficient so activities of this type are
  * still useful to handle.
  *
- * @author Tobias Lindberg
  */
 public class UnknownEventActivity extends EventActivity {
 }

@@ -5,7 +5,6 @@ import com.podio.sdk.domain.Status;
 /**
  * This class is used when the stream object is of type "status".
  *
- * @author Tobias Lindberg
  */
 public class StatusEventContext extends EventContext {
 

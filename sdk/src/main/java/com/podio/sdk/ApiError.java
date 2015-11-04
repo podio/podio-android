@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2015 Citrix Systems, Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.podio.sdk;
 
 import com.google.gson.JsonObject;
@@ -25,14 +10,12 @@ import com.podio.sdk.json.JsonParser;
  * the client request. Examples of issues can be missing permissions, expired authentication or
  * invalid client requests (like asking for the eleventh item in a list of ten).
  *
- * @author László Urszuly
  */
 public class ApiError extends PodioError {
 
     /**
      * Sub object of the ErrorBundle class.
      *
-     * @author László Urszuly
      */
     private static final class ErrorRequest {
         private final String url = null;
@@ -44,7 +27,6 @@ public class ApiError extends PodioError {
      * The very Podio error domain model as sent by the API. This class is used to isolate the
      * object layout and not have the PodioError exception being directly dependent of it.
      *
-     * @author László Urszuly
      */
     private static final class ErrorBundle {
         private final JsonObject error_parameters = null;

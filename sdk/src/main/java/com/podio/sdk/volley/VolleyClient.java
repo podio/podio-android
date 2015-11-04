@@ -1,18 +1,4 @@
-/*
- * Copyright (C) 2015 Citrix Systems, Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.podio.sdk.volley;
 
 import android.content.Context;
@@ -112,7 +98,7 @@ public class VolleyClient implements Client {
                 HashMap<String, String> params = parseParams(uri);
 
                 // Re-authenticate on a prioritized request queue.
-                VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(url, params);
+                VolleyRequest<Void> reAuthRequest = VolleyRequest.newAuthRequest(userAgent, url, params);
                 reAuthRequest.setRetryPolicy(new DefaultRetryPolicy(CLIENT_DEFAULT_TIMEOUT_MS, 0, 0));
                 addToRefreshQueue(reAuthRequest);
 
@@ -131,6 +117,7 @@ public class VolleyClient implements Client {
     protected String clientSecret;
     protected String scheme;
     protected String authority;
+    protected String userAgent;
 
     // All implementations and instances will share these request queues.
     private static RequestQueue volleyRequestQueue;
@@ -171,7 +158,7 @@ public class VolleyClient implements Client {
 
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> authRequest = VolleyRequest.newAuthRequest(url, params);
+        VolleyRequest<Void> authRequest = VolleyRequest.newAuthRequest(userAgent, url, params);
 
         // Re-authenticate on a prioritized request queue.
         addToRefreshQueue(authRequest);
@@ -184,18 +171,19 @@ public class VolleyClient implements Client {
         String url = filter.buildUri(scheme, authority).toString();
         String body = item != null ? JsonParser.toJson(item) : null;
 
-        VolleyRequest<T> request = VolleyRequest.newRequest(method, url, body, classOfResult);
+        VolleyRequest<T> request = VolleyRequest.newRequest(userAgent, method, url, body, classOfResult);
         request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
         addToRequestQueue(request);
 
         return request;
     }
 
-    public synchronized void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
+    public synchronized void setup(Context context, String scheme, String authority, String clientId, String clientSecret, String userAgent, SSLSocketFactory sslSocketFactory) {
         this.scheme = scheme;
         this.authority = authority;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+        this.userAgent = userAgent;
 
         // Ensure the expected request queues exists.
         if (sslSocketFactory == null) {
@@ -253,7 +241,7 @@ public class VolleyClient implements Client {
     protected synchronized Request<Void> authenticate(Uri uri) {
         String url = parseUrl(uri);
         HashMap<String, String> params = parseParams(uri);
-        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(url, params);
+        VolleyRequest<Void> request = VolleyRequest.newAuthRequest(userAgent, url, params);
 
         // It seems Volley takes the connection timeout from the assigned RetryPolicy (defaults to
         // 2.5 seconds). This particular RetryPolicy allows a 30 second connection timeout, zero

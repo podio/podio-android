@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2015 Citrix Systems, Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.podio.sdk;
 
@@ -20,6 +5,7 @@ import android.content.Context;
 
 import com.podio.sdk.Request.ErrorListener;
 import com.podio.sdk.Request.SessionListener;
+import com.podio.sdk.androidasynchttp.AndroidAsyncHttpClient;
 import com.podio.sdk.provider.ApplicationProvider;
 import com.podio.sdk.provider.CalendarProvider;
 import com.podio.sdk.provider.ClientProvider;
@@ -49,13 +35,14 @@ import javax.net.ssl.SSLSocketFactory;
  * Enables easy access to the Podio API with a basic configuration which should be suitable for most
  * third party developers.
  *
- * @author László Urszuly
  */
 public class Podio {
     /**
      * The default request client for the providers.
      */
-    protected static VolleyClient restClient = new VolleyClient();
+    protected static VolleyClient volleytRestClient = new VolleyClient();
+
+    protected static AndroidAsyncHttpClient androidAsyncHttpRestClient = new AndroidAsyncHttpClient();
 
     /**
      * Enables means of easy operating on the Application API end point.
@@ -227,10 +214,11 @@ public class Podio {
      * @param clientSecret
      *         The corresponding Podio client secret.
      *
-     * @see Podio#setup(Context, String, String, String, String, SSLSocketFactory)
+     * @see Podio#setup(Context, String, String, String, String, String, SSLSocketFactory,
+     * cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory)
      */
     public static void setup(Context context, String clientId, String clientSecret) {
-        setup(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null);
+        setup(context, BuildConfig.SCHEME, BuildConfig.API_AUTHORITY, clientId, clientSecret, null, null, null);
     }
 
     /**
@@ -245,33 +233,37 @@ public class Podio {
      *         The pre-shared Podio client id.
      * @param clientSecret
      *         The corresponding Podio client secret.
-     * @param sslSocketFactory
+     * @param userAgent
+     *         Optional user agent.
+     * @param volleySslSocketFactory
      *         Optional custom SSL socket factory to use in the HTTP requests.
+     * @param androidAsyncHttpSslSocketFactory
+     *         Optional custom SSL sockey factory to use for uploading files.
      */
-    public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, SSLSocketFactory sslSocketFactory) {
-        restClient.setup(context, scheme, authority, clientId, clientSecret, sslSocketFactory);
-
+    public static void setup(Context context, String scheme, String authority, String clientId, String clientSecret, String userAgent, SSLSocketFactory volleySslSocketFactory, cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory androidAsyncHttpSslSocketFactory) {
+        volleytRestClient.setup(context, scheme, authority, clientId, clientSecret, userAgent, volleySslSocketFactory);
+        androidAsyncHttpRestClient.setup(context, scheme, authority, userAgent, androidAsyncHttpSslSocketFactory);
         // Providers relying on a rest client in order to operate properly.
-        application.setClient(restClient);
-        calendar.setClient(restClient);
-        client.setClient(restClient);
-        contact.setClient(restClient);
-        conversation.setClient(restClient);
-        file.setClient(restClient);
-        item.setClient(restClient);
-        organization.setClient(restClient);
-        user.setClient(restClient);
-        view.setClient(restClient);
-        task.setClient(restClient);
-        notification.setClient(restClient);
-        stream.setClient(restClient);
-        comment.setClient(restClient);
-        rating.setClient(restClient);
-        grant.setClient(restClient);
-        location.setClient(restClient);
-        embed.setClient(restClient);
-        reference.setClient(restClient);
-        status.setClient(restClient);
+        application.setClient(volleytRestClient);
+        calendar.setClient(volleytRestClient);
+        client.setClient(volleytRestClient);
+        contact.setClient(volleytRestClient);
+        conversation.setClient(volleytRestClient);
+        file.setClient(androidAsyncHttpRestClient);
+        item.setClient(volleytRestClient);
+        organization.setClient(volleytRestClient);
+        user.setClient(volleytRestClient);
+        view.setClient(volleytRestClient);
+        task.setClient(volleytRestClient);
+        notification.setClient(volleytRestClient);
+        stream.setClient(volleytRestClient);
+        comment.setClient(volleytRestClient);
+        rating.setClient(volleytRestClient);
+        grant.setClient(volleytRestClient);
+        location.setClient(volleytRestClient);
+        embed.setClient(volleytRestClient);
+        reference.setClient(volleytRestClient);
+        status.setClient(volleytRestClient);
     }
 
     /**

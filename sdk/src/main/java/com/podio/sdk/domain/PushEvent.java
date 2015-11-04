@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2015 Citrix Systems, Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.podio.sdk.domain;
 
@@ -23,7 +8,6 @@ public abstract class PushEvent {
     /**
      * All supported event types.
      *
-     * @author László Urszuly
      */
     public static enum Type {
         conversation_event(Conversation.PushNewEvent.class),
@@ -52,7 +36,6 @@ public abstract class PushEvent {
     /**
      * A helper class, describing an arbitrary reference.
      *
-     * @author László Urszuly
      */
     protected static class Reference {
         private final String type = null;

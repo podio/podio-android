@@ -24,7 +24,6 @@ import java.util.Map;
 /**
  * Resolves the reference object received in a URL resolver API call in the references API area
  *
- * @author rabie
  */
 public class DataReferenceDeserializer implements JsonDeserializer<DataReference> {
 

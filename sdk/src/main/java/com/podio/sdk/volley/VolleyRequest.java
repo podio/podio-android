@@ -1,18 +1,4 @@
-/*
- * Copyright (C) 2015 Citrix Systems, Inc
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.podio.sdk.volley;
 
 import com.android.volley.AuthFailureError;
@@ -59,21 +45,28 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return VolleyCallbackManager.removeGlobalSessionListener(sessionListener);
     }
 
-    static <E> VolleyRequest<E> newRequest(com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
+    static <E> VolleyRequest<E> newRequest(String userAgent, com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
         int volleyMethod = parseMethod(method);
 
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);
         request.contentType = "application/json; charset=UTF-8";
+        if (userAgent != null) {
+            request.headers.put("User-agent", userAgent);
+        }
         request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
         request.body = Utils.notEmpty(body) ? body.getBytes() : null;
 
         return request;
     }
 
-    static VolleyRequest<Void> newAuthRequest(String url, Map<String, String> params) {
+    static VolleyRequest<Void> newAuthRequest(String userAgent, String url, Map<String, String> params) {
         int volleyMethod = parseMethod(com.podio.sdk.Request.Method.POST);
 
         VolleyRequest<Void> request = new VolleyRequest<Void>(volleyMethod, url, null, true);
+        if (userAgent != null) {
+            request.headers.put("User-agent", userAgent);
+        }
+        request.headers.put("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
         request.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
         request.params.putAll(params);
 
@@ -98,7 +91,6 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private final VolleyCallbackManager<T> callbackManager;
 
     private final Class<T> classOfResult;
-
     protected HashMap<String, String> headers;
     protected HashMap<String, String> params;
     protected String contentType;
