@@ -12,7 +12,7 @@ import com.podio.sdk.Request;
 import com.podio.sdk.domain.Profile;
 import com.podio.sdk.domain.User;
 import com.podio.sdk.domain.UserStatus;
-import com.podio.sdk.mock.MockRestClient;
+import com.podio.sdk.volley.MockRestClient;
 
 public class UserProviderTest extends InstrumentationTestCase {
 

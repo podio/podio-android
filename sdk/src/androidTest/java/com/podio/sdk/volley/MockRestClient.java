@@ -1,5 +1,5 @@
 
-package com.podio.sdk.mock;
+package com.podio.sdk.volley;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,9 +7,6 @@ import android.net.Uri;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Request;
 import com.podio.sdk.json.JsonParser;
-import com.podio.sdk.volley.VolleyClient;
-import com.podio.sdk.volley.VolleyRequest;
-
 
 public class MockRestClient<T> extends VolleyClient {
     public String data;

@@ -10,7 +10,7 @@ import android.test.InstrumentationTestCase;
 import android.test.suitebuilder.annotation.Suppress;
 
 import com.podio.sdk.Request;
-import com.podio.sdk.mock.MockRestClient;
+import com.podio.sdk.volley.MockRestClient;
 
 public class ClientProviderTest extends InstrumentationTestCase {
 

@@ -10,7 +10,6 @@ import com.podio.sdk.domain.reference.ReferenceGroup;
 /**
  * Enables access to the Reference API end point.
  *
- * @author Tobias Lindberg
  */
 public class ReferenceProvider extends Provider {
 

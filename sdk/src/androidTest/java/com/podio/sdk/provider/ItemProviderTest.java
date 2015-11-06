@@ -12,7 +12,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Item;
-import com.podio.sdk.mock.MockRestClient;
+import com.podio.sdk.volley.MockRestClient;
 import com.podio.sdk.provider.ItemProvider.ItemFilterProvider;
 
 public class ItemProviderTest extends InstrumentationTestCase {

@@ -9,7 +9,7 @@ import android.test.InstrumentationTestCase;
 
 import com.podio.sdk.Request;
 import com.podio.sdk.domain.Organization;
-import com.podio.sdk.mock.MockRestClient;
+import com.podio.sdk.volley.MockRestClient;
 
 public class OrganizationProviderTest extends InstrumentationTestCase {
 

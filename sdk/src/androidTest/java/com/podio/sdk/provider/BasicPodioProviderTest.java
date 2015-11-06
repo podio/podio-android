@@ -10,7 +10,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
-import com.podio.sdk.mock.MockRestClient;
+import com.podio.sdk.volley.MockRestClient;
 import com.podio.sdk.volley.VolleyRequest;
 
 
