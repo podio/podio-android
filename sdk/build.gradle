@@ -18,7 +18,7 @@ android {
         buildConfigField "String", "PUSH_AUTHORITY", "\"push.podio.com\""
         buildConfigField "String", "PUSH_PATH", "\"faye\""
 
-        testInstrumentationRunner "pl.polidea.instrumentation.PolideaInstrumentationTestRunner"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
 
     }
 

@@ -27,15 +27,19 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import android.net.Uri;
-import android.test.AndroidTestCase;
+import android.test.InstrumentationTestCase;
 
-import com.podio.sdk.ResultListener;
+import com.podio.sdk.Request;
+import com.podio.sdk.domain.Application;
 import com.podio.sdk.mock.MockRestClient;
 
-public class ApplicationProviderTest extends AndroidTestCase {
+public class ApplicationProviderTest extends InstrumentationTestCase {
 
     @Mock
-    ResultListener<Object> resultListener;
+    Request.ResultListener<Application> resultListener;
+
+    @Mock
+    Request.ResultListener<Application[]> arrayResultListener;
 
     @Override
     protected void setUp() throws Exception {
@@ -43,182 +47,69 @@ public class ApplicationProviderTest extends AndroidTestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    /**
-     * Verifies that the {@link ApplicationProvider} requests a full set of
-     * contents by default when requesting a single application.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new ApplicationProvider.
-     * 
-     * 2. Make a default request for a specific app item.
-     * 
-     * 3. Verify that the designated rest client is called with a Uri that
-     *      explicitly has set the "type" property to full.
-     * 
-     * </pre>
-     */
+
     public void testFetchApplicationRequestsFullItemSetByDefault() {
-        MockRestClient mockClient = new MockRestClient();
+        MockRestClient mockClient = new MockRestClient(getInstrumentation().getTargetContext());
         ApplicationProvider provider = new ApplicationProvider();
-        provider.setRestClient(mockClient);
+        provider.setClient(mockClient);
+        provider.get(2L).withResultListener(resultListener);
 
-        provider
-                .get(2L)
-                .withResultListener(resultListener);
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(resultListener);
-
-        assertEquals(Uri.parse("test://podio.test/app/2?type=full"), mockClient.uri);
+        Mockito.verify(resultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
+        assertEquals(Uri.parse("https://test/app/2?type=full"), mockClient.uri);
     }
 
-    /**
-     * Verifies that the {@link ApplicationProvider} requests a micro set of
-     * contents when requesting so.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new ApplicationProvider.
-     * 
-     * 2. Make an explicit micro request for a specific app item.
-     * 
-     * 3. Verify that the designated rest client is called with a Uri that
-     *      has set the "type" property to micro.
-     * 
-     * </pre>
-     */
+
     public void testFetchApplicationMicroRequestsMicroItemSet() {
-        MockRestClient mockClient = new MockRestClient();
+        MockRestClient mockClient = new MockRestClient(getInstrumentation().getTargetContext());
         ApplicationProvider provider = new ApplicationProvider();
-        provider.setRestClient(mockClient);
+        provider.setClient(mockClient);
+        provider.getMicro(2L).withResultListener(resultListener);
 
-        provider
-                .getMicro(2L)
-                .withResultListener(resultListener);
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(resultListener);
-
-        assertEquals(Uri.parse("test://podio.test/app/2?type=micro"), mockClient.uri);
+        Mockito.verify(resultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
+        assertEquals(Uri.parse("https://test/app/2?type=micro"), mockClient.uri);
     }
 
-    /**
-     * Verifies that the {@link ApplicationProvider} requests a mini set of
-     * contents when requesting so.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new ApplicationProvider.
-     * 
-     * 2. Make an explicit mini request for a specific app item.
-     * 
-     * 3. Verify that the designated rest client is called with a Uri that
-     *      has set the "type" property to mini.
-     * 
-     * </pre>
-     */
+
     public void testFetchApplicationMiniRequestsMiniItemSet() {
-        MockRestClient mockClient = new MockRestClient();
+        MockRestClient mockClient = new MockRestClient(getInstrumentation().getTargetContext());
         ApplicationProvider provider = new ApplicationProvider();
-        provider.setRestClient(mockClient);
+        provider.setClient(mockClient);
+        provider.getMini(6L).withResultListener(resultListener);
 
-        provider
-                .getMini(2L)
-                .withResultListener(resultListener);
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(resultListener);
-
-        assertEquals(Uri.parse("test://podio.test/app/2?type=mini"), mockClient.uri);
+        Mockito.verify(resultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
+        assertEquals(Uri.parse("https://test/app/6?type=mini"), mockClient.uri);
     }
 
-    /**
-     * Verifies that the {@link ApplicationProvider} doesn't request inactive
-     * app items by default.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new AppItemProvider.
-     * 
-     * 2. Make a default request of app items for any workspace.
-     * 
-     * 3. Verify that the designated rest client is called with a Uri that
-     *      explicitly has set the "include inactive" flag to false.
-     * 
-     * </pre>
-     */
+
     public void testFetchApplicationsForSpaceDoesntRequestInactiveItems() {
-        MockRestClient mockClient = new MockRestClient();
+        MockRestClient mockClient = new MockRestClient(getInstrumentation().getTargetContext());
         ApplicationProvider provider = new ApplicationProvider();
-        provider.setRestClient(mockClient);
+        provider.setClient(mockClient);
+        provider.getAllActive(1L).withResultListener(arrayResultListener);
 
-        provider
-                .getAllActive(1L)
-                .withResultListener(resultListener);
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(resultListener);
-
-        assertEquals(Uri.parse("test://podio.test/app/space/1?include_inactive=false"), mockClient.uri);
+        Mockito.verify(resultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
+        assertEquals(Uri.parse("https://test/app/space/1?include_inactive=false"), mockClient.uri);
     }
 
-    /**
-     * Verifies that the {@link ApplicationProvider} requests inactive app items
-     * as well through the custom fetch method.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new AppItemProvider.
-     * 
-     * 2. Make a custom request of app items for any workspace.
-     * 
-     * 3. Verify that the designated rest client is called with a Uri that
-     *      explicitly has set the "include inactive" flag to true.
-     * 
-     * </pre>
-     */
     public void testFetchApplicationsForSpaceWithInactivesIncludedRequestsInactiveItems() {
-        MockRestClient mockClient = new MockRestClient();
+        MockRestClient mockClient = new MockRestClient(getInstrumentation().getTargetContext());
         ApplicationProvider provider = new ApplicationProvider();
-        provider.setRestClient(mockClient);
+        provider.setClient(mockClient);
+        provider.getAll(2L).withResultListener(arrayResultListener);
 
-        provider
-                .getAll(2L)
-                .withResultListener(resultListener);
-
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(resultListener);
-
-        assertEquals(Uri.parse("test://podio.test/app/space/2?include_inactive=true"), mockClient.uri);
+        Mockito.verify(resultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
+        assertEquals(Uri.parse("https://test/app/space/2?include_inactive=true"), mockClient.uri);
     }
 
-    /**
-     * Verifies that the {@link ApplicationProvider} requests a short set of
-     * contents when requesting so.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new ApplicationProvider.
-     * 
-     * 2. Make an explicit short request for a specific app item.
-     * 
-     * 3. Verify that the designated rest client is called with a Uri that
-     *      has set the "type" property to short.
-     * 
-     * </pre>
-     */
-    public void testFetchApplicationShortRequestsShortItemSet() {
-        MockRestClient mockClient = new MockRestClient();
-        ApplicationProvider provider = new ApplicationProvider();
-        provider.setRestClient(mockClient);
 
+    public void testFetchApplicationShortRequestsShortItemSet() {
+        MockRestClient mockClient = new MockRestClient(getInstrumentation().getTargetContext());
+        ApplicationProvider provider = new ApplicationProvider();
+        provider.setClient(mockClient);
         provider.getShort(2L).withResultListener(resultListener);
 
-        Mockito.verify(resultListener, Mockito.timeout(100)).onRequestPerformed(null);
-        Mockito.verifyNoMoreInteractions(resultListener);
-
-        assertEquals(Uri.parse("test://podio.test/app/2?type=short"), mockClient.uri);
+        Mockito.verify(resultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
+        assertEquals(Uri.parse("https://test/app/2?type=short"), mockClient.uri);
     }
 
 }

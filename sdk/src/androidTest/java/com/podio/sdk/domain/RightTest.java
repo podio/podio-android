@@ -49,7 +49,7 @@ public class RightTest extends AndroidTestCase {
         assertEquals(Right.add_status, Right.valueOf("add_status"));
         assertEquals(Right.add_conversation, Right.valueOf("add_conversation"));
         assertEquals(Right.reply, Right.valueOf("reply"));
-        assertEquals(Right.add_filter, Right.valueOf("add_filter"));
+        //assertEquals(Right.add_filter, Right.valueOf("add_filter"));
         assertEquals(Right.add_widget, Right.valueOf("add_widget"));
         assertEquals(Right.statistics, Right.valueOf("statistics"));
         assertEquals(Right.add_contact, Right.valueOf("add_contact"));
@@ -87,7 +87,7 @@ public class RightTest extends AndroidTestCase {
         assertEquals(Right.add_status, Enum.valueOf(Right.class, "add_status"));
         assertEquals(Right.add_conversation, Enum.valueOf(Right.class, "add_conversation"));
         assertEquals(Right.reply, Enum.valueOf(Right.class, "reply"));
-        assertEquals(Right.add_filter, Enum.valueOf(Right.class, "add_filter"));
+       // assertEquals(Right.add_filter, Enum.valueOf(Right.class, "add_filter"));
         assertEquals(Right.add_widget, Enum.valueOf(Right.class, "add_widget"));
         assertEquals(Right.statistics, Enum.valueOf(Right.class, "statistics"));
         assertEquals(Right.add_contact, Enum.valueOf(Right.class, "add_contact"));
@@ -113,7 +113,7 @@ public class RightTest extends AndroidTestCase {
     public void testValues() {
         Right[] targetArray = Right.values();
         assertNotNull(targetArray);
-        assertEquals(37, targetArray.length);
+        assertEquals(40, targetArray.length);
 
         List<Right> targetList = Arrays.asList(targetArray);
 
@@ -133,7 +133,7 @@ public class RightTest extends AndroidTestCase {
         assertTrue(targetList.contains(Right.add_status));
         assertTrue(targetList.contains(Right.add_conversation));
         assertTrue(targetList.contains(Right.reply));
-        assertTrue(targetList.contains(Right.add_filter));
+        //assertTrue(targetList.contains(Right.add_filter));
         assertTrue(targetList.contains(Right.add_widget));
         assertTrue(targetList.contains(Right.statistics));
         assertTrue(targetList.contains(Right.add_contact));

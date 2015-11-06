@@ -1,25 +1,3 @@
-/*
- *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
- *  do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in all 
- *  copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
- *  SOFTWARE.
- */
-
 package com.podio.sdk.internal;
 
 import java.text.ParseException;
@@ -40,14 +18,14 @@ public class UtilsTest extends AndroidTestCase {
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Date date = dateFormat.parse("2014-07-07");
-        String dateString = Utils.formatDateTime(date);
+        String dateString = Utils.formatDateTimeUtc(date);
         assertEquals("2014-07-07 00:00:00", dateString);
 
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         Date time = timeFormat.parse("21:14:59");
-        String timeString = Utils.formatDateTime(time);
+        String timeString = Utils.formatDateTimeUtc(time);
         assertEquals("1970-01-01 21:14:59", timeString);
     }
 
@@ -166,10 +144,10 @@ public class UtilsTest extends AndroidTestCase {
     }
 
     public void testParseDate() {
-        assertNull(Utils.parseDate("unparsable"));
-        assertNull(Utils.parseDate(null));
+        assertNull(Utils.parseDateUtc("unparsable"));
+        assertNull(Utils.parseDateUtc(null));
 
-        Date date = Utils.parseDate("2014-07-07 15:22:32");
+        Date date = Utils.parseDateUtc("2014-07-07 15:22:32");
         assertNotNull(date);
 
         Calendar c = Calendar.getInstance();
@@ -185,10 +163,10 @@ public class UtilsTest extends AndroidTestCase {
     }
 
     public void testParseDateTime() {
-        assertNull(Utils.parseDateTime("unparsable"));
-        assertNull(Utils.parseDateTime(null));
+        assertNull(Utils.parseDateTimeUtc("unparsable"));
+        assertNull(Utils.parseDateTimeUtc(null));
 
-        Date date = Utils.parseDateTime("2014-07-07 15:22:32");
+        Date date = Utils.parseDateTimeUtc("2014-07-07 15:22:32");
         assertNotNull(date);
 
         Calendar c = Calendar.getInstance();
@@ -204,10 +182,10 @@ public class UtilsTest extends AndroidTestCase {
     }
 
     public void testParseTime() {
-        assertNull(Utils.parseTime("unparsable"));
-        assertNull(Utils.parseTime(null));
+        assertNull(Utils.parseTimeUtc("unparsable"));
+        assertNull(Utils.parseTimeUtc(null));
 
-        Date date = Utils.parseTime("15:22:32");
+        Date date = Utils.parseTimeUtc("15:22:32");
         assertNotNull(date);
 
         Calendar c = Calendar.getInstance();

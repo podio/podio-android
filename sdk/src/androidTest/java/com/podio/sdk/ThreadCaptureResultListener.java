@@ -1,6 +1,6 @@
 package com.podio.sdk;
 
-public class ThreadCaptureResultListener implements ResultListener<Object> {
+public class ThreadCaptureResultListener implements Request.ResultListener<Object> {
 
     private String threadName;
 
@@ -9,7 +9,8 @@ public class ThreadCaptureResultListener implements ResultListener<Object> {
     }
 
     @Override
-    public void onRequestPerformed(Object content) {
+    public boolean onRequestPerformed(Object content) {
         this.threadName = Thread.currentThread().getName();
+        return false;
     }
 }

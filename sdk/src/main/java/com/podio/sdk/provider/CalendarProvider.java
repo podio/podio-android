@@ -81,7 +81,7 @@ public class CalendarProvider extends Provider {
                                                       boolean includeTasks) {
 
         CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
-                .withPriority(priority).withTasks(includeTasks).withWorkspaceNameField();
+                .withPriority(priority).withTasks(includeTasks);
 
         return get(filter, CalendarEvent[].class);
     }

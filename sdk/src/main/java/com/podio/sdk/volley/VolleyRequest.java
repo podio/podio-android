@@ -45,7 +45,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         return VolleyCallbackManager.removeGlobalSessionListener(sessionListener);
     }
 
-    static <E> VolleyRequest<E> newRequest(String userAgent, com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
+    public static <E> VolleyRequest<E> newRequest(String userAgent, com.podio.sdk.Request.Method method, String url, String body, Class<E> classOfResult) {
         int volleyMethod = parseMethod(method);
 
         VolleyRequest<E> request = new VolleyRequest<E>(volleyMethod, url, classOfResult, false);

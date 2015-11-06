@@ -1,28 +1,5 @@
-/*
- *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
- *  do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in all 
- *  copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
- *  SOFTWARE.
- */
 
 package com.podio.sdk.domain;
-
-import java.util.List;
 
 import android.test.AndroidTestCase;
 
@@ -31,21 +8,6 @@ import com.podio.sdk.domain.field.Field;
 
 public class ApplicationTest extends AndroidTestCase {
 
-    /**
-     * Verifies that the members of the {@link Application} class can be
-     * initialized by parsing JSON.
-     * 
-     * <pre>
-     * 
-     * 1. Describe an Application domain object as a JSON string.
-     * 
-     * 2. Create an instance from the JSON string.
-     * 
-     * 3. Verify that the parsed object has the expected values for
-     *      its members.
-     * 
-     * </pre>
-     */
     public void testApplicationCanBeCreatedFromJson() {
         String json = new StringBuilder("{")
                 .append("app_id:1,")
@@ -80,15 +42,15 @@ public class ApplicationTest extends AndroidTestCase {
         Application.Configuration config = application.getConfiguration();
         assertNotNull(config);
 
-        List<Field> fields = application.getFields();
-        assertNotNull(application.getFields());
-        assertEquals(0, fields.size());
+        Field[] fields = application.getTemplate();
+        assertNotNull(fields);
+        assertEquals(0, fields.length);
 
         assertEquals("LINK", application.getLink());
         assertEquals("LINKADD", application.getAddLink());
         assertNotNull(application.getOwner());
-        assertEquals(true, application.hasRights(Right.view));
-        assertEquals(false, application.hasRights(Right.delete));
+        assertEquals(true, application.hasAllRights(Right.view));
+        assertEquals(false, application.hasAllRights(Right.delete));
         assertEquals(1L, application.getSpaceId());
         assertEquals(Application.Status.inactive, application.getStatus());
         assertEquals("URL", application.getUrl());
@@ -104,18 +66,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals("TOKEN", application.getToken());
     }
 
-    /**
-     * Verifies that the members of the {@link Application} class can be
-     * initialized to default by instantiation.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new Application object instance.
-     * 
-     * 3. Verify that the members have the default values.
-     * 
-     * </pre>
-     */
+
     public void testApplicationCanBeCreatedFromInstantiation() {
         Application application = Application.newInstance();
 
@@ -125,14 +76,14 @@ public class ApplicationTest extends AndroidTestCase {
         Application.Configuration config = application.getConfiguration();
         assertNotNull(config);
 
-        List<Field> fields = application.getFields();
-        assertNotNull(application.getFields());
-        assertEquals(0, fields.size());
+        Field[] fields = application.getTemplate();
+        assertNotNull(fields);
+        assertEquals(0, fields.length);
 
         assertEquals(null, application.getLink());
         assertEquals(null, application.getAddLink());
         assertEquals(null, application.getOwner());
-        assertEquals(false, application.hasRights(Right.view));
+        assertEquals(false, application.hasAllRights(Right.view));
         assertEquals(-1L, application.getSpaceId());
         assertEquals(Application.Status.undefined, application.getStatus());
         assertEquals(null, application.getUrl());
@@ -148,92 +99,24 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(null, application.getToken());
     }
 
-    /**
-     * Verifies that the {@link Application#getConfiguration()} method doesn't
-     * return null, even if the JSON didn't specify the 'config' attribute.
-     * 
-     * <pre>
-     * 
-     * 1. Describe an Application in JSON without a 'config' attribute.
-     * 
-     * 2. Parse the JSON into a new Application object.
-     * 
-     * 3. Verify that a non-null object is returned when asking for the
-     *      application configuration.
-     * 
-     * </pre>
-     */
-    public void testConfigurationNeverNull() {
+    public void testConfigurationAndFieldsNeverNull() {
         Gson gson = new Gson();
         String json = "{}";
         Application application = gson.fromJson(json, Application.class);
-
+        Field[] fields = application.getTemplate();
+        assertNotNull(fields);
+        assertEquals(0, fields.length);
         assertNotNull(application.getConfiguration());
     }
 
-    /**
-     * Verifies that the {@link Application#getFields()} method doesn't return
-     * null, even if the JSON didn't specify the 'fields' attribute.
-     * 
-     * <pre>
-     * 
-     * 1. Describe an Application in JSON without a 'fields' attribute.
-     * 
-     * 2. Parse the JSON into a new Application object.
-     * 
-     * 3. Verify that a non-null object is returned when asking for the
-     *      application fields.
-     * 
-     * </pre>
-     */
-    public void testFieldsNeverNull() {
-        Gson gson = new Gson();
-        String json = "{}";
-        Application application = gson.fromJson(json, Application.class);
-
-        List<Field> fields = application.getFields();
-        assertNotNull(fields);
-        assertEquals(0, fields.size());
-    }
-
-    /**
-     * Verifies that the {@link Application#hasRights(Right...)} method defaults
-     * to false if no rights are defined in JSON.
-     * 
-     * <pre>
-     * 
-     * 1. Describe an Application in JSON without a 'rights' attribute.
-     * 
-     * 2. Parse the JSON into a new Application object.
-     * 
-     * 3. Verify that false is returned when asking for an arbitrary right.
-     * 
-     * </pre>
-     */
     public void testHasRightsDefaultsToFalse() {
         Gson gson = new Gson();
         String json = "{}";
         Application application = gson.fromJson(json, Application.class);
-
-        assertEquals(false, application.hasRights(Right.view));
+        assertEquals(false, application.hasAllRights(Right.view));
     }
 
-    /**
-     * Verifies that a {@link Application.Status} enum can be parsed from a JSON
-     * string, using the Gson library.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a simple Application object as a JSON string. Make sure it
-     *      has a 'status' attribute.
-     * 
-     * 2. Parse the JSON string to an Application instance.
-     * 
-     * 3. Verify that the 'status' attribute has been parsed successfully as an
-     *      enum value.
-     * 
-     * </pre>
-     */
+
     public void testStatusEnumCanBeParsedFromJson() {
         Gson gson = new Gson();
 
@@ -256,22 +139,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(Application.Status.undefined, application3.getStatus());
     }
 
-    /**
-     * Verifies that a {@link Application.Type} enum can be parsed from a JSON
-     * string, using the Gson library.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a simple Configuration object as a JSON string. Make sure it
-     *      has a 'type' attribute.
-     * 
-     * 2. Parse the JSON string to a Configuration instance.
-     * 
-     * 3. Verify that the 'type' attribute has been parsed successfully as an
-     *      enum value.
-     * 
-     * </pre>
-     */
+
     public void testTypeEnumCanBeParsedFromJson() {
         Gson gson = new Gson();
 
@@ -294,22 +162,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(Application.Type.undefined, configuration3.getType());
     }
 
-    /**
-     * Verifies that a {@link Application.View} enum can be parsed from a JSON
-     * string, using the Gson library.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a simple Application Configuration object as a JSON string.
-     *      Make sure it has a 'default_view' attribute.
-     * 
-     * 2. Parse the JSON string to an Application Configuration instance.
-     * 
-     * 3. Verify that the 'default_view' attribute has been parsed successfully as an
-     *      enum value.
-     * 
-     * </pre>
-     */
+
     public void testViewEnumCanBeParsedFromJson() {
         Gson gson = new Gson();
 
@@ -332,16 +185,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(Application.View.undefined, configuration3.getDefaultViewType());
     }
 
-    /**
-     * Verifies that the {@link Application.Status} enum returns the correct
-     * value.
-     * 
-     * <pre>
-     * 
-     * 1. Just do it.
-     * 
-     * </pre>
-     */
+
     public void testValueOfStatus() {
         assertEquals(Application.Status.active, Application.Status.valueOf("active"));
         assertEquals(Application.Status.deleted, Application.Status.valueOf("deleted"));
@@ -354,16 +198,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(Application.Status.undefined, Enum.valueOf(Application.Status.class, "undefined"));
     }
 
-    /**
-     * Verifies that the {@link Application.Type} enum returns the correct
-     * value.
-     * 
-     * <pre>
-     * 
-     * 1. Just do it.
-     * 
-     * </pre>
-     */
+
     public void testValueOfType() {
         assertEquals(Application.Type.standard, Application.Type.valueOf("standard"));
         assertEquals(Application.Type.meeting, Application.Type.valueOf("meeting"));
@@ -374,16 +209,7 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(Application.Type.undefined, Enum.valueOf(Application.Type.class, "undefined"));
     }
 
-    /**
-     * Verifies that the {@link Application.View} enum returns the correct
-     * value.
-     * 
-     * <pre>
-     * 
-     * 1. Just do it.
-     * 
-     * </pre>
-     */
+
     public void testValueOfView() {
         assertEquals(Application.View.badge, Application.View.valueOf("badge"));
         assertEquals(Application.View.calendar, Application.View.valueOf("calendar"));

@@ -1,24 +1,3 @@
-/*
- *  Copyright (C) 2014 Copyright Citrix Systems, Inc.
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy of 
- *  this software and associated documentation files (the "Software"), to deal in 
- *  the Software without restriction, including without limitation the rights to 
- *  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- *  of the Software, and to permit persons to whom the Software is furnished to 
- *  do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included in all 
- *  copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
- *  SOFTWARE.
- */
 
 package com.podio.sdk.domain;
 
@@ -29,26 +8,9 @@ import android.test.AndroidTestCase;
 
 import com.google.gson.Gson;
 
-/**
- * @author László Urszuly
- */
 public class SpaceTest extends AndroidTestCase {
 
-    /**
-     * Verifies that the members of the {@link Space} class can be initialized
-     * by parsing JSON.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a Space domain object as a JSON string.
-     * 
-     * 2. Create an instance from the JSON string.
-     * 
-     * 3. Verify that the parsed object has the expected values for
-     *      its members.
-     * 
-     * </pre>
-     */
+
     public void testSpaceCanBeCreatedFromJson() {
         String json = new StringBuilder("{")
                 .append("auto_join:true,")
@@ -82,9 +44,8 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(true, space.isSubscribed());
         assertEquals(true, space.isPremium());
         assertEquals(1, space.getRank());
-        assertEquals(1, space.getId());
-        assertEquals(true, space.hasRights(Right.view));
-        assertEquals(false, space.hasRights(Right.comment));
+        assertEquals(1, space.getSpaceId());
+        assertEquals(true, space.hasAllRights(Right.view));
         assertNotNull(space.getOrganization());
         assertEquals(Space.Privacy.closed, space.getPrivacy());
         assertEquals(Space.Role.light, space.getRole());
@@ -107,21 +68,10 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals("URLLABEL", space.getUrlLabel());
         assertEquals("VIDEO", space.getVideoId());
         assertEquals(Space.Type.emp_network, space.getType());
-        assertNotNull(space.getCreatedByUser());
+        assertNotNull(space.getCreatedBy());
     }
 
-    /**
-     * Verifies that the members of the {@link Space} class can be initialized
-     * to default by instantiation.
-     * 
-     * <pre>
-     * 
-     * 1. Create a new Space object instance.
-     * 
-     * 3. Verify that the members have the default values.
-     * 
-     * </pre>
-     */
+
     public void testSpaceCanBeCreatedFromInstantiation() {
         Space space = Space.newInstance();
 
@@ -131,9 +81,9 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(false, space.doPostOnNewMember());
         assertEquals(false, space.isSubscribed());
         assertEquals(false, space.isPremium());
-        assertEquals(0, space.getRank());
-        assertEquals(-1, space.getId());
-        assertEquals(false, space.hasRights(Right.view));
+        assertEquals(-1, space.getRank());
+        assertEquals(-1, space.getSpaceId());
+        assertEquals(false, space.hasAllRights(Right.view));
         assertEquals(null, space.getOrganization());
         assertEquals(Space.Privacy.undefined, space.getPrivacy());
         assertEquals(Space.Role.undefined, space.getRole());
@@ -146,25 +96,10 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(null, space.getUrlLabel());
         assertEquals(null, space.getVideoId());
         assertEquals(Space.Type.undefined, space.getType());
-        assertEquals(null, space.getCreatedByUser());
+        assertEquals(null, space.getCreatedBy());
     }
 
-    /**
-     * Verifies that a {@link Space.Privacy} enum can be parsed from a JSON
-     * string.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a simple Space object as a JSON string. Make sure it
-     *      has a 'privacy' attribute.
-     * 
-     * 2. Parse the JSON string to a Space instance.
-     * 
-     * 3. Verify that the 'privacy' attribute has been parsed successfully as an
-     *      enum value.
-     * 
-     * </pre>
-     */
+
     public void testPrivacyEnumCanBeParsedFromJson() {
         Gson gson = new Gson();
         Space space;
@@ -182,21 +117,7 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(Space.Privacy.undefined, space.getPrivacy());
     }
 
-    /**
-     * Verifies that a {@link Space.Role} enum can be parsed from a JSON string.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a simple Space object as a JSON string. Make sure it
-     *      has a 'role' attribute.
-     * 
-     * 2. Parse the JSON string to a Space instance.
-     * 
-     * 3. Verify that the 'role' attribute has been parsed successfully as an
-     *      enum value.
-     * 
-     * </pre>
-     */
+
     public void testRoleEnumCanBeParsedFromJson() {
         Gson gson = new Gson();
         Space space;
@@ -214,21 +135,7 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(Space.Role.undefined, space.getRole());
     }
 
-    /**
-     * Verifies that a {@link Space.Type} enum can be parsed from a JSON string.
-     * 
-     * <pre>
-     * 
-     * 1. Describe a simple Space object as a JSON string. Make sure it
-     *      has a 'type' attribute.
-     * 
-     * 2. Parse the JSON string to a Space instance.
-     * 
-     * 3. Verify that the 'type' attribute has been parsed successfully as an
-     *      enum value.
-     * 
-     * </pre>
-     */
+
     public void testTypeEnumCanBeParsedFromJson() {
         Gson gson = new Gson();
         Space space;
@@ -246,15 +153,7 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(Space.Type.undefined, space.getType());
     }
 
-    /**
-     * Verifies that the {@link Space.Privacy} enum returns the correct value.
-     * 
-     * <pre>
-     * 
-     * 1. Just do it.
-     * 
-     * </pre>
-     */
+
     public void testValueOfPrivacy() {
         assertEquals(Space.Privacy.closed, Space.Privacy.valueOf("closed"));
         assertEquals(Space.Privacy.open, Space.Privacy.valueOf("open"));
@@ -265,15 +164,7 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(Space.Privacy.undefined, Enum.valueOf(Space.Privacy.class, "undefined"));
     }
 
-    /**
-     * Verifies that the {@link Space.Role} enum returns the correct value.
-     * 
-     * <pre>
-     * 
-     * 1. Just do it.
-     * 
-     * </pre>
-     */
+
     public void testValueOfRole() {
         assertEquals(Space.Role.admin, Space.Role.valueOf("admin"));
         assertEquals(Space.Role.light, Space.Role.valueOf("light"));
@@ -286,15 +177,7 @@ public class SpaceTest extends AndroidTestCase {
         assertEquals(Space.Role.undefined, Enum.valueOf(Space.Role.class, "undefined"));
     }
 
-    /**
-     * Verifies that the {@link Space.Type} enum returns the correct value.
-     * 
-     * <pre>
-     * 
-     * 1. Just do it.
-     * 
-     * </pre>
-     */
+
     public void testValueOfType() {
         assertEquals(Space.Type.demo, Space.Type.valueOf("demo"));
         assertEquals(Space.Type.emp_network, Space.Type.valueOf("emp_network"));
