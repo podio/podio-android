@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
  * Simple class that enables a client to get hold of the number of unread notifications in the
  * inbox.
  *
- * @author rabie
  */
 public class NotificationInboxCount {
 

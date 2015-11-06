@@ -6,7 +6,6 @@ import java.util.List;
 /**
  * When the reference search group name is "tag_field" you will get this object.
  *
- * @author rabie
  */
 public class OrganisationTagReferenceGroup extends ReferenceGroup {
     private final List<String> contents = null;
