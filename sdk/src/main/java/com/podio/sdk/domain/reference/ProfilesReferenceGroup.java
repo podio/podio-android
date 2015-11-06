@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * When the reference search group name is "profiles" you will get this object.
  *
- * @author Tobias Lindberg
  */
 public class ProfilesReferenceGroup extends ReferenceGroup {
     private final List<Profile> contents = null;

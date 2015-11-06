@@ -13,9 +13,6 @@ import java.io.File;
 
 import cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory;
 
-/**
- * @author Tobias Lindberg
- */
 public class AndroidAsyncHttpClient implements Client {
 
     protected String scheme;

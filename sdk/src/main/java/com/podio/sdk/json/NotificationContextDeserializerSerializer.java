@@ -24,7 +24,6 @@ import java.util.Map;
  * the type of context so we need to have this deserializer/serializer to decide what kind of
  * context we are handling.
  *
- * @author Tobias Lindberg
  */
 class NotificationContextDeserializerSerializer implements JsonDeserializer<NotificationContext>, JsonSerializer<NotificationContext> {
 

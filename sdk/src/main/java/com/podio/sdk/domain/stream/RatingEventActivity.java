@@ -5,7 +5,6 @@ import com.podio.sdk.domain.Rating;
 /**
  * This class is used when the activity is of type "rating".
  *
- * @author Tobias Lindberg
  */
 public class RatingEventActivity extends EventActivity {
 
