@@ -69,8 +69,15 @@ public class ItemProviderTest extends InstrumentationTestCase {
         Mockito.verify(filterResultListener, Mockito.timeout(100).times(0)).onRequestPerformed(null);
 
         String f = mockClient.data;
-        String expected = "{\"filters\":{\"test-key\":\"test-value\"},\"sort_by\":\"test-column\",\"limit\":100,\"offset\":1000,\"remember\":true,\"sort_desc\":true,\"sort_nulls_last\":false}";
-        assertEquals(f, expected);
+        assertTrue(f.contains("{\"filters\":"));
+        assertTrue(f.contains("\"test-key\":\"test-value\""));
+        assertTrue(f.contains("\"sort_by\":\"test-column\""));
+        assertTrue(f.contains("\"limit\":100"));
+        assertTrue(f.contains("\"offset\":1000"));
+        assertTrue(f.contains("\"remember\":true"));
+        assertTrue(f.contains("\"sort_desc\":true"));
+        assertTrue(f.contains("\"sort_nulls_last\":false"));
+
 
         assertEquals(Uri.parse("https://test/item/app/4/filter"), mockClient.uri);
     }
