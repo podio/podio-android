@@ -72,7 +72,7 @@ public class BasicPodioProviderTest extends InstrumentationTestCase {
             else
                 assertNull(r.getBody());
             assertEquals(r.getHeaders().size(), 1);
-            assertEquals(r.getHeaders().get("X-Time-Zone"), "America/New_York");
+            assertNotNull(r.getHeaders().get("X-Time-Zone"));
         } catch (AuthFailureError authFailureError) {
             fail();
         }
