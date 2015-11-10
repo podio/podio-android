@@ -21,6 +21,7 @@ import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.RatingProvider;
 import com.podio.sdk.provider.ReferenceProvider;
+import com.podio.sdk.provider.SpacesProvider;
 import com.podio.sdk.provider.StatusProvider;
 import com.podio.sdk.provider.StreamProvider;
 import com.podio.sdk.provider.TaskProvider;
@@ -142,6 +143,11 @@ public class Podio {
      * Enables means of easy operating on the Status API end point.
      */
     public static final StatusProvider status = new StatusProvider();
+
+    /**
+     * Enables means of easy operating on the Spaces API end point.
+     */
+    public static final SpacesProvider spaces = new SpacesProvider();
 
     /**
      * Enables means of registering global error listeners. These callback implementations apply to

@@ -60,7 +60,7 @@ public class Space implements Data{
     //private final Object app_count = null;
     //private final Object top_apps = null;
 
-    private Space() {
+    protected Space() {
     }
 
     public boolean doAutoJoin() {
