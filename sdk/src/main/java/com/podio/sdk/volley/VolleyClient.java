@@ -173,9 +173,26 @@ public class VolleyClient implements Client {
 
         VolleyRequest<T> request = VolleyRequest.newRequest(userAgent, method, url, body, classOfResult);
         request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
+
+        if (userId > 0) {
+            request.setUserId(userId);
+        }
+
         addToRequestQueue(request);
 
         return request;
+    }
+
+    private long userId;
+
+    /**
+     * NOTE! This method will be removed soon. It's only temporary added for debugging purposes.
+     *
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public synchronized void setup(Context context, String scheme, String authority, String clientId, String clientSecret, String userAgent, SSLSocketFactory sslSocketFactory) {

@@ -34,7 +34,6 @@ import javax.net.ssl.SSLSocketFactory;
 /**
  * Enables easy access to the Podio API with a basic configuration which should be suitable for most
  * third party developers.
- *
  */
 public class Podio {
     /**
@@ -264,6 +263,18 @@ public class Podio {
         embed.setClient(volleytRestClient);
         reference.setClient(volleytRestClient);
         status.setClient(volleytRestClient);
+    }
+
+    /**
+     * NOTE! This method will be removed soon. It's only temporary added for debugging purposes.
+     *
+     * @param userId
+     */
+    @Deprecated
+    public static void setUserId(long userId) {
+        if (volleytRestClient != null) {
+            volleytRestClient.setUserId(userId);
+        }
     }
 
     /**

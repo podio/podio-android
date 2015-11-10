@@ -117,6 +117,18 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         this.isAuthRequest = isAuthRequest;
     }
 
+    private long userId;
+
+    /**
+     * NOTE! This method will be removed soon. It's only temporary added for debugging purposes.
+     *
+     * @param userId
+     */
+    @Deprecated
+    public void setUserId(long userId){
+        this.userId = userId;
+    }
+
     @Override
     public VolleyRequest<T> withResultListener(ResultListener<T> resultListener) {
         callbackManager.addResultListener(resultListener, isDone, result);
@@ -279,7 +291,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
         } catch (OutOfMemoryError e) {
 
             String dataSize = "\nnetworkResponse body size: " + (networkResponse.data == null ? "0" : networkResponse.data.length + "");
-            String moreInfoOnCrash = e.getMessage() + "\nclassOfResult: " + classOfResult + "\nurl: " + getOriginUrl() + dataSize;
+            String moreInfoOnCrash = e.getMessage() + "\nclassOfResult: " + classOfResult + "\nurl: " + getOriginUrl() + dataSize +"\nuser_id: " +userId;
             OutOfMemoryError exceptionWithMoreInfo = new OutOfMemoryError(moreInfoOnCrash);
             exceptionWithMoreInfo.setStackTrace(e.getStackTrace());
             throw exceptionWithMoreInfo;
