@@ -49,7 +49,7 @@ public abstract class ReferenceGroup {
 
         private final Target target;
         private String text;
-        private final Integer limit;
+        private Integer limit;
 
         public ReferenceTarget(Target target, int limit) {
             this.target = target;
@@ -62,6 +62,10 @@ public abstract class ReferenceGroup {
 
         public Target getTarget(){
             return target;
+        }
+
+        public void setLimit(int limit){
+            this.limit = limit;
         }
 
         public int getLimit(){
