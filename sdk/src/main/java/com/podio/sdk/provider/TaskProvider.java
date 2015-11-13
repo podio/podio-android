@@ -3,6 +3,7 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
+import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.Task;
 import com.podio.sdk.internal.Utils;
 
@@ -10,7 +11,6 @@ import java.util.Date;
 
 /**
  * This class provides methods to access {@link Task} objects from the API.
- *
  */
 public class TaskProvider extends Provider {
 
@@ -204,7 +204,6 @@ public class TaskProvider extends Provider {
         /**
          * This enum is used to query the Podio API for a set of tasks ordered based on a certain
          * grouping
-         *
          */
         public static enum Grouping {
 
@@ -263,15 +262,23 @@ public class TaskProvider extends Provider {
         return post(filter, null, Void.class);
     }
 
-    public Request<Task> getTask(long taskId){
+    public Request<Task> getTask(long taskId) {
         return null;
     }
 
-    public Request<Task> createTask(Task task){
+    public Request<Task> createTask(Task.CreateData task) {
         return null;
     }
 
-    public Request<Task> updateTask(long taskId, Task task){
+    public Request<Task> createTaskWithRef(ReferenceType refType, long refId, Task.CreateData task) {
+        return null;
+    }
+
+    public Request<Task> updateTask(long taskId, Task.CreateData task) {
+        return null;
+    }
+
+    public Request<Void> deleteTask(long taskId){
         return null;
     }
 }

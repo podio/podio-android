@@ -4,14 +4,21 @@ import com.google.gson.annotations.SerializedName;
 import com.podio.sdk.internal.Utils;
 
 public class Reminder {
-    @SerializedName("remind_delta")
-    private final Integer reminderDelta = null;
+    private final Integer reminder_delta;
+
+    public Reminder(int reminderDelta){
+        this.reminder_delta = reminderDelta;
+    }
+
+    public Reminder(){
+        reminder_delta = null;
+    }
 
     /**
      * @return returns minutes to remind before the due_date or -1 if no such
      *         value exists
      */
     public Integer getReminderDelta() {
-        return Utils.getNative(reminderDelta, -1);
+        return Utils.getNative(reminder_delta, -1);
     }
 }
