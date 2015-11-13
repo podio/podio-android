@@ -2,6 +2,9 @@ apply plugin: 'com.android.library'
 
 apply plugin: "sonar-runner"
 
+repositories {
+    jcenter()
+}
 
 android {
     compileSdkVersion 21
@@ -109,3 +112,4 @@ apply plugin: 'jacoco'
 jacoco {
     toolVersion = "0.7.5.201505241946"
 }
+
