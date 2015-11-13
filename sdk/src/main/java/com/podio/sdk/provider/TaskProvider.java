@@ -263,4 +263,15 @@ public class TaskProvider extends Provider {
         return post(filter, null, Void.class);
     }
 
+    public Request<Task> getTask(long taskId){
+        return null;
+    }
+
+    public Request<Task> createTask(Task task){
+        return null;
+    }
+
+    public Request<Task> updateTask(long taskId, Task task){
+        return null;
+    }
 }
