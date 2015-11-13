@@ -23,8 +23,7 @@ public class Task implements Data {
     private final String text = null;
     private final String description = null;
     private final String group = null;
-    @SerializedName("ref")
-    private final Reference reference = null;
+    private final Reference ref = null;
     private final Profile responsible = null;
     private final Status status = null;
     private final Collection<Comment> comments = null;
@@ -59,7 +58,7 @@ public class Task implements Data {
         public static class DefaultResponsible extends Responsible {
 
             @SuppressWarnings("unused")
-            private long id;
+            private final long id;
 
             /**
              * @param type
@@ -76,7 +75,7 @@ public class Task implements Data {
         public static class MailResponsible extends Responsible {
 
             @SuppressWarnings("unused")
-            private String id;
+            private final String id;
 
             public MailResponsible(String mail) {
                 super(ResponsibleType.mail);
@@ -85,7 +84,7 @@ public class Task implements Data {
         }
 
         @SuppressWarnings("unused")
-        private String text;
+        private final String text;
         @SuppressWarnings("unused")
         private String description;
         @SuppressWarnings("unused")
@@ -229,7 +228,7 @@ public class Task implements Data {
     }
 
     public Reference getReference() {
-        return reference;
+        return ref;
     }
 
     public Status getStatus() {

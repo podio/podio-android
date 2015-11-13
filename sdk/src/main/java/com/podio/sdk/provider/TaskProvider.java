@@ -169,14 +169,14 @@ public class TaskProvider extends Provider {
             return this;
         }
 
-        public static enum SortByType {
+        public enum SortByType {
             CREATED_ON("created_on"),
             COMPLETED_ON("completed_on"),
             RANK("rank");
 
             private String sortBy = null;
 
-            private SortByType(String sortBy) {
+            SortByType(String sortBy) {
                 this.sortBy = sortBy;
             }
 
@@ -185,14 +185,14 @@ public class TaskProvider extends Provider {
             }
         }
 
-        public static enum AuthType {
+        public enum AuthType {
 
             USER("user"),
             APP("app");
 
             private String auth = null;
 
-            private AuthType(String auth) {
+            AuthType(String auth) {
                 this.auth = auth;
             }
 
@@ -205,7 +205,7 @@ public class TaskProvider extends Provider {
          * This enum is used to query the Podio API for a set of tasks ordered based on a certain
          * grouping
          */
-        public static enum Grouping {
+        public enum Grouping {
 
             DUE_DATE("due_date"),
             CREATED_BY("created_by"),
@@ -216,7 +216,7 @@ public class TaskProvider extends Provider {
 
             private String group = null;
 
-            private Grouping(String group) {
+            Grouping(String group) {
                 this.group = group;
             }
 
@@ -226,7 +226,7 @@ public class TaskProvider extends Provider {
         }
     }
 
-    private static class TaskFilter extends Filter {
+    protected static class TaskFilter extends Filter {
         public TaskFilter() {
             super("task");
         }
@@ -242,6 +242,12 @@ public class TaskProvider extends Provider {
             } else {
                 addPathSegment("incomplete");
             }
+            return this;
+        }
+
+        public Filter withReference(ReferenceType refType, long refId) {
+            addPathSegment(refType.name());
+            addPathSegment(Long.toString(refId));
             return this;
         }
     }
@@ -263,22 +269,22 @@ public class TaskProvider extends Provider {
     }
 
     public Request<Task> getTask(long taskId) {
-        return null;
+        return get(new TaskFilter().withId(taskId), Task.class);
     }
 
-    public Request<Task> createTask(Task.CreateData task) {
-        return null;
+    public Request<Task> createTask(Task.CreateData createData) {
+        return post(new TaskFilter(), createData, Task.class);
     }
 
-    public Request<Task> createTaskWithRef(ReferenceType refType, long refId, Task.CreateData task) {
-        return null;
+    public Request<Task> createTaskWithRef(ReferenceType refType, long refId, Task.CreateData createData) {
+        return post(new TaskFilter().withReference(refType, refId), createData, Task.class);
     }
 
-    public Request<Task> updateTask(long taskId, Task.CreateData task) {
-        return null;
+    public Request<Task> updateTask(long taskId, Task.CreateData createData) {
+        return put(new TaskFilter().withId(taskId),createData, Task.class);
     }
 
-    public Request<Void> deleteTask(long taskId){
-        return null;
+    public Request<Void> deleteTask(long taskId) {
+        return delete(new TaskFilter().withId(taskId));
     }
 }
