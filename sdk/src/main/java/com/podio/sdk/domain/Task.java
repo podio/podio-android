@@ -5,6 +5,8 @@ import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.internal.Utils;
 import com.podio.sdk.provider.TaskProvider.GetTaskFilter.Grouping;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +28,8 @@ public class Task implements Data {
     private final Reference ref = null;
     private final Profile responsible = null;
     private final Status status = null;
-    private final Collection<Comment> comments = null;
+    private final Comment[] comments = null;
+    private final File[] files = null;
 
     public static enum Status {
         completed,
@@ -244,6 +247,10 @@ public class Task implements Data {
     }
 
     public Collection<Comment> getComments() {
-        return comments;
+        return Utils.notEmpty(comments) ? Arrays.asList(comments) : new ArrayList<Comment>(0);
+    }
+
+    public List<File> getFiles() {
+        return Utils.notEmpty(files) ? Arrays.asList(files) : new ArrayList<File>(0);
     }
 }
