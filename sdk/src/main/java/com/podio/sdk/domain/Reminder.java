@@ -16,7 +16,7 @@ public class Reminder {
     /**
      * @return returns minutes to remind before the due_date or -1 if no such value exists
      */
-    public Integer getReminderDelta() {
+    public int getReminderDelta() {
         return Utils.getNative(reminder_delta, -1);
     }
 }
