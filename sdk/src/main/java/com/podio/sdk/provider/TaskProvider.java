@@ -273,10 +273,16 @@ public class TaskProvider extends Provider {
     }
 
     public Request<Task> createTask(Task.CreateData createData) {
-        return post(new TaskFilter(), createData, Task.class);
+        ReferenceType referenceType = createData.getReferenceType();
+        long referenceId = createData.getReferenceId();
+        if(referenceType != null && referenceId > -1L){
+            return createTaskWithRef(referenceType, referenceId, createData);
+        } else {
+            return post(new TaskFilter(), createData, Task.class);
+        }
     }
 
-    public Request<Task> createTaskWithRef(ReferenceType refType, long refId, Task.CreateData createData) {
+    private Request<Task> createTaskWithRef(ReferenceType refType, long refId, Task.CreateData createData) {
         return post(new TaskFilter().withReference(refType, refId), createData, Task.class);
     }
 

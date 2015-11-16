@@ -97,7 +97,7 @@ public class Task implements Data {
         @SuppressWarnings("unused")
         private ReferenceType ref_type;
         @SuppressWarnings("unused")
-        private Long refId;
+        private Long ref_id;
         @SuppressWarnings("unused")
         private List<Long> file_ids;
         @SuppressWarnings("unused")
@@ -136,7 +136,15 @@ public class Task implements Data {
          */
         public void setRefeference(ReferenceType refType, long refId) {
             this.ref_type = refType;
-            this.refId = refId;
+            this.ref_id = refId;
+        }
+
+        public ReferenceType getReferenceType(){
+            return this.ref_type;
+        }
+
+        public long getReferenceId(){
+            return Utils.getNative(ref_id,-1L);
         }
 
         public void setFileIds(List<Long> file_ids) {
