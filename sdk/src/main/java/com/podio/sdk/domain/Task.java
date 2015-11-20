@@ -106,6 +106,8 @@ public class Task implements Data {
         @SuppressWarnings("unused")
         private Reminder reminder;
 
+        private Boolean completed;
+
         public CreateData(String text) {
             this.text = text;
         }
@@ -124,6 +126,10 @@ public class Task implements Data {
 
         public void setResponsible(List<Responsible> responsible) {
             this.responsible = responsible;
+        }
+
+        public void setCompleted(boolean completed){
+            this.completed = completed;
         }
 
         public void setIsPrivate(boolean isPrivate) {

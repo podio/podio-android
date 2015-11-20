@@ -235,21 +235,6 @@ public class TaskProvider extends Provider {
             addPathSegment(Long.toString(taskId, 10));
             return this;
         }
-
-        public TaskFilter withComplete(boolean isCompleted) {
-            if (isCompleted) {
-                addPathSegment("complete");
-            } else {
-                addPathSegment("incomplete");
-            }
-            return this;
-        }
-
-        public Filter withReference(ReferenceType refType, long refId) {
-            addPathSegment(refType.name());
-            addPathSegment(Long.toString(refId));
-            return this;
-        }
     }
 
     /**
@@ -262,32 +247,16 @@ public class TaskProvider extends Provider {
         return get(filter, Task[].class);
     }
 
-    public Request<Void> setTaskCompleted(long taskId, boolean isCompleted) {
-        TaskFilter filter = new TaskFilter();
-        filter.withId(taskId).withComplete(isCompleted);
-        return post(filter, null, Void.class);
-    }
-
     public Request<Task> getTask(long taskId) {
         return get(new TaskFilter().withId(taskId), Task.class);
     }
 
     public Request<Task> createTask(Task.CreateData createData) {
-        ReferenceType referenceType = createData.getReferenceType();
-        long referenceId = createData.getReferenceId();
-        if(referenceType != null && referenceId > -1L){
-            return createTaskWithRef(referenceType, referenceId, createData);
-        } else {
-            return post(new TaskFilter(), createData, Task.class);
-        }
-    }
-
-    private Request<Task> createTaskWithRef(ReferenceType refType, long refId, Task.CreateData createData) {
-        return post(new TaskFilter().withReference(refType, refId), createData, Task.class);
+        return post(new TaskFilter(), createData, Task.class);
     }
 
     public Request<Task> updateTask(long taskId, Task.CreateData createData) {
-        return put(new TaskFilter().withId(taskId),createData, Task.class);
+        return put(new TaskFilter().withId(taskId), createData, Task.class);
     }
 
     public Request<Void> deleteTask(long taskId) {
