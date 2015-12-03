@@ -26,6 +26,11 @@ public class CommentProvider extends Provider {
             return this;
         }
 
+        public CommentsFilter withCommentId(long commentId) {
+            addPathSegment(Long.toString(commentId, 10));
+            return this;
+        }
+
     }
 
     /**
@@ -50,4 +55,11 @@ public class CommentProvider extends Provider {
         Comment.Create create = new Comment.Create(value, fileIds);
         return post(filter, create, Comment.class);
     }
+
+    public Request<Comment> getComment(long id) {
+        CommentsFilter filter = new CommentsFilter();
+        filter.withCommentId(id);
+        return get(filter, Comment.class);
+    }
+
 }
