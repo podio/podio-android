@@ -25,7 +25,7 @@ public class Comment {
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
     //private final Object external_id = null;
-    //private final Object ref = null;
+    private final Reference ref = null;
     //private final Object last_edit_on = null;
     //private final Object questions = null;
     //private final Byline user = null;
@@ -44,6 +44,10 @@ public class Comment {
             this.value = value;
             this.file_ids = Utils.notEmpty(fileIds) ? fileIds : new long[0];
         }
+    }
+
+    public Reference getReference() {
+        return ref;
     }
 
     public long getCommentId() {
