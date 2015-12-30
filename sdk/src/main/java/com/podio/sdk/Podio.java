@@ -272,18 +272,6 @@ public class Podio {
     }
 
     /**
-     * NOTE! This method will be removed soon. It's only temporary added for debugging purposes.
-     *
-     * @param userId
-     */
-    @Deprecated
-    public static void setUserId(long userId) {
-        if (volleytRestClient != null) {
-            volleytRestClient.setUserId(userId);
-        }
-    }
-
-    /**
      * Restores a previously created Podio session. Even though the access token may have expired,
      * the refresh token can be used to get a new access token. The idea here is to enable the
      * caller to persist the session and avoid an unnecessary re-authentication. NOTE! The server
