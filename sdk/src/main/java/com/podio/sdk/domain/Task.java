@@ -29,6 +29,7 @@ public class Task implements Data {
     private final Profile responsible = null;
     private final Status status = null;
     private final Comment[] comments = null;
+    private final Label[] labels = null;
     private final File[] files = null;
 
     public static enum Status {
@@ -254,6 +255,10 @@ public class Task implements Data {
 
     public Collection<Comment> getComments() {
         return Utils.notEmpty(comments) ? Arrays.asList(comments) : new ArrayList<Comment>(0);
+    }
+
+    public Collection<Label> getLabels() {
+        return Utils.notEmpty(labels) ? Arrays.asList(labels) : new ArrayList<Label>(0);
     }
 
     public List<File> getFiles() {
