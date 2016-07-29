@@ -106,7 +106,8 @@ public class Task implements Data {
         private List<Long> file_ids;
         @SuppressWarnings("unused")
         private Reminder reminder;
-
+        @SuppressWarnings("unused")
+        private List<Long> label_ids;
         private Boolean completed;
 
         public CreateData(String text) {
@@ -163,6 +164,10 @@ public class Task implements Data {
 
         public void setReminder(Reminder reminder) {
             this.reminder = reminder;
+        }
+
+        public void setLabelIds(List<Long> label_ids) {
+            this.label_ids = label_ids;
         }
     }
 
