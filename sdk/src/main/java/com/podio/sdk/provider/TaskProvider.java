@@ -3,6 +3,7 @@ package com.podio.sdk.provider;
 import com.podio.sdk.Filter;
 import com.podio.sdk.Provider;
 import com.podio.sdk.Request;
+import com.podio.sdk.domain.Label;
 import com.podio.sdk.domain.ReferenceType;
 import com.podio.sdk.domain.Task;
 import com.podio.sdk.internal.Utils;
@@ -237,6 +238,17 @@ public class TaskProvider extends Provider {
         }
     }
 
+    protected static class LabelFilter extends Filter {
+        public LabelFilter() {
+            super("task/label");
+        }
+
+        public LabelFilter withId(long labelId) {
+            addPathSegment(Long.toString(labelId, 10));
+            return this;
+        }
+    }
+
     /**
      * @param filter
      *
@@ -261,5 +273,17 @@ public class TaskProvider extends Provider {
 
     public Request<Void> deleteTask(long taskId) {
         return delete(new TaskFilter().withId(taskId));
+    }
+
+    public Request<Label[]> getLabels() {
+        return get(new LabelFilter(), Label[].class);
+    }
+
+    public Request<Label> createLabel(Label.CreateData createData) {
+        return post(new LabelFilter(), createData, Label.class);
+    }
+
+    public Request<Void> deleteLabel(long labelId) {
+        return delete(new LabelFilter().withId(labelId));
     }
 }

@@ -8,6 +8,21 @@ public class Label {
     private final String text = null;
     private final String color = null;
 
+    public static class CreateData {
+        @SuppressWarnings("unused")
+        private final String text;
+        @SuppressWarnings("unused")
+        private String color;
+
+        public CreateData(String text) {
+            this.text = text;
+        }
+
+        public void setColor(String color){
+            this.color = color;
+        }
+    }
+
     public Long getLabelId() {
         return label_id;
     }

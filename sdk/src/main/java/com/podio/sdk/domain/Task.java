@@ -94,6 +94,10 @@ public class Task implements Data {
         @SuppressWarnings("unused")
         private String due_on;
         @SuppressWarnings("unused")
+        private String due_date;
+        @SuppressWarnings("unused")
+        private String due_time;
+        @SuppressWarnings("unused")
         private List<Responsible> responsible;
         @SuppressWarnings("unused")
         @SerializedName("private")
@@ -122,7 +126,7 @@ public class Task implements Data {
             if (hasTime) {
                 this.due_on = dueOn != null ? Utils.formatDateTimeUtc(dueOn) : null;
             } else {
-                this.due_on = dueOn != null ? Utils.formatDateDefault(dueOn) : null;
+                this.due_date = dueOn != null ? Utils.formatDateDefault(dueOn) : null;
             }
         }
 
