@@ -2,6 +2,7 @@
 package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.data.Data;
+import com.podio.sdk.domain.data.LinkedAccountData;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
@@ -228,11 +229,11 @@ public class Item implements Data {
     private final EventContext.UserRatings user_ratings = null;
     private final HashMap<Long, ItemParticipation> participants = null;
     private final ItemReferenceCount[] refs = null;
+    private final LinkedAccountData linked_account_data = null;
 
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
     //private final Object linked_account_id = null;
-    //private final Object linked_account_data = null;
     //private final Object recurrence = null;
     //private final Object app_item_id_formatted = null;
     //private final Object is_liked = null;
@@ -508,6 +509,10 @@ public class Item implements Data {
 
     public String getTitle() {
         return title;
+    }
+
+    public LinkedAccountData getLinkedAccountData() {
+        return linked_account_data;
     }
 
     /**
