@@ -106,6 +106,6 @@ public class LinkedAccountDataField extends Field<LinkedAccountDataField.Value> 
 
     @Override
     public Type getType() {
-        return Type.linkedaccountdata;
+        return Type.linked_account_data;
     }
 }

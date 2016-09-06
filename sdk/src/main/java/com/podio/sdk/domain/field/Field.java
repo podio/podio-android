@@ -144,7 +144,7 @@ public abstract class Field<T extends Field.Value> {
         phone(PhoneField.class),
         undefined(UndefinedField.class),
         tag(OrganisationTagField.class),
-        linkedaccountdata(LinkedAccountDataField.class);
+        linked_account_data(LinkedAccountDataField.class);
 
         private final Class<? extends Field> fieldClass;
 
