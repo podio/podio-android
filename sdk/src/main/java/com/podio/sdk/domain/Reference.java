@@ -7,6 +7,7 @@ public class Reference {
     private final String title = null;
     private final String type = null;
     private final Long id = null;
+    private final String link = null;
 
     public ReferenceType getType() {
         return ReferenceType.getType(type);
@@ -21,6 +22,10 @@ public class Reference {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getLink() {
+        return link;
     }
 }
 
