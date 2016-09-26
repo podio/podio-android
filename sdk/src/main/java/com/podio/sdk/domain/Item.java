@@ -140,6 +140,8 @@ public class Item implements Data {
         @SuppressWarnings("unused")
         private final List<String> tags;
 
+        private long linked_account_id;
+
         private CreateData(String externalId) {
             this.external_id = externalId;
             this.fields = new HashMap<String, Object>();
@@ -159,6 +161,10 @@ public class Item implements Data {
 
         private void addTag(String tag) {
             tags.add(tag);
+        }
+
+        private void addLinkedAccountId(long linked_account_id) {
+            this.linked_account_id = linked_account_id;
         }
     }
 
@@ -336,6 +342,8 @@ public class Item implements Data {
             }
         }
 
+        //TEMP adding linked account id to test
+        createData.addLinkedAccountId(773422);
         return createData;
     }
 
