@@ -163,7 +163,7 @@ public class Item implements Data {
             tags.add(tag);
         }
 
-        private void addLinkedAccountId(long linked_account_id) {
+        public void addLinkedAccountId(long linked_account_id) {
             this.linked_account_id = linked_account_id;
         }
     }
@@ -342,8 +342,6 @@ public class Item implements Data {
             }
         }
 
-        //TEMP adding linked account id to test
-        createData.addLinkedAccountId(773422);
         return createData;
     }
 

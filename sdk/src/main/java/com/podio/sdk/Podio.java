@@ -16,6 +16,7 @@ import com.podio.sdk.provider.EmbedProvider;
 import com.podio.sdk.provider.FileProvider;
 import com.podio.sdk.provider.GrantProvider;
 import com.podio.sdk.provider.ItemProvider;
+import com.podio.sdk.provider.LinkedAccountProvider;
 import com.podio.sdk.provider.LocationProvider;
 import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
@@ -150,6 +151,11 @@ public class Podio {
     public static final SpacesProvider spaces = new SpacesProvider();
 
     /**
+     * Enables means of easy operating on the Linked Account API end point.
+     */
+    public static final LinkedAccountProvider linkedAccount = new LinkedAccountProvider();
+
+    /**
      * Enables means of registering global error listeners. These callback implementations apply to
      * <em>all</em> requests until explicitly removed and they are called <em>after</em> any custom
      * callbacks added to a particular request future are called.
@@ -269,6 +275,7 @@ public class Podio {
         embed.setClient(volleytRestClient);
         reference.setClient(volleytRestClient);
         status.setClient(volleytRestClient);
+        linkedAccount.setClient(volleytRestClient);
     }
 
     /**

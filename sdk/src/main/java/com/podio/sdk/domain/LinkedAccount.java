@@ -20,7 +20,8 @@ public class LinkedAccount implements Data {
         legacy_google,
         google_apps,
         citrix,
-        sharefile
+        sharefile,
+        appear_in
     }
 
     public enum Capability {
