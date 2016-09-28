@@ -140,7 +140,7 @@ public class Item implements Data {
         @SuppressWarnings("unused")
         private final List<String> tags;
 
-        private long linked_account_id;
+        private Long linked_account_id;
 
         private CreateData(String externalId) {
             this.external_id = externalId;
