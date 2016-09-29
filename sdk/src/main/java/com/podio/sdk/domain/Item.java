@@ -518,6 +518,10 @@ public class Item implements Data {
         return reminder;
     }
 
+    public Recurrence getRecurrence() {
+        return recurrence;
+    }
+
     /**
      * Tries to return a value for the given field within this item. The value may or may not have
      * been prior verified by the API. If you only want to get values that have been verified by the

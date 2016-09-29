@@ -1,7 +1,6 @@
 package com.podio.sdk.domain.field;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,34 +8,65 @@ import java.util.Map;
  * Created by sai on 9/29/16.
  */
 
-public class ReminderField extends Field<ReminderField.Value>{
+/**
+ * Field to display the reminder and recurrence for a date field of type "meeting type"
+ */
+public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value>{
 
     public static class Value extends Field.Value {
+        // For reminder
         private final Integer remind_delta;
 
-        public Value(int remind_delta) {
+        //For recurrence
+        private final Integer step;
+        private final List<String> days;
+        private final String repeat_on;
+        private final String name;
+        private final String until;
+
+        public Value(Integer remind_delta, Integer step, List<String> days, String repeat_on, String name, String until) {
             this.remind_delta = remind_delta;
+            this.step = step;
+            this.days = days;
+            this.until = until;
+            this.name = name;
+            this.repeat_on = repeat_on;
         }
 
         @Override
         public Map<String, Object> getCreateData() {
-            HashMap<String, Object> data = null;
-
-            if(remind_delta != null) {
-                data = new HashMap<>();
-                data.put("remind_delta", remind_delta);
-            }
-            return data;
+            //Is not used
+            return null;
         }
 
-        public int getRemindDelta(){
+        public Integer getRemindDelta() {
             return remind_delta;
+        }
+
+        public Integer getStep() {
+            return step;
+        }
+
+        public List<String> getDays() {
+            return days;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUntil() {
+            return until;
+        }
+
+        public String getRepeatOn() {
+            return repeat_on;
         }
     }
 
-    private final ArrayList<ReminderField.Value> values;
+    private final ArrayList<ReminderRecurrenceField.Value> values;
 
-    public ReminderField(String externalId) {
+    public ReminderRecurrenceField(String externalId) {
         super(externalId);
         this.values = new ArrayList<>();
     }
@@ -84,6 +114,6 @@ public class ReminderField extends Field<ReminderField.Value>{
 
     @Override
     public Type getType() {
-        return Type.reminder;
+        return Type.reminder_recurrence;
     }
 }

@@ -32,16 +32,16 @@ public class Recurrence {
         return config;
     }
 
-    class Config {
+    public class Config {
         private final List<String> days = null;
 
-        private final Integer repeat_on = null;
+        private final String repeat_on = null;
 
         public List<String> getDays() {
             return days;
         }
 
-        public Integer getRepeatOn() {
+        public String getRepeatOn() {
             return repeat_on;
         }
     }
