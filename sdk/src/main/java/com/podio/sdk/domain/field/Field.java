@@ -1,7 +1,6 @@
 
 package com.podio.sdk.domain.field;
 
-import com.podio.sdk.domain.data.LinkedAccountData;
 import com.podio.sdk.internal.Utils;
 
 import java.util.ArrayList;

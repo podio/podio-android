@@ -2,7 +2,6 @@
 package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.data.Data;
-import com.podio.sdk.domain.data.LinkedAccountData;
 import com.podio.sdk.domain.field.Field;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
