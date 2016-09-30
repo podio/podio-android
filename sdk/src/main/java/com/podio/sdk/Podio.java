@@ -21,6 +21,7 @@ import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.RatingProvider;
 import com.podio.sdk.provider.ReferenceProvider;
+import com.podio.sdk.provider.ReminderProvider;
 import com.podio.sdk.provider.SpacesProvider;
 import com.podio.sdk.provider.StatusProvider;
 import com.podio.sdk.provider.StreamProvider;
@@ -149,6 +150,8 @@ public class Podio {
      */
     public static final SpacesProvider spaces = new SpacesProvider();
 
+    public static final ReminderProvider reminder = new ReminderProvider();
+
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
      * <em>all</em> requests until explicitly removed and they are called <em>after</em> any custom
@@ -269,6 +272,7 @@ public class Podio {
         embed.setClient(volleytRestClient);
         reference.setClient(volleytRestClient);
         status.setClient(volleytRestClient);
+        reminder.setClient(volleytRestClient);
     }
 
     /**

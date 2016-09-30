@@ -4,6 +4,13 @@ import com.podio.sdk.internal.Utils;
 
 public class Reminder {
 
+    public static class CreateData {
+        private final int remind_delta;
+
+        public CreateData(int remind_delta) {
+            this.remind_delta = remind_delta;
+        }
+    }
     private final Integer remind_delta = null;
 
     /**
