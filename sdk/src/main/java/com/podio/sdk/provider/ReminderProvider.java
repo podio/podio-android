@@ -11,16 +11,16 @@ import com.podio.sdk.domain.Reminder;
 
 public class ReminderProvider extends Provider {
 
-    public static class GetReminderFilter extends Filter {
+    public static class ReminderFilter extends Filter {
         private static String itemRefType = "item";
         private static String refType = "ref_type";
         private static String refId = "ref_id";
 
-        public GetReminderFilter() {
+        public ReminderFilter() {
             super("reminder/");
         }
 
-        public GetReminderFilter item(long itemId) {
+        public ReminderFilter item(long itemId) {
             this.addPathSegment(itemRefType);
             this.addPathSegment(String.valueOf(itemId));
 
@@ -33,15 +33,15 @@ public class ReminderProvider extends Provider {
     }
 
     public Request<Reminder> getItemReminder(long itemId) {
-        return get(new GetReminderFilter().item(itemId), Reminder.class);
+        return get(new ReminderFilter().item(itemId), Reminder.class);
     }
 
     public Request<Void> deleteItemReminder(long itemId) {
-        return delete(new GetReminderFilter().item(itemId));
+        return delete(new ReminderFilter().item(itemId));
     }
 
     public Request<Reminder> updateItemReminder(long itemId, Reminder.CreateData createData) {
-        return put(new GetReminderFilter().item(itemId), createData, Reminder.class);
+        return put(new ReminderFilter().item(itemId), createData, Reminder.class);
     }
 
 }
