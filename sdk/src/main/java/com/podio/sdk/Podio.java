@@ -20,6 +20,7 @@ import com.podio.sdk.provider.LocationProvider;
 import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.RatingProvider;
+import com.podio.sdk.provider.RecurrenceProvider;
 import com.podio.sdk.provider.ReferenceProvider;
 import com.podio.sdk.provider.ReminderProvider;
 import com.podio.sdk.provider.SpacesProvider;
@@ -152,6 +153,8 @@ public class Podio {
 
     public static final ReminderProvider reminder = new ReminderProvider();
 
+    public static final RecurrenceProvider recurrence = new RecurrenceProvider();
+
     /**
      * Enables means of registering global error listeners. These callback implementations apply to
      * <em>all</em> requests until explicitly removed and they are called <em>after</em> any custom
@@ -273,6 +276,7 @@ public class Podio {
         reference.setClient(volleytRestClient);
         status.setClient(volleytRestClient);
         reminder.setClient(volleytRestClient);
+        recurrence.setClient(volleytRestClient);
     }
 
     /**

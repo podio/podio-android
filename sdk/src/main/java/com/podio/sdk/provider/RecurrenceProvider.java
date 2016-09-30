@@ -36,7 +36,7 @@ public class RecurrenceProvider extends Provider {
     }
 
     public Request<Void> deleteItemRecurrence(long itemId) {
-        return delete(new ReminderProvider.ReminderFilter().item(itemId));
+        return delete(new RecurrenceFilter().item(itemId));
     }
 
     public Request<Recurrence> updateItemRecurrence(long itemId, Recurrence.CreateData createData) {
