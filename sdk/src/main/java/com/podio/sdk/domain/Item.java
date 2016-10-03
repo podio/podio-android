@@ -162,7 +162,7 @@ public class Item implements Data {
             tags.add(tag);
         }
 
-        public void addLinkedAccountId(long linked_account_id) {
+        public void addLinkedAccountId(Long linked_account_id) {
             this.linked_account_id = linked_account_id;
         }
     }
