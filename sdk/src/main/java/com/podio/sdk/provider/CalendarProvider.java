@@ -40,23 +40,8 @@ public class CalendarProvider extends Provider {
             return this;
         }
 
-
-        //TODO :: To be removed, only for testing purposes
-        public CalendarFilter withDateFromTo(String from, String to) {
-            addQueryParameter("date_from", from);
-            addQueryParameter("date_to", to);
-            return this;
-        }
-
         public CalendarFilter withPriority(int priority) {
             addQueryParameter("priority", Integer.toString(priority));
-            return this;
-        }
-
-        public CalendarFilter withAppId(long appId) {
-            addPathSegment("app");
-            addQueryParameter("app_id", Long.toString(appId, 10));
-            addPathSegment(Long.toString(appId, 10));
             return this;
         }
 
@@ -100,15 +85,7 @@ public class CalendarProvider extends Provider {
 
         return get(filter, CalendarEvent[].class);
     }
-
-    // TODO :: TESTING ONLY
-    public Request<CalendarEvent[]> getAppCalendar(long appId, Date from, Date to) {
-        CalendarFilter filter = new CalendarFilter().withAppId(16371626).
-                withDateFromTo("2016-09-28", "2016-10-20");
-
-        return get(filter, CalendarEvent[].class);
-    }
-
+    
     /**
      * Fetches all space calendar events.
      *
