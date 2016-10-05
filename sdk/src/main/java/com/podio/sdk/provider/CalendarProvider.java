@@ -85,7 +85,7 @@ public class CalendarProvider extends Provider {
 
         return get(filter, CalendarEvent[].class);
     }
-    
+
     /**
      * Fetches all space calendar events.
      *
