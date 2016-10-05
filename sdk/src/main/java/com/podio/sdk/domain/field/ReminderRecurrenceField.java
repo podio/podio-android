@@ -1,6 +1,7 @@
 package com.podio.sdk.domain.field;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,41 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
         public Map<String, Object> getCreateData() {
             //Is not used
             return null;
+        }
+
+        public Map<String, Object> getReminderData() {
+            if (remind_delta == null) {
+                return null;
+            }
+
+            Map<String, Object> reminderData = new HashMap<>();
+            reminderData.put("remind_delta", remind_delta);
+
+            return reminderData;
+        }
+
+        public Map<String, Object> getRecurrenceData() {
+            if(name == null) {
+                return null;
+            }
+
+            Map<String, Object> recurrenceData = new HashMap<>();
+            Map<String, Object> configData = new HashMap<>();
+
+            recurrenceData.put("name", name);
+            if(name.equalsIgnoreCase("weekly")) {
+                configData.put("days", days);
+                recurrenceData.put("config", configData);
+                recurrenceData.put("step", step);
+            }
+            else if(name.equalsIgnoreCase("monthly")) {
+                configData.put("repeat_on", repeat_on);
+                recurrenceData.put("config", configData);
+                recurrenceData.put("step", step);
+            }
+            recurrenceData.put("until", until);
+
+            return recurrenceData;
         }
 
         public Integer getRemindDelta() {

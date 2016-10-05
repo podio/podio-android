@@ -3,6 +3,7 @@ package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.field.ReminderRecurrenceField;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
 
@@ -139,6 +140,10 @@ public class Item implements Data {
         @SuppressWarnings("unused")
         private final List<String> tags;
 
+        private Map<String, Object> reminder;
+
+        private Map<String, Object> recurrence;
+
         private CreateData(String externalId) {
             this.external_id = externalId;
             this.fields = new HashMap<String, Object>();
@@ -150,6 +155,14 @@ public class Item implements Data {
             if (field != null && values != null) {
                 fields.put(field, values);
             }
+        }
+
+        private void setReminder(Map<String, Object> reminder) {
+            this.reminder = reminder;
+        }
+
+        private void setRecurrence(Map<String, Object> recurrence) {
+            this.recurrence = recurrence;
         }
 
         private void addFileId(long fileId) {
@@ -315,6 +328,7 @@ public class Item implements Data {
         // Iterate over our unknown field types and blindly trust that the associated values match
         // the field. The server will do a validation and throw an error response back at us if they
         // don't match.
+        createData = getOtherFieldsData(createData);
         for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
             String key = entry.getKey();
             List<Field.Value> values = entry.getValue();
@@ -336,6 +350,39 @@ public class Item implements Data {
         }
 
         return createData;
+    }
+
+    private CreateData getOtherFieldsData(CreateData createData) {
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            switch (key) {
+                case "reminder_recurrence" :
+                    Map<String, Object> reminderData = getReminderData((ReminderRecurrenceField.Value)entry.getValue().get(0));
+                    if(reminderData != null) {
+                        createData.setReminder(reminderData);
+                    }
+
+                    Map<String, Object> recurrenceData = getRecurrenceData((ReminderRecurrenceField.Value) entry.getValue().get(0));
+                    if(recurrenceData != null) {
+                        createData.setRecurrence(recurrenceData);
+                    }
+                    break;
+            }
+        }
+        removeOtherUnverifiedFields();
+        return createData;
+    }
+
+    private void removeOtherUnverifiedFields() {
+        unverifiedFieldValues.remove("reminder_recurrence");
+    }
+
+    private Map<String, Object> getRecurrenceData(ReminderRecurrenceField.Value value) {
+        return value.getRecurrenceData();
+    }
+
+    private Map<String, Object> getReminderData(ReminderRecurrenceField.Value value) {
+        return value.getReminderData();
     }
 
     public void addValues(String field, List<Field.Value> fieldValues) {
