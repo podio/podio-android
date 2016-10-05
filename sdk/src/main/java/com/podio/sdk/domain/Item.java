@@ -140,6 +140,7 @@ public class Item implements Data {
         @SuppressWarnings("unused")
         private final List<String> tags;
 
+        private Long linked_account_id;
         private Map<String, Object> reminder;
 
         private Map<String, Object> recurrence;
@@ -171,6 +172,10 @@ public class Item implements Data {
 
         private void addTag(String tag) {
             tags.add(tag);
+        }
+
+        public void addLinkedAccountId(Long linked_account_id) {
+            this.linked_account_id = linked_account_id;
         }
     }
 
