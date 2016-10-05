@@ -39,6 +39,10 @@ public class LinkedAccountDataField extends Field<LinkedAccountDataField.Value> 
             return data;
         }
 
+        public Long getLinkedAccountId() {
+           return Long.parseLong(id);
+        }
+
         public String getUrl(){
             return url;
         }

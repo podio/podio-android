@@ -3,6 +3,7 @@ package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.data.Data;
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.field.LinkedAccountDataField;
 import com.podio.sdk.domain.field.ReminderRecurrenceField;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
@@ -141,6 +142,7 @@ public class Item implements Data {
         private final List<String> tags;
 
         private Long linked_account_id;
+
         private Map<String, Object> reminder;
 
         private Map<String, Object> recurrence;
@@ -164,6 +166,10 @@ public class Item implements Data {
 
         private void setRecurrence(Map<String, Object> recurrence) {
             this.recurrence = recurrence;
+        }
+
+        private void setLinkedAccountId(Long linkedAccountId) {
+            this.linked_account_id = linkedAccountId;
         }
 
         private void addFileId(long fileId) {
@@ -372,6 +378,11 @@ public class Item implements Data {
                         createData.setRecurrence(recurrenceData);
                     }
                     break;
+
+                case "linked_account" :
+                    createData.setLinkedAccountId(getLinkedAccountId((LinkedAccountDataField.Value) entry.getValue().get(0)));
+                    break;
+
             }
         }
         removeOtherUnverifiedFields();
@@ -380,6 +391,7 @@ public class Item implements Data {
 
     private void removeOtherUnverifiedFields() {
         unverifiedFieldValues.remove("reminder_recurrence");
+        unverifiedFieldValues.remove("linked_account");
     }
 
     private Map<String, Object> getRecurrenceData(ReminderRecurrenceField.Value value) {
@@ -388,6 +400,10 @@ public class Item implements Data {
 
     private Map<String, Object> getReminderData(ReminderRecurrenceField.Value value) {
         return value.getReminderData();
+    }
+
+    private Long getLinkedAccountId(LinkedAccountDataField.Value value) {
+        return value.getLinkedAccountId();
     }
 
     public void addValues(String field, List<Field.Value> fieldValues) {
