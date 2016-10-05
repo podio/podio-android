@@ -1,11 +1,9 @@
 package com.podio.sdk.domain;
 
-import com.podio.sdk.domain.data.Data;
-
 /**
  * Created by sai on 8/31/16.
  */
-public class LinkedAccountData implements Data{
+public class LinkedAccountData {
     private final String url = null;
     private final String info = null;
     private final String type = null;

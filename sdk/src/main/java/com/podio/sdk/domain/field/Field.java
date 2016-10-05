@@ -143,7 +143,8 @@ public abstract class Field<T extends Field.Value> {
         phone(PhoneField.class),
         undefined(UndefinedField.class),
         tag(OrganisationTagField.class),
-        linked_account_data(LinkedAccountDataField.class);
+        linked_account_data(LinkedAccountDataField.class),
+        reminder_recurrence(ReminderRecurrenceField.class);
 
         private final Class<? extends Field> fieldClass;
 

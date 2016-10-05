@@ -21,7 +21,9 @@ import com.podio.sdk.provider.LocationProvider;
 import com.podio.sdk.provider.NotificationProvider;
 import com.podio.sdk.provider.OrganizationProvider;
 import com.podio.sdk.provider.RatingProvider;
+import com.podio.sdk.provider.RecurrenceProvider;
 import com.podio.sdk.provider.ReferenceProvider;
+import com.podio.sdk.provider.ReminderProvider;
 import com.podio.sdk.provider.SpacesProvider;
 import com.podio.sdk.provider.StatusProvider;
 import com.podio.sdk.provider.StreamProvider;
@@ -150,6 +152,10 @@ public class Podio {
      */
     public static final SpacesProvider spaces = new SpacesProvider();
 
+    public static final ReminderProvider reminder = new ReminderProvider();
+
+    public static final RecurrenceProvider recurrence = new RecurrenceProvider();
+
     /**
      * Enables means of easy operating on the Linked Account API end point.
      */
@@ -276,6 +282,8 @@ public class Podio {
         reference.setClient(volleytRestClient);
         status.setClient(volleytRestClient);
         linkedAccount.setClient(volleytRestClient);
+        reminder.setClient(volleytRestClient);
+        recurrence.setClient(volleytRestClient);
     }
 
     /**
