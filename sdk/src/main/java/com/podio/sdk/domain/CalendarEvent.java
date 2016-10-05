@@ -19,6 +19,8 @@ public class CalendarEvent {
     private final String description = null;
     private final String location = null;
     private final Application app = null;
+    private final Boolean forged = null;
+    private final String color = null;
 
     /**
      * Gets the end date of the calendar event as a Java Date object.
@@ -99,6 +101,19 @@ public class CalendarEvent {
 
     public String getRefType() {
         return ref_type;
+    }
+
+    public Boolean isForged() {
+        return Utils.getNative(forged, false);
+    }
+
+    public String getColor() {
+        return "#" + color;
+    }
+
+    public String getCategoryValue() {
+        // TODO :: Placeholder text for now, will replace with API returned value
+        return "Category label";
     }
 
     @Override

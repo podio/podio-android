@@ -2,8 +2,8 @@
 package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.data.Data;
-import com.podio.sdk.domain.data.LinkedAccountData;
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.field.ReminderRecurrenceField;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
 
@@ -140,6 +140,10 @@ public class Item implements Data {
         @SuppressWarnings("unused")
         private final List<String> tags;
 
+        private Map<String, Object> reminder;
+
+        private Map<String, Object> recurrence;
+
         private CreateData(String externalId) {
             this.external_id = externalId;
             this.fields = new HashMap<String, Object>();
@@ -151,6 +155,14 @@ public class Item implements Data {
             if (field != null && values != null) {
                 fields.put(field, values);
             }
+        }
+
+        private void setReminder(Map<String, Object> reminder) {
+            this.reminder = reminder;
+        }
+
+        private void setRecurrence(Map<String, Object> recurrence) {
+            this.recurrence = recurrence;
         }
 
         private void addFileId(long fileId) {
@@ -230,11 +242,12 @@ public class Item implements Data {
     private final HashMap<Long, ItemParticipation> participants = null;
     private final ItemReferenceCount[] refs = null;
     private final LinkedAccountData linked_account_data = null;
+    private final Reminder reminder = null;
+    private final Recurrence recurrence = null;
 
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
     //private final Object linked_account_id = null;
-    //private final Object recurrence = null;
     //private final Object app_item_id_formatted = null;
     //private final Object is_liked = null;
     //private final Object ratings = null;
@@ -244,7 +257,6 @@ public class Item implements Data {
     //private final Object values = null;
     //private final Object ref = null;
     //private final Object invite = null;
-    //private final Object reminder = null;
     //private final Object presence = null;
     //private final Object created_via = null;
     //private final Object activity = null;
@@ -316,6 +328,7 @@ public class Item implements Data {
         // Iterate over our unknown field types and blindly trust that the associated values match
         // the field. The server will do a validation and throw an error response back at us if they
         // don't match.
+        createData = getOtherFieldsData(createData);
         for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
             String key = entry.getKey();
             List<Field.Value> values = entry.getValue();
@@ -337,6 +350,39 @@ public class Item implements Data {
         }
 
         return createData;
+    }
+
+    private CreateData getOtherFieldsData(CreateData createData) {
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            switch (key) {
+                case "reminder_recurrence" :
+                    Map<String, Object> reminderData = getReminderData((ReminderRecurrenceField.Value)entry.getValue().get(0));
+                    if(reminderData != null) {
+                        createData.setReminder(reminderData);
+                    }
+
+                    Map<String, Object> recurrenceData = getRecurrenceData((ReminderRecurrenceField.Value) entry.getValue().get(0));
+                    if(recurrenceData != null) {
+                        createData.setRecurrence(recurrenceData);
+                    }
+                    break;
+            }
+        }
+        removeOtherUnverifiedFields();
+        return createData;
+    }
+
+    private void removeOtherUnverifiedFields() {
+        unverifiedFieldValues.remove("reminder_recurrence");
+    }
+
+    private Map<String, Object> getRecurrenceData(ReminderRecurrenceField.Value value) {
+        return value.getRecurrenceData();
+    }
+
+    private Map<String, Object> getReminderData(ReminderRecurrenceField.Value value) {
+        return value.getReminderData();
     }
 
     public void addValues(String field, List<Field.Value> fieldValues) {
@@ -513,6 +559,14 @@ public class Item implements Data {
 
     public LinkedAccountData getLinkedAccountData() {
         return linked_account_data;
+    }
+
+    public Reminder getReminder() {
+        return reminder;
+    }
+
+    public Recurrence getRecurrence() {
+        return recurrence;
     }
 
     /**

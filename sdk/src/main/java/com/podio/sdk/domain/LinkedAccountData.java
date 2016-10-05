@@ -1,4 +1,4 @@
-package com.podio.sdk.domain.data;
+package com.podio.sdk.domain;
 
 /**
  * Created by sai on 8/31/16.
