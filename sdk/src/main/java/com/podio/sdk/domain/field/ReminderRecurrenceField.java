@@ -41,7 +41,7 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
         }
 
         public Map<String, Object> getReminderData() {
-            if (remind_delta == null) {
+            if (remind_delta == null || remind_delta == -1) {
                 return null;
             }
 

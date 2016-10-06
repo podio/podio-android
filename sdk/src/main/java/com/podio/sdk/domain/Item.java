@@ -133,19 +133,17 @@ public class Item implements Data {
      */
     public static class CreateData {
         @SuppressWarnings("unused")
-        private final String external_id;
+        protected final String external_id;
         @SuppressWarnings("unused")
-        private final Map<String, Object> fields;
+        protected final Map<String, Object> fields;
         @SuppressWarnings("unused")
-        private final List<Long> file_ids;
+        protected final List<Long> file_ids;
         @SuppressWarnings("unused")
-        private final List<String> tags;
+        protected final List<String> tags;
 
-        private Long linked_account_id;
+        /*private Map<String, Object> reminder;
 
-        private Map<String, Object> reminder;
-
-        private Map<String, Object> recurrence;
+        private Map<String, Object> recurrence;*/
 
         private CreateData(String externalId) {
             this.external_id = externalId;
@@ -154,34 +152,41 @@ public class Item implements Data {
             this.tags = new ArrayList<String>();
         }
 
-        private void setValues(String field, Object values) {
+        protected void setValues(String field, Object values) {
             if (field != null && values != null) {
                 fields.put(field, values);
             }
         }
 
-        private void setReminder(Map<String, Object> reminder) {
+       /* private void setReminder(Map<String, Object> reminder) {
             this.reminder = reminder;
         }
 
         private void setRecurrence(Map<String, Object> recurrence) {
             this.recurrence = recurrence;
-        }
+        }*/
 
-        private void setLinkedAccountId(Long linkedAccountId) {
-            this.linked_account_id = linkedAccountId;
-        }
 
-        private void addFileId(long fileId) {
+
+        protected void addFileId(long fileId) {
             file_ids.add(fileId);
         }
 
         private void addTag(String tag) {
             tags.add(tag);
         }
+    }
 
-        public void addLinkedAccountId(Long linked_account_id) {
-            this.linked_account_id = linked_account_id;
+    public static class CreateDataLinkedAccount extends CreateData {
+
+        private CreateDataLinkedAccount(String externalId) {
+            super(externalId);
+        }
+
+        private Long linked_account_id;
+
+        public void setLinkedAccountId(Long linkedAccountId) {
+            this.linked_account_id = linkedAccountId;
         }
     }
 
@@ -317,9 +322,16 @@ public class Item implements Data {
      * understands it.
      *
      * @return The change data structure.
+     * @param hasLinkedAccountData
      */
-    public CreateData getCreateData() {
-        CreateData createData = new CreateData(external_id);
+    public CreateData getCreateData(boolean hasLinkedAccountData) {
+        CreateData createData;
+        if(hasLinkedAccountData) {
+            createData = new CreateDataLinkedAccount(external_id);
+        }
+        else {
+            createData = new CreateData(external_id);
+        }
 
         for (Field field : fields) {
             if (field != null) {
@@ -339,7 +351,6 @@ public class Item implements Data {
         // Iterate over our unknown field types and blindly trust that the associated values match
         // the field. The server will do a validation and throw an error response back at us if they
         // don't match.
-        createData = getOtherFieldsData(createData);
         for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
             String key = entry.getKey();
             List<Field.Value> values = entry.getValue();
@@ -359,39 +370,32 @@ public class Item implements Data {
                 createData.setValues(entry.getKey(), createDataValues);
             }
         }
+        if(hasLinkedAccountData) {
+            createData = getLinkedAccountCreateData((CreateDataLinkedAccount)createData);
+        }
 
         return createData;
     }
 
-    private CreateData getOtherFieldsData(CreateData createData) {
+    private CreateData getLinkedAccountCreateData(CreateDataLinkedAccount createData) {
         for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
             String key = entry.getKey();
             switch (key) {
-                case "reminder_recurrence" :
-                    Map<String, Object> reminderData = getReminderData((ReminderRecurrenceField.Value)entry.getValue().get(0));
-                    if(reminderData != null) {
-                        createData.setReminder(reminderData);
-                    }
-
-                    Map<String, Object> recurrenceData = getRecurrenceData((ReminderRecurrenceField.Value) entry.getValue().get(0));
-                    if(recurrenceData != null) {
-                        createData.setRecurrence(recurrenceData);
-                    }
-                    break;
-
                 case "linked_account" :
                     createData.setLinkedAccountId(getLinkedAccountId((LinkedAccountDataField.Value) entry.getValue().get(0)));
                     break;
 
             }
         }
-        removeOtherUnverifiedFields();
+        createData = removeOtherUnverifiedFields(createData);
         return createData;
     }
 
-    private void removeOtherUnverifiedFields() {
-        unverifiedFieldValues.remove("reminder_recurrence");
-        unverifiedFieldValues.remove("linked_account");
+    private CreateDataLinkedAccount removeOtherUnverifiedFields(CreateDataLinkedAccount createData) {
+        createData.fields.remove("reminder_recurrence");
+        createData.fields.remove("linked_account");
+
+        return createData;
     }
 
     private Map<String, Object> getRecurrenceData(ReminderRecurrenceField.Value value) {

@@ -40,6 +40,9 @@ public class LinkedAccountDataField extends Field<LinkedAccountDataField.Value> 
         }
 
         public Long getLinkedAccountId() {
+            if(id == null || id.equalsIgnoreCase("null")) {
+                return null;
+            }
            return Long.parseLong(id);
         }
 
