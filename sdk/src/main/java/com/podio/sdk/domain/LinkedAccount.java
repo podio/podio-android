@@ -54,7 +54,7 @@ public class LinkedAccount implements Data {
 
     private final Map<Option, Boolean> options = null;
 
-    public Long getLinked_account_id() {
+    public Long getLinkedAccountId() {
         return linked_account_id;
     }
 
@@ -70,11 +70,11 @@ public class LinkedAccount implements Data {
         return provider;
     }
 
-    public String getProvider_humanized_name() {
+    public String getProviderHumanizedName() {
         return provider_humanized_name;
     }
 
-    public Map<Capability, String> getCapability_names() {
+    public Map<Capability, String> getCapabilityNames() {
         return capability_names;
     }
 
