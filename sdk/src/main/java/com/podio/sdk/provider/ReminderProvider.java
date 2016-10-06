@@ -40,7 +40,7 @@ public class ReminderProvider extends Provider {
         return delete(new ReminderFilter().item(itemId));
     }
 
-    public Request<Reminder> updateItemReminder(long itemId, Reminder.CreateData createData) {
+    public Request<Reminder> createOrUpdateItemReminder(long itemId, Reminder.CreateData createData) {
         return put(new ReminderFilter().item(itemId), createData, Reminder.class);
     }
 

@@ -141,9 +141,9 @@ public class Item implements Data {
         @SuppressWarnings("unused")
         protected final List<String> tags;
 
-        /*private Map<String, Object> reminder;
+        private Map<String, Object> reminder;
 
-        private Map<String, Object> recurrence;*/
+        private Map<String, Object> recurrence;
 
         private CreateData(String externalId) {
             this.external_id = externalId;
@@ -158,22 +158,20 @@ public class Item implements Data {
             }
         }
 
-       /* private void setReminder(Map<String, Object> reminder) {
-            this.reminder = reminder;
-        }
-
-        private void setRecurrence(Map<String, Object> recurrence) {
-            this.recurrence = recurrence;
-        }*/
-
-
-
         protected void addFileId(long fileId) {
             file_ids.add(fileId);
         }
 
         private void addTag(String tag) {
             tags.add(tag);
+        }
+
+        private void setReminder(Map<String, Object> reminder) {
+            this.reminder = reminder;
+        }
+
+        private void setRecurrence(Map<String, Object> recurrence) {
+            this.recurrence = recurrence;
         }
     }
 
@@ -373,6 +371,28 @@ public class Item implements Data {
         if(hasLinkedAccountData) {
             createData = getLinkedAccountCreateData((CreateDataLinkedAccount)createData);
         }
+        createData = addReminderRecurrenceData(createData);
+        createData = removeOtherUnverifiedFields(createData);
+        return createData;
+    }
+
+    private CreateData addReminderRecurrenceData(CreateData createData) {
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            switch (key) {
+                case "reminder_recurrence" :
+                    ReminderRecurrenceField.Value data = (ReminderRecurrenceField.Value) entry.getValue().get(0);
+                    if(data.getReminderData() != null) {
+                        createData.setReminder(data.getReminderData());
+                    }
+
+                    if(data.getRecurrenceData() != null) {
+                        createData.setRecurrence(data.getRecurrenceData());
+                    }
+                    break;
+
+            }
+        }
 
         return createData;
     }
@@ -387,11 +407,11 @@ public class Item implements Data {
 
             }
         }
-        createData = removeOtherUnverifiedFields(createData);
+
         return createData;
     }
 
-    private CreateDataLinkedAccount removeOtherUnverifiedFields(CreateDataLinkedAccount createData) {
+    private CreateData removeOtherUnverifiedFields(CreateData createData) {
         createData.fields.remove("reminder_recurrence");
         createData.fields.remove("linked_account");
 
