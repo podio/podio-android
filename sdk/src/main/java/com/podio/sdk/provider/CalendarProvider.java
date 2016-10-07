@@ -31,12 +31,25 @@ public class CalendarProvider extends Provider {
 
         }
 
+        public CalendarFilter withAppId(long appId) {
+            addPathSegment("app");
+            addQueryParameter("app_id", Long.toString(appId, 10));
+            addPathSegment(Long.toString(appId, 10));
+            return this;
+        }
+
         public CalendarFilter withDateFromTo(Date from, Date to) {
 
             String dateFrom = DateFormat.format("yyyy-MM-dd", from).toString();
             String dateTo = DateFormat.format("yyyy-MM-dd", to).toString();
             addQueryParameter("date_from", dateFrom);
             addQueryParameter("date_to", dateTo);
+            return this;
+        }
+
+        public CalendarFilter withDateFromTo(String from, String to) {
+            addQueryParameter("date_from", from);
+            addQueryParameter("date_to", to);
             return this;
         }
 
@@ -82,6 +95,13 @@ public class CalendarProvider extends Provider {
 
         CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
                 .withPriority(priority).withTasks(includeTasks);
+
+        return get(filter, CalendarEvent[].class);
+    }
+
+    public Request<CalendarEvent[]> getAppCalendar() {
+        CalendarFilter filter = new CalendarFilter().withAppId(15850755)
+                .withDateFromTo("2016-08-03", "2016-08-07");
 
         return get(filter, CalendarEvent[].class);
     }

@@ -21,6 +21,7 @@ public class CalendarEvent {
     private final Application app = null;
     private final Boolean forged = null;
     private final String color = null;
+    private final String category_text = null;
 
     /**
      * Gets the end date of the calendar event as a Java Date object.
@@ -111,9 +112,8 @@ public class CalendarEvent {
         return "#" + color;
     }
 
-    public String getCategoryValue() {
-        // TODO :: Placeholder text for now, will replace with API returned value
-        return "Category label";
+    public String getCategoryText() {
+        return category_text;
     }
 
     @Override
