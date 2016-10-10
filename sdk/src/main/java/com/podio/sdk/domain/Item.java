@@ -388,8 +388,8 @@ public class Item implements Data {
                 if(data.getRecurrenceData() != null) {
                     createData.setRecurrence(data.getRecurrenceData());
                 }
+                break;
             }
-            break;
         }
 
         return createData;
