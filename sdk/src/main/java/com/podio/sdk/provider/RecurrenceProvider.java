@@ -31,15 +31,15 @@ public class RecurrenceProvider extends Provider {
         }
     }
 
-    public Request<Recurrence> getItemRecurrence(long itemId) {
+    public Request<Recurrence> getRecurrence(long itemId) {
         return get(new RecurrenceFilter().item(itemId), Recurrence.class);
     }
 
-    public Request<Void> deleteItemRecurrence(long itemId) {
+    public Request<Void> deleteRecurrence(long itemId) {
         return delete(new RecurrenceFilter().item(itemId));
     }
 
-    public Request<Recurrence> updateItemRecurrence(long itemId, Recurrence.CreateData createData) {
+    public Request<Recurrence> updateRecurrence(long itemId, Recurrence.CreateData createData) {
         return put(new RecurrenceFilter().item(itemId), createData, Recurrence.class);
     }
 }

@@ -369,61 +369,49 @@ public class Item implements Data {
             }
         }
         if(hasLinkedAccountData) {
-            createData = getLinkedAccountCreateData((CreateDataLinkedAccount)createData);
+            createData = addLinkedAccountInfo((CreateDataLinkedAccount)createData);
         }
-        createData = addReminderRecurrenceData(createData);
-        createData = removeOtherUnverifiedFields(createData);
+        createData = addReminderRecurrenceInfo(createData);
+        createData = removeNonFields(createData);
         return createData;
     }
 
-    private CreateData addReminderRecurrenceData(CreateData createData) {
+    private CreateData addReminderRecurrenceInfo(CreateData createData) {
         for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
             String key = entry.getKey();
-            switch (key) {
-                case "reminder_recurrence" :
-                    ReminderRecurrenceField.Value data = (ReminderRecurrenceField.Value) entry.getValue().get(0);
-                    if(data.getReminderData() != null) {
-                        createData.setReminder(data.getReminderData());
-                    }
+            if(key.equalsIgnoreCase(ReminderRecurrenceField.NAME)) {
+                ReminderRecurrenceField.Value data = (ReminderRecurrenceField.Value) entry.getValue().get(0);
+                if(data.getReminderData() != null) {
+                    createData.setReminder(data.getReminderData());
+                }
 
-                    if(data.getRecurrenceData() != null) {
-                        createData.setRecurrence(data.getRecurrenceData());
-                    }
-                    break;
+                if(data.getRecurrenceData() != null) {
+                    createData.setRecurrence(data.getRecurrenceData());
+                }
+            }
+            break;
+        }
 
+        return createData;
+    }
+
+    private CreateData addLinkedAccountInfo(CreateDataLinkedAccount createData) {
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            if(key.equalsIgnoreCase(LinkedAccountDataField.NAME)) {
+                createData.setLinkedAccountId(getLinkedAccountId((LinkedAccountDataField.Value) entry.getValue().get(0)));
+                break;
             }
         }
 
         return createData;
     }
 
-    private CreateData getLinkedAccountCreateData(CreateDataLinkedAccount createData) {
-        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
-            String key = entry.getKey();
-            switch (key) {
-                case "linked_account" :
-                    createData.setLinkedAccountId(getLinkedAccountId((LinkedAccountDataField.Value) entry.getValue().get(0)));
-                    break;
-
-            }
-        }
+    private CreateData removeNonFields(CreateData createData) {
+        createData.fields.remove(ReminderRecurrenceField.NAME);
+        createData.fields.remove(LinkedAccountDataField.NAME);
 
         return createData;
-    }
-
-    private CreateData removeOtherUnverifiedFields(CreateData createData) {
-        createData.fields.remove("reminder_recurrence");
-        createData.fields.remove("linked_account");
-
-        return createData;
-    }
-
-    private Map<String, Object> getRecurrenceData(ReminderRecurrenceField.Value value) {
-        return value.getRecurrenceData();
-    }
-
-    private Map<String, Object> getReminderData(ReminderRecurrenceField.Value value) {
-        return value.getReminderData();
     }
 
     private Long getLinkedAccountId(LinkedAccountDataField.Value value) {

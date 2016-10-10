@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class LinkedAccountDataField extends Field<LinkedAccountDataField.Value> {
 
+    public static final String NAME = "linked_account";
     public static class Value extends Field.Value {
         private final String url;
         private final String info;
@@ -65,8 +66,8 @@ public class LinkedAccountDataField extends Field<LinkedAccountDataField.Value> 
 
     private final ArrayList<LinkedAccountDataField.Value> values;
 
-    public LinkedAccountDataField(String externalId) {
-        super(externalId);
+    public LinkedAccountDataField() {
+        super(NAME);
         this.values = new ArrayList<>();
     }
 

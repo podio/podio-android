@@ -32,15 +32,15 @@ public class ReminderProvider extends Provider {
 
     }
 
-    public Request<Reminder> getItemReminder(long itemId) {
+    public Request<Reminder> getReminder(long itemId) {
         return get(new ReminderFilter().item(itemId), Reminder.class);
     }
 
-    public Request<Void> deleteItemReminder(long itemId) {
+    public Request<Void> deleteReminder(long itemId) {
         return delete(new ReminderFilter().item(itemId));
     }
 
-    public Request<Reminder> createOrUpdateItemReminder(long itemId, Reminder.CreateData createData) {
+    public Request<Reminder> createOrUpdateReminder(long itemId, Reminder.CreateData createData) {
         return put(new ReminderFilter().item(itemId), createData, Reminder.class);
     }
 

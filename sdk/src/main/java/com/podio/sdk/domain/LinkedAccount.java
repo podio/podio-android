@@ -1,14 +1,12 @@
 package com.podio.sdk.domain;
 
-import com.podio.sdk.domain.data.Data;
-
 import java.util.Map;
 
 /**
  * Created by sai on 9/26/16.
  */
 
-public class LinkedAccount implements Data {
+public class LinkedAccount {
 
     public enum Status {
         active,

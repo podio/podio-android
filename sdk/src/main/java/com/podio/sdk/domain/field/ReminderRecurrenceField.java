@@ -14,7 +14,19 @@ import java.util.Map;
  */
 public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value>{
 
+    public static final String NAME = "reminder_recurrence";
+
     public static class Value extends Field.Value {
+        private static final String REMIND_DELTA = "remind_delta";
+        private static final String NAME = "name";
+        private static final String WEEKLY = "weekly";
+        private static final String DAYS = "days";
+        private static final String CONFIG = "config";
+        private static final String STEP = "step";
+        private static final String MONTHLY = "monthly";
+        private static final String REPEAT_ON = "repeat_on";
+        private static final String UNTIL = "until";
+
         // For reminder
         private final Integer remind_delta;
 
@@ -46,7 +58,7 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
             }
 
             Map<String, Object> reminderData = new HashMap<>();
-            reminderData.put("remind_delta", remind_delta);
+            reminderData.put(REMIND_DELTA, remind_delta);
 
             return reminderData;
         }
@@ -59,18 +71,18 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
             Map<String, Object> recurrenceData = new HashMap<>();
             Map<String, Object> configData = new HashMap<>();
 
-            recurrenceData.put("name", name);
-            if(name.equalsIgnoreCase("weekly")) {
-                configData.put("days", days);
-                recurrenceData.put("config", configData);
-                recurrenceData.put("step", step);
+            recurrenceData.put(NAME, name);
+            if(name.equalsIgnoreCase(WEEKLY)) {
+                configData.put(DAYS, days);
+                recurrenceData.put(CONFIG, configData);
+                recurrenceData.put(STEP, step);
             }
-            else if(name.equalsIgnoreCase("monthly")) {
-                configData.put("repeat_on", repeat_on);
-                recurrenceData.put("config", configData);
-                recurrenceData.put("step", step);
+            else if(name.equalsIgnoreCase(MONTHLY)) {
+                configData.put(REPEAT_ON, repeat_on);
+                recurrenceData.put(CONFIG, configData);
+                recurrenceData.put(STEP, step);
             }
-            recurrenceData.put("until", until);
+            recurrenceData.put(UNTIL, until);
 
             return recurrenceData;
         }
@@ -102,8 +114,8 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
 
     private final ArrayList<ReminderRecurrenceField.Value> values;
 
-    public ReminderRecurrenceField(String externalId) {
-        super(externalId);
+    public ReminderRecurrenceField() {
+        super(NAME);
         this.values = new ArrayList<>();
     }
 

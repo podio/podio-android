@@ -109,7 +109,7 @@ public class CalendarEvent {
     }
 
     public String getColor() {
-        return "#" + color;
+        return color;
     }
 
     public String getCategoryText() {
