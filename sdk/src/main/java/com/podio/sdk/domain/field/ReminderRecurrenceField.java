@@ -135,7 +135,7 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
 
     @Override
     public Value getValue(int index) {
-        return values != null ? values.get(index) : null;
+        return values != null && values.size() > index ? values.get(index) : null;
     }
 
     @Override
