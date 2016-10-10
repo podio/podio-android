@@ -31,6 +31,13 @@ public class CalendarProvider extends Provider {
 
         }
 
+        public CalendarFilter withAppId(long appId) {
+            addPathSegment("app");
+            addQueryParameter("app_id", Long.toString(appId, 10));
+            addPathSegment(Long.toString(appId, 10));
+            return this;
+        }
+
         public CalendarFilter withDateFromTo(Date from, Date to) {
 
             String dateFrom = DateFormat.format("yyyy-MM-dd", from).toString();
@@ -82,6 +89,23 @@ public class CalendarProvider extends Provider {
 
         CalendarFilter filter = new CalendarFilter().withDateFromTo(from, to)
                 .withPriority(priority).withTasks(includeTasks);
+
+        return get(filter, CalendarEvent[].class);
+    }
+
+    /**
+     * Fetches all app calendar events
+     * @param appId
+     * @param from
+     * @param to
+     * @param priority
+     * @param includeTasks
+     * @return
+     */
+    public Request<CalendarEvent[]> getAppCalendar(long appId, Date from, Date to,
+                                                   int priority, boolean includeTasks) {
+        CalendarFilter filter = new CalendarFilter().withAppId(appId)
+                .withDateFromTo(from, to).withPriority(priority).withTasks(includeTasks);
 
         return get(filter, CalendarEvent[].class);
     }

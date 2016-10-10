@@ -12,7 +12,7 @@ public class ItemPushTest extends AndroidTestCase {
         Gson gson = new Gson();
         Item item = new Item();
         item.addValue("FIELD-1", new TextField.Value("VALUE"));
-        String pushJson = gson.toJson(item.getCreateData());
+        String pushJson = gson.toJson(item.getCreateData(false));
         String reference = "{\"fields\":{\"FIELD-1\":[{\"value\":\"VALUE\"}]}";
         assertTrue(pushJson.contains(reference));
     }

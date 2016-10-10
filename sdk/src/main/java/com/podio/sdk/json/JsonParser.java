@@ -28,6 +28,7 @@ public class JsonParser {
             .registerTypeAdapter(ReferenceGroup.class, new ReferenceGroupDeserializerSerializer())
             .registerTypeAdapter(DataReference.class, new DataReferenceDeserializer())
             .disableHtmlEscaping()
+            .serializeNulls()
             .create();
 
     public static <T> T fromJson(String json, Class<T> classOfResult) {

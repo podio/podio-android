@@ -27,7 +27,7 @@ public class ItemTest extends AndroidTestCase {
         item.addValue("FIELD-1", new TextField.Value("VALUE"));
 
         Gson gson = new Gson();
-        String actualJson = gson.toJson(item.getCreateData());
+        String actualJson = gson.toJson(item.getCreateData(false));
 
         String expectedJson = "{\"fields\":{\"FIELD-1\":[{\"value\":\"VALUE\"}]}";
 
@@ -41,12 +41,12 @@ public class ItemTest extends AndroidTestCase {
         String expectedStringJson = "{\"fields\":{\"FIELD-1\":[{\"value\":\"VALUE\"}]}";
 
         item.addValue("FIELD-1", new TextField.Value("VALUE"));
-        String actualStringJson = gson.toJson(item.getCreateData());
+        String actualStringJson = gson.toJson(item.getCreateData(false));
         assertTrue(actualStringJson.contains(expectedStringJson));
 
         // Empty values are not added
         item.addValue("FIELD-1", new TextField.Value(""));
-        String actualEmptyJson = gson.toJson(item.getCreateData());
+        String actualEmptyJson = gson.toJson(item.getCreateData(false));
         assertTrue(actualEmptyJson.contains(expectedStringJson));
     }
 
@@ -113,7 +113,7 @@ public class ItemTest extends AndroidTestCase {
         Item item = gson.fromJson(json, Item.class);
         item.addValue("FIELD-1", new CategoryField.Value(3));
 
-        Object pushData = item.getCreateData();
+        Object pushData = item.getCreateData(false);
         String actualPushJson = gson.toJson(pushData);
         String expectedPushJson = "{\"external_id\":\"EXTERNALID\",\"fields\":{\"FIELD-1\":[{\"value\":2},{\"value\":3}]}";
 
@@ -415,7 +415,7 @@ public class ItemTest extends AndroidTestCase {
         Item item = gson.fromJson(json, Item.class);
         item.addValue("FIELD-4", new NumberField.Value(5d));
 
-        Object pushData = item.getCreateData();
+        Object pushData = item.getCreateData(false);
         String actualPushJson = gson.toJson(pushData);
         String expectedPushJson = "{\"external_id\":\"EXTERNALID\",\"fields\":{\"FIELD-4\":[{\"value\":\"5.0\"}],\"FIELD-1\":[{\"value\":2}]}";
 
@@ -430,14 +430,14 @@ public class ItemTest extends AndroidTestCase {
         Item item = new Item();
         item.addValue("FIELD-1", value);
 
-        String actualPreRemoveJson = gson.toJson(item.getCreateData());
+        String actualPreRemoveJson = gson.toJson(item.getCreateData(false));
         String expectedPreRemoveJson = "{\"fields\":{\"FIELD-1\":[{\"value\":\"VALUE\"}]}";
         assertTrue(actualPreRemoveJson.contains(expectedPreRemoveJson));
 
         item.removeValue("FIELD-1", value);
 
         String expectedPostRemoveJson = "{\"fields\":{\"FIELD-1\":[]}";
-        String actualPostRemoveJson = gson.toJson(item.getCreateData());
+        String actualPostRemoveJson = gson.toJson(item.getCreateData(false));
         assertTrue(actualPostRemoveJson.contains(expectedPostRemoveJson));
     }
 
@@ -475,13 +475,13 @@ public class ItemTest extends AndroidTestCase {
         }).create();
 
         Item item = gson.fromJson(json, Item.class);
-        Object preRemoveData = item.getCreateData();
+        Object preRemoveData = item.getCreateData(false);
         String expectedPreRemoveJson = "{\"fields\":{\"FIELD-1\":[{\"value\":2},{\"value\":3}]}";
         assertTrue(gson.toJson(preRemoveData).contains(expectedPreRemoveJson));
 
         CategoryField.Value value = new CategoryField.Value(2);
         item.removeValue("FIELD-1", value);
-        Object postRemoveData = item.getCreateData();
+        Object postRemoveData = item.getCreateData(false);
         String expectedPostRemoveJson = "{\"fields\":{\"FIELD-1\":[{\"value\":3}]}";
         assertTrue(gson.toJson(postRemoveData).contains(expectedPostRemoveJson));
     }
