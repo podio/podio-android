@@ -213,7 +213,7 @@ public class ItemProvider extends Provider {
      */
     public Request<Item.CreateResult> create(long applicationId, Item item) {
         Path filter = new Path().withApplicationId(applicationId);
-        Item.CreateData data = item.getCreateData();
+        Item.CreateData data = item.getCreateData(false);
         return post(filter, data, Item.CreateResult.class);
     }
 
@@ -235,7 +235,7 @@ public class ItemProvider extends Provider {
     public Request<Item.CreateResult> update(long itemId, Item item) {
         // TODO: Consider a mirror "ChangeData" + "ChangeResult" implementation to avoid confusion.
         Path filter = new Path().withItemId(itemId);
-        Item.CreateData data = item.getCreateData();
+        Item.CreateData data = item.getCreateData(false);
         return put(filter, data, Item.CreateResult.class);
     }
 

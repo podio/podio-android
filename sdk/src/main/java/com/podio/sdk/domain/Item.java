@@ -2,8 +2,9 @@
 package com.podio.sdk.domain;
 
 import com.podio.sdk.domain.data.Data;
-import com.podio.sdk.domain.data.LinkedAccountData;
 import com.podio.sdk.domain.field.Field;
+import com.podio.sdk.domain.field.LinkedAccountDataField;
+import com.podio.sdk.domain.field.ReminderRecurrenceField;
 import com.podio.sdk.domain.stream.EventContext;
 import com.podio.sdk.internal.Utils;
 
@@ -132,13 +133,17 @@ public class Item implements Data {
      */
     public static class CreateData {
         @SuppressWarnings("unused")
-        private final String external_id;
+        protected final String external_id;
         @SuppressWarnings("unused")
-        private final Map<String, Object> fields;
+        protected final Map<String, Object> fields;
         @SuppressWarnings("unused")
-        private final List<Long> file_ids;
+        protected final List<Long> file_ids;
         @SuppressWarnings("unused")
-        private final List<String> tags;
+        protected final List<String> tags;
+
+        private Map<String, Object> reminder;
+
+        private Map<String, Object> recurrence;
 
         private CreateData(String externalId) {
             this.external_id = externalId;
@@ -147,18 +152,39 @@ public class Item implements Data {
             this.tags = new ArrayList<String>();
         }
 
-        private void setValues(String field, Object values) {
+        protected void setValues(String field, Object values) {
             if (field != null && values != null) {
                 fields.put(field, values);
             }
         }
 
-        private void addFileId(long fileId) {
+        protected void addFileId(long fileId) {
             file_ids.add(fileId);
         }
 
         private void addTag(String tag) {
             tags.add(tag);
+        }
+
+        private void setReminder(Map<String, Object> reminder) {
+            this.reminder = reminder;
+        }
+
+        private void setRecurrence(Map<String, Object> recurrence) {
+            this.recurrence = recurrence;
+        }
+    }
+
+    public static class CreateDataLinkedAccount extends CreateData {
+
+        private CreateDataLinkedAccount(String externalId) {
+            super(externalId);
+        }
+
+        private Long linked_account_id;
+
+        public void setLinkedAccountId(Long linkedAccountId) {
+            this.linked_account_id = linkedAccountId;
         }
     }
 
@@ -230,11 +256,12 @@ public class Item implements Data {
     private final HashMap<Long, ItemParticipation> participants = null;
     private final ItemReferenceCount[] refs = null;
     private final LinkedAccountData linked_account_data = null;
+    private final Reminder reminder = null;
+    private final Recurrence recurrence = null;
 
     // These attributes are defined in the API source code,
     // but not supported by the SDK right now.
     //private final Object linked_account_id = null;
-    //private final Object recurrence = null;
     //private final Object app_item_id_formatted = null;
     //private final Object is_liked = null;
     //private final Object ratings = null;
@@ -244,7 +271,6 @@ public class Item implements Data {
     //private final Object values = null;
     //private final Object ref = null;
     //private final Object invite = null;
-    //private final Object reminder = null;
     //private final Object presence = null;
     //private final Object created_via = null;
     //private final Object activity = null;
@@ -294,9 +320,16 @@ public class Item implements Data {
      * understands it.
      *
      * @return The change data structure.
+     * @param hasLinkedAccountData
      */
-    public CreateData getCreateData() {
-        CreateData createData = new CreateData(external_id);
+    public CreateData getCreateData(boolean hasLinkedAccountData) {
+        CreateData createData;
+        if(hasLinkedAccountData) {
+            createData = new CreateDataLinkedAccount(external_id);
+        }
+        else {
+            createData = new CreateData(external_id);
+        }
 
         for (Field field : fields) {
             if (field != null) {
@@ -335,8 +368,54 @@ public class Item implements Data {
                 createData.setValues(entry.getKey(), createDataValues);
             }
         }
+        if(hasLinkedAccountData) {
+            createData = addLinkedAccountInfo((CreateDataLinkedAccount)createData);
+        }
+        createData = addReminderRecurrenceInfo(createData);
+        createData = removeNonFields(createData);
+        return createData;
+    }
+
+    private CreateData addReminderRecurrenceInfo(CreateData createData) {
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            if(key.equalsIgnoreCase(ReminderRecurrenceField.NAME)) {
+                ReminderRecurrenceField.Value data = (ReminderRecurrenceField.Value) entry.getValue().get(0);
+                if(data.getReminderData() != null) {
+                    createData.setReminder(data.getReminderData());
+                }
+
+                if(data.getRecurrenceData() != null) {
+                    createData.setRecurrence(data.getRecurrenceData());
+                }
+            }
+            break;
+        }
 
         return createData;
+    }
+
+    private CreateData addLinkedAccountInfo(CreateDataLinkedAccount createData) {
+        for (Entry<String, List<Field.Value>> entry : unverifiedFieldValues.entrySet()) {
+            String key = entry.getKey();
+            if(key.equalsIgnoreCase(LinkedAccountDataField.NAME)) {
+                createData.setLinkedAccountId(getLinkedAccountId((LinkedAccountDataField.Value) entry.getValue().get(0)));
+                break;
+            }
+        }
+
+        return createData;
+    }
+
+    private CreateData removeNonFields(CreateData createData) {
+        createData.fields.remove(ReminderRecurrenceField.NAME);
+        createData.fields.remove(LinkedAccountDataField.NAME);
+
+        return createData;
+    }
+
+    private Long getLinkedAccountId(LinkedAccountDataField.Value value) {
+        return value.getLinkedAccountId();
     }
 
     public void addValues(String field, List<Field.Value> fieldValues) {
@@ -513,6 +592,14 @@ public class Item implements Data {
 
     public LinkedAccountData getLinkedAccountData() {
         return linked_account_data;
+    }
+
+    public Reminder getReminder() {
+        return reminder;
+    }
+
+    public Recurrence getRecurrence() {
+        return recurrence;
     }
 
     /**
