@@ -27,7 +27,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class VolleyClient implements Client {
 
-    static class AuthPath extends Filter {
+    protected static class AuthPath extends Filter {
 
         protected AuthPath() {
             super("oauth/token");

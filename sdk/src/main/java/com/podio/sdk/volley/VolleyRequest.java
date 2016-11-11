@@ -93,8 +93,8 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private final Class<T> classOfResult;
     protected HashMap<String, String> headers;
     protected HashMap<String, String> params;
-    protected String contentType;
-    protected byte[] body;
+    public String contentType;
+    public byte[] body;
 
     private T result;
     private PodioError error;
@@ -102,7 +102,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
     private boolean isAuthRequest;
     private boolean hasSessionChanged;
 
-    protected VolleyRequest(int method, String url, Class<T> resultType, boolean isAuthRequest) {
+    public VolleyRequest(int method, String url, Class<T> resultType, boolean isAuthRequest) {
         super(method, url, null);
         setShouldCache(false);
 
