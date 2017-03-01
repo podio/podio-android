@@ -20,10 +20,12 @@ public class DateField extends Field<DateField.Value> {
         private Boolean calendar = null;
         private final String end = null;
         private String time = null;
+        private Boolean isCreateViewEditHidden = null;
 
-        public Settings(Boolean calendar, String time){
+        public Settings(Boolean calendar, String time, Boolean isCreateViewEditHidden){
             this.calendar = calendar;
             this.time = time;
+            this.isCreateViewEditHidden = isCreateViewEditHidden;
         }
     }
 
@@ -66,6 +68,14 @@ public class DateField extends Field<DateField.Value> {
             } catch (IllegalArgumentException e) {
                 return State.undefined;
             }
+        }
+
+        @Override
+        public boolean getIsHiddenCreateViewEdit() {
+            if(settings != null && settings.isCreateViewEditHidden != null) {
+                return settings.isCreateViewEditHidden;
+            }
+            return super.getIsHiddenCreateViewEdit();
         }
     }
 
@@ -293,7 +303,8 @@ public class DateField extends Field<DateField.Value> {
     public DateField(CalculationField calculationField){
         super(calculationField);
 
-        this.config = new Configuration(new Settings(calculationField.getConfiguration().isCalendar(),calculationField.getConfiguration().getTimeState()));
+        final CalculationField.Configuration configuration = calculationField.getConfiguration();
+        this.config = new Configuration(new Settings(configuration.isCalendar(), configuration.getTimeState(), configuration.getIsHiddenCreateViewEdit()));
         this.values = new ArrayList<>();
         for (Field.Value calcValue : calculationField.getValues()) {
             this.values.add((DateField.Value)calcValue);
