@@ -17,9 +17,11 @@ public class NumberField extends Field<NumberField.Value> {
      */
     private static class Settings {
         private Integer decimals = null;
+        private Boolean isCreateViewEditHidden = null;
 
-        public Settings(Integer decimals) {
+        public Settings(Integer decimals, boolean isCreateViewEdithidden) {
             this.decimals = decimals;
+            this.isCreateViewEditHidden = isCreateViewEdithidden;
         }
     }
 
@@ -41,6 +43,14 @@ public class NumberField extends Field<NumberField.Value> {
 
         public int getNumberOfDecimals() {
             return settings != null ? Utils.getNative(settings.decimals, 0) : 0;
+        }
+
+        @Override
+        public boolean getIsHiddenCreateViewEdit() {
+            if(settings != null && settings.isCreateViewEditHidden != null) {
+                return settings.isCreateViewEditHidden;
+            }
+            return super.getIsHiddenCreateViewEdit();
         }
     }
 
@@ -107,7 +117,8 @@ public class NumberField extends Field<NumberField.Value> {
     public NumberField(CalculationField calculationField) {
         super(calculationField);
 
-        config = new Configuration(new Settings(calculationField.getConfiguration().getNumberOfDecimals()));
+        final CalculationField.Configuration configuration = calculationField.getConfiguration();
+        config = new Configuration(new Settings(configuration.getNumberOfDecimals(), configuration.getIsHiddenCreateViewEdit()));
 
         this.values = new ArrayList<>();
         for (Field.Value calcValue : calculationField.getValues()) {
