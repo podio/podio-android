@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 
-apply plugin: "sonar-runner"
+// apply plugin: "sonar-runner"
 
 repositories {
     jcenter()
@@ -8,7 +8,7 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    buildToolsVersion '25'
 
     defaultConfig {
         minSdkVersion 15
@@ -83,29 +83,29 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
 }
 
-sonarRunner {
-    sonarProperties {
-        property "sonar.projectName", "Android SDK"
-        property "sonar.projectKey", "org.sonarqube:android-sdk-gradle-sonar"
-        property "sonar.projectVersion", "1.0"
-        property "sonar.login", "adude"
-        property "sonar.password", "androiddude1"
-        property "sonar.dynamicAnalysis", "reuseReports"
-        property "sonar.host.url", "http://10.229.130.81:5094/sonar"
-        property "sonar.jdbc.url", "jdbc:mysql://10.229.130.81:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance"
-        property "sonar.jdbc.driverClassName", "org.mysql.Driver"
-        property "sonar.jdbc.username", "sonar"
-        property "sonar.jdbc.password", "iesi5iel"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.profile", "Android Lint"
-        property "sonar.sources", "src/main/java"
-        property "sonar.tests", "src/androidTest/java"
-        property "sonar.binaries", "build/intermediates/classes/debug/com/podio"
-        property "sonar.junit.reportsPath", file("build/outputs/androidTest-results/connected")
-        property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", file("build/outputs/code-coverage/connected/coverage.ec")
-    }
-}
+//sonarRunner {
+//    sonarProperties {
+//        property "sonar.projectName", "Android SDK"
+//        property "sonar.projectKey", "org.sonarqube:android-sdk-gradle-sonar"
+//        property "sonar.projectVersion", "1.0"
+//        property "sonar.login", "adude"
+//        property "sonar.password", "androiddude1"
+//        property "sonar.dynamicAnalysis", "reuseReports"
+//        property "sonar.host.url", "http://10.229.130.81:5094/sonar"
+//        property "sonar.jdbc.url", "jdbc:mysql://10.229.130.81:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance"
+//        property "sonar.jdbc.driverClassName", "org.mysql.Driver"
+//        property "sonar.jdbc.username", "sonar"
+//        property "sonar.jdbc.password", "iesi5iel"
+//        property "sonar.sourceEncoding", "UTF-8"
+//        property "sonar.profile", "Android Lint"
+//        property "sonar.sources", "src/main/java"
+//        property "sonar.tests", "src/androidTest/java"
+//        property "sonar.binaries", "build/intermediates/classes/debug/com/podio"
+//        property "sonar.junit.reportsPath", file("build/outputs/androidTest-results/connected")
+//        property "sonar.java.coveragePlugin", "jacoco"
+//        property "sonar.jacoco.reportPath", file("build/outputs/code-coverage/connected/coverage.ec")
+//    }
+//}
 
 apply plugin: 'jacoco'
 
