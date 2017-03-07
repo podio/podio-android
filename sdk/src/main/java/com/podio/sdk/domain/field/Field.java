@@ -45,6 +45,7 @@ public abstract class Field<T extends Field.Value> {
         private final String description = null;
         private final String label = null;
         private final Boolean hidden = null;
+        private final Boolean hidden_create_view_edit = null;
         private final Boolean required = null;
         private final Boolean visible = null;
         private final String mapping = null;
@@ -92,6 +93,16 @@ public abstract class Field<T extends Field.Value> {
          */
         public boolean isHidden() {
             return hidden != null ? hidden.booleanValue() : false;
+        }
+
+
+        /**
+         * Returns the the always hidden_create_view_edit flag. AKA always hidden .
+         *
+         * @return Boolean true if the field is hidden durning create, view, and edit, boolean false otherwise.
+         */
+        public boolean getIsHiddenCreateViewEdit() {
+            return hidden_create_view_edit != null ? hidden_create_view_edit.booleanValue() : false;
         }
 
         /**

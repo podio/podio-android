@@ -19,6 +19,11 @@ public class TextField extends Field<TextField.Value> {
      */
     private static class Settings {
         private final String size = null;
+        private Boolean isCreateViewEditHidden = null;
+
+        public Settings(boolean isCreateViewEdithidden) {
+            this.isCreateViewEditHidden = isCreateViewEdithidden;
+        }
     }
 
     /**
@@ -29,8 +34,8 @@ public class TextField extends Field<TextField.Value> {
         private final Value default_value = null;
         private Settings settings = null;
 
-        public Configuration() {
-            settings = new Settings();
+        public Configuration(Settings settings) {
+            this.settings = settings;
         }
 
         public Value getDefaultValue() {
@@ -45,6 +50,14 @@ public class TextField extends Field<TextField.Value> {
             } catch (IllegalArgumentException e) {
                 return Size.undefined;
             }
+        }
+
+        @Override
+        public boolean getIsHiddenCreateViewEdit() {
+            if(settings != null && settings.isCreateViewEditHidden != null) {
+                return settings.isCreateViewEditHidden;
+            }
+            return super.getIsHiddenCreateViewEdit();
         }
     }
 
@@ -115,7 +128,7 @@ public class TextField extends Field<TextField.Value> {
     public TextField(CalculationField calculationField) {
         super(calculationField);
 
-        config = new Configuration();
+        config = new Configuration(new Settings(calculationField.getConfiguration().getIsHiddenCreateViewEdit()));
         this.values = new ArrayList<>();
         for (Field.Value calcValue : calculationField.getValues()) {
             this.values.add((TextField.Value)calcValue);

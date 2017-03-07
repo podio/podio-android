@@ -82,6 +82,9 @@ public class ReminderRecurrenceField extends Field<ReminderRecurrenceField.Value
                 recurrenceData.put(CONFIG, configData);
                 recurrenceData.put(STEP, step);
             }
+            else {
+                recurrenceData.put(CONFIG, configData);
+            }
             recurrenceData.put(UNTIL, until);
 
             return recurrenceData;
