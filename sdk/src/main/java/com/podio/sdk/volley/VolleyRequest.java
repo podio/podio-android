@@ -147,14 +147,7 @@ public class VolleyRequest<T> extends Request<T> implements com.podio.sdk.Reques
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        String accessToken = Session.accessToken();
-
-        if (!isAuthRequest && Utils.notEmpty(accessToken)) {
-            headers.put("Authorization", "Bearer " + accessToken);
-        } else {
-            headers.remove("Authorization");
-        }
-
+        Session.addAuthorization(headers, isAuthRequest);
         return headers;
     }
 

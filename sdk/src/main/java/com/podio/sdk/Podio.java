@@ -285,23 +285,4 @@ public class Podio {
         reminder.setClient(volleytRestClient);
         recurrence.setClient(volleytRestClient);
     }
-
-    /**
-     * Restores a previously created Podio session. Even though the access token may have expired,
-     * the refresh token can be used to get a new access token. The idea here is to enable the
-     * caller to persist the session and avoid an unnecessary re-authentication. NOTE! The server
-     * may very well invalidate both the access and refresh tokens, which would require a
-     * re-authentication anyway.
-     *
-     * @param accessToken
-     *         The previously stored access token.
-     * @param refreshToken
-     *         The previously stored refresh token.
-     * @param expires
-     *         The previously stored expire time stamp (in seconds).
-     */
-    public static void restoreSession(String accessToken, String refreshToken, long expires) {
-        Session.set(accessToken, refreshToken, expires);
-    }
-
 }

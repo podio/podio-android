@@ -42,6 +42,12 @@ public class ConversationProvider extends Provider {
             return this;
         }
 
+        Path withShareFileItem(String item_id) {
+            addPathSegment("sharefile");
+            addPathSegment(item_id);
+            return this;
+        }
+
         Path withLeaveFlag(long id) {
             addPathSegment(Long.toString(id, 10));
             addPathSegment("leave");
@@ -145,6 +151,11 @@ public class ConversationProvider extends Provider {
     public Request<Conversation> getConversation(long id) {
         Path filter = new Path().withId(id);
         return get(filter, Conversation.class);
+    }
+
+    public Request<Conversation> getConversation(String sharefile_item_id) {
+        Path filter = new Path().withShareFileItem(sharefile_item_id);
+        return post(filter, null, Conversation.class);
     }
 
     /**

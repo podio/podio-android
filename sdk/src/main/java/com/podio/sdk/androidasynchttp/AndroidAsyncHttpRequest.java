@@ -94,7 +94,7 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
     }
 
     @Override
-    public boolean onSessionChanged(String authToken, String refreshToken, String transferToken, long expires) {
+    public boolean onSessionChanged() {
         runRequest();
 
         return false;
@@ -172,13 +172,6 @@ public class AndroidAsyncHttpRequest<T> implements Request<T>, Request.SessionLi
     }
 
     public Header[] getHeaders() {
-        Header[] headers = new Header[2];
-        String accessToken = Session.accessToken();
-        BasicHeader header = new BasicHeader("Authorization", "Bearer " + accessToken);
-        headers[0] = header;
-        header = new BasicHeader("X-Time-Zone", Calendar.getInstance().getTimeZone().getID());
-        headers[1] = header;
-
-        return headers;
+        return Session.getAuthorizationHeaders();
     }
 }

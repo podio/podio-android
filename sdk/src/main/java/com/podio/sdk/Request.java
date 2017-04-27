@@ -58,19 +58,9 @@ public interface Request<T> {
          * boolean true if the event is to be consumed (no subsequent listeners in the chain will be
          * called) or boolean false to allow bubbling of the event.
          *
-         * @param authToken
-         *         The new access token.
-         * @param refreshToken
-         *         The new refresh token.
-         * @param transferToken
-         *         The new transfer token.
-         * @param expires
-         *         The Unix epoch when the access token expires.
-         *
          * @return Boolean flag whether the event is to be consumed or not by this implementation.
          */
-        public boolean onSessionChanged(String authToken, String refreshToken, String transferToken, long expires);
-
+        boolean onSessionChanged();
     }
 
     /**

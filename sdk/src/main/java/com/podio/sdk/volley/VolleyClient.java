@@ -85,7 +85,7 @@ public class VolleyClient implements Client {
             // If the access token has changed since this request was originally executed (say, as a
             // result of an other request refreshing it), the 401 status isn't necessarily valid any
             // more, hence, we should only re-authenticate if our access token is intact.
-            if (error instanceof AuthFailureError && accessToken.equals(Session.accessToken())) {
+            if (error instanceof AuthFailureError && accessToken.equals(Session.accessTokenHash())) {
                 Uri uri = buildAuthUri();
 
                 if (uri == null) {
@@ -172,7 +172,7 @@ public class VolleyClient implements Client {
         String body = item != null ? JsonParser.toJson(item) : null;
 
         VolleyRequest<T> request = VolleyRequest.newRequest(userAgent, method, url, body, classOfResult);
-        request.setRetryPolicy(new VolleyRetryPolicy(Session.accessToken()));
+        request.setRetryPolicy(new VolleyRetryPolicy(Session.accessTokenHash()));
 
         addToRequestQueue(request);
 
