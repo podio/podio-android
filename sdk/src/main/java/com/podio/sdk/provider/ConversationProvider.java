@@ -155,6 +155,11 @@ public class ConversationProvider extends Provider {
 
     public Request<Conversation> getConversation(String sharefile_item_id) {
         Path filter = new Path().withShareFileItem(sharefile_item_id);
+        return get(filter, Conversation.class);
+    }
+
+    public Request<Conversation> joinConversation(String sharefile_item_id) {
+        Path filter = new Path().withShareFileItem(sharefile_item_id);
         return post(filter, null, Conversation.class);
     }
 
