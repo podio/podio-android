@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
 
-apply plugin: "sonar-runner"
+//apply plugin: "sonar-runner"
 
 repositories {
     jcenter()
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 25
 
         versionCode 17
         versionName '0.1.4'
@@ -22,94 +22,96 @@ android {
         buildConfigField "String", "SCHEME", "\"https\""
         buildConfigField "String", "API_AUTHORITY", "\"api.podio.com\""
         buildConfigField "String", "PUSH_AUTHORITY", "\"push.podio.com\""
-        buildConfigField "String", "PUSH_PATH", "\"faye\""
+        buildConfigField "String", "PUSH_PATH", "\"com.sharefile.podio.chatlib.faye\""
 
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+//        testInstrumentationRunner "android.test.InstrumentationTestRunner"
 
     }
 
-    buildTypes {
-        release {
-            debuggable false
-        }
-        debug {
-            testCoverageEnabled = true
-        }
-    }
+//    buildTypes {
+//        release {
+//            debuggable false
+//        }
+//        debug {
+//            testCoverageEnabled = true
+//        }
+//    }
 
-    libraryVariants.all { variant ->
-        def name = variant.name.capitalize()
-        def suffix = name.replaceAll('([A-Z])', '-$1').toLowerCase()
-        def template = "${project.archivesBaseName}-${project.version}-${suffix}"
-
-        // Force AAR archives to have the same naming conventions as the JAR's.
-        variant.outputs.each { output ->
-            def fileName = output.outputFile.name
-            if (fileName.endsWith('.aar')) {
-                output.outputFile = new File(output.outputFile.parent, template + '.aar')
-            }
-        }
-
-        // Build JAR's
-        task("podioJavadoc${name}", type: Javadoc) {
-            source = android.sourceSets.main.java.srcDirs
-            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        }
-
-        task("podioJavadocJar${name}", type: Jar, dependsOn: "podioJavadoc${name}") {
-            classifier = 'javadoc'
-            from tasks["podioJavadoc${name}"].destinationDir
-            destinationDir = file("${buildDir}/outputs/jar/")
-        }
-
-        artifacts.add('archives', task("podioSourceJar${name}", type: Jar) {
-            classifier = 'sources'
-            from android.sourceSets.main.java.srcDirs
-            destinationDir = file("${buildDir}/outputs/jar/")
-        })
-
-        artifacts.add('archives', task("podioJar${name}", type: Jar) {
-            dependsOn variant.javaCompile
-            from variant.javaCompile.destinationDir
-            destinationDir = file("${buildDir}/outputs/jar/")
-        })
-    }
+//    libraryVariants.all { variant ->
+//        def name = variant.name.capitalize()
+//        def suffix = name.replaceAll('([A-Z])', '-$1').toLowerCase()
+//        def template = "${project.archivesBaseName}-${project.version}-${suffix}"
+//
+//        // Force AAR archives to have the same naming conventions as the JAR's.
+//        variant.outputs.each { output ->
+//            def fileName = output.outputFile.name
+//            if (fileName.endsWith('.aar')) {
+//                output.outputFile = new File(output.outputFile.parent, template + '.aar')
+//            }
+//        }
+//
+//        // Build JAR's
+//        task("podioJavadoc${name}", type: Javadoc) {
+//            source = android.sourceSets.main.java.srcDirs
+//            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//        }
+//
+//        task("podioJavadocJar${name}", type: Jar, dependsOn: "podioJavadoc${name}") {
+//            classifier = 'javadoc'
+//            from tasks["podioJavadoc${name}"].destinationDir
+//            destinationDir = file("${buildDir}/outputs/jar/")
+//        }
+//
+//        artifacts.add('archives', task("podioSourceJar${name}", type: Jar) {
+//            classifier = 'sources'
+//            from android.sourceSets.main.java.srcDirs
+//            destinationDir = file("${buildDir}/outputs/jar/")
+//        })
+//
+//        artifacts.add('archives', task("podioJar${name}", type: Jar) {
+//            dependsOn variant.javaCompile
+//            from variant.javaCompile.destinationDir
+//            destinationDir = file("${buildDir}/outputs/jar/")
+//        })
+//    }
 }
+
 dependencies {
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.mcxiaoke.volley:library:1.0.9'
-    androidTestCompile 'org.mockito:mockito-core:1.9.5'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
+//    androidTestCompile 'org.mockito:mockito-core:1.9.5'
+//    androidTestCompile 'com.google.dexmaker:dexmaker-mckito:1.0'
     compile 'com.loopj.android:android-async-http:1.4.9'
 }
 
-sonarRunner {
-    sonarProperties {
-        property "sonar.projectName", "Android SDK"
-        property "sonar.projectKey", "org.sonarqube:android-sdk-gradle-sonar"
-        property "sonar.projectVersion", "1.0"
-        property "sonar.login", "adude"
-        property "sonar.password", "androiddude1"
-        property "sonar.dynamicAnalysis", "reuseReports"
-        property "sonar.host.url", "http://10.229.130.81:5094/sonar"
-        property "sonar.jdbc.url", "jdbc:mysql://10.229.130.81:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance"
-        property "sonar.jdbc.driverClassName", "org.mysql.Driver"
-        property "sonar.jdbc.username", "sonar"
-        property "sonar.jdbc.password", "iesi5iel"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.profile", "Android Lint"
-        property "sonar.sources", "src/main/java"
-        property "sonar.tests", "src/androidTest/java"
-        property "sonar.binaries", "build/intermediates/classes/debug/com/podio"
-        property "sonar.junit.reportsPath", file("build/outputs/androidTest-results/connected")
-        property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.jacoco.reportPath", file("build/outputs/code-coverage/connected/coverage.ec")
-    }
-}
+//
+//sonarRunner {
+//    sonarProperties {
+//        property "sonar.projectName", "Android SDK"
+//        property "sonar.projectKey", "org.sonarqube:android-sdk-gradle-sonar"
+//        property "sonar.projectVersion", "1.0"
+//        property "sonar.login", "adude"
+//        property "sonar.password", "androiddude1"
+//        property "sonar.dynamicAnalysis", "reuseReports"
+//        property "sonar.host.url", "http://10.229.130.81:5094/sonar"
+//        property "sonar.jdbc.url", "jdbc:mysql://10.229.130.81:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance"
+//        property "sonar.jdbc.driverClassName", "org.mysql.Driver"
+//        property "sonar.jdbc.username", "sonar"
+//        property "sonar.jdbc.password", "iesi5iel"
+//        property "sonar.sourceEncoding", "UTF-8"
+//        property "sonar.profile", "Android Lint"
+//        property "sonar.sources", "src/main/java"
+//        property "sonar.tests", "src/androidTest/java"
+//        property "sonar.binaries", "build/intermediates/classes/debug/com/podio"
+//        property "sonar.junit.reportsPath", file("build/outputs/androidTest-results/connected")
+//        property "sonar.java.coveragePlugin", "jacoco"
+//        property "sonar.jacoco.reportPath", file("build/outputs/code-coverage/connected/coverage.ec")
+//    }
+//}
 
-apply plugin: 'jacoco'
-
-jacoco {
-    toolVersion = "0.7.5.201505241946"
-}
+//apply plugin: 'jacoco'
+//
+//jacoco {
+//    toolVersion = "0.7.5.201505241946"
+//}
 
