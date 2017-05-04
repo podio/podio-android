@@ -69,11 +69,29 @@ public class Conversation {
     /**
      * This class describes the conversation event data.
      */
+    // TODO: split this into multiple classes based on the event type
     public static class Data {
+        // message.data
         private final Long message_id = null;
         private final File[] files = null;
         private final String text = null;
         private final String created_on = null;
+        // embed?
+
+        // participant_add / participant_leave
+        private final Long user_id = null;
+        private final String name = null;
+        private final Long space_id = null;
+        private final Long profile_id = null;
+        private final Long org_id = null;
+        private final String last_seen_on = null;
+        private final String link = null;
+        // avatar
+        // private final String type = null;
+        // image
+
+        // TODO: add fields for other event types
+        // ...
 
         public File[] getFiles() {
             return files.clone();
@@ -93,6 +111,29 @@ public class Conversation {
 
         public long getMessageId() {
             return Utils.getNative(message_id, -1L);
+        }
+
+        // data for participant_add/leave
+        public Long getUserId() {
+            return user_id;
+        }
+        public String getName() {
+            return name;
+        }
+        public Long getSpaceId() {
+            return space_id;
+        }
+        public Long getProfileId() {
+            return profile_id;
+        }
+        public Long getOrgId() {
+            return org_id;
+        }
+        public Date getLastSeenOn() {
+            return Utils.parseDateTimeUtc(last_seen_on);
+        }
+        public String getLink() {
+            return link;
         }
     }
 
@@ -150,6 +191,9 @@ public class Conversation {
             return data != null ? data.created_on : null;
         }
 
+        public Data getData() {
+            return data;
+        }
     }
 
     /**

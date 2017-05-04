@@ -96,6 +96,11 @@ public class ConversationProvider extends Provider {
             return this;
         }
 
+        Path withView(String view) {
+            addQueryParameter("view", view);
+            return this;
+        }
+
     }
 
     /**
@@ -112,6 +117,27 @@ public class ConversationProvider extends Provider {
         Path filter = new Path().withMoreParticipants(conversationId);
         HashMap<String, long[]> data = new HashMap<String, long[]>();
         data.put("participants", participantIds);
+        return post(filter, data, Void.class);
+    }
+
+    public static class ShareFileContact {
+        public final String type;
+        public final String user_id;
+        public ShareFileContact(String id) {
+            type = "sharefile";
+            this.user_id = id;
+        }
+    }
+    /**
+     *
+     * @param conversationId
+     * @param sf_user_ids
+     * @return
+     */
+    public Request<Void> addParticipants(long conversationId, ShareFileContact[] sf_user_ids) {
+        Path filter = new Path().withMoreParticipants(conversationId);
+        HashMap<String, ShareFileContact[]> data = new HashMap<>();
+        data.put("participants", sf_user_ids);
         return post(filter, data, Void.class);
     }
 
